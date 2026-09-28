@@ -94,6 +94,12 @@ related photos together; on the first end-to-end run with real Vision output it 
 85 photos into a handful of "duplicates". A perceptual hash is only trusted when the image has
 contrast and the hash has at least 8 set and 8 unset bits.
 
+Embeddings are only trusted if they vary. A zero, empty or non-finite feature print counts as
+missing, and when a whole library's feature prints are essentially identical (Vision returned a
+constant vector — seen in the CI simulator) the engine ignores embeddings for that run and sets
+`MemoryEngineDiagnostics.embeddingsIgnored`. Debug builds log every duplicate pair with sizes,
+dates and both distances (`Duplicate: copy … → kept …`) to support tuning on real libraries.
+
 The copy kept is: favorite → has location → higher resolution → earlier. Nothing is deleted.
 Thresholds are in `SimilarityConfiguration` and **should be tuned on real libraries** (see
 "Tuning" below).
