@@ -2,6 +2,15 @@ import Foundation
 import Observation
 import os
 import ReliveCore
+import UIKit
+
+/// How an import changed the selection.
+struct SelectionChange: Equatable, Sendable {
+    var added: Int
+    var removed: Int
+
+    var hasChanges: Bool { added > 0 || removed > 0 }
+}
 
 /// The user's story and everything they decided about it.
 ///
@@ -114,6 +123,16 @@ final class StoryStore {
         story.moments.filter { userState(for: $0.id).isHidden }
     }
 
+    /// Covers spread evenly across the story, for the reveal mosaic.
+    func representativeHeroIDs(limit: Int) -> [AssetID] {
+        let moments = visibleMoments.filter { $0.kind != .undated }
+        guard !moments.isEmpty, limit > 0 else { return [] }
+        let step = max(1, moments.count / limit)
+        return stride(from: 0, to: moments.count, by: step)
+            .prefix(limit)
+            .compactMap { heroAssetID(for: moments[$0]) }
+    }
+
     /// Where "Continue your story" should take the user.
     func nextMoment(after lastViewed: MomentID?) -> Moment? {
         let moments = visibleMoments
@@ -153,22 +172,22 @@ final class StoryStore {
 
     // MARK: - Importing
 
-    /// Adds the given library items to the selection. Returns how many were new.
+    /// Adds the given library items to the selection.
     @discardableResult
-    func importSelection(identifiers: [AssetID]) async -> Int {
+    func importSelection(identifiers: [AssetID]) async -> SelectionChange {
         let fetched = await photoLibrary.assets(withIdentifiers: identifiers)
         return merge(fetched, replacingSelection: false)
     }
 
     /// Makes the selection match exactly what Relive can see (used with limited access, where the
-    /// user's system-level selection *is* the selection). Returns how many were new.
+    /// user's system-level selection *is* the selection).
     @discardableResult
-    func syncWithAccessibleAssets() async -> Int {
+    func syncWithAccessibleAssets() async -> SelectionChange {
         let fetched = await photoLibrary.allAccessibleAssets()
         return merge(fetched, replacingSelection: true)
     }
 
-    private func merge(_ fetched: [MemoryAsset], replacingSelection: Bool) -> Int {
+    private func merge(_ fetched: [MemoryAsset], replacingSelection: Bool) -> SelectionChange {
         accessStatus = photoLibrary.accessStatus()
         var updated = replacingSelection ? [:] : assets
         var added = 0
@@ -181,9 +200,10 @@ final class StoryStore {
             }
             updated[asset.id] = asset
         }
+        let removed = assets.keys.filter { updated[$0] == nil }.count
         assets = updated
         repository.saveAssets(Array(updated.values))
-        return added
+        return SelectionChange(added: added, removed: removed)
     }
 
     // MARK: - Processing
@@ -199,6 +219,13 @@ final class StoryStore {
 
         let started = Date()
         processing = .running(MemoryEngineProgress(stage: .readingMetadata))
+        // Ask for a little time to finish if the user switches apps mid-way.
+        let backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "relive.processing")
+        defer {
+            if backgroundTask != .invalid {
+                UIApplication.shared.endBackgroundTask(backgroundTask)
+            }
+        }
         await placeResolver.resetFailures()
 
         let engine = MemoryEngine(
