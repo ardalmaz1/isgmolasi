@@ -78,6 +78,8 @@ Us. Screenshots of each step are uploaded as a build artifact.
   persistence, concurrency.
 - [docs/MEMORY_ENGINE.md](docs/MEMORY_ENGINE.md) — every heuristic with its thresholds: moment
   clustering, trips, duplicates, cover selection, naming, Found for You.
+- [docs/VALIDATION.md](docs/VALIDATION.md) — how to run a validation session with a couple and
+  read the signals.
 
 ## Known limitations of 0.1
 
