@@ -50,4 +50,14 @@ extension View {
     func reliveBackground() -> some View {
         background(Palette.background.ignoresSafeArea())
     }
+
+    /// Paper-coloured strip behind the status bar for screens without a navigation bar, so
+    /// scrolled content never runs under the clock.
+    func statusBarBackdrop() -> some View {
+        safeAreaInset(edge: .top, spacing: 0) {
+            Color.clear
+                .frame(height: 0)
+                .background(Palette.background.opacity(0.96), ignoresSafeAreaEdges: .top)
+        }
+    }
 }

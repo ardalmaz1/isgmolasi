@@ -88,6 +88,7 @@ struct MemoryEngineTests {
         #expect(!owner.featuredAssetIDs.contains("kas-whatsapp-copy"))
         #expect(owner.endDate ?? .distantFuture < date(2025, 8, 8))
         #expect(result.diagnostics.duplicateCount == 1)
+        #expect(result.duplicateGroups == [DuplicateDetector.DuplicateGroup(primary: "kas-original", copies: ["kas-whatsapp-copy"])])
     }
 
     @Test("Progress is reported in order and ends finished")

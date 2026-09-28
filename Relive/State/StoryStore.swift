@@ -273,6 +273,9 @@ final class StoryStore {
             recomputeDerived()
             processing = .finished(result.diagnostics)
 
+            #if DEBUG
+            logDuplicateDetails(result)
+            #endif
             let diagnostics = result.diagnostics
             Self.logger.notice("Story built: \(diagnostics.inputCount) assets, \(diagnostics.momentCount) moments, \(diagnostics.chapterCount) chapters, \(diagnostics.duplicateCount) duplicates, \(diagnostics.similarCount) similar, \(diagnostics.analysisFailureCount) analysis failures, \(diagnostics.namedPlaceCount) places in \(Int(Date().timeIntervalSince(started)))s")
             analytics.track(.memoryProcessingCompleted, [
@@ -294,6 +297,25 @@ final class StoryStore {
             }
         }
     }
+
+    #if DEBUG
+    /// Development aid for tuning `SimilarityConfiguration` on real libraries: one line per
+    /// copy that was attached to an original, with the signals that decided it.
+    private func logDuplicateDetails(_ result: MemoryEngineResult) {
+        let byID = Dictionary(result.assets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        for group in result.duplicateGroups {
+            guard let primary = byID[group.primary] else { continue }
+            for copyID in group.copies {
+                guard let copy = byID[copyID] else { continue }
+                let lhs = primary.analysis?.fingerprint
+                let rhs = copy.analysis?.fingerprint
+                let feature = lhs.flatMap { left in rhs.flatMap { left.featureDistance(to: $0) } }
+                let hash = lhs.flatMap { left in rhs.flatMap { left.hashDistance(to: $0) } }
+                Self.logger.notice("Duplicate: copy \(copy.pixelWidth)x\(copy.pixelHeight) \(copy.creationDate?.formatted() ?? "undated") → kept \(primary.pixelWidth)x\(primary.pixelHeight) \(primary.creationDate?.formatted() ?? "undated"); feature \(feature.map { String(format: "%.3f", $0) } ?? "–"), hash \(hash.map(String.init) ?? "–")")
+            }
+        }
+    }
+    #endif
 
     func acknowledgeProcessingResult() {
         if !processing.isRunning {

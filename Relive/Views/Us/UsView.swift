@@ -60,6 +60,7 @@ struct UsView: View {
             }
             .scrollContentBackground(.hidden)
             .reliveBackground()
+            .statusBarBackdrop()
             .foregroundStyle(Palette.textPrimary)
             .toolbar(.hidden, for: .navigationBar)
             .sheet(isPresented: $isEditingProfile) { EditProfileView() }

@@ -69,4 +69,6 @@ public struct MemoryEngineResult: Sendable {
     /// Input assets with analysis filled in, so callers can cache it.
     public var assets: [MemoryAsset]
     public var diagnostics: MemoryEngineDiagnostics
+    /// Which copies were attached to which originals — for tuning the similarity thresholds.
+    public var duplicateGroups: [DuplicateDetector.DuplicateGroup]
 }

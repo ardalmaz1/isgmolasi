@@ -56,6 +56,7 @@ struct StoryTimelineView: View {
                 }
                 .scrollIndicators(.hidden)
                 .reliveBackground()
+                .statusBarBackdrop()
                 .onChange(of: app.storyScrollTarget, initial: true) { _, target in
                     guard let target else { return }
                     path = []

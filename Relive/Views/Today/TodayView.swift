@@ -53,6 +53,7 @@ struct TodayView: View {
             }
             .scrollIndicators(.hidden)
             .reliveBackground()
+            .statusBarBackdrop()
             .toolbar(.hidden, for: .navigationBar)
             .momentDestination()
         }

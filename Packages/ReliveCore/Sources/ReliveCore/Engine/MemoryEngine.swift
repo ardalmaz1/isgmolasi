@@ -81,7 +81,12 @@ public struct MemoryEngine: Sendable {
         diagnostics.chapterCount = story.chapters.count
 
         progress(MemoryEngineProgress(stage: .finished, completedUnits: 1, totalUnits: 1))
-        return MemoryEngineResult(story: story, assets: analyzed, diagnostics: diagnostics)
+        return MemoryEngineResult(
+            story: story,
+            assets: analyzed,
+            diagnostics: diagnostics,
+            duplicateGroups: grouping.duplicateGroups
+        )
     }
 
     // MARK: - Analysis
@@ -158,6 +163,7 @@ public struct MemoryEngine: Sendable {
         var drafts: [MomentDraft]
         var chapters: [ChapterDraft]
         var duplicateCount: Int
+        var duplicateGroups: [DuplicateDetector.DuplicateGroup]
     }
 
     private func group(dated: [MemoryAsset], undated: [MemoryAsset], all: [MemoryAsset]) -> Grouping {
@@ -245,7 +251,12 @@ public struct MemoryEngine: Sendable {
             ))
         }
 
-        return Grouping(drafts: drafts, chapters: chapters, duplicateCount: primaryOfCopy.count)
+        return Grouping(
+            drafts: drafts,
+            chapters: chapters,
+            duplicateCount: primaryOfCopy.count,
+            duplicateGroups: duplicateGroups
+        )
     }
 
     private func makeDraft(kind: Moment.Kind, members: [MemoryAsset], chapterRun: Int?, isAtHome: Bool) -> MomentDraft {
