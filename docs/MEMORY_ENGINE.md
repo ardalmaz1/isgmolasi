@@ -85,8 +85,14 @@ Two signals per photo (`VisualFingerprint`):
 
 | Decision | Rule |
 |----------|------|
-| Duplicate copy (global) | Same aspect ratio (±4 %), and embedding distance ≤ 0.25 with hash distance ≤ 12 — or, without embeddings, hash distance ≤ 5 when both images have enough contrast for the hash to mean anything. |
-| Similar shot (within a moment) | Taken ≤ 5 min apart, and embedding distance ≤ 0.45 (or hash distance ≤ 10 without embeddings). |
+| Duplicate copy (global) | Same aspect ratio (±4 %), **and** embedding distance ≤ 0.15 with hash distance ≤ 8. If the hashes carry no information (flat or low-contrast image), the embeddings alone must be ≤ 0.075. Without embeddings: hash distance ≤ 4 **and** the signature of a re-saved copy (≤ 80 % of the pixels, or location stripped). |
+| Similar shot (within a moment) | Taken ≤ 5 min after the burst's first shot, and embedding distance ≤ 0.35 to it (or hash distance ≤ 8 without embeddings). |
+
+Grouping is **star-shaped**: every member must match the group's anchor directly (the best copy
+to keep, or the burst's first shot). Transitive grouping (A≈B, B≈C ⇒ one group) chains loosely
+related photos together; on the first end-to-end run with real Vision output it collapsed 78 of
+85 photos into a handful of "duplicates". A perceptual hash is only trusted when the image has
+contrast and the hash has at least 8 set and 8 unset bits.
 
 The copy kept is: favorite → has location → higher resolution → earlier. Nothing is deleted.
 Thresholds are in `SimilarityConfiguration` and **should be tuned on real libraries** (see

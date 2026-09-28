@@ -12,6 +12,8 @@ enum SyntheticImage {
                 let fy = Double(y) / Double(height)
                 let fx = Double(x) / Double(width)
                 var value = fy < 0.55 ? 200 - 120 * fy : 60 + 40 * fx
+                // Low-frequency texture, as real scenes have (foliage, water, fabric).
+                value += 22 * sin(fx * 13 + fy * 9 + Double(variant))
                 let sunX = 0.7 - 0.4 * Double(variant % 2), sunY = 0.25
                 if (fx - sunX) * (fx - sunX) + (fy - sunY) * (fy - sunY) < 0.01 { value = 250 }
                 if fx > 0.3 && fx < 0.4 && fy > 0.4 && fy < 0.9 { value = 20 }
@@ -82,7 +84,8 @@ struct GrayscaleImageTests {
         let original = SyntheticImage.scene(width: 480, height: 640)
         let copy = SyntheticImage.recompressed(original, maxDimension: 200, noise: 4)
         let distance = (original.differenceHash() ^ copy.differenceHash()).nonzeroBitCount
-        #expect(distance <= 5)
+        #expect(distance <= SimilarityConfiguration.standard.duplicateHashDistance)
+        #expect(original.differenceHash().nonzeroBitCount >= SimilarityConfiguration.standard.minimumHashBits)
     }
 
     @Test("A different composition has a distant hash")

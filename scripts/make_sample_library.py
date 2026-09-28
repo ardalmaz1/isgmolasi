@@ -70,6 +70,9 @@ def scene(seed: int, palette: tuple, variation: float = 0.0) -> Image.Image:
         shade = tuple(max(0, c - rng.randint(20, 60)) for c in ground)
         draw.ellipse([x - r, y - r // 2, x + r, y + r // 2], fill=shade)
 
+    # Fine texture, as real photos have (grass, water, fabric, sensor noise).
+    texture = Image.effect_noise((WIDTH, HEIGHT), 28).convert("RGB")
+    image = Image.blend(image, texture, 0.12)
     return image.filter(ImageFilter.GaussianBlur(radius=1.2))
 
 

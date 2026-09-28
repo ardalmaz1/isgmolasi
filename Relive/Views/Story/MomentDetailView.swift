@@ -91,7 +91,6 @@ struct MomentDetailView: View {
         }
         .scrollIndicators(.hidden)
         .reliveBackground()
-        .ignoresSafeArea(edges: .top)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
@@ -120,12 +119,8 @@ struct MomentDetailView: View {
                         Label("Hide This Memory", systemImage: "eye.slash")
                     }
                 } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.body.weight(.semibold))
-                        .frame(width: 32, height: 32)
-                        .background(.ultraThinMaterial, in: Circle())
+                    Label("More", systemImage: "ellipsis.circle")
                 }
-                .accessibilityLabel("More")
             }
         }
         .sheet(isPresented: $isEditingNote) {

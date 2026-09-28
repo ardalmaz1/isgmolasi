@@ -122,14 +122,29 @@ final class StoryStore {
         story.moments.filter { userState(for: $0.id).isHidden }
     }
 
-    /// Covers spread evenly across the story, for the reveal mosaic.
+    /// Photos spread evenly across the story, for the reveal mosaic: one cover per moment, and
+    /// when there are fewer moments than slots, more photos from the same moments.
     func representativeHeroIDs(limit: Int) -> [AssetID] {
         let moments = visibleMoments.filter { $0.kind != .undated }
         guard !moments.isEmpty, limit > 0 else { return [] }
         let step = max(1, moments.count / limit)
-        return stride(from: 0, to: moments.count, by: step)
+        var picked = stride(from: 0, to: moments.count, by: step)
             .prefix(limit)
             .compactMap { heroAssetID(for: moments[$0]) }
+        var round = 0
+        while picked.count < limit, round < 8 {
+            var addedThisRound = false
+            for moment in moments where picked.count < limit {
+                let extras = moment.featuredAssetIDs.filter { isAvailable($0) && !picked.contains($0) && assets[$0]?.kind == .photo }
+                if let next = extras.first {
+                    picked.append(next)
+                    addedThisRound = true
+                }
+            }
+            if !addedThisRound { break }
+            round += 1
+        }
+        return picked
     }
 
     /// Where "Continue your story" should take the user.
