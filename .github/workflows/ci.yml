@@ -96,7 +96,7 @@ jobs:
             -only-testing:ReliveUITests \
             -derivedDataPath build/DerivedData \
             -resultBundlePath build/UIFlow.xcresult \
-            2>&1 | tee build/uitest.log | grep -E "error:|TIMELINE|Test Case|\*\* TEST" || true
+            2>&1 | tee build/uitest.log | grep -E "error:|TIMELINE|SCREEN|Test Case|\*\* TEST" || true
           grep -q "\*\* TEST SUCCEEDED \*\*" build/uitest.log
       - name: Export screenshots
         if: always()
@@ -104,10 +104,43 @@ jobs:
           mkdir -p build/screenshots
           xcrun xcresulttool export attachments --path build/UIFlow.xcresult --output-path build/screenshots || true
           ls -la build/screenshots || true
+      - name: Screenshot thumbnails (for review from environments without artifact access)
+        if: always()
+        run: |
+          python3 - <<'PY'
+          import base64, json, pathlib, subprocess
+          root = pathlib.Path("build/screenshots")
+          manifest = root / "manifest.json"
+          if not manifest.exists():
+              raise SystemExit(0)
+          found = []
+          def walk(node):
+              if isinstance(node, dict):
+                  if "exportedFileName" in node and "suggestedHumanReadableName" in node:
+                      found.append((node["suggestedHumanReadableName"], node["exportedFileName"]))
+                  for value in node.values():
+                      walk(value)
+              elif isinstance(node, list):
+                  for value in node:
+                      walk(value)
+          walk(json.loads(manifest.read_text()))
+          wanted = ("06-", "07-", "10-", "15-")
+          for name, file in sorted(found):
+              if not name.startswith(wanted) or not file.endswith(".png"):
+                  continue
+              thumb = root / (name.split("_")[0] + ".jpg")
+              subprocess.run(["sips", "-Z", "440", "-s", "format", "jpeg", "-s", "formatOptions", "50",
+                              str(root / file), "--out", str(thumb)], check=True, capture_output=True)
+              data = base64.b64encode(thumb.read_bytes()).decode()
+              print(f"THUMB-BEGIN {thumb.name}")
+              for i in range(0, len(data), 4000):
+                  print(data[i:i + 4000])
+              print(f"THUMB-END {thumb.name}")
+          PY
       - name: App log excerpt
         if: always()
         run: |
-          xcrun simctl spawn "$UDID" log show --last 15m --style compact --predicate 'subsystem == "app.relive"' | tail -80 || true
+          xcrun simctl spawn "$UDID" log show --last 15m --info --style compact --predicate 'subsystem == "app.relive"' | tail -60 || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:

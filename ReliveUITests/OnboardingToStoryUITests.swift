@@ -29,7 +29,8 @@ final class OnboardingToStoryUITests: XCTestCase {
         nameField.tap()
         nameField.typeText("Emma")
         snapshot("02-partner")
-        app.buttons["Continue"].tap()
+        // Submit with the keyboard's return key ("continue"), which also saves the name.
+        nameField.typeText("\n")
 
         // Start date (keep the default estimate)
         XCTAssertTrue(app.staticTexts["When did your story begin?"].waitForExistence(timeout: 5))
@@ -52,6 +53,7 @@ final class OnboardingToStoryUITests: XCTestCase {
         XCTAssertTrue(seeStory.waitForExistence(timeout: 240), "Processing did not finish")
         sleep(3) // let the statistics finish appearing
         snapshot("06-reveal")
+        describe(app, "reveal")
         seeStory.tap()
 
         // Timeline
@@ -60,6 +62,7 @@ final class OnboardingToStoryUITests: XCTestCase {
         sleep(2)
         snapshot("07-timeline-top")
         logMoments(in: app)
+        describe(app, "timeline")
         app.swipeUp()
         sleep(1)
         snapshot("08-timeline-scrolled")
@@ -76,6 +79,7 @@ final class OnboardingToStoryUITests: XCTestCase {
         XCTAssertTrue(notePrompt.waitForExistence(timeout: 10))
         sleep(2)
         snapshot("10-moment-detail")
+        describe(app, "moment")
         app.swipeUp()
         sleep(1)
         snapshot("11-moment-grid")
@@ -109,12 +113,14 @@ final class OnboardingToStoryUITests: XCTestCase {
         app.tabBars.buttons["Today"].tap()
         sleep(3)
         snapshot("15-today")
+        describe(app, "today")
         app.swipeUp()
         sleep(1)
         snapshot("16-today-scrolled")
         app.tabBars.buttons["Us"].tap()
         sleep(1)
         snapshot("17-us")
+        describe(app, "us")
     }
 
     /// Photo access is normally granted before the run with `simctl privacy`; if the system
@@ -139,6 +145,13 @@ final class OnboardingToStoryUITests: XCTestCase {
         for card in cards {
             print("TIMELINE MOMENT: \(card.label)")
         }
+    }
+
+    /// Prints the visible text of a screen so CI logs show what the user would read.
+    @MainActor
+    private func describe(_ app: XCUIApplication, _ screen: String) {
+        let texts = app.staticTexts.allElementsBoundByIndex.map(\.label).filter { !$0.isEmpty }
+        print("SCREEN \(screen): \(texts.joined(separator: " | "))")
     }
 
     @MainActor
