@@ -94,6 +94,7 @@ struct StoryTimelineView: View {
             MomentCard(moment: moment)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("momentCard")
         .id(moment.id)
         .padding(.bottom, Spacing.xl)
     }
@@ -206,11 +207,6 @@ private struct TimelineFooter: View {
         VStack(alignment: .leading, spacing: Spacing.l) {
             if !store.sections.isEmpty {
                 Hairline()
-                if let start = app.relationship?.start {
-                    Text("Your story began \(start.precision == .day ? "on" : "in") \(DateText.relationshipStart(start)). There’s more of it in your camera roll.")
-                        .font(Typography.bodySerif)
-                        .foregroundStyle(Palette.textSecondary)
-                }
             }
             if app.shouldAskSmileQuestion {
                 SmileQuestionCard()

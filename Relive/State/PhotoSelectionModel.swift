@@ -27,6 +27,10 @@ final class PhotoSelectionModel {
     /// Below this, clustering has little to work with, so we gently suggest adding more.
     static let recommendedMinimum = 30
 
+    #if DEBUG
+    static let importAllForUITestsArgument = "-ReliveUITestImportAllPhotos"
+    #endif
+
     var phase: Phase = .idle
     var isPickerPresented = false
     var pickerItems: [PhotosPickerItem] = []
@@ -81,6 +85,16 @@ final class PhotoSelectionModel {
             let change = await store.syncWithAccessibleAssets()
             finish(change, store: store, analytics: analytics, access: "limited")
         case .full:
+            #if DEBUG
+            // UI tests can't operate the out-of-process PhotosPicker; with this launch argument
+            // they import everything the simulator's library holds instead.
+            if ProcessInfo.processInfo.arguments.contains(Self.importAllForUITestsArgument) {
+                phase = .importing
+                let change = await store.syncWithAccessibleAssets()
+                finish(change, store: store, analytics: analytics, access: "full")
+                return
+            }
+            #endif
             phase = .idle
             isPickerPresented = true
         case .denied, .restricted:

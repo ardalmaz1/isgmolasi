@@ -2,7 +2,6 @@ import Foundation
 import Observation
 import os
 import ReliveCore
-import UIKit
 
 /// How an import changed the selection.
 struct SelectionChange: Equatable, Sendable {
@@ -220,12 +219,8 @@ final class StoryStore {
         let started = Date()
         processing = .running(MemoryEngineProgress(stage: .readingMetadata))
         // Ask for a little time to finish if the user switches apps mid-way.
-        let backgroundTask = UIApplication.shared.beginBackgroundTask(withName: "relive.processing")
-        defer {
-            if backgroundTask != .invalid {
-                UIApplication.shared.endBackgroundTask(backgroundTask)
-            }
-        }
+        let backgroundActivity = BackgroundActivity(name: "relive.processing")
+        defer { backgroundActivity.end() }
         await placeResolver.resetFailures()
 
         let engine = MemoryEngine(

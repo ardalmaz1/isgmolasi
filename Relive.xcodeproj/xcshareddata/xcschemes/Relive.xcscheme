@@ -39,6 +39,16 @@
                ReferencedContainer = "container:Packages/ReliveCore">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5E1A0000000000000000001C"
+               BuildableName = "ReliveUITests.xctest"
+               BlueprintName = "ReliveUITests"
+               ReferencedContainer = "container:Relive.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
