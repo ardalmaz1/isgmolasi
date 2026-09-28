@@ -120,7 +120,8 @@ Names describe *when* and *where*, never how it felt. The app cannot know that.
 
 | Situation | Title |
 |-----------|-------|
-| Known place | **Kaş** · August 2025 |
+| Known place away from home | **Kaş** · August 2025 |
+| At home (a region with ≥ 25 % of moments over ≥ 3 months) | **June Evening** · June 2025 — the place appears on the card instead |
 | Inside a trip, same place as the trip | **Friday Evening** · August 8 |
 | Inside a trip, somewhere else | **Kekova** · August 8 |
 | No place, part of a day | **December Evening** |

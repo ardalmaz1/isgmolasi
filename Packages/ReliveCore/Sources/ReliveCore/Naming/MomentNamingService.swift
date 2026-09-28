@@ -10,6 +10,9 @@ public struct MomentNamingContext: Hashable, Sendable {
     /// Place of the enclosing chapter, when the moment is part of a trip.
     public var chapterPlace: PlaceName?
     public var isInChapter: Bool
+    /// True when the moment happened where the couple spends most of their time. The place is
+    /// then not what makes it distinctive, so names lead with the time instead.
+    public var isAtHome: Bool
     public var assetCount: Int
 
     public init(
@@ -19,6 +22,7 @@ public struct MomentNamingContext: Hashable, Sendable {
         place: PlaceName?,
         chapterPlace: PlaceName? = nil,
         isInChapter: Bool = false,
+        isAtHome: Bool = false,
         assetCount: Int
     ) {
         self.kind = kind
@@ -27,6 +31,7 @@ public struct MomentNamingContext: Hashable, Sendable {
         self.place = place
         self.chapterPlace = chapterPlace
         self.isInChapter = isInChapter
+        self.isAtHome = isAtHome
         self.assetCount = assetCount
     }
 }

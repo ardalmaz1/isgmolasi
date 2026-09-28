@@ -140,6 +140,7 @@ public struct MemoryEngine: Sendable {
         var similarShotCounts: [AssetID: Int]
         var centroid: GeoCoordinate?
         var chapterRun: Int?
+        var isAtHome: Bool
         var start: Date?
         var end: Date?
     }
@@ -182,8 +183,10 @@ public struct MemoryEngine: Sendable {
             )
         }
 
-        // Trips.
-        let runs = ChapterBuilder(configuration: configuration.chapters, calendar: calendar).chapterRuns(for: summaries)
+        // Trips, and which moments are everyday life at home.
+        let chapterBuilder = ChapterBuilder(configuration: configuration.chapters, calendar: calendar)
+        let runs = chapterBuilder.chapterRuns(for: summaries)
+        let homeFlags = chapterBuilder.homeFlags(for: summaries)
         var runOfCluster: [Int: Int] = [:]
         for (runIndex, run) in runs.enumerated() {
             for clusterIndex in run { runOfCluster[clusterIndex] = runIndex }
@@ -201,10 +204,11 @@ public struct MemoryEngine: Sendable {
             let members = group.clusterIndices.flatMap { clusters[$0] }.sorted(by: MetadataProcessor.chronological)
             let kind: Moment.Kind = group.isCollection ? .collection : .event
             let run = group.isCollection ? nil : group.clusterIndices.first.flatMap { runOfCluster[$0] }
-            drafts.append(makeDraft(kind: kind, members: members, chapterRun: run))
+            let atHome = group.clusterIndices.allSatisfy { homeFlags[$0] }
+            drafts.append(makeDraft(kind: kind, members: members, chapterRun: run, isAtHome: atHome))
         }
         if !undatedPrimaries.isEmpty {
-            drafts.append(makeDraft(kind: .undated, members: undatedPrimaries, chapterRun: nil))
+            drafts.append(makeDraft(kind: .undated, members: undatedPrimaries, chapterRun: nil, isAtHome: false))
         }
 
         // Attach copies to the moment of their original.
@@ -243,7 +247,7 @@ public struct MemoryEngine: Sendable {
         return Grouping(drafts: drafts, chapters: chapters, duplicateCount: primaryOfCopy.count)
     }
 
-    private func makeDraft(kind: Moment.Kind, members: [MemoryAsset], chapterRun: Int?) -> MomentDraft {
+    private func makeDraft(kind: Moment.Kind, members: [MemoryAsset], chapterRun: Int?, isAtHome: Bool) -> MomentDraft {
         let dates = members.compactMap(\.creationDate)
         let key = members.first?.id ?? UUID().uuidString
         let centroid: GeoCoordinate?
@@ -263,6 +267,7 @@ public struct MemoryEngine: Sendable {
             similarShotCounts: [:],
             centroid: centroid,
             chapterRun: chapterRun,
+            isAtHome: isAtHome,
             start: dates.min(),
             end: dates.max()
         )
@@ -385,6 +390,7 @@ public struct MemoryEngine: Sendable {
                 place: momentPlace,
                 chapterPlace: chapterPlaceOfMoment[index],
                 isInChapter: chapterIDOfMoment[index] != nil,
+                isAtHome: draft.isAtHome,
                 assetCount: draft.members.count
             ))
             let allAssets = (draft.members + draft.copies).sorted(by: MetadataProcessor.chronological)

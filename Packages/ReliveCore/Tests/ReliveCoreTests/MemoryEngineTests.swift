@@ -72,8 +72,10 @@ struct MemoryEngineTests {
         #expect(undated.kind == .undated)
         #expect(undated.assetIDs == ["scan"])
 
+        // Everyday life at home is named by time; the place stays on the moment.
         let homeMoment = try #require(story.moments.first)
-        #expect(homeMoment.title == MomentTitle(primary: "Kadıköy", secondary: "January 2025"))
+        #expect(homeMoment.title == MomentTitle(primary: "January Evening", secondary: "January 2025"))
+        #expect(homeMoment.place?.name == "Kadıköy")
         #expect(homeMoment.heroAssetID != nil)
     }
 

@@ -55,11 +55,15 @@ struct MomentCard: View {
         moment.assetIDs.filter { store.isAvailable($0) && !moment.duplicateAssetIDs.contains($0) }.count
     }
 
-    /// "August 6 – 9 · 64 memories"
+    /// "August 6 – 9 · 64 memories", or "Thursday, June 12 · Kadıköy · 6 memories" when the
+    /// title doesn't already name the place.
     private var detailLine: String {
         var parts: [String] = []
         if let range = DateText.range(start: moment.startDate, end: moment.endDate) {
             parts.append(range)
+        }
+        if let place = moment.place?.name, place != moment.title.primary, moment.chapterID == nil {
+            parts.append(place)
         }
         parts.append(Counted.text(memoryCount, "memory", "memories"))
         return parts.joined(separator: " · ")
@@ -75,9 +79,6 @@ struct MomentCard: View {
 
     private func accessibilityText(note: String?) -> String {
         var parts = [moment.title.primary, detailLine]
-        if let place = moment.place?.name, place != moment.title.primary {
-            parts.append(place)
-        }
         if let note, !note.isEmpty {
             parts.append("Your note: \(note)")
         }

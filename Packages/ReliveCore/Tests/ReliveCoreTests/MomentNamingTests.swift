@@ -17,6 +17,13 @@ struct MomentNamingTests {
         #expect(title.combined == "Kaş • August 2025")
     }
 
+    @Test("At home, the time leads and the place steps back")
+    func homeUsesTime() {
+        var context = event(date(2025, 6, 12, 19), date(2025, 6, 12, 20), place: "Kadıköy")
+        context.isAtHome = true
+        #expect(naming.makeTitle(for: context) == MomentTitle(primary: "June Evening", secondary: "June 2025"))
+    }
+
     @Test("Without a place, an evening is named after its month")
     func evening() {
         let title = naming.makeTitle(for: event(date(2024, 12, 12, 19), date(2024, 12, 12, 21)))

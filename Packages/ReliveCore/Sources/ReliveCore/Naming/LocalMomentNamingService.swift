@@ -3,7 +3,8 @@ import Foundation
 /// Deterministic, factual names built from dates and places only.
 ///
 /// Examples:
-/// - With a place: "Kaş" / "August 2025"
+/// - With a place away from home: "Kaş" / "August 2025"
+/// - At home (the place isn't what's distinctive): named by time, e.g. "June Evening"
 /// - Inside a trip, same place as the trip: "Friday Evening" / "August 8"
 /// - Inside a trip, somewhere else: "Kekova" / "August 8"
 /// - No place, part of a day: "December Evening" / "December 2024"
@@ -64,7 +65,7 @@ public struct LocalMomentNamingService: MomentNamingService {
             return MomentTitle(primary: timeOfDayName(start: start, end: end, middle: middle), secondary: dayLabel)
         }
 
-        if let place = context.place {
+        if let place = context.place, !context.isAtHome {
             return MomentTitle(primary: place.name, secondary: monthYear(start))
         }
 

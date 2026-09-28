@@ -28,6 +28,15 @@ struct ChapterBuilderTests {
         #expect(runs == [[6, 7, 8, 9]])
     }
 
+    @Test("Home flags mark everyday places, not trips")
+    func homeFlags() {
+        let clusters = homeLife() + [
+            ClusterSummary(start: date(2025, 8, 6, 17), end: date(2025, 8, 6, 22), centroid: Places.kas),
+            ClusterSummary(start: date(2025, 8, 7, 10), end: date(2025, 8, 7, 12), centroid: nil),
+        ]
+        #expect(builder.homeFlags(for: clusters) == [true, true, true, true, true, true, false, false])
+    }
+
     @Test("Consecutive days at home are not a trip")
     func homeIsNotATrip() {
         var clusters = homeLife()

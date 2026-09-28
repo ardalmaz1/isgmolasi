@@ -129,6 +129,13 @@ public struct ChapterBuilder: Sendable {
         return runs
     }
 
+    /// Whether each cluster happened in a home-like region (everyday life rather than a trip).
+    public func homeFlags(for clusters: [ClusterSummary]) -> [Bool] {
+        let regions = assignRegions(clusters)
+        let homes = homeRegions(clusters: clusters, regions: regions)
+        return regions.map { region in region.map(homes.contains) ?? false }
+    }
+
     /// Region index per cluster (nil when the cluster has no location).
     func assignRegions(_ clusters: [ClusterSummary]) -> [Int?] {
         var anchors: [GeoCoordinate] = []
