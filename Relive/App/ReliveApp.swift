@@ -1,11 +1,21 @@
-import ReliveCore
 import SwiftUI
 
 @main
 struct ReliveApp: App {
+    @State private var environment: AppEnvironment
+
+    init() {
+        _environment = State(initialValue: AppEnvironment.live())
+    }
+
     var body: some Scene {
         WindowGroup {
-            Text(MomentTitle(primary: "Relive", secondary: "0.1").combined)
+            RootView()
+                .environment(environment.appModel)
+                .environment(environment.storyStore)
+                .environment(\.photoImageLoader, environment.imageLoader)
+                .environment(\.analytics, environment.analytics)
+                .modelContainer(environment.container)
         }
     }
 }

@@ -78,11 +78,13 @@ struct DuplicateDetectorTests {
     @Test("A burst collapses to its best shot")
     func burstCollapses() {
         let start = date(2025, 8, 7, 19, 0)
-        let assets = (0..<4).map { index in
-            makeAsset(
-                "burst-\(index)", at: start.addingTimeInterval(Double(index) * 2),
-                analysis: analysis(hash: 0xF0F0 ^ UInt64(index), vector: [1, Float(index) * 0.05, 0], sharpness: index == 2 ? 0.95 : 0.3)
-            )
+        var assets: [MemoryAsset] = []
+        for index in 0..<4 {
+            let offset: TimeInterval = Double(index) * 2
+            let drift: Float = Float(index) * 0.05
+            let sharpness: Double = index == 2 ? 0.95 : 0.3
+            let fingerprint = analysis(hash: 0xF0F0 ^ UInt64(index), vector: [1, drift, 0], sharpness: sharpness)
+            assets.append(makeAsset("burst-\(index)", at: start.addingTimeInterval(offset), analysis: fingerprint))
         }
         let scorer = AssetScorer()
         let groups = detector.similarGroups(in: assets) { scorer.score($0) }
