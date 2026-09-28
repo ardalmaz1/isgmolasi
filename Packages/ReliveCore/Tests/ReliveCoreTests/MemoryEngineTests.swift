@@ -91,6 +91,25 @@ struct MemoryEngineTests {
         #expect(result.duplicateGroups == [DuplicateDetector.DuplicateGroup(primary: "kas-original", copies: ["kas-whatsapp-copy"])])
     }
 
+    @Test("Identical embeddings for every photo are recognised as broken and ignored")
+    func degenerateEmbeddingsIgnored() async throws {
+        // Every photo gets the same embedding (as Vision does in some simulators) and a distinct,
+        // informative hash. Nothing may be treated as a duplicate.
+        var assets: [MemoryAsset] = []
+        for index in 0..<8 {
+            let hash: UInt64 = 0x0F0F_3C3C_A5A5_5A5A &* UInt64(index + 3)
+            let size = index.isMultiple(of: 2) ? (4032, 3024) : (1600, 1200)
+            assets.append(makeAsset(
+                "photo-\(index)", at: date(2025, 1, 1 + index * 3, 19), width: size.0, height: size.1,
+                analysis: analysis(hash: hash, vector: [0.5, 0.5, 0.5])
+            ))
+        }
+        let result = try await makeEngine().buildStory(from: assets, now: date(2026, 9, 28))
+        #expect(result.diagnostics.embeddingsIgnored)
+        #expect(result.diagnostics.duplicateCount == 0)
+        #expect(result.assets.allSatisfy { $0.analysis?.fingerprint?.featureVector != nil })
+    }
+
     @Test("Progress is reported in order and ends finished")
     func progressOrder() async throws {
         let recorder = ProgressRecorder()

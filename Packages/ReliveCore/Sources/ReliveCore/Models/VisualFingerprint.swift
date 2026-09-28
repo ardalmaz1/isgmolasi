@@ -18,7 +18,7 @@ public struct VisualFingerprint: Hashable, Sendable {
     public init(differenceHash: UInt64? = nil, contrast: Double? = nil, featureVector: [Float]? = nil) {
         self.differenceHash = differenceHash
         self.contrast = contrast
-        self.featureVector = featureVector.map(VisualFingerprint.normalized)
+        self.featureVector = featureVector.flatMap(VisualFingerprint.normalizedIfInformative)
     }
 
     /// Hamming distance between perceptual hashes, if both exist.
@@ -41,9 +41,14 @@ public struct VisualFingerprint: Hashable, Sendable {
         return sum.squareRoot()
     }
 
-    static func normalized(_ vector: [Float]) -> [Float] {
-        let length = vector.reduce(Float(0)) { $0 + $1 * $1 }.squareRoot()
-        guard length > 0, length.isFinite else { return vector }
+    /// Unit-length copy of the vector, or nil when it carries no information (empty, all
+    /// zeros, or non-finite values) — a failed embedding must never look like a perfect match.
+    static func normalizedIfInformative(_ vector: [Float]) -> [Float]? {
+        guard !vector.isEmpty, vector.allSatisfy(\.isFinite) else { return nil }
+        var sumOfSquares: Float = 0
+        for value in vector { sumOfSquares += value * value }
+        let length = sumOfSquares.squareRoot()
+        guard length > 1e-6, length.isFinite else { return nil }
         return vector.map { $0 / length }
     }
 }
@@ -67,7 +72,7 @@ extension VisualFingerprint: Codable {
         }
         contrast = try container.decodeIfPresent(Double.self, forKey: .contrast)
         if let data = try container.decodeIfPresent(Data.self, forKey: .featureVector) {
-            featureVector = VisualFingerprint.floats(from: data)
+            featureVector = VisualFingerprint.floats(from: data).flatMap(VisualFingerprint.normalizedIfInformative)
         } else {
             featureVector = nil
         }

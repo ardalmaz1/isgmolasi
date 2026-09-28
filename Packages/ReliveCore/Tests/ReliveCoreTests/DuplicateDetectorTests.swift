@@ -154,6 +154,13 @@ struct DuplicateDetectorTests {
         #expect(detector.similarGroups(in: assets) { _ in 0 }.isEmpty)
     }
 
+    @Test("Empty or zero embeddings are treated as missing")
+    func zeroEmbeddingIsMissing() {
+        #expect(VisualFingerprint(featureVector: [0, 0, 0]).featureVector == nil)
+        #expect(VisualFingerprint(featureVector: []).featureVector == nil)
+        #expect(VisualFingerprint(featureVector: [.nan, 1]).featureVector == nil)
+    }
+
     @Test("Fingerprints round-trip through JSON")
     func fingerprintCoding() throws {
         let fingerprint = VisualFingerprint(differenceHash: 0xFEDC_BA98_7654_3210, contrast: 0.42, featureVector: [3, 4])

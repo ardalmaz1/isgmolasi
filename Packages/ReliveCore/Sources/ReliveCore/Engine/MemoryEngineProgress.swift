@@ -60,6 +60,9 @@ public struct MemoryEngineDiagnostics: Equatable, Sendable {
     public var momentCount = 0
     public var chapterCount = 0
     public var namedPlaceCount = 0
+    /// True when the image embeddings showed no variation across the library (e.g. Vision
+    /// unavailable in a simulator) and were ignored for this run.
+    public var embeddingsIgnored = false
 
     public init() {}
 }

@@ -58,14 +58,18 @@ public struct MemoryEngine: Sendable {
             $0.analysis?.failures.contains(.thumbnailUnavailable) ?? true
         }.count
         diagnostics.locatedCount = analyzed.filter { $0.location != nil }.count
+        // Grouping works on a copy whose embeddings are dropped if they're degenerate; the
+        // returned assets keep what the analyzer produced so the cache stays intact.
+        let (forGrouping, embeddingsIgnored) = MemoryEngine.withoutDegenerateEmbeddings(analyzed)
+        diagnostics.embeddingsIgnored = embeddingsIgnored
         let datedCount = normalized.dated.count
-        let dated = Array(analyzed.prefix(datedCount))
-        let undated = Array(analyzed.dropFirst(datedCount))
+        let dated = Array(forGrouping.prefix(datedCount))
+        let undated = Array(forGrouping.dropFirst(datedCount))
 
         // 3–6. Grouping
         progress(MemoryEngineProgress(stage: .findingMoments))
         try Task.checkCancellation()
-        let grouping = group(dated: dated, undated: undated, all: analyzed)
+        let grouping = group(dated: dated, undated: undated, all: forGrouping)
         diagnostics.duplicateCount = grouping.duplicateCount
         diagnostics.similarCount = grouping.drafts.reduce(0) { $0 + $1.similar.count } - grouping.duplicateCount
 
@@ -428,6 +432,34 @@ public struct MemoryEngine: Sendable {
         }
         chapters.sort { $0.startDate < $1.startDate }
         return Story(generatedAt: now, moments: moments, chapters: chapters)
+    }
+
+    /// Embeddings are only useful if they differ between images. If a sample of pairs is
+    /// essentially identical, the model didn't really run (this happens in simulators) and the
+    /// embeddings would make every photo look like a copy of every other.
+    static func withoutDegenerateEmbeddings(_ assets: [MemoryAsset]) -> ([MemoryAsset], Bool) {
+        let withVectors = assets.filter { $0.analysis?.fingerprint?.featureVector != nil }
+        guard withVectors.count >= 4 else { return (assets, false) }
+
+        var maximumDistance: Float = 0
+        let step = max(1, withVectors.count / 24)
+        var index = 0
+        while index + step < withVectors.count, maximumDistance < 0.02 {
+            if let left = withVectors[index].analysis?.fingerprint,
+               let right = withVectors[index + step].analysis?.fingerprint,
+               let distance = left.featureDistance(to: right) {
+                maximumDistance = max(maximumDistance, distance)
+            }
+            index += step
+        }
+        guard maximumDistance < 0.02 else { return (assets, false) }
+
+        let stripped = assets.map { asset -> MemoryAsset in
+            var copy = asset
+            copy.analysis?.fingerprint?.featureVector = nil
+            return copy
+        }
+        return (stripped, true)
     }
 
     /// Most common place by comparison key; ties go to the first seen.

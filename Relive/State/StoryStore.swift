@@ -277,7 +277,7 @@ final class StoryStore {
             logDuplicateDetails(result)
             #endif
             let diagnostics = result.diagnostics
-            Self.logger.notice("Story built: \(diagnostics.inputCount) assets, \(diagnostics.momentCount) moments, \(diagnostics.chapterCount) chapters, \(diagnostics.duplicateCount) duplicates, \(diagnostics.similarCount) similar, \(diagnostics.analysisFailureCount) analysis failures, \(diagnostics.namedPlaceCount) places in \(Int(Date().timeIntervalSince(started)))s")
+            Self.logger.notice("Story built: \(diagnostics.inputCount) assets, \(diagnostics.momentCount) moments, \(diagnostics.chapterCount) chapters, \(diagnostics.duplicateCount) duplicates, \(diagnostics.similarCount) similar, \(diagnostics.analysisFailureCount) analysis failures, \(diagnostics.namedPlaceCount) places in \(Int(Date().timeIntervalSince(started)))s\(diagnostics.embeddingsIgnored ? " (image embeddings were uniform and ignored)" : "")")
             analytics.track(.memoryProcessingCompleted, [
                 "assets": String(diagnostics.inputCount),
                 "moments": String(diagnostics.momentCount),
