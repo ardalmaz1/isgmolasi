@@ -5,10 +5,12 @@ import Foundation
 /// Nothing is ever deleted. Duplicates and similar shots are only collapsed behind a
 /// "Show similar" affordance so the same picture doesn't appear twice in a row.
 ///
-/// - **Duplicates** (global): the same image saved twice, e.g. an original and its
-///   WhatsApp-compressed copy saved days later without location. The copy would otherwise
+/// - **Duplicates** (global): the same image saved again later at lower resolution, e.g. an
+///   original and its WhatsApp-compressed copy saved days later. The copy would otherwise
 ///   create a phantom moment on the day it was saved, so copies are removed from clustering
-///   and attached to the moment of their original.
+///   and attached to the moment of their original. Same-size copies (AirDrop, "Duplicate" in
+///   Photos) keep their capture time, land in the same moment, and are collapsed there as
+///   similar shots instead.
 /// - **Similar shots** (per moment): bursts and "one more" photos taken within minutes that
 ///   look nearly the same. The best one stays featured; favorites always stay featured.
 ///
@@ -66,6 +68,10 @@ public struct DuplicateDetector: Sendable {
         guard lhs.kind == .photo, rhs.kind == .photo,
               let left = lhs.analysis?.fingerprint, let right = rhs.analysis?.fingerprint else { return false }
 
+        // A re-saved copy is always noticeably smaller. Requiring it keeps two different photos
+        // with similar content from ever being merged across moments.
+        guard isResavedCopyPair(lhs, rhs) else { return false }
+
         if let leftRatio = lhs.aspectRatio, let rightRatio = rhs.aspectRatio {
             // Compare long/short side so a missing orientation flag doesn't matter.
             let a = max(leftRatio, 1 / leftRatio)
@@ -85,18 +91,15 @@ public struct DuplicateDetector: Sendable {
             // ...or, when the hashes say nothing, the embeddings alone must be twice as close.
             return featureDistance <= configuration.duplicateFeatureDistance / 2
         }
-        // Without embeddings a 64-bit hash can't tell "same photo" from "same composition"
-        // (two sunsets over the same horizon), so also require the signature of a re-saved copy.
-        guard let hashDistance, hashDistance <= configuration.duplicateHashDistance else { return false }
-        return looksLikeResavedCopy(lhs, rhs)
+        guard let hashDistance else { return false }
+        return hashDistance <= configuration.duplicateHashDistance
     }
 
-    /// A messaging-app or screenshot re-save is noticeably smaller, or has lost its location.
-    func looksLikeResavedCopy(_ lhs: MemoryAsset, _ rhs: MemoryAsset) -> Bool {
-        if (lhs.location == nil) != (rhs.location == nil) { return true }
+    /// True when one of the two has noticeably fewer pixels than the other.
+    func isResavedCopyPair(_ lhs: MemoryAsset, _ rhs: MemoryAsset) -> Bool {
         let smaller = min(lhs.megapixels, rhs.megapixels)
         let larger = max(lhs.megapixels, rhs.megapixels)
-        guard larger > 0 else { return false }
+        guard smaller > 0 else { return false }
         return smaller / larger <= configuration.resavedCopyMaximumResolutionRatio
     }
 

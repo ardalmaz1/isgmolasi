@@ -14,8 +14,7 @@ public struct SimilarityConfiguration: Hashable, Sendable {
     public var duplicateHashDistanceWithFeatures: Int
     /// Copies must have (nearly) the same shape; crops are not copies.
     public var duplicateAspectRatioTolerance: Double
-    /// Hash-only copies must be at most this fraction of the original's pixel count (or have
-    /// lost their location).
+    /// A copy must have at most this fraction of the original's pixel count.
     public var resavedCopyMaximumResolutionRatio: Double
 
     /// Near-identical shots (bursts, "one more") — perceptual hash distance.

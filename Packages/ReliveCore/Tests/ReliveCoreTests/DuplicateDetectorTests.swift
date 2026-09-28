@@ -42,6 +42,15 @@ struct DuplicateDetectorTests {
         #expect(detector.duplicateGroups(in: assets).isEmpty)
     }
 
+    @Test("Same-size look-alikes are never global duplicates")
+    func sameSizeIsNotACopy() {
+        let assets = [
+            makeAsset("a", at: date(2025, 1, 1), analysis: analysis(hash: 0xFF, vector: [1, 0, 0])),
+            makeAsset("b", at: date(2025, 2, 1), analysis: analysis(hash: 0xFF, vector: [1, 0, 0])),
+        ]
+        #expect(detector.duplicateGroups(in: assets).isEmpty)
+    }
+
     @Test("Matching hashes alone aren't enough between two camera originals")
     func sameCompositionIsNotACopy() {
         // Same size, both located: two photos of the same view, not a re-saved copy.
@@ -65,8 +74,8 @@ struct DuplicateDetectorTests {
     func noChaining() {
         // a ≈ b and b ≈ c, but a and c are far apart. Only one pair may be grouped.
         let a = makeAsset("a", at: date(2025, 1, 1), favorite: true, analysis: analysis(hash: 0xFF, vector: [1, 0, 0]))
-        let b = makeAsset("b", at: date(2025, 1, 2), analysis: analysis(hash: 0xFF, vector: [0.994, 0.11, 0]))
-        let c = makeAsset("c", at: date(2025, 1, 3), analysis: analysis(hash: 0xFF, vector: [0.976, 0.22, 0]))
+        let b = makeAsset("b", at: date(2025, 1, 2), width: 1512, height: 2016, analysis: analysis(hash: 0xFF, vector: [0.994, 0.11, 0]))
+        let c = makeAsset("c", at: date(2025, 1, 3), width: 1512, height: 2016, analysis: analysis(hash: 0xFF, vector: [0.976, 0.22, 0]))
         let groups = detector.duplicateGroups(in: [a, b, c])
         #expect(groups == [DuplicateDetector.DuplicateGroup(primary: "a", copies: ["b"])])
     }

@@ -85,7 +85,7 @@ Two signals per photo (`VisualFingerprint`):
 
 | Decision | Rule |
 |----------|------|
-| Duplicate copy (global) | Same aspect ratio (±4 %), **and** embedding distance ≤ 0.15 with hash distance ≤ 8. If the hashes carry no information (flat or low-contrast image), the embeddings alone must be ≤ 0.075. Without embeddings: hash distance ≤ 4 **and** the signature of a re-saved copy (≤ 80 % of the pixels, or location stripped). |
+| Duplicate copy (global) | The copy has ≤ 80 % of the original's pixels (every messaging-app re-save does), same aspect ratio (±4 %), **and** embedding distance ≤ 0.15 with hash distance ≤ 8. If the hashes carry no information (flat or low-contrast image), the embeddings alone must be ≤ 0.075. Without embeddings: hash distance ≤ 4. Same-size copies (AirDrop, "Duplicate") keep their capture time and are handled as similar shots inside their moment. |
 | Similar shot (within a moment) | Taken ≤ 5 min after the burst's first shot, and embedding distance ≤ 0.35 to it (or hash distance ≤ 8 without embeddings). |
 
 Grouping is **star-shaped**: every member must match the group's anchor directly (the best copy
