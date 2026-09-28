@@ -83,9 +83,14 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Known limitations of 0.1
 
-- **Thresholds are first guesses.** Clustering has been tested with synthetic libraries, not yet
-  with many real ones. The Vision feature-print thresholds for "same photo" and "similar shot"
-  are the least certain; see *Tuning* in MEMORY_ENGINE.md.
+- **Thresholds are first guesses.** Clustering has been tested with synthetic libraries (unit
+  tests and the simulator flow), not yet with many real ones. The Vision feature-print thresholds
+  for "same photo" and "similar shot" are the least certain; Debug builds log every duplicate
+  decision to help tune them (see *Tuning* in MEMORY_ENGINE.md).
+- **In the Simulator, Vision's feature prints are uniform**, so the engine detects this and falls
+  back to perceptual hashes. On a device the embeddings are used.
+- **Capture times** are read in the device's current time zone (PhotoKit doesn't expose the time
+  zone a photo was taken in), so trips across time zones can shift a late-night photo by a day.
 - **Place names** come from Apple's reverse geocoder (town/city level). Offline or rate-limited
   lookups leave a moment unnamed rather than guessing; a later "Add Memories" run fills gaps.
 - **Photos only in iCloud** (Optimize Storage) aren't downloaded for analysis, so they get
