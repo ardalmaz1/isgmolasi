@@ -16,7 +16,7 @@ in by the app through three protocols: `AssetAnalyzing`, `PlaceNameResolving` an
 | # | Stage | Type | What it does |
 |---|-------|------|--------------|
 | 1 | Metadata processing | `MetadataProcessor` | Drops invalid GPS (out of range, 0,0), treats far-future dates as unknown, separates undated assets, sorts chronologically. |
-| 2 | Image analysis | `AssetAnalyzing` (app: `VisionAssetAnalyzer`) | On a 512 px thumbnail: face count + face capture quality, Vision feature print, aesthetics score + "utility" flag, perceptual hash, contrast, sharpness. Cached per asset; only new assets are analyzed. Runs 4 at a time. |
+| 2 | Image analysis | `AssetAnalyzing` (app: `VisionAssetAnalyzer`) | On a 512 px thumbnail: face count + face capture quality, Vision feature print, aesthetics score + "utility" flag, perceptual hash, contrast, sharpness. Cached per asset; only new assets are analyzed. Up to 4 at a time at utility priority, always leaving one core to the interface. |
 | 3 | Duplicate detection | `DuplicateDetector.duplicateGroups` | Finds copies across the whole selection (e.g. an original and its WhatsApp re-save). Copies leave clustering and are re-attached to their original's moment. |
 | 4 | Temporal + location moments | `MomentClusterer` | See below. |
 | 5 | Trips | `ChapterBuilder` | See below. |

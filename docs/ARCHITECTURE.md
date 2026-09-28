@@ -32,7 +32,7 @@ Everything that decides *what the story is* — clustering, duplicates, scoring,
 You, reconciliation, statistics — is plain Swift in `ReliveCore`. It has no PhotoKit, Vision or
 SwiftUI imports, so:
 
-- it is fully unit-tested (Swift Testing, 69 tests) and runs anywhere, including Linux CI;
+- it is fully unit-tested (Swift Testing) and runs anywhere, including Linux CI;
 - each stage is a small value type with its own configuration, replaceable independently;
 - a future server-side or macOS tool could reuse it unchanged.
 
@@ -110,8 +110,9 @@ views and stores don't depend on SwiftData directly.
 ## Concurrency
 
 - UI state (`AppModel`, `StoryStore`, repository) is `@MainActor`.
-- `MemoryEngine` is a `Sendable` struct; `buildStory` runs off the main actor and analyzes 4
-  assets at a time in a task group. It honours cancellation.
+- `MemoryEngine` is a `Sendable` struct; `buildStory` runs off the main actor and analyzes up to
+  4 assets at a time in a task group, at utility priority and never on every core, so the
+  interface stays responsive. It honours cancellation.
 - `GeocodingPlaceResolver` is an actor (serial lookups, disk cache, failure back-off).
 - `PhotoImageLoader` wraps thread-safe PhotoKit/`NSCache` APIs; requests are cancelled when views
   disappear.
