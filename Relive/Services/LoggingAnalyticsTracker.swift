@@ -12,7 +12,7 @@ struct LoggingAnalyticsTracker: AnalyticsTracking {
             .sorted { $0.key < $1.key }
             .map { "\($0.key)=\($0.value)" }
             .joined(separator: " ")
-        Self.logger.info("\(event.name.rawValue, privacy: .public) \(properties, privacy: .public)")
+        Self.logger.notice("\(event.name.rawValue, privacy: .public) \(properties, privacy: .public)")
     }
 }
 

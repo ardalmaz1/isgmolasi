@@ -223,8 +223,14 @@ final class StoryStore {
         defer { backgroundActivity.end() }
         await placeResolver.resetFailures()
 
+        // Leave at least one core to the interface.
+        let cores = ProcessInfo.processInfo.activeProcessorCount
         let engine = MemoryEngine(
-            configuration: MemoryEngineConfiguration(calendar: calendar),
+            configuration: MemoryEngineConfiguration(
+                calendar: calendar,
+                analysisConcurrency: max(1, min(4, cores - 1)),
+                analysisPriority: .utility
+            ),
             analyzer: analyzer,
             placeResolver: placeResolver,
             namingService: LocalMomentNamingService(calendar: calendar, locale: .current)
@@ -253,6 +259,7 @@ final class StoryStore {
             processing = .finished(result.diagnostics)
 
             let diagnostics = result.diagnostics
+            Self.logger.notice("Story built: \(diagnostics.inputCount) assets, \(diagnostics.momentCount) moments, \(diagnostics.chapterCount) chapters, \(diagnostics.duplicateCount) duplicates, \(diagnostics.similarCount) similar, \(diagnostics.analysisFailureCount) analysis failures, \(diagnostics.namedPlaceCount) places in \(Int(Date().timeIntervalSince(started)))s")
             analytics.track(.memoryProcessingCompleted, [
                 "assets": String(diagnostics.inputCount),
                 "moments": String(diagnostics.momentCount),

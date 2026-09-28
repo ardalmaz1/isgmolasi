@@ -10,6 +10,9 @@ public struct MemoryEngineConfiguration: Sendable {
     public var heroWeights: HeroScoringWeights
     /// How many assets are analyzed in parallel. Vision is heavy; a handful is plenty.
     public var analysisConcurrency: Int
+    /// Priority of analysis work. Below the UI's, so the interface stays responsive while
+    /// hundreds of photos are analyzed.
+    public var analysisPriority: TaskPriority
     /// A moment's photos must lie within this distance of their centre for the centre to name it.
     public var coherentPlaceRadius: Double
     /// Capture dates further in the future than this are treated as unknown.
@@ -23,6 +26,7 @@ public struct MemoryEngineConfiguration: Sendable {
         similarity: SimilarityConfiguration = .standard,
         heroWeights: HeroScoringWeights = .standard,
         analysisConcurrency: Int = 4,
+        analysisPriority: TaskPriority = .utility,
         coherentPlaceRadius: Double = 25_000,
         futureDateTolerance: TimeInterval = 2 * 86_400
     ) {
@@ -33,6 +37,7 @@ public struct MemoryEngineConfiguration: Sendable {
         self.similarity = similarity
         self.heroWeights = heroWeights
         self.analysisConcurrency = analysisConcurrency
+        self.analysisPriority = analysisPriority
         self.coherentPlaceRadius = coherentPlaceRadius
         self.futureDateTolerance = futureDateTolerance
     }

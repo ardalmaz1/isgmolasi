@@ -97,12 +97,13 @@ public struct MemoryEngine: Sendable {
 
         let analyzer = self.analyzer
         let width = max(1, configuration.analysisConcurrency)
+        let priority = configuration.analysisPriority
         try await withThrowingTaskGroup(of: (Int, AssetAnalysis).self) { group in
             var nextPending = 0
             while nextPending < min(width, pending.count) {
                 let index = pending[nextPending]
                 let asset = assets[index]
-                group.addTask { (index, await analyzer.analyze(asset)) }
+                group.addTask(priority: priority) { (index, await analyzer.analyze(asset)) }
                 nextPending += 1
             }
 
@@ -116,7 +117,7 @@ public struct MemoryEngine: Sendable {
                 if nextPending < pending.count {
                     let index = pending[nextPending]
                     let asset = assets[index]
-                    group.addTask { (index, await analyzer.analyze(asset)) }
+                    group.addTask(priority: priority) { (index, await analyzer.analyze(asset)) }
                     nextPending += 1
                 }
             }

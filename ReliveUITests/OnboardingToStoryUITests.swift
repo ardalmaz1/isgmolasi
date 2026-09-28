@@ -45,10 +45,8 @@ final class OnboardingToStoryUITests: XCTestCase {
         allowPhotoAccessIfAsked()
 
         // Processing runs on device; give Vision and geocoding time.
-        let processing = app.staticTexts["Finding your story…"]
-        if processing.waitForExistence(timeout: 20) {
-            snapshot("05-processing")
-        }
+        sleep(4)
+        snapshot("05-processing")
         let seeStory = app.buttons["See Our Story"]
         XCTAssertTrue(seeStory.waitForExistence(timeout: 240), "Processing did not finish")
         sleep(3) // let the statistics finish appearing
