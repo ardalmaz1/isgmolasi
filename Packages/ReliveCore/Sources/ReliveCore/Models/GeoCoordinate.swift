@@ -25,9 +25,12 @@ public struct GeoCoordinate: Codable, Hashable, Sendable {
         let lat2 = other.latitude * .pi / 180
         let deltaLat = (other.latitude - latitude) * .pi / 180
         let deltaLon = (other.longitude - longitude) * .pi / 180
-        let a = sin(deltaLat / 2) * sin(deltaLat / 2)
-            + cos(lat1) * cos(lat2) * sin(deltaLon / 2) * sin(deltaLon / 2)
-        return earthRadius * 2 * atan2(sqrt(a), sqrt(max(0, 1 - a)))
+        let sinLat: Double = sin(deltaLat / 2)
+        let sinLon: Double = sin(deltaLon / 2)
+        let cosProduct: Double = cos(lat1) * cos(lat2)
+        let a: Double = sinLat * sinLat + cosProduct * sinLon * sinLon
+        let angle: Double = 2 * atan2(sqrt(a), sqrt(max(0, 1 - a)))
+        return earthRadius * angle
     }
 
     /// Mean position computed on the unit sphere so that points on either side of the

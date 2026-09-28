@@ -137,14 +137,26 @@ public struct FoundForYouService: Sendable {
             .filter { $0.kind == .photo && $0.analysis?.isUtility != true && !$0.isScreenshot }
         guard !candidates.isEmpty else { return nil }
 
-        let scored = candidates.map { ($0, scorer.score($0)) }
-            .sorted { $0.1 == $1.1 ? $0.0.id < $1.0.id : $0.1 > $1.1 }
+        var scored: [(asset: MemoryAsset, score: Double)] = []
+        for candidate in candidates {
+            scored.append((asset: candidate, score: scorer.score(candidate)))
+        }
+        scored.sort(by: FoundForYouService.higherScoreFirst)
+
         let cover = HeroSelector.resolvedHero(for: moment, userState: userState, isAvailable: isAvailable)
-        let coverScore = scored.first { $0.0.id == cover }?.1 ?? scored[0].1
-        if let alternative = scored.first(where: { $0.0.id != cover }), alternative.1 >= coverScore * 0.85 {
+        let coverEntry = scored.first { $0.asset.id == cover } ?? scored[0]
+        if let alternative = scored.first(where: { $0.asset.id != cover }), alternative.score >= coverEntry.score * 0.85 {
             return alternative
         }
-        return scored.first { $0.0.id == cover } ?? scored[0]
+        return coverEntry
+    }
+
+    private static func higherScoreFirst(
+        _ lhs: (asset: MemoryAsset, score: Double),
+        _ rhs: (asset: MemoryAsset, score: Double)
+    ) -> Bool {
+        if lhs.score != rhs.score { return lhs.score > rhs.score }
+        return lhs.asset.id < rhs.asset.id
     }
 
     /// Stable pseudo-random value in 0..<1 for (seed, key).

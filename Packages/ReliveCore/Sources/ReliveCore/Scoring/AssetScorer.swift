@@ -110,8 +110,13 @@ public struct AssetScorer: Sendable {
             (orientation, weights.orientation),
             (uniqueness, weights.uniqueness),
         ]
-        let weightSum = components.reduce(0) { $0 + max(0, $1.1) }
-        let weighted = components.reduce(0) { $0 + $1.0 * max(0, $1.1) }
+        var weightSum = 0.0
+        var weighted = 0.0
+        for (value, weight) in components {
+            let clampedWeight = max(0, weight)
+            weightSum += clampedWeight
+            weighted += value * clampedWeight
+        }
         let base = weightSum > 0 ? weighted / weightSum : Self.neutral
 
         let bonus = asset.isFavorite ? weights.favoriteBonus : 0

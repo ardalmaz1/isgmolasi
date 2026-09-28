@@ -77,10 +77,13 @@ public struct GrayscaleImage: Sendable {
         for row in 1..<(height - 1) {
             let base = row * width
             for column in 1..<(width - 1) {
-                let center = Double(pixels[base + column])
-                let laplacian = Double(pixels[base + column - 1]) + Double(pixels[base + column + 1])
-                    + Double(pixels[base - width + column]) + Double(pixels[base + width + column])
-                    - 4 * center
+                let center = Int(pixels[base + column])
+                let left = Int(pixels[base + column - 1])
+                let right = Int(pixels[base + column + 1])
+                let up = Int(pixels[base - width + column])
+                let down = Int(pixels[base + width + column])
+                let neighbours = left + right + up + down
+                let laplacian = Double(neighbours - 4 * center)
                 sum += laplacian
                 sumOfSquares += laplacian * laplacian
                 count += 1

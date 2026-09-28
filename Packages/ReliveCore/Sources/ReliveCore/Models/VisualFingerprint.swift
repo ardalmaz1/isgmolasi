@@ -96,10 +96,10 @@ extension VisualFingerprint: Codable {
         result.reserveCapacity(bytes.count / 4)
         var index = 0
         while index < bytes.count {
-            let bits = UInt32(bytes[index])
-                | UInt32(bytes[index + 1]) << 8
-                | UInt32(bytes[index + 2]) << 16
-                | UInt32(bytes[index + 3]) << 24
+            var bits: UInt32 = UInt32(bytes[index + 3])
+            bits = (bits << 8) | UInt32(bytes[index + 2])
+            bits = (bits << 8) | UInt32(bytes[index + 1])
+            bits = (bits << 8) | UInt32(bytes[index])
             result.append(Float(bitPattern: bits))
             index += 4
         }
