@@ -35,6 +35,7 @@ jobs:
       - name: Build app for iOS Simulator
         run: |
           set -o pipefail
+          mkdir -p build
           xcodebuild \
             -project Relive.xcodeproj \
             -scheme Relive \
