@@ -44,11 +44,19 @@ final class OnboardingToStoryUITests: XCTestCase {
         choose.tap()
         allowPhotoAccessIfAsked()
 
-        // Processing runs on device; give Vision and geocoding time.
+        // Processing runs on device; give Vision and geocoding time, and report progress so a
+        // stall explains itself in the log.
         sleep(4)
         snapshot("05-processing")
+        describe(app, "after-choose")
         let seeStory = app.buttons["See Our Story"]
-        XCTAssertTrue(seeStory.waitForExistence(timeout: 240), "Processing did not finish")
+        var waited = 0
+        while !seeStory.waitForExistence(timeout: 30), waited < 330 {
+            waited += 30
+            describe(app, "waiting-\(waited)s")
+            allowPhotoAccessIfAsked()
+        }
+        XCTAssertTrue(seeStory.exists, "Processing did not finish")
         sleep(3) // let the statistics finish appearing
         snapshot("06-reveal")
         describe(app, "reveal")
@@ -126,12 +134,13 @@ final class OnboardingToStoryUITests: XCTestCase {
     @MainActor
     private func allowPhotoAccessIfAsked() {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-        for label in ["Allow Full Access", "Allow Access to All Photos"] {
-            let button = springboard.buttons[label]
-            if button.waitForExistence(timeout: 3) {
-                button.tap()
-                return
-            }
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: 3) else { return }
+        let buttons = alert.buttons.allElementsBoundByIndex.map(\.label)
+        print("SCREEN system-alert: \(alert.label) | buttons: \(buttons.joined(separator: ", "))")
+        for label in ["Allow Full Access", "Allow Access to All Photos", "Allow"] where alert.buttons[label].exists {
+            alert.buttons[label].tap()
+            return
         }
     }
 
