@@ -49,6 +49,14 @@ public struct FoundMemory: Hashable, Sendable {
     /// "2 years ago", "A year ago this week"
     public var ageDescription: String
     public var place: PlaceName?
+
+    public init(momentID: MomentID, assetID: AssetID, captureDate: Date?, ageDescription: String, place: PlaceName?) {
+        self.momentID = momentID
+        self.assetID = assetID
+        self.captureDate = captureDate
+        self.ageDescription = ageDescription
+        self.place = place
+    }
 }
 
 /// Picks one older, good-looking memory that hasn't been shown recently.

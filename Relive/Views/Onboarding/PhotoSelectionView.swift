@@ -68,7 +68,7 @@ struct PhotoSelectionView: View {
             AccessBanner(
                 message: "Relive can’t see any photos right now. You can choose which ones it may see in Settings.",
                 actionTitle: "Open Settings",
-                action: SystemPresenter.openSettings
+                action: { SystemPresenter.openSettings() }
             )
         case .finished where store.selectionCount < PhotoSelectionModel.recommendedMinimum:
             Text(fewPhotosMessage)

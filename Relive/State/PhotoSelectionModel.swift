@@ -70,7 +70,11 @@ final class PhotoSelectionModel {
         case .limited:
             // When access was just granted as "limited", iOS has already shown its picker.
             // Otherwise (or if nothing was chosen) let the user adjust the selection now.
-            if !justRequested || (await store.photoLibrary.allAccessibleAssets()).isEmpty {
+            var shouldOfferPicker = !justRequested
+            if justRequested {
+                shouldOfferPicker = await store.photoLibrary.allAccessibleAssets().isEmpty
+            }
+            if shouldOfferPicker {
                 _ = await SystemPresenter.presentLimitedLibraryPicker()
             }
             phase = .importing
