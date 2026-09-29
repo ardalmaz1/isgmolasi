@@ -70,9 +70,7 @@ final class CountingAnalyzer: AssetAnalyzing, @unchecked Sendable {
     }
 
     func analyze(_ asset: MemoryAsset) async -> AssetAnalysis {
-        lock.lock()
-        calls += 1
-        lock.unlock()
+        lock.withLock { calls += 1 }
         return AssetAnalysis(sharpness: 0.5, aestheticScore: 0.5)
     }
 }
