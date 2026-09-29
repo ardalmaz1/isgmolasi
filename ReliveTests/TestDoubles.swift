@@ -58,6 +58,93 @@ struct InstantAnalyzer: AssetAnalyzing {
     }
 }
 
+/// Analysis that returns immediately and counts how often it ran.
+final class CountingAnalyzer: AssetAnalyzing, @unchecked Sendable {
+    private let lock = NSLock()
+    private var calls = 0
+
+    var callCount: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return calls
+    }
+
+    func analyze(_ asset: MemoryAsset) async -> AssetAnalysis {
+        lock.lock()
+        calls += 1
+        lock.unlock()
+        return AssetAnalysis(sharpness: 0.5, aestheticScore: 0.5)
+    }
+}
+
+/// Holds every analysis until `open()` is called, so a run can be observed while in flight.
+final class GatedAnalyzer: AssetAnalyzing, @unchecked Sendable {
+    private let lock = NSLock()
+    private var isOpen = false
+    private var waiting: [CheckedContinuation<Void, Never>] = []
+    private var calls = 0
+
+    var callCount: Int {
+        lock.lock()
+        defer { lock.unlock() }
+        return calls
+    }
+
+    func analyze(_ asset: MemoryAsset) async -> AssetAnalysis {
+        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+            lock.lock()
+            calls += 1
+            if isOpen {
+                lock.unlock()
+                continuation.resume()
+            } else {
+                waiting.append(continuation)
+                lock.unlock()
+            }
+        }
+        return AssetAnalysis(sharpness: 0.5, aestheticScore: 0.5)
+    }
+
+    func open() {
+        lock.lock()
+        isOpen = true
+        let pending = waiting
+        waiting = []
+        lock.unlock()
+        pending.forEach { $0.resume() }
+    }
+}
+
+/// Never looks anything up (the test assets have no locations anyway).
+struct NoPlaceLookups: ManagedPlaceNameResolving {
+    func placeName(for coordinate: GeoCoordinate) async -> PlaceName? { nil }
+    func resetFailures() async {}
+    func clearCache() async {}
+}
+
+@MainActor
+func makeTestStore(assets: [MemoryAsset], analyzer: any AssetAnalyzing = InstantAnalyzer()) -> StoryStore {
+    StoryStore(
+        repository: InMemoryStoryRepository(assets: assets),
+        photoLibrary: FakePhotoLibrary(assets: assets),
+        analyzer: analyzer,
+        placeResolver: NoPlaceLookups(),
+        analytics: InMemoryAnalyticsTracker()
+    )
+}
+
+struct ConditionTimedOut: Error {}
+
+/// Polls `condition` on the main actor until it holds; throws (failing the test) after `timeout`.
+@MainActor
+func waitUntil(timeout: Duration = .seconds(10), _ condition: () -> Bool) async throws {
+    let deadline = ContinuousClock.now.advanced(by: timeout)
+    while !condition() {
+        guard ContinuousClock.now < deadline else { throw ConditionTimedOut() }
+        try await Task.sleep(for: .milliseconds(10))
+    }
+}
+
 enum TestLibrary {
     /// `count` photos, a few minutes apart, spread over a handful of evenings. No locations, so
     /// no place lookups happen.
@@ -73,12 +160,5 @@ enum TestLibrary {
                 pixelHeight: 4032
             )
         }
-    }
-
-    /// A place-name cache file that belongs to one test and is never shared.
-    static func temporaryPlaceCacheURL() -> URL {
-        FileManager.default.temporaryDirectory
-            .appending(path: "relive-tests-\(UUID().uuidString)", directoryHint: .isDirectory)
-            .appending(path: "place-names.json")
     }
 }

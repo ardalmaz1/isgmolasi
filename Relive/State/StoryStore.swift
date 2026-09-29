@@ -31,6 +31,15 @@ final class StoryStore {
         }
     }
 
+    /// How a processing run ended. Every caller of `process()` receives it, so leaving the
+    /// processing screen is driven by an awaited result — not by catching a state change.
+    enum ProcessingOutcome: Equatable, Sendable {
+        case finished(MemoryEngineDiagnostics)
+        case failed(String)
+        /// Stopped by Start Over; the result, if any, was discarded.
+        case cancelled
+    }
+
     private(set) var story: Story
     private(set) var assets: [AssetID: MemoryAsset]
     private(set) var userStates: [MomentID: MomentUserState]
@@ -47,15 +56,21 @@ final class StoryStore {
     let photoLibrary: any PhotoLibraryProviding
     private let repository: any StoryRepository
     private let analyzer: any AssetAnalyzing
-    private let placeResolver: GeocodingPlaceResolver
+    private let placeResolver: any ManagedPlaceNameResolving
     private let analytics: any AnalyticsTracking
     private static let logger = Logger(subsystem: "app.relive", category: "story")
+
+    /// The run in flight. Callers arriving while it runs wait for it instead of starting another.
+    @ObservationIgnored private var activeRun: Task<ProcessingOutcome, Never>?
+    /// Identifies the current run; a run that is no longer current (cancelled by Start Over)
+    /// can't write progress or an outcome.
+    @ObservationIgnored private var activeRunID: UUID?
 
     init(
         repository: any StoryRepository,
         photoLibrary: any PhotoLibraryProviding,
         analyzer: any AssetAnalyzing,
-        placeResolver: GeocodingPlaceResolver,
+        placeResolver: any ManagedPlaceNameResolving,
         analytics: any AnalyticsTracking,
         calendar: Calendar = .current
     ) {
@@ -222,13 +237,37 @@ final class StoryStore {
 
     // MARK: - Processing
 
-    /// Runs the Memory Engine over the whole selection. Cached analysis is reused, so adding a
-    /// few memories later only analyzes the new ones.
-    func process() async {
-        guard !processing.isRunning else { return }
+    /// Runs the Memory Engine over the whole selection and returns how it ended. Cached analysis
+    /// is reused, so adding a few memories later only analyzes the new ones.
+    ///
+    /// Only one run happens at a time: a caller arriving during a run waits for that run and gets
+    /// the same outcome. A run isn't tied to any view's lifetime; only `resetAll()` cancels it.
+    @discardableResult
+    func process() async -> ProcessingOutcome {
+        if let activeRun {
+            return await activeRun.value
+        }
+        let runID = UUID()
+        let run = Task { () -> ProcessingOutcome in
+            let outcome = await self.runPipeline(runID: runID)
+            if self.activeRunID == runID {
+                self.activeRun = nil
+                self.activeRunID = nil
+            }
+            return outcome
+        }
+        activeRun = run
+        activeRunID = runID
+        return await run.value
+    }
+
+    private func runPipeline(runID: UUID) async -> ProcessingOutcome {
+        // Started over before the run got going.
+        guard !Task.isCancelled, activeRunID == runID else {
+            return conclude(runID, .cancelled)
+        }
         guard !assets.isEmpty else {
-            processing = .failed("Choose a few photos first.")
-            return
+            return conclude(runID, .failed("Choose a few photos first."))
         }
 
         let started = Date()
@@ -252,50 +291,71 @@ final class StoryStore {
         )
         let input = Array(assets.values)
         let (updates, continuation) = AsyncStream.makeStream(of: MemoryEngineProgress.self, bufferingPolicy: .bufferingNewest(1))
-        let observer = Task { @MainActor [weak self] in
+        // Progress can only move the current, still-running pipeline forward. It can never
+        // overwrite an outcome or another run's state.
+        let progressWriter = Task { @MainActor [weak self] in
             for await progress in updates {
-                self?.processing = .running(progress)
+                guard let self, self.activeRunID == runID, self.processing.isRunning else { continue }
+                self.processing = .running(progress)
             }
         }
 
+        let result: MemoryEngineResult
         do {
-            let result = try await engine.buildStory(from: input, now: Date()) { progress in
+            result = try await engine.buildStory(from: input, now: Date()) { progress in
                 continuation.yield(progress)
             }
-            continuation.finish()
-            await observer.value
-
-            let reconciled = MomentReconciler().reconcile(new: result.story, previous: story)
-            story = reconciled
-            assets = Dictionary(result.assets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-            repository.saveAssets(result.assets)
-            repository.saveStory(reconciled)
-            recomputeDerived()
-            processing = .finished(result.diagnostics)
-
-            #if DEBUG
-            logDuplicateDetails(result)
-            #endif
-            let diagnostics = result.diagnostics
-            Self.logger.notice("Story built: \(diagnostics.inputCount) assets, \(diagnostics.momentCount) moments, \(diagnostics.chapterCount) chapters, \(diagnostics.duplicateCount) duplicates, \(diagnostics.similarCount) similar, \(diagnostics.analysisFailureCount) analysis failures, \(diagnostics.namedPlaceCount) places in \(Int(Date().timeIntervalSince(started)))s\(diagnostics.embeddingsIgnored ? " (image embeddings were uniform and ignored)" : "")")
-            analytics.track(.memoryProcessingCompleted, [
-                "assets": String(diagnostics.inputCount),
-                "moments": String(diagnostics.momentCount),
-                "chapters": String(diagnostics.chapterCount),
-                "duplicates": String(diagnostics.duplicateCount),
-                "analysis_failures": String(diagnostics.analysisFailureCount),
-                "seconds": String(Int(Date().timeIntervalSince(started))),
-            ])
         } catch {
             continuation.finish()
-            observer.cancel()
-            if error is CancellationError {
-                processing = .idle
-            } else {
-                Self.logger.error("Processing failed: \(error.localizedDescription, privacy: .public)")
-                processing = .failed("Something went wrong while organizing your photos.")
+            await progressWriter.value
+            if error is CancellationError || Task.isCancelled {
+                return conclude(runID, .cancelled)
             }
+            Self.logger.error("Processing failed: \(error.localizedDescription, privacy: .public)")
+            return conclude(runID, .failed("Something went wrong while organizing your photos."))
         }
+        // Deliver every pending progress update before the outcome, so none can follow it.
+        continuation.finish()
+        await progressWriter.value
+
+        // Started over while the engine was finishing: discard the result.
+        guard !Task.isCancelled, activeRunID == runID else {
+            return conclude(runID, .cancelled)
+        }
+
+        let reconciled = MomentReconciler().reconcile(new: result.story, previous: story)
+        story = reconciled
+        assets = Dictionary(result.assets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        repository.saveAssets(result.assets)
+        repository.saveStory(reconciled)
+        recomputeDerived()
+
+        #if DEBUG
+        logDuplicateDetails(result)
+        #endif
+        let diagnostics = result.diagnostics
+        Self.logger.notice("Story built: \(diagnostics.inputCount) assets, \(diagnostics.momentCount) moments, \(diagnostics.chapterCount) chapters, \(diagnostics.duplicateCount) duplicates, \(diagnostics.similarCount) similar, \(diagnostics.analysisFailureCount) analysis failures, \(diagnostics.namedPlaceCount) places in \(Int(Date().timeIntervalSince(started)))s\(diagnostics.embeddingsIgnored ? " (image embeddings were uniform and ignored)" : "")")
+        analytics.track(.memoryProcessingCompleted, [
+            "assets": String(diagnostics.inputCount),
+            "moments": String(diagnostics.momentCount),
+            "chapters": String(diagnostics.chapterCount),
+            "duplicates": String(diagnostics.duplicateCount),
+            "analysis_failures": String(diagnostics.analysisFailureCount),
+            "seconds": String(Int(Date().timeIntervalSince(started))),
+        ])
+        return conclude(runID, .finished(diagnostics))
+    }
+
+    /// Writes a run's outcome — the one place a run ends. The outcome of a run that is no longer
+    /// current (cancelled by Start Over) is returned to its callers but never shown.
+    private func conclude(_ runID: UUID, _ outcome: ProcessingOutcome) -> ProcessingOutcome {
+        guard activeRunID == runID else { return outcome }
+        switch outcome {
+        case .finished(let diagnostics): processing = .finished(diagnostics)
+        case .failed(let message): processing = .failed(message)
+        case .cancelled: processing = .idle
+        }
+        return outcome
     }
 
     #if DEBUG
@@ -394,6 +454,9 @@ final class StoryStore {
     // MARK: - Reset
 
     func resetAll() {
+        activeRun?.cancel()
+        activeRun = nil
+        activeRunID = nil
         repository.deleteAll()
         story = .empty
         assets = [:]

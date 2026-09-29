@@ -3,6 +3,12 @@ import Foundation
 import os
 import ReliveCore
 
+/// A place resolver whose failure budget and cache the story store manages between runs.
+protocol ManagedPlaceNameResolving: PlaceNameResolving {
+    func resetFailures() async
+    func clearCache() async
+}
+
 /// Names places with Apple's reverse geocoder, one coordinate per moment (never per photo),
 /// with a persistent local cache so each place is looked up only once.
 ///
@@ -10,7 +16,7 @@ import ReliveCore
 /// the only network call in the analysis pipeline, and failures simply leave a moment unnamed.
 /// The geocoder is rate-limited, so requests run one at a time and the resolver stops for the
 /// current run after repeated failures.
-actor GeocodingPlaceResolver: PlaceNameResolving {
+actor GeocodingPlaceResolver: ManagedPlaceNameResolving {
     private struct CacheEntry: Codable {
         var place: PlaceName?
         var resolvedAt: Date
