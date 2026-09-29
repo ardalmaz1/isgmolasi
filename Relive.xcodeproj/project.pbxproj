@@ -14,6 +14,13 @@
 			remoteGlobalIDString = 5E1A00000000000000000006;
 			remoteInfo = Relive;
 		};
+		5E1A00000000000000000025 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 5E1A00000000000000000009 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 5E1A00000000000000000006;
+			remoteInfo = Relive;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXBuildFile section */
@@ -24,6 +31,7 @@
 		5E1A00000000000000000001 /* Relive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Relive.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		5E1A00000000000000000014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5E1A00000000000000000015 /* ReliveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReliveUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5E1A00000000000000000020 /* ReliveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReliveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -35,6 +43,11 @@
 		5E1A00000000000000000016 /* ReliveUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ReliveUITests;
+			sourceTree = "<group>";
+		};
+		5E1A00000000000000000021 /* ReliveTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ReliveTests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -55,6 +68,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5E1A00000000000000000023 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -62,6 +82,7 @@
 			isa = PBXGroup;
 			children = (
 				5E1A00000000000000000002 /* Relive */,
+				5E1A00000000000000000021 /* ReliveTests */,
 				5E1A00000000000000000016 /* ReliveUITests */,
 				5E1A00000000000000000013 /* Config */,
 				5E1A00000000000000000005 /* Products */,
@@ -72,6 +93,7 @@
 			isa = PBXGroup;
 			children = (
 				5E1A00000000000000000001 /* Relive.app */,
+				5E1A00000000000000000020 /* ReliveTests.xctest */,
 				5E1A00000000000000000015 /* ReliveUITests.xctest */,
 			);
 			name = Products;
@@ -134,6 +156,29 @@
 			productReference = 5E1A00000000000000000015 /* ReliveUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		5E1A00000000000000000027 /* ReliveTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5E1A00000000000000000028 /* Build configuration list for PBXNativeTarget "ReliveTests" */;
+			buildPhases = (
+				5E1A00000000000000000022 /* Sources */,
+				5E1A00000000000000000023 /* Frameworks */,
+				5E1A00000000000000000024 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5E1A00000000000000000026 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				5E1A00000000000000000021 /* ReliveTests */,
+			);
+			name = ReliveTests;
+			packageProductDependencies = (
+			);
+			productName = ReliveTests;
+			productReference = 5E1A00000000000000000020 /* ReliveTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -148,6 +193,10 @@
 						CreatedOnToolsVersion = 16.0;
 					};
 					5E1A0000000000000000001C = {
+						CreatedOnToolsVersion = 16.0;
+						TestTargetID = 5E1A00000000000000000006;
+					};
+					5E1A00000000000000000027 = {
 						CreatedOnToolsVersion = 16.0;
 						TestTargetID = 5E1A00000000000000000006;
 					};
@@ -171,6 +220,7 @@
 			projectRoot = "";
 			targets = (
 				5E1A00000000000000000006 /* Relive */,
+				5E1A00000000000000000027 /* ReliveTests */,
 				5E1A0000000000000000001C /* ReliveUITests */,
 			);
 		};
@@ -185,6 +235,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5E1A00000000000000000019 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5E1A00000000000000000024 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -208,6 +265,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		5E1A00000000000000000022 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -215,6 +279,11 @@
 			isa = PBXTargetDependency;
 			target = 5E1A00000000000000000006 /* Relive */;
 			targetProxy = 5E1A0000000000000000001A /* PBXContainerItemProxy */;
+		};
+		5E1A00000000000000000026 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 5E1A00000000000000000006 /* Relive */;
+			targetProxy = 5E1A00000000000000000025 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -382,6 +451,44 @@
 			};
 			name = Release;
 		};
+		5E1A00000000000000000029 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.relive.prototype.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Relive.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Relive";
+			};
+			name = Debug;
+		};
+		5E1A0000000000000000002A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = app.relive.prototype.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Relive.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Relive";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -408,6 +515,15 @@
 			buildConfigurations = (
 				5E1A0000000000000000001E /* Debug */,
 				5E1A0000000000000000001F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5E1A00000000000000000028 /* Build configuration list for PBXNativeTarget "ReliveTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5E1A00000000000000000029 /* Debug */,
+				5E1A0000000000000000002A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
