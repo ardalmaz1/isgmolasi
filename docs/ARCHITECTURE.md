@@ -1,4 +1,4 @@
-# Architecture — Relive Prototype 0.1
+# Architecture — Relive (Prototype 0.1, v0.2 creation)
 
 ## Goals that shaped it
 
@@ -140,3 +140,17 @@ views and stores don't depend on SwiftData directly.
   CloudKit-compatible.
 - **Analytics provider** — implement `AnalyticsTracking`.
 - **Better clustering** — each stage is a separate type with its own config and tests.
+
+## v0.2: creation
+
+Collages, story cards and recaps follow the same split as the rest of the app: decisions in
+ReliveCore (`Creation/` — layouts, Make it for me, captions, story sequences, recaps, Surprise
+Memory; pure and tested on Linux), drawing and I/O in the app (`Relive/Creation/`). Canvases are
+laid out in 1080-point design space and the preview and export draw the same view at different
+scales. A single `CreationRequest` on `AppModel` opens the creation flow full screen from any
+entry point (Create, Moment Detail, recaps, Surprise Memory). See [CREATION.md](CREATION.md).
+
+Persistence additions are additive and migrate automatically: four optional `StoredProfile`
+fields for today's Surprise Memory, and a `StoredCreatedAsset` entity listing images Relive saved
+to the photo library so they are never imported back as memories.
+

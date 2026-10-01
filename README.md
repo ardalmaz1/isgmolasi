@@ -1,4 +1,4 @@
-# Relive — Prototype 0.1
+# Relive — v0.2
 
 > Your love story already exists in your camera roll. Relive helps you rediscover it.
 
@@ -14,7 +14,25 @@ Principles: **Remember → Appreciate → Live.** AI organizes the memory; peopl
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
 
-## What works
+## New in v0.2 — creating from memories
+
+> Choose memories. Relive makes something beautiful from them.
+
+- **Create tab** (Today · Story · Create · Us): Memory Collage, Story Maker, Monthly Recap, Our Year.
+- **Memory Collage**: 2–12 photos (chosen, or from a moment), six curated styles (Minimal,
+  Editorial, Grid, Film, Polaroid, Scrapbook) that account for portrait and landscape photos,
+  **Make it for me**, swap/replace/reorder, 1:1 · 4:5 · 9:16, factual title/date/place toggles.
+- **Story Maker**: 3–6 9:16 cards from a moment, photos, a month or a year, in five looks.
+- **Monthly Recap** and **Our Year**: real counts, moments, trips, best photos; gentle states
+  when there isn't enough; shareable summary cards.
+- **Surprise Memory** on Today, only on real anniversaries ("A year ago this week").
+- **Create from this** on every moment.
+- Everything renders on device at 2160 px wide; Save to Photos (add-only permission) or Share.
+  Preview and export are drawn from the same layout.
+
+Details: [docs/CREATION.md](docs/CREATION.md).
+
+## What works (since 0.1)
 
 1. Onboarding: welcome → partner's first name → when the story began (month or exact day) →
    why photos are needed → Apple's photo selection UI.
@@ -34,7 +52,7 @@ No scores, streaks, comparisons, guilt or claims about the relationship. Titles 
    share sheet. The recipient doesn't need Relive.
 10. "Did you find something that made you smile?" — asked once, after a few moments have been
     explored, answer stored locally.
-11. Three tabs only: Today, Story, Us. Light and dark mode, Dynamic Type, VoiceOver labels.
+11. Tabs: Today, Story, Create (v0.2), Us. Light and dark mode, Dynamic Type, VoiceOver labels.
 
 No account, no payment, no uploads, no AI API.
 
@@ -74,6 +92,8 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/CREATION.md](docs/CREATION.md) — v0.2 creation: collage layouts, Make it for me, story
+  cards, recaps, Surprise Memory, rendering and export.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — structure, decisions, iOS 18 target, privacy,
   persistence, concurrency.
 - [docs/MEMORY_ENGINE.md](docs/MEMORY_ENGINE.md) — every heuristic with its thresholds: moment
@@ -99,3 +119,15 @@ Us. Screenshots of each step are uploaded as a build artifact.
 - The app target compiles in Swift 5 mode with complete concurrency checking; the core package
   is Swift 6.
 - Analytics events only go to the device log (Console.app, subsystem `app.relive`).
+
+## Known limitations of v0.2
+
+- **Creation output has been checked in the Simulator and by automated tests, not yet on a
+  physical device.** Rendering speed and memory with very large libraries, and how saved images
+  look in other apps, need a device check (see the checklist in the v0.2 notes).
+- Our Year's full scrolling retrospective isn't exported as one piece; Share Our Year shares a
+  summary card and Create Story makes year story cards.
+- Seasons ("Summer") are not used, because they depend on the hemisphere.
+- Collage editing is intentionally limited (no free positioning, filters or text editing).
+- Drafts aren't saved: closing an editor discards it.
+
