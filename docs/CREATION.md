@@ -108,8 +108,9 @@ Full-resolution originals are never requested. JPEG encoding runs off the main t
 
 - **Save to Photos** asks only for *add* permission (`NSPhotoLibraryAddUsageDescription`).
 - **Share** writes JPEGs to a private temporary folder and opens the share sheet.
-- One export at a time per screen; repeated taps are ignored. Exports continue briefly if the
-  app goes to the background (`BackgroundActivity`).
+- One export at a time per screen; repeated taps are ignored. After a collage is saved, Save
+  stays disabled until something about it changes, so it can't be saved twice by accident.
+  Exports continue briefly if the app goes to the background (`BackgroundActivity`).
 - Images Relive saves are recorded (`StoredCreatedAsset`) and **never imported back as
   memories** — with limited photo access they become visible to Relive, and "Add Memories" would
   otherwise pull them into the story. This list survives Start Over for the same reason.
@@ -121,3 +122,20 @@ Full-resolution originals are never requested. JPEG encoding runs off the main t
 No new dependencies, no network calls, no remote AI. Creation reads the same photos the user
 already chose; choosing photos for a collage never shows the full library. Analytics remain local
 log lines with non-identifying properties (kind, style, shape, counts).
+
+## Testing
+
+- **ReliveCore** (`Tests/ReliveCoreTests/Collage*`, `CreationLibraryTests`, `StorySequenceTests`):
+  layouts for every style × shape × 2–12 photos (bounds, overlaps, orientation), Make it for me,
+  captions that never invent, sources, recaps, Our Year, story sequences, Surprise Memory dates
+  (including leap days, rest days and cooldowns). Runs on Linux.
+- **App, hosted** (`ReliveTests/CreationTests.swift`): export pixel sizes for every shape and
+  style, export = previewed layout, per-frame image requests, missing photos, editor behaviour,
+  Story Maker shortfalls, one export at a time, Relive's own images never imported, Surprise
+  Memory on Today. These tests never touch PhotoKit: doing so in the test host raises the system
+  permission prompt, and an unanswered prompt is recorded as "Don't Allow" for the UI tests that
+  follow.
+- **UI** (`ReliveUITests/CreationFlowUITests.swift`): onboarding, then collage from a moment →
+  Make it for me → styles and shapes → Save to Photos; Story Maker → Save This Card; Monthly
+  Recap; Our Year; Create from this (including the "Not enough photos" path).
+
