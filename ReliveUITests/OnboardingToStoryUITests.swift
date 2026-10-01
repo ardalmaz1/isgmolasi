@@ -14,7 +14,7 @@ final class OnboardingToStoryUITests: XCTestCase {
     @MainActor
     func testFullStoryFlow() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh"]
         app.launch()
 
         // Welcome
