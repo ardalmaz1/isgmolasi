@@ -21,6 +21,7 @@ final class AppModel {
     enum Tab: Hashable {
         case today
         case story
+        case create
         case us
     }
 
@@ -34,6 +35,10 @@ final class AppModel {
     private(set) var foundMemory: FoundMemory?
     /// Shown briefly after hiding a moment, with an undo.
     var recentlyHiddenMomentID: MomentID?
+    /// Today's Surprise Memory, when there is one (occasionally, on real anniversaries).
+    private(set) var surpriseMemory: SurpriseMemory?
+    /// The collage or story being made, presented over everything.
+    var activeCreation: CreationRequest?
 
     let storyStore: StoryStore
     private let repository: any StoryRepository
@@ -129,6 +134,9 @@ final class AppModel {
         if foundMemory?.momentID == id {
             refreshFoundMemory(force: true)
         }
+        if surpriseMemory?.momentID == id {
+            surpriseMemory = nil
+        }
     }
 
     func undoHide() {
@@ -177,6 +185,52 @@ final class AppModel {
         analytics.track(.foundForYouOpened, ["age": foundMemory?.ageDescription ?? ""])
     }
 
+    // MARK: - Surprise Memory
+
+    /// Restores today's surprise, or — on a day after the rest period — looks for a memory with a
+    /// real anniversary today. Call after `refreshFoundMemory` so the two never show the same moment.
+    func refreshSurprise(now: Date = Date()) {
+        let calendar = storyStore.calendar
+        let service = SurpriseMemoryService(library: storyStore.creationLibrary)
+        let onToday = Set([foundMemory?.momentID].compactMap { $0 })
+
+        if let record = profile.surprise, calendar.isDate(record.day, inSameDayAs: now) {
+            let restored = record.isDismissed ? nil : service.restore(momentID: record.momentID, assetID: record.assetID, now: now)
+            surpriseMemory = restored.flatMap { onToday.contains($0.momentID) ? nil : $0 }
+            return
+        }
+        guard let memory = service.select(now: now, lastSurpriseDay: profile.surprise?.day, excluding: onToday) else {
+            surpriseMemory = nil
+            return
+        }
+        surpriseMemory = memory
+        profile.surprise = SurpriseRecord(momentID: memory.momentID, assetID: memory.assetID, day: calendar.startOfDay(for: now), isDismissed: false)
+        repository.saveProfile(profile)
+        storyStore.markSurfaced(memory.momentID, at: now)
+        analytics.track(.surpriseMemoryShown, ["same_day": memory.isSameDay ? "true" : "false"])
+    }
+
+    /// "Not now": the card goes away for today.
+    func dismissSurprise() {
+        guard var record = profile.surprise else { return }
+        record.isDismissed = true
+        profile.surprise = record
+        repository.saveProfile(profile)
+        surpriseMemory = nil
+    }
+
+    func openSurprise() {
+        analytics.track(.surpriseMemoryOpened)
+    }
+
+    // MARK: - Creating
+
+    /// Opens the collage or story maker over the current screen.
+    func startCreation(_ kind: CreationKind, from start: CreationStart, origin: String) {
+        activeCreation = CreationRequest(kind: kind, start: start, origin: origin)
+        analytics.track(.creationStarted, ["kind": kind.rawValue, "origin": origin])
+    }
+
     // MARK: - Validation question
 
     /// Ask once, only after the user has actually explored a few moments.
@@ -200,6 +254,8 @@ final class AppModel {
         storyStore.resetAll()
         profile = .empty
         foundMemory = nil
+        surpriseMemory = nil
+        activeCreation = nil
         recentlyHiddenMomentID = nil
         storyScrollTarget = nil
         onboardingStep = .welcome

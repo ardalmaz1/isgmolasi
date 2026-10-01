@@ -18,6 +18,7 @@ struct AppProfile: Equatable, Sendable {
     var momentsOpenedCount: Int = 0
     var lastViewedMomentID: MomentID?
     var foundForYou: FoundForYouRecord?
+    var surprise: SurpriseRecord?
 
     static let empty = AppProfile()
 }
@@ -27,4 +28,13 @@ struct FoundForYouRecord: Equatable, Sendable {
     var momentID: MomentID
     var assetID: AssetID
     var day: Date
+}
+
+/// The most recent Surprise Memory: kept for its day, and used to rest between surprises.
+struct SurpriseRecord: Equatable, Sendable {
+    var momentID: MomentID
+    var assetID: AssetID
+    var day: Date
+    /// "Not now": hidden for the rest of the day.
+    var isDismissed: Bool
 }

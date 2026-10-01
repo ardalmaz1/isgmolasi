@@ -56,7 +56,11 @@ struct MomentDetailView: View {
                     isEditingNote = true
                 }
                 .padding(.horizontal, Spacing.screenMargin)
-                .padding(.vertical, Spacing.l)
+                .padding(.top, Spacing.l)
+
+                CreateFromThisSection(moment: moment)
+                    .padding(.horizontal, Spacing.screenMargin)
+                    .padding(.vertical, Spacing.l)
 
                 LazyVGrid(columns: columns, spacing: 2) {
                     ForEach(assets) { asset in

@@ -1,7 +1,8 @@
 import ReliveCore
 import SwiftUI
 
-/// Three tabs, nothing more: Today, Story, Us.
+/// Four tabs: Today, Story, Create, Us. Collages and stories open over everything, from
+/// whichever screen asked for them.
 struct MainTabView: View {
     @Environment(AppModel.self) private var app
 
@@ -14,9 +15,15 @@ struct MainTabView: View {
             Tab("Story", systemImage: "book.closed", value: AppModel.Tab.story) {
                 StoryTimelineView()
             }
+            Tab("Create", systemImage: "photo.on.rectangle.angled", value: AppModel.Tab.create) {
+                CreateHomeView()
+            }
             Tab("Us", systemImage: "person.2", value: AppModel.Tab.us) {
                 UsView()
             }
+        }
+        .fullScreenCover(item: $app.activeCreation) { request in
+            CreationFlowView(request: request)
         }
     }
 }

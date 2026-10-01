@@ -22,7 +22,14 @@ final class PhotoImageLoader: @unchecked Sendable {
     }
 
     /// Image for display, sized in pixels. Returns `nil` if the asset is gone or unavailable.
-    func image(for id: AssetID, pixelSize: CGSize, contentMode: PHImageContentMode = .aspectFill) async -> UIImage? {
+    /// - Parameter caches: keep the result in the memory cache. Large one-off images (exports)
+    ///   pass `false` so they don't push out the thumbnails the screens reuse.
+    func image(
+        for id: AssetID,
+        pixelSize: CGSize,
+        contentMode: PHImageContentMode = .aspectFill,
+        caches: Bool = true
+    ) async -> UIImage? {
         let key = "\(id)|\(Int(pixelSize.width))x\(Int(pixelSize.height))|\(contentMode.rawValue)" as NSString
         if let cached = cache.object(forKey: key) {
             return cached
@@ -36,7 +43,7 @@ final class PhotoImageLoader: @unchecked Sendable {
         options.resizeMode = .fast
         options.isNetworkAccessAllowed = true
         let image = await request(asset: asset, pixelSize: pixelSize, contentMode: contentMode, options: options)
-        if let image {
+        if let image, caches {
             cache.setObject(image, forKey: key)
         }
         return image

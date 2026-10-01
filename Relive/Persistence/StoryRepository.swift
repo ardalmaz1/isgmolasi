@@ -19,7 +19,12 @@ protocol StoryRepository: AnyObject {
     func loadMomentStates() -> [MomentID: MomentUserState]
     func saveMomentState(_ state: MomentUserState, for id: MomentID)
 
-    /// Removes everything Relive stored. Photos in the library are never touched.
+    /// Images Relive saved to the photo library itself (see `StoredCreatedAsset`).
+    func loadCreatedAssetIDs() -> Set<AssetID>
+    func recordCreatedAssets(_ ids: [AssetID])
+
+    /// Removes everything Relive stored. Photos in the library are never touched. The list of
+    /// images Relive created is kept, so they still can't come back as memories after a restart.
     func deleteAll()
 }
 
@@ -79,6 +84,9 @@ final class SwiftDataStoryRepository: StoryRepository {
         if let momentID = stored.foundMomentID, let assetID = stored.foundAssetID, let day = stored.foundOnDay {
             profile.foundForYou = FoundForYouRecord(momentID: momentID, assetID: assetID, day: day)
         }
+        if let momentID = stored.surpriseMomentID, let assetID = stored.surpriseAssetID, let day = stored.surpriseOnDay {
+            profile.surprise = SurpriseRecord(momentID: momentID, assetID: assetID, day: day, isDismissed: stored.surpriseDismissed)
+        }
         return profile
     }
 
@@ -101,6 +109,10 @@ final class SwiftDataStoryRepository: StoryRepository {
         stored.foundMomentID = profile.foundForYou?.momentID
         stored.foundAssetID = profile.foundForYou?.assetID
         stored.foundOnDay = profile.foundForYou?.day
+        stored.surpriseMomentID = profile.surprise?.momentID
+        stored.surpriseAssetID = profile.surprise?.assetID
+        stored.surpriseOnDay = profile.surprise?.day
+        stored.surpriseDismissed = profile.surprise?.isDismissed ?? false
         save()
     }
 
@@ -200,6 +212,21 @@ final class SwiftDataStoryRepository: StoryRepository {
         stored.lastSurfacedAt = state.lastSurfacedAt
         stored.surfacedCount = state.surfacedCount
         stored.lastOpenedAt = state.lastOpenedAt
+        save()
+    }
+
+    // MARK: - Created images
+
+    func loadCreatedAssetIDs() -> Set<AssetID> {
+        Set(fetchAll(StoredCreatedAsset.self).map(\.localIdentifier))
+    }
+
+    func recordCreatedAssets(_ ids: [AssetID]) {
+        let known = loadCreatedAssetIDs()
+        let now = Date()
+        for id in ids where !known.contains(id) {
+            context.insert(StoredCreatedAsset(localIdentifier: id, createdAt: now))
+        }
         save()
     }
 

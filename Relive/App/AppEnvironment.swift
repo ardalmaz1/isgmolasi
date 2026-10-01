@@ -33,9 +33,20 @@ final class AppEnvironment {
         self.appModel = AppModel(storyStore: storyStore, repository: repository, analytics: analytics)
     }
 
+    #if DEBUG
+    /// UI tests pass this to start from onboarding regardless of earlier runs.
+    static let startFreshArgument = "-ReliveUITestStartFresh"
+    #endif
+
     static func live() -> AppEnvironment {
-        AppEnvironment(
-            container: SwiftDataStoryRepository.makeContainer(),
+        let container = SwiftDataStoryRepository.makeContainer()
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains(startFreshArgument) {
+            SwiftDataStoryRepository(container: container).deleteAll()
+        }
+        #endif
+        return AppEnvironment(
+            container: container,
             photoLibrary: PhotoKitLibraryService(),
             imageLoader: .shared,
             analytics: LoggingAnalyticsTracker()

@@ -28,6 +28,11 @@ final class StoredProfile {
     var foundMomentID: UUID?
     var foundAssetID: String?
     var foundOnDay: Date?
+    // Today's Surprise Memory (v0.2). Optional, so existing stores migrate automatically.
+    var surpriseMomentID: UUID?
+    var surpriseAssetID: String?
+    var surpriseOnDay: Date?
+    var surpriseDismissed: Bool = false
 
     init() {}
 }
@@ -80,11 +85,26 @@ final class StoredMomentState {
     }
 }
 
+/// An image Relive itself saved to the photo library (a collage or story card). Remembered so
+/// that, with limited photo access — where new images Relive saves become visible to it — they
+/// are never imported back into the story as memories.
+@Model
+final class StoredCreatedAsset {
+    var localIdentifier: String = ""
+    var createdAt: Date = Date()
+
+    init(localIdentifier: String, createdAt: Date) {
+        self.localIdentifier = localIdentifier
+        self.createdAt = createdAt
+    }
+}
+
 enum PersistenceSchema {
     static let models: [any PersistentModel.Type] = [
         StoredProfile.self,
         StoredAsset.self,
         StoredStorySnapshot.self,
         StoredMomentState.self,
+        StoredCreatedAsset.self,
     ]
 }

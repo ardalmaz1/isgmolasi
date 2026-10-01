@@ -5,7 +5,7 @@ import SwiftUI
 struct TodayView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
-    @State private var path: [MomentRoute] = []
+    @State private var path = NavigationPath()
     @State private var isAddingMemories = false
 
     var body: some View {
@@ -24,6 +24,14 @@ struct TodayView: View {
 
                     if app.shouldAskSmileQuestion {
                         SmileQuestionCard()
+                    }
+
+                    if let surprise = app.surpriseMemory {
+                        SurpriseMemoryCard(
+                            memory: surprise,
+                            onOpen: { path.append(SurpriseRoute(momentID: surprise.momentID, assetID: surprise.assetID)) },
+                            onDismiss: { withAnimation { app.dismissSurprise() } }
+                        )
                     }
 
                     if let memory = app.foundMemory {
@@ -56,10 +64,19 @@ struct TodayView: View {
             .statusBarBackdrop()
             .toolbar(.hidden, for: .navigationBar)
             .momentDestination()
+            .navigationDestination(for: SurpriseRoute.self) { route in
+                SurpriseMemoryView(route: route)
+            }
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)
-        .onAppear { app.refreshFoundMemory() }
-        .onChange(of: store.story.generatedAt) { _, _ in app.refreshFoundMemory() }
+        .onAppear { refreshResurfacing() }
+        .onChange(of: store.story.generatedAt) { _, _ in refreshResurfacing() }
+    }
+
+    /// Found for You first, so the occasional Surprise never repeats its moment.
+    private func refreshResurfacing() {
+        app.refreshFoundMemory()
+        app.refreshSurprise()
     }
 }
 

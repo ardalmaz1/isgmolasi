@@ -9,6 +9,7 @@ final class InMemoryStoryRepository: StoryRepository {
     var assets: [MemoryAsset]
     var story: Story?
     var states: [MomentID: MomentUserState] = [:]
+    var createdAssetIDs: Set<AssetID> = []
 
     init(assets: [MemoryAsset] = []) {
         self.assets = assets
@@ -22,6 +23,8 @@ final class InMemoryStoryRepository: StoryRepository {
     func saveStory(_ story: Story) { self.story = story }
     func loadMomentStates() -> [MomentID: MomentUserState] { states }
     func saveMomentState(_ state: MomentUserState, for id: MomentID) { states[id] = state }
+    func loadCreatedAssetIDs() -> Set<AssetID> { createdAssetIDs }
+    func recordCreatedAssets(_ ids: [AssetID]) { createdAssetIDs.formUnion(ids) }
 
     func deleteAll() {
         profile = .empty

@@ -51,6 +51,8 @@ final class StoryStore {
     private(set) var sections: [TimelineSection] = []
     /// Derived: what the reveal and Us screens count.
     private(set) var statistics: StoryStatistics = .zero
+    /// Images Relive saved to the library itself; never imported as memories.
+    private(set) var createdAssetIDs: Set<AssetID>
 
     let calendar: Calendar
     let photoLibrary: any PhotoLibraryProviding
@@ -83,6 +85,7 @@ final class StoryStore {
         self.story = repository.loadStory() ?? .empty
         self.assets = Dictionary(repository.loadAssets().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         self.userStates = repository.loadMomentStates()
+        self.createdAssetIDs = repository.loadCreatedAssetIDs()
         self.accessStatus = photoLibrary.accessStatus()
         recomputeDerived()
     }
@@ -220,7 +223,8 @@ final class StoryStore {
         accessStatus = photoLibrary.accessStatus()
         var updated = replacingSelection ? [:] : assets
         var added = 0
-        for var asset in fetched {
+        // A collage or story card Relive saved is not a memory, even when it becomes visible.
+        for var asset in fetched where !createdAssetIDs.contains(asset.id) {
             if let existing = assets[asset.id] {
                 // Keep cached analysis; refresh metadata that may have changed (e.g. favorite).
                 asset.analysis = existing.analysis
@@ -233,6 +237,26 @@ final class StoryStore {
         assets = updated
         repository.saveAssets(Array(updated.values))
         return SelectionChange(added: added, removed: removed)
+    }
+
+    // MARK: - Creations
+
+    /// A snapshot of the story for making collages, story cards and recaps.
+    var creationLibrary: CreationLibrary {
+        CreationLibrary(
+            story: story,
+            assets: assets,
+            userStates: userStates,
+            unavailableAssetIDs: unavailableAssetIDs,
+            calendar: calendar
+        )
+    }
+
+    /// Remembers images Relive saved to the photo library, so they are never imported as memories.
+    func recordCreatedAssets(_ ids: [AssetID]) {
+        guard !ids.isEmpty else { return }
+        createdAssetIDs.formUnion(ids)
+        repository.recordCreatedAssets(ids)
     }
 
     // MARK: - Processing
