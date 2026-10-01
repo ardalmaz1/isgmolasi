@@ -59,7 +59,7 @@ enum CreationTestLibrary {
         return (store, repository)
     }
 
-    static func solidImage(width: CGFloat, height: CGFloat) -> UIImage {
+    nonisolated static func solidImage(width: CGFloat, height: CGFloat) -> UIImage {
         let format = UIGraphicsImageRendererFormat()
         format.scale = 1
         return UIGraphicsImageRenderer(size: CGSize(width: width, height: height), format: format).image { context in
