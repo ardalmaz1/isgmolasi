@@ -43,6 +43,8 @@ final class CreationFlowUITests: XCTestCase {
         capture("C04-collage-film")
 
         app.buttons["9:16"].firstMatch.tap()
+        app.buttons["Film"].firstMatch.swipeLeft()
+        sleep(1)
         app.buttons["Polaroid"].firstMatch.tap()
         sleep(2)
         capture("C05-collage-polaroid-story")
@@ -115,10 +117,21 @@ final class CreationFlowUITests: XCTestCase {
         if !fromThis.isHittable { app.swipeUp() }
         capture("C15-create-from-this")
         fromThis.tap()
-        XCTAssertTrue(preview.waitForExistence(timeout: 10), "Create from this did not open the collage")
+        // A one-photo moment (the simulator's own sample photos) can't make a collage on its own:
+        // Relive says so and offers to choose more photos instead.
+        let notEnough = app.staticTexts["Not enough photos"]
+        XCTAssertTrue(preview.waitForExistence(timeout: 10) || notEnough.exists, "Create from this did not open")
         sleep(2)
-        capture("C16-collage-from-moment")
-        app.buttons["Close"].firstMatch.tap()
+        capture("C16-create-from-this-opened")
+        printScreen(app, "create-from-this")
+        if notEnough.exists {
+            app.buttons["Choose Photos"].tap()
+            XCTAssertTrue(app.descendants(matching: .any)["pickerStatus"].waitForExistence(timeout: 10), "Photo picker did not open")
+            capture("C17-choose-more-photos")
+            app.buttons["Cancel"].firstMatch.tap()
+        } else {
+            app.buttons["Close"].firstMatch.tap()
+        }
     }
 
     // MARK: - Steps

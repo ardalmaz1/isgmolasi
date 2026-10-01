@@ -14,7 +14,11 @@ struct StoryCardText: Equatable {
     init(card: StoryCardPlan) {
         switch card.kind {
         case .opening:
-            let title = CreationText.title(card.title, use: .headline)
+            var title = CreationText.title(card.title, use: .headline)
+            // A moment or trip with a real place opens with the place: "KAŞ / August 2026".
+            if case .named? = card.title, let place = CreationText.place(card.place) {
+                title = place
+            }
             let period = CreationText.periodLine(card.dateSpan)
             // Without a shared name, the dates are the title.
             self.title = title ?? period

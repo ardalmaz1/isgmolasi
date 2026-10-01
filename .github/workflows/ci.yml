@@ -136,7 +136,7 @@ jobs:
                   for value in node:
                       walk(value)
           walk(json.loads(manifest.read_text()))
-          wanted = ("08-", "15-", "C01-", "C02-", "C03-", "C04-", "C05-", "C07-", "C08-", "C09-", "C11-", "C13-", "C15-")
+          wanted = ("08-", "15-", "C01-", "C02-", "C03-", "C04-", "C05-", "C07-", "C08-", "C09-", "C11-", "C13-", "C16-", "C17-")
           for name, file in sorted(found):
               if not name.startswith(wanted) or not file.endswith(".png"):
                   continue
