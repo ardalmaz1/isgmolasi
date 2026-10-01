@@ -93,7 +93,7 @@ struct CollageEditorView: View {
                     Text("Save to Photos")
                 }
                 .buttonStyle(.relivePrimary)
-                .disabled(!model.canExport)
+                .disabled(!model.canExport || model.isSaved)
                 .accessibilityIdentifier("collageSave")
             }
             .padding(.horizontal, Spacing.screenMargin)
@@ -132,8 +132,11 @@ struct CollageEditorView: View {
                 }
             }
         }
+        // Any change makes a different image, so it can be saved again.
         .onChange(of: model.style) { _, _ in model.export.clearMessage() }
         .onChange(of: model.aspectRatio) { _, _ in model.export.clearMessage() }
+        .onChange(of: model.photoIDs) { _, _ in model.export.clearMessage() }
+        .onChange(of: model.caption) { _, _ in model.export.clearMessage() }
     }
 
     private var animation: Animation? {
@@ -189,6 +192,7 @@ struct CollageEditorView: View {
                 .padding(.horizontal, Spacing.screenMargin)
             }
             .scrollIndicators(.hidden)
+            .accessibilityIdentifier("styleRow")
         }
     }
 

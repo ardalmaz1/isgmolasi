@@ -43,9 +43,17 @@ final class CreationFlowUITests: XCTestCase {
         capture("C04-collage-film")
 
         app.buttons["9:16"].firstMatch.tap()
-        app.buttons["Film"].firstMatch.swipeLeft()
         sleep(1)
-        app.buttons["Polaroid"].firstMatch.tap()
+        // The taller 9:16 preview pushes the styles below the fold: scroll to them, then along
+        // the row. Only tap what is actually on screen.
+        app.swipeUp()
+        app.scrollViews["styleRow"].swipeLeft()
+        sleep(1)
+        let polaroid = app.buttons["Polaroid"].firstMatch
+        XCTAssertTrue(polaroid.isHittable, "Polaroid style is not reachable")
+        polaroid.tap()
+        app.swipeDown()
+        app.swipeDown()
         sleep(2)
         capture("C05-collage-polaroid-story")
 
@@ -54,6 +62,7 @@ final class CreationFlowUITests: XCTestCase {
         XCTAssertTrue(waitForExport(app), "Collage was not saved")
         capture("C06-collage-saved")
         printScreen(app, "collage-saved")
+        XCTAssertFalse(app.buttons["collageSave"].isEnabled, "An unchanged collage can't be saved twice")
         app.buttons["Close"].firstMatch.tap()
 
         // Story Maker from a moment

@@ -83,6 +83,12 @@ final class CollageEditorModel {
         range.contains(photoIDs.count) && missingInCollage.isEmpty && !export.isBusy
     }
 
+    /// Just saved, and nothing has changed since: saving again would only make a duplicate.
+    var isSaved: Bool {
+        if case .finished = export.phase { return true }
+        return false
+    }
+
     var analyticsProperties: [String: String] {
         ["kind": "collage", "style": style.rawValue, "shape": aspectRatio.label, "photos": String(photoIDs.count)]
     }
