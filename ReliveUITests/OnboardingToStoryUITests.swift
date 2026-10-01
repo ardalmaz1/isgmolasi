@@ -78,7 +78,12 @@ final class OnboardingToStoryUITests: XCTestCase {
         snapshot("09-timeline-later")
 
         // Moment detail
-        let visibleCard = cards.allElementsBoundByIndex.first { $0.isHittable }
+        // A card that is only peeking out under the status bar reports itself hittable, but a tap
+        // there lands on the status bar (which scrolls to the top). Pick one whose middle is on screen.
+        let screen = app.windows.firstMatch.frame
+        let visibleCard = cards.allElementsBoundByIndex.first { card in
+            card.isHittable && card.frame.midY > screen.minY + 120 && card.frame.midY < screen.maxY - 140
+        } ?? cards.allElementsBoundByIndex.first { $0.isHittable }
         let card = try XCTUnwrap(visibleCard, "No tappable moment card")
         card.tap()
         let notePrompt = app.buttons["What do you remember about this?"]
