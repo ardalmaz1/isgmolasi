@@ -27,14 +27,22 @@ enum CreationExportError: LocalizedError, Equatable {
     }
 }
 
+/// Where creation pixels come from: the photo library in the app, a stand-in in tests (which
+/// must never touch PhotoKit — that would raise the system permission prompt).
+protocol CreationPhotoLoading: Sendable {
+    func image(for id: AssetID, pixelSize: CGSize, contentMode: PHImageContentMode, caches: Bool) async -> UIImage?
+}
+
+extension PhotoImageLoader: CreationPhotoLoading {}
+
 /// Loads pixels for creations. Previews use modest, cached sizes; exports load each photo at
 /// the size its frame needs in the final image (never the full original) without caching.
 struct CreationImageSource {
-    let loader: PhotoImageLoader
+    let loader: any CreationPhotoLoading
 
     /// A whole (uncropped) image for previews, or nil if the photo is gone.
     func previewImage(for id: AssetID, longSide: Double = CreationImageSizing.previewLongSide) async -> UIImage? {
-        await loader.image(for: id, pixelSize: CGSize(width: longSide, height: longSide), contentMode: .aspectFit)
+        await loader.image(for: id, pixelSize: CGSize(width: longSide, height: longSide), contentMode: .aspectFit, caches: true)
     }
 
     /// Export images for photos and the frames they fill. Throws if any photo can't be loaded.

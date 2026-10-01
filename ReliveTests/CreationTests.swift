@@ -1,3 +1,4 @@
+import Photos
 import ReliveCore
 import SwiftUI
 import UIKit
@@ -211,7 +212,7 @@ final class CollageEditorModelTests: XCTestCase {
     func testExportFailsGracefullyWhenPhotosAreGone() async {
         let (model, _) = makeModel()
         do {
-            _ = try await model.renderExport(using: CreationImageSource(loader: PhotoImageLoader()))
+            _ = try await model.renderExport(using: CreationImageSource(loader: MissingPhotos()))
             XCTFail("Test identifiers don't exist in the photo library")
         } catch let error as CreationExportError {
             XCTAssertEqual(error, .missingPhotos(model.photoIDs.count))
@@ -220,11 +221,64 @@ final class CollageEditorModelTests: XCTestCase {
         }
     }
 
+    /// The exported collage is the previewed layout at export size, and each photo is requested
+    /// only at the size its frame needs — never the original.
+    func testExportRendersThePreviewedLayoutAtExportSize() async throws {
+        let (model, store) = makeModel()
+        let photos = SolidPhotos(aspects: Dictionary(uniqueKeysWithValues: model.photoIDs.map { ($0, store.assets[$0]?.aspectRatio ?? 1) }))
+        await model.loadPreviews(using: CreationImageSource(loader: photos))
+        XCTAssertEqual(model.previewImages.count, model.photoIDs.count)
+        let previewLayout = model.layout
+
+        let image = try await model.renderExport(using: CreationImageSource(loader: photos))
+        let cgImage = try XCTUnwrap(image.cgImage)
+        XCTAssertEqual(cgImage.width, model.aspectRatio.exportPixelSize.width)
+        XCTAssertEqual(cgImage.height, model.aspectRatio.exportPixelSize.height)
+        XCTAssertEqual(model.layout, previewLayout, "exporting doesn't change the arrangement")
+
+        let exportRequests = photos.requests.suffix(model.photoIDs.count)
+        for request in exportRequests {
+            let slot = try XCTUnwrap(previewLayout.slots.first { model.photoIDs[$0.photoIndex] == request.id })
+            let needed = CreationImageSizing.exportPixelSize(forFrame: slot.photoFrame.size)
+            XCTAssertEqual(request.size, needed.cgSize)
+            XCTAssertLessThanOrEqual(max(request.size.width, request.size.height), CreationImageSizing.maximumExportSide)
+        }
+    }
+
     func testPreviewsMarkMissingPhotosInsteadOfFailing() async {
         let (model, _) = makeModel()
-        await model.loadPreviews(using: CreationImageSource(loader: PhotoImageLoader()))
+        await model.loadPreviews(using: CreationImageSource(loader: MissingPhotos()))
         XCTAssertEqual(Set(model.missingInCollage), Set(model.photoIDs))
         XCTAssertFalse(model.canExport)
+    }
+}
+
+/// Every photo is gone from the library.
+struct MissingPhotos: CreationPhotoLoading {
+    func image(for id: AssetID, pixelSize: CGSize, contentMode: PHImageContentMode, caches: Bool) async -> UIImage? { nil }
+}
+
+/// Every photo loads, as a solid image of its own shape at the requested size, and requests
+/// are recorded so tests can check what was asked of the library.
+final class SolidPhotos: CreationPhotoLoading, @unchecked Sendable {
+    let aspects: [AssetID: Double]
+    private let lock = NSLock()
+    private var log: [(id: AssetID, size: CGSize)] = []
+
+    init(aspects: [AssetID: Double]) {
+        self.aspects = aspects
+    }
+
+    var requests: [(id: AssetID, size: CGSize)] { lock.withLock { log } }
+
+    func image(for id: AssetID, pixelSize: CGSize, contentMode: PHImageContentMode, caches: Bool) async -> UIImage? {
+        lock.withLock { log.append((id, pixelSize)) }
+        let aspect = aspects[id] ?? 1
+        // Like PhotoKit: keep the photo's shape, cover (fill) or fit inside the requested size.
+        let scale = contentMode == .aspectFill
+            ? max(pixelSize.width / aspect, pixelSize.height)
+            : min(pixelSize.width / aspect, pixelSize.height)
+        return CreationTestLibrary.solidImage(width: (scale * aspect).rounded(), height: scale.rounded())
     }
 }
 
@@ -254,7 +308,7 @@ final class StoryMakerModelTests: XCTestCase {
         let (store, _) = CreationTestLibrary.makeStore()
         let trip = store.story.moments[0]
         let model = StoryMakerModel(source: .moment(trip.id), library: store.creationLibrary)
-        await model.loadPreviews(using: CreationImageSource(loader: PhotoImageLoader()))
+        await model.loadPreviews(using: CreationImageSource(loader: MissingPhotos()))
         XCTAssertNotNil(model.shortfall)
         XCTAssertFalse(model.canExport)
     }
