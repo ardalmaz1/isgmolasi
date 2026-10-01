@@ -230,7 +230,6 @@ struct ExportStatusView: View {
             case .finished(let message):
                 Label(message, systemImage: "checkmark")
                     .foregroundStyle(Palette.textPrimary)
-                    .accessibilityIdentifier("exportFinished")
             case .failed(let message):
                 VStack(spacing: Spacing.xs) {
                     Text(message)
@@ -247,5 +246,15 @@ struct ExportStatusView: View {
         .frame(maxWidth: .infinity)
         .animation(.easeInOut(duration: 0.2), value: controller.phase)
         .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(identifier)
+    }
+
+    private var identifier: String {
+        switch controller.phase {
+        case .idle: "exportIdle"
+        case .working: "exportWorking"
+        case .finished: "exportFinished"
+        case .failed: "exportFailed"
+        }
     }
 }

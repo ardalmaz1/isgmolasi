@@ -49,7 +49,7 @@ final class CreationFlowUITests: XCTestCase {
 
         app.buttons["collageSave"].tap()
         allowSystemAlertIfShown()
-        XCTAssertTrue(app.descendants(matching: .any)["exportFinished"].waitForExistence(timeout: 60), "Collage was not saved")
+        XCTAssertTrue(waitForExport(app), "Collage was not saved")
         capture("C06-collage-saved")
         printScreen(app, "collage-saved")
         app.buttons["Close"].firstMatch.tap()
@@ -71,13 +71,13 @@ final class CreationFlowUITests: XCTestCase {
         capture("C09-story-editorial")
         app.buttons["storySaveOne"].tap()
         allowSystemAlertIfShown()
-        XCTAssertTrue(app.descendants(matching: .any)["exportFinished"].waitForExistence(timeout: 60), "Story card was not saved")
+        XCTAssertTrue(waitForExport(app), "Story card was not saved")
         app.buttons["Close"].firstMatch.tap()
 
         // Monthly Recap
         XCTAssertTrue(app.buttons["createMonthlyRecap"].waitForExistence(timeout: 10))
         app.buttons["createMonthlyRecap"].tap()
-        let month = app.buttons.matching(identifier: "recapMonthRow").firstMatch
+        let month = app.descendants(matching: .any).matching(identifier: "recapMonthRow").firstMatch
         XCTAssertTrue(month.waitForExistence(timeout: 10), "No months listed")
         capture("C10-months")
         month.tap()
@@ -161,6 +161,23 @@ final class CreationFlowUITests: XCTestCase {
         capture("C-picker-\(Int(Date().timeIntervalSince1970) % 1000)")
         let row = try XCTUnwrap(rows.allElementsBoundByIndex.first { $0.isEnabled && $0.isHittable }, "No moment with enough photos")
         row.tap()
+    }
+
+    /// Waits for an export to finish; prints the failure message if it failed instead.
+    @MainActor
+    private func waitForExport(_ app: XCUIApplication) -> Bool {
+        let finished = app.descendants(matching: .any)["exportFinished"]
+        let failed = app.descendants(matching: .any)["exportFailed"]
+        for _ in 0..<60 {
+            if finished.exists { return true }
+            if failed.exists {
+                print("SCREEN export-failed: \(failed.label)")
+                return false
+            }
+            allowSystemAlertIfShown()
+            sleep(1)
+        }
+        return finished.exists
     }
 
     /// Photo access is granted before the run; if iOS still asks (e.g. to add photos), allow it.
