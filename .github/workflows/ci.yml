@@ -113,36 +113,40 @@ jobs:
       - name: Export screenshots
         if: always()
         run: |
-          mkdir -p build/screenshots
+          mkdir -p build/screenshots build/screenshots/renders
           xcrun xcresulttool export attachments --path build/UIFlow.xcresult --output-path build/screenshots || true
-          ls -la build/screenshots || true
+          # Rendered book pages and trend recipes attached by the hosted tests.
+          xcrun xcresulttool export attachments --path build/AppUnitTests.xcresult --output-path build/screenshots/renders || true
+          ls -la build/screenshots build/screenshots/renders || true
       - name: Screenshot thumbnails (for review from environments without artifact access)
         if: always()
         run: |
           python3 - <<'PY'
           import base64, json, pathlib, subprocess
-          root = pathlib.Path("build/screenshots")
-          manifest = root / "manifest.json"
-          if not manifest.exists():
-              raise SystemExit(0)
           found = []
-          def walk(node):
+          def walk(node, root):
               if isinstance(node, dict):
                   if "exportedFileName" in node and "suggestedHumanReadableName" in node:
-                      found.append((node["suggestedHumanReadableName"], node["exportedFileName"]))
+                      found.append((node["suggestedHumanReadableName"], root / node["exportedFileName"]))
                   for value in node.values():
-                      walk(value)
+                      walk(value, root)
               elif isinstance(node, list):
                   for value in node:
-                      walk(value)
-          walk(json.loads(manifest.read_text()))
-          wanted = ("08-", "15-", "C01-", "C02-", "C03-", "C04-", "C05-", "C06-", "C07-", "C08-", "C09-", "C11-", "C13-", "C16-", "C17-")
+                      walk(value, root)
+          for root in (pathlib.Path("build/screenshots"), pathlib.Path("build/screenshots/renders")):
+              manifest = root / "manifest.json"
+              if manifest.exists():
+                  walk(json.loads(manifest.read_text()), root)
+          out = pathlib.Path("build/screenshots")
+          wanted = ("08-", "15-", "C01-", "C02-", "C06-", "C07-", "T01-", "T02-", "T03-", "T04-", "T06-", "B03-", "B04-", "B05-", "B06-", "B07-", "B08-", "P-", "R-")
           for name, file in sorted(found):
-              if not name.startswith(wanted) or not file.endswith(".png"):
+              if not name.startswith(wanted) or file.suffix != ".png":
                   continue
-              thumb = root / (name.split("_")[0] + ".jpg")
-              subprocess.run(["sips", "-Z", "440", "-s", "format", "jpeg", "-s", "formatOptions", "50",
-                              str(root / file), "--out", str(thumb)], check=True, capture_output=True)
+              # Renders are reviewed for layout, so smaller thumbnails are enough.
+              size = "300" if name.startswith(("P-", "R-")) else "440"
+              thumb = out / (name.split("_")[0] + ".jpg")
+              subprocess.run(["sips", "-Z", size, "-s", "format", "jpeg", "-s", "formatOptions", "50",
+                              str(file), "--out", str(thumb)], check=True, capture_output=True)
               data = base64.b64encode(thumb.read_bytes()).decode()
               print(f"THUMB-BEGIN {thumb.name}")
               for i in range(0, len(data), 4000):

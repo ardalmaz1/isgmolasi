@@ -83,11 +83,14 @@ struct MemoryBookEditorView: View {
                         .overlay { AssetImageView(assetID: layout.pages.first?.slots.first?.assetID) }
                         .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                         .accessibilityHidden(true)
+                    // Borderless: a List row with several default buttons fires all of them on a tap.
                     VStack(alignment: .leading, spacing: Spacing.xxs) {
                         Button("Change Cover") { picker = .cover }
+                            .buttonStyle(.borderless)
                             .accessibilityIdentifier("bookChangeCover")
                         if book.coverAssetID != nil {
                             Button("Use the Best Photo") { updateIfAllowed { $0.setCover(nil) } }
+                                .buttonStyle(.borderless)
                                 .font(Typography.footnote)
                         }
                     }

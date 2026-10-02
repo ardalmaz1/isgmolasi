@@ -110,6 +110,7 @@ struct CreateHomeView: View {
                 }
                 .scrollIndicators(.hidden)
                 .padding(.horizontal, -Spacing.screenMargin)
+                .accessibilityIdentifier("trendingRow")
             }
         }
     }
