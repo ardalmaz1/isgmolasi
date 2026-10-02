@@ -116,6 +116,11 @@ public struct StorySequenceBuilder: Sendable {
             }
             return .success(byMoment(pool: pool, lead: library.best(pool), facts: facts, ordered: pool))
 
+        case .trip:
+            let ordered = library.initialPhotos(for: source, limit: .max).filter { !excluding.contains($0) }
+            let facts = library.facts(for: source, photos: ordered)
+            return .success(byMoment(pool: ordered, lead: library.best(ordered), facts: facts, ordered: ordered))
+
         case .month(let month):
             let recap = MonthlyRecapBuilder(library: library).recap(for: month)
             let ordered = recap.interleavedPhotos.filter { !excluding.contains($0) }

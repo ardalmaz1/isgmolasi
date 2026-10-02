@@ -71,9 +71,11 @@ public struct CreationFacts: Hashable, Sendable {
     public static let none = CreationFacts()
 }
 
-/// What a creation is made from.
-public enum CreationSource: Hashable, Sendable {
+/// What a creation is made from. Codable so saved creations (Memory Books) remember it.
+public enum CreationSource: Hashable, Sendable, Codable {
     case moment(MomentID)
+    /// A trip: a chapter of consecutive moments away from home.
+    case trip(UUID)
     case photos([AssetID])
     case month(MonthKey)
     case year(Int)
@@ -211,6 +213,10 @@ public struct CreationLibrary: Sendable {
         case .moment(let id):
             guard let moment = story.moment(id: id), isVisible(moment) else { return [] }
             return spreadPick(usablePhotos(in: moment), count: limit, include: lead(of: moment))
+        case .trip(let id):
+            let summary = RecapSummary(moments: tripMoments(id), library: self)
+            let interleaved = summary.interleave(summary.moments.map { summary.ranked($0) })
+            return Array(interleaved.prefix(limit)).sorted(by: chronologicalOrder)
         case .month(let month):
             return MonthlyRecapBuilder(library: self).recap(for: month).highlights(limit: limit)
         case .year(let year):
@@ -226,6 +232,8 @@ public struct CreationLibrary: Sendable {
         case .moment(let id):
             guard let moment = story.moment(id: id), isVisible(moment) else { return [] }
             return usablePhotos(in: moment)
+        case .trip(let id):
+            return tripMoments(id).flatMap(usablePhotos(in:))
         case .month(let month):
             return MonthlyRecapBuilder(library: self).recap(for: month).moments.flatMap(usablePhotos(in:))
         case .year(let year):
@@ -243,6 +251,11 @@ public struct CreationLibrary: Sendable {
             return facts(forPhotos: photos)
         case .photos:
             return facts(forPhotos: photos)
+        case .trip(let id):
+            guard let chapter = story.chapter(id: id) else { return facts(forPhotos: photos) }
+            var facts = facts(for: chapter)
+            facts.dateSpan = dateSpan(of: photos) ?? facts.dateSpan
+            return facts
         case .month(let month):
             let recap = MonthlyRecapBuilder(library: self).recap(for: month)
             var facts = sharedPlaceFacts(recap.moments)
@@ -253,6 +266,27 @@ public struct CreationLibrary: Sendable {
             let review = YearInReviewBuilder(library: self).review(for: year)
             return CreationFacts(title: .year(year), dateSpan: dateSpan(of: photos) ?? review.dateSpan)
         }
+    }
+
+    /// Visible moments of a trip, chronological.
+    public func tripMoments(_ id: UUID) -> [Moment] {
+        visibleMoments.filter { $0.chapterID == id }
+    }
+
+    /// Trips with at least one visible moment, newest first.
+    public var visibleTrips: [Chapter] {
+        let visible = Set(visibleMoments.compactMap(\.chapterID))
+        return story.chapters.filter { visible.contains($0.id) }.sorted { $0.startDate > $1.startDate }
+    }
+
+    public func facts(for chapter: Chapter) -> CreationFacts {
+        let title = chapter.title.primary.trimmingCharacters(in: .whitespacesAndNewlines)
+        return CreationFacts(
+            title: title.isEmpty ? chapter.place.map { .named($0.name) } : .named(title),
+            dateSpan: DateSpan(start: chapter.startDate, end: chapter.endDate),
+            place: chapter.place,
+            coordinate: chapter.place == nil ? nil : chapter.centroid
+        )
     }
 
     public func facts(for moment: Moment) -> CreationFacts {
@@ -287,13 +321,9 @@ public struct CreationLibrary: Sendable {
         }
         if let chapterID = moments.first?.chapterID, moments.allSatisfy({ $0.chapterID == chapterID }),
            let chapter = story.chapter(id: chapterID) {
-            let title = chapter.title.primary.trimmingCharacters(in: .whitespacesAndNewlines)
-            return CreationFacts(
-                title: title.isEmpty ? chapter.place.map { .named($0.name) } : .named(title),
-                dateSpan: span,
-                place: chapter.place,
-                coordinate: chapter.place == nil ? nil : chapter.centroid
-            )
+            var facts = facts(for: chapter)
+            facts.dateSpan = span
+            return facts
         }
         var facts = sharedPlaceFacts(moments)
         facts.dateSpan = span
