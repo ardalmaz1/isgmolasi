@@ -65,7 +65,12 @@ enum TrendRecipeRegistry {
 /// Core Image steps shared by recipes. Deterministic: the same photo and variation always give
 /// the same pixels (the grain is a fixed pattern).
 enum TrendImageProcessing {
-    nonisolated(unsafe) private static let context = CIContext(options: [.cacheIntermediates: false])
+    /// One shared context. CIContext is thread-safe; the box keeps this warning-free on SDKs
+    /// that do and don't mark it Sendable.
+    private final class SharedContext: @unchecked Sendable {
+        let context = CIContext(options: [.cacheIntermediates: false])
+    }
+    private static let shared = SharedContext()
 
     /// Runs `transform` on an upright version of `image`, off the main thread.
     static func apply(_ image: UIImage, _ transform: @escaping @Sendable (CIImage) -> CIImage) async -> UIImage {
@@ -73,7 +78,7 @@ enum TrendImageProcessing {
             guard let cgImage = image.cgImage else { return image }
             let input = CIImage(cgImage: cgImage).oriented(CGImagePropertyOrientation(image.imageOrientation))
             let output = transform(input).cropped(to: input.extent)
-            guard let rendered = context.createCGImage(output, from: input.extent) else { return image }
+            guard let rendered = shared.context.createCGImage(output, from: input.extent) else { return image }
             return UIImage(cgImage: rendered)
         }.value
     }
