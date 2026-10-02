@@ -118,22 +118,31 @@ final class PersistenceMigrationTests: XCTestCase {
 
 @MainActor
 final class MemoryBookRenderingTests: XCTestCase {
-    private func layout() throws -> (BookLayout, StoryStore) {
+    private func makeBook() throws -> (MemoryBook, StoryStore) {
         let (store, _) = CreationTestLibrary.makeStore()
         var book = try MemoryBookBuilder(library: store.creationLibrary).makeBook(from: .year(2025), now: Date()).get()
         book.note = "For us."
+        return (book, store)
+    }
+
+    private func layout() throws -> (BookLayout, StoryStore) {
+        let (book, store) = try makeBook()
         return (BookLayoutEngine(library: store.creationLibrary).layout(book), store)
     }
 
     func testEveryPageKindRendersAtExportSizeInEveryStyle() throws {
-        let (layout, store) = try layout()
+        let (initial, store) = try makeBook()
+        var book = initial
         var images: CanvasImages = [:]
-        for id in layout.photoIDs {
+        for id in book.photoIDs {
             let aspect = store.assets[id]?.aspectRatio ?? 1
-            images[id] = CreationTestLibrary.solidImage(width: (300 * aspect).rounded(), height: 300)
+            images[id] = TrendTestImages.gradient(width: (300 * aspect).rounded(), height: 300)
         }
-        XCTAssertTrue(Set(layout.pages.map(\.kind)).isSuperset(of: [.cover, .bookNote, .opener, .photos, .closing]))
         for style in BookStyle.allCases {
+            // As in the reader: laid out for the book's own style.
+            book.style = style
+            let layout = BookLayoutEngine(library: store.creationLibrary).layout(book)
+            XCTAssertTrue(Set(layout.pages.map(\.kind)).isSuperset(of: [.cover, .bookNote, .opener, .photos, .closing]))
             var attached = Set<String>()
             for page in layout.pages {
                 let canvas = BookPageCanvas(page: page, style: style, images: images)
@@ -142,7 +151,7 @@ final class MemoryBookRenderingTests: XCTestCase {
                 XCTAssertEqual(rendered.width, 2160)
                 XCTAssertEqual(rendered.height, 2700)
                 // One of each kind (and of each photo template) per style, for review in CI.
-                let name = "P-\(style)-\(page.kind)\(page.kind == .photos ? "-\(page.template)" : "")"
+                let name = "P-\(style)-\(page.kind)" + (page.template.map { "-\($0)" } ?? "")
                 if attached.insert(name).inserted { attach(image, name: name) }
             }
         }
@@ -192,7 +201,7 @@ final class TrendAppTests: XCTestCase {
     }
 
     func testEveryRecipeRendersEachVariationAtExportSize() async throws {
-        let photo = CreationTestLibrary.solidImage(width: 600, height: 800)
+        let photo = TrendTestImages.gradient(width: 600, height: 800)
         for recipe in TrendRecipeRegistry.all {
             for variation in recipe.variations.indices {
                 let processed = await recipe.process(photo, variation: variation)
@@ -204,6 +213,19 @@ final class TrendAppTests: XCTestCase {
                 XCTAssertEqual(rendered.width, recipe.aspectRatio.exportPixelSize.width, "\(recipe.reference)")
                 XCTAssertEqual(rendered.height, recipe.aspectRatio.exportPixelSize.height, "\(recipe.reference)")
                 if variation == 0 { attach(image, name: "R-\(recipe.reference.id)") }
+            }
+        }
+    }
+
+    /// Processing must keep a photo's mid-tones: a neutral grey stays a visible grey in every
+    /// recipe and variation (never crushed to black or blown out to white).
+    func testProcessingKeepsMidTones() async throws {
+        let grey = TrendTestImages.solid(white: 0.5, width: 400, height: 500)
+        for recipe in TrendRecipeRegistry.all {
+            for variation in recipe.variations.indices {
+                let processed = await recipe.process(grey, variation: variation)
+                let level = try XCTUnwrap(TrendTestImages.centreLuminance(of: processed))
+                XCTAssertTrue((0.2...0.85).contains(level), "\(recipe.reference) \(recipe.variations[variation]): \(level)")
             }
         }
     }
@@ -276,6 +298,59 @@ final class TrendAppTests: XCTestCase {
         XCTAssertNil(RemoteTrendCatalogProvider(url: URL(string: "http://example.com/catalog.json")!))
         XCTAssertNotNil(RemoteTrendCatalogProvider(url: URL(string: "https://example.com/catalog.json")!))
         XCTAssertNil(RemoteTrendCatalogProvider.configured(bundle: .main), "no remote catalog is configured in this build")
+    }
+}
+
+/// Test photos in plain 8-bit sRGB, like library photos.
+enum TrendTestImages {
+    private static var format: UIGraphicsImageRendererFormat {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = 1
+        format.preferredRange = .standard
+        return format
+    }
+
+    /// A warm-to-cool vertical gradient, so tonal processing shows in renders.
+    nonisolated static func gradient(width: CGFloat, height: CGFloat) -> UIImage {
+        UIGraphicsImageRenderer(size: CGSize(width: width, height: height), format: format).image { context in
+            let colours = [
+                UIColor(red: 0.98, green: 0.86, blue: 0.66, alpha: 1).cgColor,
+                UIColor(red: 0.78, green: 0.52, blue: 0.42, alpha: 1).cgColor,
+                UIColor(red: 0.22, green: 0.3, blue: 0.42, alpha: 1).cgColor,
+            ] as CFArray
+            let gradient = CGGradient(colorsSpace: CGColorSpace(name: CGColorSpace.sRGB), colors: colours, locations: [0, 0.55, 1])!
+            context.cgContext.drawLinearGradient(gradient, start: .zero, end: CGPoint(x: 0, y: height), options: [])
+        }
+    }
+
+    nonisolated static func solid(white: CGFloat, width: CGFloat, height: CGFloat) -> UIImage {
+        UIGraphicsImageRenderer(size: CGSize(width: width, height: height), format: format).image { context in
+            UIColor(white: white, alpha: 1).setFill()
+            context.fill(CGRect(x: 0, y: 0, width: width, height: height))
+        }
+    }
+
+    /// The luminance (0…1) of a small patch at the centre of `image`.
+    static func centreLuminance(of image: UIImage) -> Double? {
+        guard let cgImage = image.cgImage else { return nil }
+        let side = 8
+        let patch = CGRect(x: cgImage.width / 2 - side / 2, y: cgImage.height / 2 - side / 2, width: side, height: side)
+        guard let cropped = cgImage.cropping(to: patch) else { return nil }
+        var pixels = [UInt8](repeating: 0, count: side * side * 4)
+        let drawn: Bool = pixels.withUnsafeMutableBytes { buffer in
+            guard let context = CGContext(
+                data: buffer.baseAddress, width: side, height: side, bitsPerComponent: 8, bytesPerRow: side * 4,
+                space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+            ) else { return false }
+            context.draw(cropped, in: CGRect(x: 0, y: 0, width: side, height: side))
+            return true
+        }
+        guard drawn else { return nil }
+        var total = 0.0
+        for index in stride(from: 0, to: pixels.count, by: 4) {
+            total += 0.2126 * Double(pixels[index]) + 0.7152 * Double(pixels[index + 1]) + 0.0722 * Double(pixels[index + 2])
+        }
+        return total / Double(side * side) / 255
     }
 }
 

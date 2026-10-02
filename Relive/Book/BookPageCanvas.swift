@@ -184,7 +184,8 @@ struct BookPageCanvas: View {
     @ViewBuilder
     private var cover: some View {
         if let frame = page.textFrame {
-            let overPhoto = style == .editorial && !page.slots.isEmpty
+            // White over the photo only where the photo really is behind the title.
+            let overPhoto = style == .editorial && page.slots.contains { $0.frame.contains(frame, tolerance: 1) }
             VStack(alignment: overPhoto ? .leading : .center, spacing: 18) {
                 if let title = text.title {
                     Text(display(title))

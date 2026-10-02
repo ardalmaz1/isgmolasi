@@ -152,7 +152,8 @@ log lines with non-identifying properties (kind, style, shape, counts).
 - **v0.3**: `MemoryBookTests`, `MemoryBookEditingTests`, `TrendCatalogTests` (ReliveCore, Linux);
   `ReliveTests/BookAndTrendTests.swift` (books saved/reopened/deleted, v0.2 → v0.3 store
   migration, every page kind × style at export size, every recipe × variation at export size,
-  deterministic processing, studio export, AI honestly unavailable, catalog fallback);
+  deterministic processing, mid-tones kept by every recipe, studio export, AI honestly
+  unavailable, catalog fallback; page and recipe renders are attached for review in CI);
   `ReliveUITests/BookAndTrendsUITests.swift` (trend → studio → variation → Save; AI trend
   disclosure; Memory Book from a trip → pages → Save Page → style → relaunch).
 
