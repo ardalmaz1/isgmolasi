@@ -53,6 +53,8 @@ final class StoryStore {
     private(set) var statistics: StoryStatistics = .zero
     /// Images Relive saved to the library itself; never imported as memories.
     private(set) var createdAssetIDs: Set<AssetID>
+    /// Saved Memory Books, most recently changed first.
+    private(set) var books: [MemoryBook]
 
     let calendar: Calendar
     let photoLibrary: any PhotoLibraryProviding
@@ -86,6 +88,7 @@ final class StoryStore {
         self.assets = Dictionary(repository.loadAssets().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         self.userStates = repository.loadMomentStates()
         self.createdAssetIDs = repository.loadCreatedAssetIDs()
+        self.books = repository.loadBooks().sorted { $0.updatedAt > $1.updatedAt }
         self.accessStatus = photoLibrary.accessStatus()
         recomputeDerived()
     }
@@ -257,6 +260,26 @@ final class StoryStore {
         guard !ids.isEmpty else { return }
         createdAssetIDs.formUnion(ids)
         repository.recordCreatedAssets(ids)
+    }
+
+    // MARK: - Memory Books
+
+    func book(id: UUID) -> MemoryBook? {
+        books.first { $0.id == id }
+    }
+
+    /// Saves a new or changed book and keeps the list in most-recent order.
+    func saveBook(_ book: MemoryBook, now: Date = Date()) {
+        var book = book
+        book.updatedAt = now
+        books.removeAll { $0.id == book.id }
+        books.insert(book, at: 0)
+        repository.saveBook(book)
+    }
+
+    func deleteBook(id: UUID) {
+        books.removeAll { $0.id == id }
+        repository.deleteBook(id: id)
     }
 
     // MARK: - Processing
@@ -486,6 +509,7 @@ final class StoryStore {
         assets = [:]
         userStates = [:]
         unavailableAssetIDs = []
+        books = []
         processing = .idle
         recomputeDerived()
         Task { await placeResolver.clearCache() }

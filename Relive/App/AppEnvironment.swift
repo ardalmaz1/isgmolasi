@@ -9,6 +9,7 @@ final class AppEnvironment {
     let container: ModelContainer
     let appModel: AppModel
     let storyStore: StoryStore
+    let trendCatalog: TrendCatalogStore
     let imageLoader: PhotoImageLoader
     let analytics: any AnalyticsTracking
 
@@ -30,6 +31,7 @@ final class AppEnvironment {
             analytics: analytics
         )
         self.storyStore = storyStore
+        self.trendCatalog = TrendCatalogStore()
         self.appModel = AppModel(storyStore: storyStore, repository: repository, analytics: analytics)
     }
 

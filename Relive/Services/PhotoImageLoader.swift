@@ -18,6 +18,9 @@ final class PhotoImageLoader: @unchecked Sendable {
 
     init() {
         cache.countLimit = 400
+        // Bounded by decoded size too, so large preview images (books, creations) can't grow the
+        // cache without limit; NSCache also empties itself under memory pressure.
+        cache.totalCostLimit = 160 * 1024 * 1024
         manager.allowsCachingHighQualityImages = false
     }
 
@@ -44,7 +47,8 @@ final class PhotoImageLoader: @unchecked Sendable {
         options.isNetworkAccessAllowed = true
         let image = await request(asset: asset, pixelSize: pixelSize, contentMode: contentMode, options: options)
         if let image, caches {
-            cache.setObject(image, forKey: key)
+            let pixels = image.size.width * image.scale * image.size.height * image.scale
+            cache.setObject(image, forKey: key, cost: Int(pixels) * 4)
         }
         return image
     }

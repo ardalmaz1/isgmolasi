@@ -99,6 +99,22 @@ final class StoredCreatedAsset {
     }
 }
 
+/// A Memory Book (v0.3): its definition as JSON — source, photo references, cover, style, note.
+/// Never pixels; pages are laid out again from the story whenever the book opens.
+@Model
+final class StoredMemoryBook {
+    var bookID: UUID = UUID()
+    /// JSON-encoded `MemoryBook`.
+    var payload: Data = Data()
+    var updatedAt: Date = Date()
+
+    init(bookID: UUID, payload: Data, updatedAt: Date) {
+        self.bookID = bookID
+        self.payload = payload
+        self.updatedAt = updatedAt
+    }
+}
+
 enum PersistenceSchema {
     static let models: [any PersistentModel.Type] = [
         StoredProfile.self,
@@ -106,5 +122,6 @@ enum PersistenceSchema {
         StoredStorySnapshot.self,
         StoredMomentState.self,
         StoredCreatedAsset.self,
+        StoredMemoryBook.self,
     ]
 }

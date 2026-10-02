@@ -13,6 +13,7 @@ struct ReliveApp: App {
             RootView()
                 .environment(environment.appModel)
                 .environment(environment.storyStore)
+                .environment(environment.trendCatalog)
                 .environment(\.photoImageLoader, environment.imageLoader)
                 .environment(\.analytics, environment.analytics)
         }

@@ -7,15 +7,20 @@ enum CreateRoute: Hashable {
     case month(MonthKey)
     case years
     case year(Int)
+    case trend(String)
+    case book(UUID)
 }
 
-/// Create: Relive's creative hub. Four things, each shown with the user's own photos.
+/// Create: Relive's creative studio. Trending Now (current, from the trend catalog) above the
+/// permanent tools, each shown with the user's own photos.
 /// "Choose memories. Relive makes something beautiful from them."
 struct CreateHomeView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
+    @Environment(TrendCatalogStore.self) private var trends
     @Environment(\.analytics) private var analytics
     @State private var path: [CreateRoute] = []
+    @State private var choosesBookSource = false
 
     var body: some View {
         let library = store.creationLibrary
@@ -43,9 +48,15 @@ struct CreateHomeView: View {
                             message: "Once your story has memories, you can turn them into collages, stories and recaps here."
                         )
                     } else {
+                        trendingNow
+                        Text("Create")
+                            .eyebrowStyle()
+                            .accessibilityAddTraits(.isHeader)
                         collageFeature(library: library)
                         Hairline()
                         storyFeature(library: library)
+                        Hairline()
+                        bookFeature(library: library, months: months, years: years)
                         Hairline()
                         monthlyRecapRow(library: library, months: months)
                         Hairline()
@@ -65,11 +76,93 @@ struct CreateHomeView: View {
                 case .month(let month): MonthlyRecapView(month: month)
                 case .years: YearListView()
                 case .year(let year): OurYearView(year: year)
+                case .trend(let id): TrendDetailView(trendID: id)
+                case .book(let id): MemoryBookReaderView(bookID: id)
                 }
             }
             .momentDestination()
         }
         .onAppear { analytics.track(.createOpened) }
+        .task { await trends.refresh() }
+    }
+
+    // MARK: - Trending Now
+
+    @ViewBuilder
+    private var trendingNow: some View {
+        let visible = trends.visibleTrends()
+        if !visible.isEmpty {
+            VStack(alignment: .leading, spacing: Spacing.m) {
+                Text("Trending Now")
+                    .eyebrowStyle()
+                    .accessibilityAddTraits(.isHeader)
+                ScrollView(.horizontal) {
+                    LazyHStack(alignment: .top, spacing: Spacing.m) {
+                        ForEach(visible, id: \.trend.id) { entry in
+                            NavigationLink(value: CreateRoute.trend(entry.trend.id)) {
+                                TrendCard(trend: entry.trend, availability: entry.availability)
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("trendCard-\(entry.trend.id)")
+                        }
+                    }
+                    .padding(.horizontal, Spacing.screenMargin)
+                }
+                .scrollIndicators(.hidden)
+                .padding(.horizontal, -Spacing.screenMargin)
+            }
+        }
+    }
+
+    // MARK: - Memory Book
+
+    private func bookFeature(library: CreationLibrary, months: [MonthKey], years: [Int]) -> some View {
+        let cover = library.visibleMoments.last(where: { $0.kind != .undated }).flatMap(library.lead(of:))
+        let hasTrips = !library.visibleTrips.isEmpty
+        return VStack(alignment: .leading, spacing: Spacing.m) {
+            HStack(alignment: .top, spacing: Spacing.m) {
+                BookCoverThumbnail(assetID: cover)
+                    .frame(width: 96)
+                    .accessibilityHidden(true)
+                VStack(alignment: .leading, spacing: Spacing.s) {
+                    FeatureText(title: "Memory Book", subtitle: "Your memories, made into a book.")
+                    Button("Start a Book") { choosesBookSource = true }
+                        .buttonStyle(.reliveOutline)
+                        .accessibilityIdentifier("createBook")
+                }
+            }
+            if !store.books.isEmpty {
+                VStack(alignment: .leading, spacing: Spacing.s) {
+                    Text("Your books").eyebrowStyle()
+                    ScrollView(.horizontal) {
+                        HStack(alignment: .top, spacing: Spacing.m) {
+                            ForEach(store.books) { book in
+                                NavigationLink(value: CreateRoute.book(book.id)) {
+                                    BookShelfItem(book: book)
+                                }
+                                .buttonStyle(.plain)
+                                .accessibilityIdentifier("savedBook")
+                            }
+                        }
+                    }
+                    .scrollIndicators(.hidden)
+                }
+            }
+        }
+        .confirmationDialog("Start a Memory Book from…", isPresented: $choosesBookSource, titleVisibility: .visible) {
+            Button("A Moment") { app.startCreation(.book, from: .chooseMoment, origin: "create") }
+            if hasTrips {
+                Button("A Trip") { app.startCreation(.book, from: .chooseTrip, origin: "create") }
+            }
+            if !months.isEmpty {
+                Button("A Month") { app.startCreation(.book, from: .chooseMonth, origin: "create") }
+            }
+            if !years.isEmpty {
+                Button("A Year") { app.startCreation(.book, from: .chooseYear, origin: "create") }
+            }
+            Button("Photos I Choose") { app.startCreation(.book, from: .choosePhotos, origin: "create") }
+            Button("Cancel", role: .cancel) {}
+        }
     }
 
     // MARK: - Memory Collage
@@ -219,5 +312,47 @@ private struct FeatureRow: View {
         }
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// A small closed book: the cover photo with a spine shadow.
+struct BookCoverThumbnail: View {
+    let assetID: AssetID?
+
+    var body: some View {
+        Color.clear
+            .aspectRatio(4 / 5, contentMode: .fit)
+            .overlay { AssetImageView(assetID: assetID) }
+            .overlay(alignment: .leading) {
+                LinearGradient(colors: [.black.opacity(0.28), .clear], startPoint: .leading, endPoint: .trailing)
+                    .frame(width: 10)
+            }
+            .clipShape(RoundedRectangle(cornerRadius: 3, style: .continuous))
+            .shadow(color: .black.opacity(0.2), radius: 6, x: 2, y: 4)
+    }
+}
+
+/// A saved book on the shelf.
+private struct BookShelfItem: View {
+    let book: MemoryBook
+
+    @Environment(StoryStore.self) private var store
+
+    var body: some View {
+        let layout = BookLayoutEngine(library: store.creationLibrary).layout(book)
+        VStack(alignment: .leading, spacing: Spacing.xs) {
+            BookCoverThumbnail(assetID: layout.pages.first?.slots.first?.assetID)
+                .frame(width: 110)
+            Text(CreationText.title(layout.facts.title) ?? CreationText.periodLine(layout.facts.dateSpan) ?? "Memory Book")
+                .font(Typography.footnote.weight(.semibold))
+                .foregroundStyle(Palette.textPrimary)
+                .lineLimit(1)
+            Text("\(Counted.text(layout.photoIDs.count, "photo", "photos")) · \(book.style.displayName)")
+                .font(.caption2)
+                .foregroundStyle(Palette.textSecondary)
+        }
+        .frame(width: 110, alignment: .leading)
+        .accessibilityElement(children: .combine)
+        .accessibilityHint("Opens the book")
     }
 }

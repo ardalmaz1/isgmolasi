@@ -328,7 +328,10 @@ public struct BookLayoutEngine: Sendable {
             if aspects[0] <= 1.05 {
                 template = .fullBleed
                 let inset = metrics.bleedInset * Self.pageSize.width
-                frames = [LayoutRect(x: 0, y: 0, width: Self.pageSize.width, height: Self.pageSize.height).insetBy(dx: inset, dy: inset)]
+                // Edge to edge when the style bleeds; otherwise a large print that leaves the
+                // running footer clear.
+                let footer = inset > 0 ? metrics.footer * Self.pageSize.width : 0
+                frames = [LayoutRect(x: inset, y: inset, width: Self.pageSize.width - 2 * inset, height: Self.pageSize.height - 2 * inset - footer)]
             } else {
                 template = .single
                 frames = CollageLayoutEngine.justified(aspects: aspects.map { min(2.4, $0) }, in: area, gutter: gutter, maxRows: 1)

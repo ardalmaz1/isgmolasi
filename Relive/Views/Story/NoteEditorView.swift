@@ -3,6 +3,8 @@ import SwiftUI
 /// A private note on a moment. Stored only on this iPhone.
 struct NoteEditorView: View {
     let initialText: String
+    var prompt = "What do you remember about this?"
+    var privacyLine = "Only you can see this. It stays on this iPhone."
     let onSave: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -12,7 +14,7 @@ struct NoteEditorView: View {
     var body: some View {
         NavigationStack {
             VStack(alignment: .leading, spacing: Spacing.m) {
-                Text("What do you remember about this?")
+                Text(prompt)
                     .font(Typography.title2)
                     .foregroundStyle(Palette.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -27,7 +29,7 @@ struct NoteEditorView: View {
                     .background(Palette.surface, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
                     .accessibilityLabel("Note")
 
-                Label("Only you can see this. It stays on this iPhone.", systemImage: "lock")
+                Label(privacyLine, systemImage: "lock")
                     .font(Typography.footnote)
                     .foregroundStyle(Palette.textSecondary)
 

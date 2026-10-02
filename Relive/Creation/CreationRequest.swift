@@ -5,12 +5,14 @@ import ReliveCore
 enum CreationKind: String, Hashable, Sendable {
     case collage
     case story
+    case book
 
     /// Photos a creation of this kind works with.
     var photoRange: ClosedRange<Int> {
         switch self {
         case .collage: CreationLimits.collage
         case .story: CreationLimits.story
+        case .book: BookLimits.minimumPhotos...BookLimits.maximumPhotos
         }
     }
 
@@ -18,6 +20,7 @@ enum CreationKind: String, Hashable, Sendable {
         switch self {
         case .collage: "Memory Collage"
         case .story: "Story Maker"
+        case .book: "Memory Book"
         }
     }
 }
@@ -26,6 +29,9 @@ enum CreationKind: String, Hashable, Sendable {
 enum CreationStart: Hashable, Sendable {
     case choosePhotos
     case chooseMoment
+    case chooseTrip
+    case chooseMonth
+    case chooseYear
     case source(CreationSource)
 }
 

@@ -285,3 +285,68 @@ struct MemoryBookTests {
         #expect((3...6).contains(story.cards.count))
     }
 }
+
+@Suite("Memory Book editing")
+struct MemoryBookEditingTests {
+    func book() -> MemoryBook {
+        MemoryBook(createdAt: date(2026, 1, 1), source: .photos([]), photoIDs: ["a", "b", "c", "d", "e"], coverAssetID: "c")
+    }
+
+    @Test("Removing keeps a book a book")
+    func remove() {
+        var book = book()
+        let ok1 = book.removePhoto("c")
+        #expect(ok1)
+        #expect(book.photoIDs == ["a", "b", "d", "e"])
+        #expect(book.coverAssetID == nil, "the removed photo was the cover")
+        let ok2 = book.removePhoto("a")
+        #expect(!ok2, "four photos is the minimum")
+        let ok3 = book.removePhoto("missing")
+        #expect(!ok3)
+    }
+
+    @Test("Moving and replacing")
+    func moveReplace() {
+        var book = book()
+        let ok4 = book.movePhoto("a", by: 1)
+        #expect(ok4)
+        #expect(book.photoIDs == ["b", "a", "c", "d", "e"])
+        let ok5 = book.movePhoto("e", by: 1)
+        #expect(!ok5)
+        let ok6 = book.replacePhoto("c", with: "z")
+        #expect(ok6)
+        #expect(book.photoIDs[2] == "z" && book.coverAssetID == "z")
+        let ok7 = book.replacePhoto("a", with: "b")
+        #expect(!ok7, "no photo twice")
+    }
+
+    @Test("Choosing photos again keeps places and limits")
+    func setPhotos() {
+        var book = book()
+        let ok8 = book.setPhotos(["e", "x", "a", "c", "y"])
+        #expect(ok8)
+        #expect(book.photoIDs == ["a", "c", "e", "x", "y"])
+        let ok9 = book.setPhotos(["a", "b"])
+        #expect(!ok9)
+        #expect(book.photoIDs == ["a", "c", "e", "x", "y"])
+        let ok10 = book.setPhotos((0..<80).map { "p\($0)" })
+        #expect(ok10)
+        #expect(book.photoIDs.count == BookLimits.maximumPhotos)
+    }
+
+    @Test("The cover is one of the book's photos; notes are trimmed")
+    func coverAndNote() {
+        var book = book()
+        let ok11 = book.setCover("d")
+        #expect(ok11)
+        let ok12 = book.setCover("not-in-book")
+        #expect(!ok12)
+        #expect(book.coverAssetID == "d")
+        let ok13 = book.setCover(nil)
+        #expect(ok13)
+        book.setNote("  For us.  ")
+        #expect(book.note == "For us.")
+        book.setNote("   ")
+        #expect(book.note == nil)
+    }
+}

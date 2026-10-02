@@ -126,3 +126,61 @@ public struct MemoryBookBuilder: Sendable {
         return updated
     }
 }
+
+// MARK: - Light editing
+
+extension MemoryBook {
+    /// Removes a photo, keeping at least `BookLimits.minimumPhotos`. Returns false if it can't.
+    @discardableResult
+    public mutating func removePhoto(_ id: AssetID) -> Bool {
+        guard photoIDs.count > BookLimits.minimumPhotos, let index = photoIDs.firstIndex(of: id) else { return false }
+        photoIDs.remove(at: index)
+        if coverAssetID == id { coverAssetID = nil }
+        return true
+    }
+
+    /// Moves a photo earlier (negative) or later (positive) in the book.
+    @discardableResult
+    public mutating func movePhoto(_ id: AssetID, by offset: Int) -> Bool {
+        guard let index = photoIDs.firstIndex(of: id) else { return false }
+        let target = index + offset
+        guard photoIDs.indices.contains(target), target != index else { return false }
+        photoIDs.swapAt(index, target)
+        return true
+    }
+
+    /// Puts `newID` where `oldID` was. A photo can't be in a book twice.
+    @discardableResult
+    public mutating func replacePhoto(_ oldID: AssetID, with newID: AssetID) -> Bool {
+        guard let index = photoIDs.firstIndex(of: oldID), !photoIDs.contains(newID) else { return false }
+        photoIDs[index] = newID
+        if coverAssetID == oldID { coverAssetID = newID }
+        return true
+    }
+
+    /// After choosing photos again: photos still chosen keep their places, new ones join the end.
+    @discardableResult
+    public mutating func setPhotos(_ ids: [AssetID]) -> Bool {
+        let chosen = Set(ids)
+        var updated = photoIDs.filter { chosen.contains($0) }
+        updated += ids.filter { !updated.contains($0) }
+        updated = Array(updated.prefix(BookLimits.maximumPhotos))
+        guard updated.count >= BookLimits.minimumPhotos else { return false }
+        photoIDs = updated
+        if let cover = coverAssetID, !photoIDs.contains(cover) { coverAssetID = nil }
+        return true
+    }
+
+    /// The cover must be one of the book's own photos; nil goes back to the best photo.
+    @discardableResult
+    public mutating func setCover(_ id: AssetID?) -> Bool {
+        if let id, !photoIDs.contains(id) { return false }
+        coverAssetID = id
+        return true
+    }
+
+    public mutating func setNote(_ text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        note = trimmed.isEmpty ? nil : trimmed
+    }
+}

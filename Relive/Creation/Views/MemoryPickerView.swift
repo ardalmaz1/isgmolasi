@@ -8,6 +8,8 @@ struct MemoryPickerView: View {
     /// How many photos may be chosen (1...1 replaces a single photo).
     let range: ClosedRange<Int>
     var excluded: Set<AssetID> = []
+    /// When set, only these photos can be chosen (e.g. a book's own photos for its cover).
+    var limitedTo: Set<AssetID>?
     let onDone: ([AssetID]) -> Void
     let onCancel: () -> Void
 
@@ -22,12 +24,14 @@ struct MemoryPickerView: View {
         range: ClosedRange<Int>,
         initialSelection: [AssetID] = [],
         excluded: Set<AssetID> = [],
+        limitedTo: Set<AssetID>? = nil,
         onDone: @escaping ([AssetID]) -> Void,
         onCancel: @escaping () -> Void
     ) {
         self.title = title
         self.range = range
         self.excluded = excluded
+        self.limitedTo = limitedTo
         self.onDone = onDone
         self.onCancel = onCancel
         _selection = State(initialValue: Array(initialSelection.prefix(range.upperBound)))
@@ -38,7 +42,9 @@ struct MemoryPickerView: View {
     var body: some View {
         let library = store.creationLibrary
         let groups = library.visibleMoments.reversed().compactMap { moment -> MomentPhotos? in
-            let photos = library.usablePhotos(in: moment).filter { !excluded.contains($0) }
+            let photos = library.usablePhotos(in: moment).filter { id in
+                !excluded.contains(id) && (limitedTo?.contains(id) ?? true)
+            }
             return photos.isEmpty ? nil : MomentPhotos(moment: moment, photos: photos)
         }
 

@@ -23,6 +23,11 @@ protocol StoryRepository: AnyObject {
     func loadCreatedAssetIDs() -> Set<AssetID>
     func recordCreatedAssets(_ ids: [AssetID])
 
+    /// Saved Memory Books (definitions only).
+    func loadBooks() -> [MemoryBook]
+    func saveBook(_ book: MemoryBook)
+    func deleteBook(id: UUID)
+
     /// Removes everything Relive stored. Photos in the library are never touched. The list of
     /// images Relive created is kept, so they still can't come back as memories after a restart.
     func deleteAll()
@@ -230,6 +235,37 @@ final class SwiftDataStoryRepository: StoryRepository {
         save()
     }
 
+    // MARK: - Memory Books
+
+    func loadBooks() -> [MemoryBook] {
+        fetchAll(StoredMemoryBook.self).compactMap { stored in
+            do {
+                return try decoder.decode(MemoryBook.self, from: stored.payload)
+            } catch {
+                Self.logger.error("Dropping unreadable book: \(error.localizedDescription, privacy: .public)")
+                return nil
+            }
+        }
+    }
+
+    func saveBook(_ book: MemoryBook) {
+        guard let payload = try? encoder.encode(book) else { return }
+        let matches = fetchAll(StoredMemoryBook.self).filter { $0.bookID == book.id }
+        if let stored = matches.first {
+            stored.payload = payload
+            stored.updatedAt = book.updatedAt
+            matches.dropFirst().forEach(context.delete)
+        } else {
+            context.insert(StoredMemoryBook(bookID: book.id, payload: payload, updatedAt: book.updatedAt))
+        }
+        save()
+    }
+
+    func deleteBook(id: UUID) {
+        fetchAll(StoredMemoryBook.self).filter { $0.bookID == id }.forEach(context.delete)
+        save()
+    }
+
     // MARK: - Reset
 
     func deleteAll() {
@@ -238,6 +274,7 @@ final class SwiftDataStoryRepository: StoryRepository {
             try context.delete(model: StoredAsset.self)
             try context.delete(model: StoredStorySnapshot.self)
             try context.delete(model: StoredMomentState.self)
+            try context.delete(model: StoredMemoryBook.self)
         } catch {
             Self.logger.error("Reset failed: \(error.localizedDescription, privacy: .public)")
         }

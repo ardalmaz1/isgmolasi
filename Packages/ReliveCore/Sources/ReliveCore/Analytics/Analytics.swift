@@ -22,6 +22,9 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case recapOpened = "recap_opened"
     case surpriseMemoryShown = "surprise_memory_shown"
     case surpriseMemoryOpened = "surprise_memory_opened"
+    case memoryBookCreated = "memory_book_created"
+    case memoryBookOpened = "memory_book_opened"
+    case trendOpened = "trend_opened"
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {
