@@ -1,4 +1,4 @@
-# Architecture — Relive (Prototype 0.1, v0.2 creation)
+# Architecture — Relive (Prototype 0.1, v0.2 creation, v0.3 Memory Book and Trends)
 
 ## Goals that shaped it
 
@@ -20,9 +20,12 @@ Relive/                     iOS app target (SwiftUI)
   DesignSystem/             Palette, typography, spacing, button styles
   Utilities/                Date formatting, UIKit presentation helpers
   Views/                    Onboarding, Main (tabs), Today, Story, Us, Components
+  Creation/                 v0.2 creation: requests, models, rendering, export, Create tab
+  Book/                     v0.3 Memory Book: page canvas, reader, editor, trip/month/year picker
+  Trends/                   v0.3 Trending Now: compiled recipes, catalog store, trend screens
   Resources/                Asset catalog
 Packages/ReliveCore/        Foundation-only Swift package: models + Memory Engine + tests
-docs/                       This file and MEMORY_ENGINE.md
+docs/                       This file, MEMORY_ENGINE.md, CREATION.md, MEMORY_BOOK.md, TRENDS.md
 .github/workflows/ci.yml    Core tests on Linux and macOS, app build with Xcode
 ```
 
@@ -102,6 +105,8 @@ without breaking anything, and come back if access returns.
 | `StoredMomentState` | Note, hidden, don't-resurface, cover override, surfacing history — per moment | User-authored and irreplaceable, so modelled explicitly |
 | `StoredAsset` | Identifier + JSON `MemoryAsset` (metadata and cached analysis) | Derived, rebuildable from the library |
 | `StoredStorySnapshot` | JSON `Story` (versioned) | Derived, rebuildable by re-running the engine |
+| `StoredCreatedAsset` (v0.2) | Identifiers of images Relive saved | So they're never imported back as memories |
+| `StoredMemoryBook` (v0.3) | Book id + JSON `MemoryBook` definition (photo identifiers, style, cover, note) | User-authored; small; never holds image data |
 
 All properties have defaults and there are no unique constraints, which keeps the schema
 compatible with CloudKit-backed SwiftData if sync is added. `StoryRepository` is a protocol, so
@@ -124,6 +129,9 @@ views and stores don't depend on SwiftData directly.
 ## Privacy summary
 
 - No account, no server, no third-party SDKs.
+- v0.3 adds an *optional* remote trend catalog (plain JSON over HTTPS, validated, never code) that
+  is not configured, and an AI provider *protocol* with no implementation. Neither sends
+  anything. See [TRENDS.md](TRENDS.md).
 - Photos are analyzed on device from small thumbnails. Vision is used only for face *presence*
   and capture quality — never identity.
 - The only network request in the pipeline is reverse geocoding: Apple's geocoder receives one
@@ -154,3 +162,27 @@ Persistence additions are additive and migrate automatically: four optional `Sto
 fields for today's Surprise Memory, and a `StoredCreatedAsset` entity listing images Relive saved
 to the photo library so they are never imported back as memories.
 
+## v0.3: Memory Book and Trends
+
+Same split again. In ReliveCore:
+
+- `Book/` — `MemoryBook` (the saved definition: source, photo identifiers, style, cover, note),
+  `MemoryBookBuilder` (sources and light edits with limits) and `BookLayoutEngine` (deterministic
+  pagination into cover, note, trip title, opener, photo and closing pages; style-independent
+  pagination, style-specific geometry).
+- `Trends/` — `TrendDefinition`/`TrendCatalog` (data), `TrendCatalogParser` (lossy, validated
+  parsing), `TrendCatalogResolver` (highest valid revision, bundled as the floor),
+  `TrendCatalogFilter` (availability for this app and day), `StarterTrendCatalog` (bundled JSON),
+  and `AITrends` (`AITrendProvider` protocol, `AITrendCoordinator`, `CreationEntitlements`,
+  `TrendPrivacyGate`). No provider is implemented.
+- `CreationLibrary` gained the `.trip` source and trip facts.
+
+In the app, `Relive/Book/` draws and edits books, and `Relive/Trends/` holds the compiled recipes
+(`TrendRecipeRegistry`, `id@version`), `TrendCatalogStore` (injected through the environment
+from `AppEnvironment`) and the Trending Now screens. Both reuse the v0.2 canvas, image-loading and
+export infrastructure. `StoryStore` gained the saved books; `StoryRepository` gained
+`loadBooks`/`saveBook`/`deleteBook`.
+
+Persistence is additive (one new entity, `StoredMemoryBook`) and migrates automatically; a
+hosted test opens a v0.2-shaped store with the v0.3 schema. See
+[MEMORY_BOOK.md](MEMORY_BOOK.md) and [TRENDS.md](TRENDS.md).

@@ -1,6 +1,15 @@
-# Creation — Relive v0.2
+# Creation — Relive v0.2, v0.3
 
 > Choose memories. Relive makes something beautiful from them.
+
+**v0.3** adds two things on top of the v0.2 creation infrastructure described here:
+**Memory Book** ([MEMORY_BOOK.md](MEMORY_BOOK.md)) and **Trending Now**
+([TRENDS.md](TRENDS.md)). Both reuse the same pieces — `CreationLibrary` for which photos may be
+used and what facts may be said, design-point canvases with preview = export, `CreationImageSource`
+for sized loading, and `ExportController` for Save/Share with duplicate-save protection. The
+Create tab now opens with Trending Now, then the permanent tools: Memory Collage, Story Maker,
+Memory Book, Monthly Recap, Our Year. `CreationSource` gained `.trip` (a whole trip chapter),
+used by Memory Book and by Story Maker.
 
 v0.2 adds a small set of opinionated ways to turn real memories into something worth keeping or
 sharing: **Memory Collage**, **Story Maker**, **Monthly Recap**, **Our Year**, plus an occasional
@@ -119,7 +128,9 @@ Full-resolution originals are never requested. JPEG encoding runs off the main t
 
 ## Privacy
 
-No new dependencies, no network calls, no remote AI. Creation reads the same photos the user
+No new dependencies, no network calls, no remote AI (v0.3 adds the *architecture* for AI trends
+and an optional remote trend catalog; neither is configured, so this still holds — see
+[TRENDS.md](TRENDS.md) §4 and §8). Creation reads the same photos the user
 already chose; choosing photos for a collage never shows the full library. Analytics remain local
 log lines with non-identifying properties (kind, style, shape, counts).
 
@@ -138,4 +149,10 @@ log lines with non-identifying properties (kind, style, shape, counts).
 - **UI** (`ReliveUITests/CreationFlowUITests.swift`): onboarding, then collage from a moment →
   Make it for me → styles and shapes → Save to Photos; Story Maker → Save This Card; Monthly
   Recap; Our Year; Create from this (including the "Not enough photos" path).
+- **v0.3**: `MemoryBookTests`, `MemoryBookEditingTests`, `TrendCatalogTests` (ReliveCore, Linux);
+  `ReliveTests/BookAndTrendTests.swift` (books saved/reopened/deleted, v0.2 → v0.3 store
+  migration, every page kind × style at export size, every recipe × variation at export size,
+  deterministic processing, studio export, AI honestly unavailable, catalog fallback);
+  `ReliveUITests/BookAndTrendsUITests.swift` (trend → studio → variation → Save; AI trend
+  disclosure; Memory Book from a trip → pages → Save Page → style → relaunch).
 

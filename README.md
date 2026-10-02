@@ -1,4 +1,4 @@
-# Relive — v0.2
+# Relive — v0.3
 
 > Your love story already exists in your camera roll. Relive helps you rediscover it.
 
@@ -13,6 +13,25 @@ Prototype 0.1 exists to test one hypothesis:
 Principles: **Remember → Appreciate → Live.** AI organizes the memory; people give it meaning.
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
+
+## New in v0.3 — Memory Book and Trending Now
+
+- **Memory Book**: a book made automatically from a moment, a trip, a month, a year or chosen
+  photos — cover, factual title pages (real names, dates, places), varied photo pages that respect
+  each photo's orientation, the couple's own notes, and a closing page. Three styles (Classic,
+  Editorial, Film). Read it page by page; save or share any page at 2160 × 2700. Light editing:
+  style, cover, add/remove/replace/reorder photos, a note for the first page, refresh from the
+  source, delete. Books are saved as definitions (photo identifiers, style, note) — never photo
+  copies — and reopen from Create → Your books.
+- **Trending Now** at the top of Create: five original on-device looks made from your own photos
+  (B&W Editorial, Film Couple, Photo Booth Strip, Magazine Cover, Cinematic Poster), each with a
+  real preview, "You'll need" and "Best results", variations, Save to Photos and Share. Trends
+  come from a validated, data-only catalog bundled in the app (remote-ready, not configured).
+- **AI trends: architecture only.** One AI trend is listed as *Coming soon* with an honest
+  "About AI creations" disclosure. No AI provider, API key or upload exists in this version.
+- No paywall, purchases or accounts.
+
+Details: [docs/MEMORY_BOOK.md](docs/MEMORY_BOOK.md), [docs/TRENDS.md](docs/TRENDS.md).
 
 ## New in v0.2 — creating from memories
 
@@ -92,6 +111,11 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/MEMORY_BOOK.md](docs/MEMORY_BOOK.md) — v0.3 Memory Book: model, sources, auto-layout,
+  styles, persistence, rendering, performance, accessibility, the future PDF and print paths.
+- [docs/TRENDS.md](docs/TRENDS.md) — v0.3 Trends: trend and catalog model, recipes and versions,
+  LOCAL/TEMPLATE/AI, the AI provider abstraction and privacy boundary, Trend Radar and human
+  review, publishing, monetization hook, copyright, fallback behaviour.
 - [docs/CREATION.md](docs/CREATION.md) — v0.2 creation: collage layouts, Make it for me, story
   cards, recaps, Surprise Memory, rendering and export.
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — structure, decisions, iOS 18 target, privacy,
@@ -131,3 +155,18 @@ Us. Screenshots of each step are uploaded as a build artifact.
 - Collage editing is intentionally limited (no free positioning, filters or text editing).
 - Drafts aren't saved: closing an editor discards it.
 
+## Known limitations of v0.3
+
+- **Not physically verified.** Memory Book and Trends were checked by automated tests and in the
+  iOS Simulator only. Page-turn feel, image quality of saved pages and trends, memory use with
+  large books, and Dark Mode on a real screen need a device check.
+- Memory Book exports single pages (save/share). There is no PDF export and no printed-book
+  ordering yet — see the planned paths in MEMORY_BOOK.md.
+- Books aren't updated automatically when the source changes; Edit → *Update from …* does it
+  on request. Photos that disappear simply drop out.
+- The remote trend catalog is implemented but switched off (no URL configured); trends change
+  only with an app update for now.
+- AI trends can't be made: no provider is integrated (by design for this version).
+- Trend recipes don't read catalog `parameters` yet.
+- Page and trend canvases are fixed-size artwork; their text doesn't follow Dynamic Type (the
+  app around them does, and VoiceOver reads each page's facts).
