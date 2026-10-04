@@ -214,29 +214,40 @@ final class PersonalCollectionUITests: XCTestCase {
 
     // MARK: - Steps
 
+    /// Taps a Create tool, scrolled clear of the tab bar (a tap under it would switch tabs).
     @MainActor
     private func tapTool(_ app: XCUIApplication, _ identifier: String) {
         let tool = app.buttons[identifier]
         XCTAssertTrue(tool.waitForExistence(timeout: 10), "\(identifier) is missing")
-        for _ in 0..<6 where !tool.isHittable {
-            app.swipeUp()
+        let screen = app.windows.firstMatch.frame
+        func isClear() -> Bool {
+            tool.isHittable && tool.frame.minY > screen.minY + 80 && tool.frame.maxY < screen.maxY - 140
+        }
+        for _ in 0..<8 where !isClear() {
+            if tool.frame.minY <= screen.minY + 80 { app.swipeDown() } else { app.swipeUp() }
             sleep(1)
         }
+        XCTAssertTrue(isClear(), "\(identifier) is not reachable (frame \(tool.frame))")
         tool.tap()
     }
 
-    /// A tall (9:16) preview can push the editor's controls below the fold: scroll to the
-    /// control, tap it, and scroll back up.
+    /// A tall (9:16) preview can push the editor's controls below the fold, or under the save
+    /// bar at the bottom (where a tap lands on the bar). Scroll until the control is clear of
+    /// both bars, tap it, and scroll back up.
     @MainActor
     private func tapScrollingIntoView(_ app: XCUIApplication, _ element: XCUIElement) {
         XCTAssertTrue(element.waitForExistence(timeout: 5))
+        let screen = app.windows.firstMatch.frame
+        func isClear() -> Bool {
+            element.isHittable && element.frame.minY > screen.minY + 110 && element.frame.maxY < screen.maxY - 200
+        }
         var scrolled = 0
-        while !element.isHittable, scrolled < 4 {
+        while !isClear(), scrolled < 4 {
             app.swipeUp()
             sleep(1)
             scrolled += 1
         }
-        XCTAssertTrue(element.isHittable, "\(element.label) is not reachable")
+        XCTAssertTrue(isClear(), "\(element.label) is not reachable (frame \(element.frame))")
         element.tap()
         for _ in 0..<scrolled { app.swipeDown() }
     }
