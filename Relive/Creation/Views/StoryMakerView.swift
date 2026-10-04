@@ -195,6 +195,9 @@ struct StoryMakerView: View {
         } label: {
             Label("Edit Card", systemImage: "slider.horizontal.3")
                 .font(Typography.callout.weight(.semibold))
+                .padding(.horizontal, Spacing.xs)
+                .frame(minHeight: 44)
+                .contentShape(Rectangle())
         }
         .accessibilityIdentifier("storyEditCard")
     }

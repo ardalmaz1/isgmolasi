@@ -40,14 +40,14 @@ final class StoryAndSourcesUITests: XCTestCase {
         // Small corrections to a card
         cards.swipeLeft()
         sleep(2)
-        app.buttons["storyEditCard"].tap()
+        openMenu(app.buttons["storyEditCard"])
         let changeLayout = app.buttons["Change Layout"]
         XCTAssertTrue(changeLayout.waitForExistence(timeout: 5), "Edit Card has no Change Layout")
         changeLayout.tap()
         sleep(2)
         capture("S03-story-change-layout")
 
-        app.buttons["storyEditCard"].tap()
+        openMenu(app.buttons["storyEditCard"])
         let hideDate = app.buttons["Hide Date"]
         if hideDate.waitForExistence(timeout: 3) {
             hideDate.tap()
@@ -103,6 +103,15 @@ final class StoryAndSourcesUITests: XCTestCase {
     }
 
     // MARK: - Steps
+
+    /// Opens a SwiftUI menu by tapping its centre (menus inside a paging view can report
+    /// themselves as not hittable to XCTest even when fully visible).
+    @MainActor
+    private func openMenu(_ menu: XCUIElement) {
+        XCTAssertTrue(menu.waitForExistence(timeout: 5))
+        menu.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        sleep(1)
+    }
 
     @MainActor
     private func completeOnboarding(_ app: XCUIApplication) throws {

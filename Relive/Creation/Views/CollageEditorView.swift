@@ -250,6 +250,8 @@ struct CollageEditorView: View {
                 } label: {
                     Text("Edit Photos")
                         .font(Typography.callout.weight(.semibold))
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
                 }
                 .accessibilityIdentifier("collageEditPhotos")
             }
