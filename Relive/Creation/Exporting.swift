@@ -111,10 +111,26 @@ enum PhotoLibrarySaver {
     }
 }
 
+/// Where finished images are saved. The app saves to the photo library; hosted tests use a
+/// stand-in (PhotoKit would raise the system permission prompt).
+protocol CreationSaving: Sendable {
+    /// Saves JPEG data as new photos and returns their identifiers.
+    func save(_ jpegs: [Data]) async throws -> [AssetID]
+}
+
+struct PhotoLibraryCreationSaver: CreationSaving {
+    func save(_ jpegs: [Data]) async throws -> [AssetID] {
+        try await PhotoLibrarySaver.save(jpegs)
+    }
+}
+
 /// Runs one export at a time for a creation screen, and reports how it went.
 ///
 /// Repeated taps while an export runs are ignored, the work continues briefly if the app is
-/// sent to the background, and nothing is left half-done on failure.
+/// sent to the background, and nothing is left half-done on failure. Every image saved is
+/// recorded with the store first, so it can never be imported as a memory — whatever the
+/// creation was made from (memories, the photo library, favorites, a reopened creation or a
+/// draft).
 @Observable
 @MainActor
 final class ExportController {
@@ -128,35 +144,46 @@ final class ExportController {
     private(set) var phase: Phase = .idle
     /// The last failure can be fixed in Settings.
     private(set) var offersSettings = false
+    @ObservationIgnored private let saver: any CreationSaving
+
+    init(saver: any CreationSaving = PhotoLibraryCreationSaver()) {
+        self.saver = saver
+    }
 
     var isBusy: Bool {
         if case .working = phase { return true }
         return false
     }
 
-    /// Renders with `render`, encodes, then saves to Photos.
+    /// Renders with `render`, encodes, then saves to Photos. `onSaved` runs once the images
+    /// are saved (and recorded as Relive's own).
     func save(
         store: StoryStore,
         analytics: any AnalyticsTracking,
         properties: [String: String],
+        onSaved: @escaping @MainActor () -> Void = {},
         render: @escaping @MainActor () async throws -> [UIImage]
     ) async {
+        let saver = self.saver
         await run(message: "Saving…") {
             let images = try await render()
             let jpegs = await Self.encode(images)
             guard jpegs.count == images.count, !jpegs.isEmpty else { throw CreationExportError.renderFailed }
-            let ids = try await PhotoLibrarySaver.save(jpegs)
+            let ids = try await saver.save(jpegs)
             store.recordCreatedAssets(ids)
             analytics.track(.creationExported, properties.merging(["destination": "photos", "images": String(jpegs.count)]) { $1 })
+            onSaved()
             return jpegs.count == 1 ? "Saved to Photos" : "\(jpegs.count) images saved to Photos"
         }
     }
 
-    /// Renders with `render`, encodes, and opens the share sheet.
+    /// Renders with `render`, encodes, and opens the share sheet. `onShared` runs only if
+    /// something was actually shared.
     func share(
         name: String,
         analytics: any AnalyticsTracking,
         properties: [String: String],
+        onShared: @escaping @MainActor () -> Void = {},
         render: @escaping @MainActor () async throws -> [UIImage]
     ) async {
         await run(message: "Preparing…") {
@@ -171,6 +198,7 @@ final class ExportController {
                     "activity": activity ?? "unknown",
                     "images": String(jpegs.count),
                 ]) { $1 })
+                onShared()
             }
             return nil
         }

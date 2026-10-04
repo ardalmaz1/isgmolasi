@@ -36,6 +36,8 @@ enum CreationStart: Hashable, Sendable {
     case chooseMonth
     case chooseYear
     case source(CreationSource)
+    /// Reopen a kept collage, story or book (a draft or a finished one) by its identifier.
+    case resume(UUID)
 }
 
 /// A request to open the collage or story maker. Any screen can make one through `AppModel`;

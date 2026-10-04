@@ -1,4 +1,5 @@
 import Foundation
+import Observation
 import ReliveCore
 
 /// What a collage or story editor currently holds.
@@ -15,6 +16,8 @@ enum CreationContent {
 ///   when the editor closes or the app goes to the background (`flush`).
 /// - "Save", or saving/sharing the image, turns the same record into a finished creation — the
 ///   draft never lingers as a duplicate.
+/// - Without a store (previews, some tests) it keeps nothing.
+@Observable
 @MainActor
 final class CreationKeeper {
     static let pause: Duration = .milliseconds(800)
@@ -25,20 +28,22 @@ final class CreationKeeper {
     let createdAt: Date
     /// The record as last written, if it has been.
     private(set) var record: SavedCreation?
-    private(set) var hasUnsavedChanges = false
+    @ObservationIgnored private(set) var hasUnsavedChanges = false
+    /// The user deleted it: nothing may write it back.
+    @ObservationIgnored private var isDiscarded = false
 
-    private weak var store: StoryStore?
-    private var pending: Task<Void, Never>?
-    private let content: () -> CreationContent?
+    @ObservationIgnored private weak var store: StoryStore?
+    @ObservationIgnored private var pending: Task<Void, Never>?
+    /// What the editor holds right now; set by the editor once it exists.
+    @ObservationIgnored var content: @MainActor () -> CreationContent? = { nil }
 
-    init(kind: SavedCreationKind, source: CreationSource, store: StoryStore?, existing: SavedCreation? = nil, now: Date = Date(), content: @escaping () -> CreationContent?) {
+    init(kind: SavedCreationKind, source: CreationSource, store: StoryStore?, existing: SavedCreation? = nil, now: Date = Date()) {
         self.id = existing?.id ?? UUID()
         self.kind = kind
         self.source = existing?.source ?? source
         self.createdAt = existing?.createdAt ?? now
         self.record = existing
         self.store = store
-        self.content = content
     }
 
     /// Finished (in My Creations), rather than a draft.
@@ -48,7 +53,7 @@ final class CreationKeeper {
 
     /// The user changed something: write it shortly.
     func changed() {
-        guard store != nil else { return }
+        guard store != nil, !isDiscarded else { return }
         hasUnsavedChanges = true
         pending?.cancel()
         pending = Task { [weak self] in
@@ -72,6 +77,15 @@ final class CreationKeeper {
         write(now: now) { $0.markSaved(at: now) }
     }
 
+    /// Forgets the record after the user deleted it, so nothing writes it back.
+    func forget() {
+        pending?.cancel()
+        pending = nil
+        hasUnsavedChanges = false
+        isDiscarded = true
+        record = nil
+    }
+
     /// Its image was saved to Photos or shared: it is finished too.
     func markExported(now: Date = Date()) {
         pending?.cancel()
@@ -79,7 +93,7 @@ final class CreationKeeper {
     }
 
     private func write(now: Date, _ change: (inout SavedCreation) -> Void) {
-        guard let store, let content = content() else { return }
+        guard let store, !isDiscarded, let content = content() else { return }
         var creation = record ?? SavedCreation(id: id, kind: kind, createdAt: createdAt, source: source)
         switch content {
         case .collage(let state): creation.collage = state

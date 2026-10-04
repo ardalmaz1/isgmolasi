@@ -228,7 +228,27 @@ final class AppModel {
     /// Opens the collage or story maker over the current screen.
     func startCreation(_ kind: CreationKind, from start: CreationStart, origin: String) {
         activeCreation = CreationRequest(kind: kind, start: start, origin: origin)
-        analytics.track(.creationStarted, ["kind": kind.rawValue, "origin": origin])
+        switch start {
+        case .resume:
+            break // reopening is tracked when the creation opens (creation_reopened, draft_resumed)
+        case .source(.favorites):
+            analytics.track(.creationStarted, ["kind": kind.rawValue, "origin": origin])
+            analytics.track(.createFromFavorites, ["kind": kind.rawValue])
+        default:
+            analytics.track(.creationStarted, ["kind": kind.rawValue, "origin": origin])
+        }
+    }
+
+    /// Reopens a kept collage, story or book (finished or draft) where it left off.
+    func open(_ item: KeptItem, origin: String) {
+        switch item {
+        case .creation(let creation): resumeCreation(creation, origin: origin)
+        case .book(let book): startCreation(.book, from: .resume(book.id), origin: origin)
+        }
+    }
+
+    func resumeCreation(_ creation: SavedCreation, origin: String) {
+        startCreation(creation.kind == .collage ? .collage : .story, from: .resume(creation.id), origin: origin)
     }
 
     // MARK: - Validation question

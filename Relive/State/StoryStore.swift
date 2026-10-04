@@ -291,10 +291,13 @@ final class StoryStore {
         repository.saveBook(book)
     }
 
+    /// Deletes a book from Relive. Its photos stay, in Relive and in the Photos app.
     func deleteBook(id: UUID) {
+        guard book(id: id) != nil else { return }
         books.removeAll { $0.id == id }
         repository.deleteBook(id: id)
         setFavorite(.creation, id.uuidString, isFavorite: false)
+        analytics.track(.creationDeleted, ["kind": "book"])
     }
 
     /// The library a book is laid out with: the story plus the book's own photo snapshots.
@@ -318,11 +321,12 @@ final class StoryStore {
     func saveCreation(_ creation: SavedCreation) {
         var creation = creation
         creation.captureSnapshots(from: creationLibrary(for: creation))
-        let isNew = !creations.contains { $0.id == creation.id }
+        let previous = self.creation(id: creation.id)
         creations.removeAll { $0.id == creation.id }
         creations.insert(creation, at: 0)
         repository.saveCreation(creation)
-        if isNew, creation.isDraft { analytics.track(.draftCreated, ["kind": creation.kind.rawValue]) }
+        if previous == nil, creation.isDraft { analytics.track(.draftCreated, ["kind": creation.kind.rawValue]) }
+        if !creation.isDraft, previous?.isDraft ?? true { analytics.track(.creationSaved, ["kind": creation.kind.rawValue]) }
     }
 
     /// Deletes a draft or creation. Its photos — in Relive and in the Photos app — stay.
@@ -361,6 +365,24 @@ final class StoryStore {
 
     func toggleFavorite(_ kind: FavoriteKind, _ identifier: String) {
         setFavorite(kind, identifier, isFavorite: !isFavorite(kind, identifier))
+    }
+
+    /// Favorited memories — photos and videos — in the story right now, in the order they were
+    /// taken (ties by identifier). Favorites of memories that aren't in the story (after Start
+    /// Over, or hidden) stay saved and return with them.
+    var favoriteMemories: [MemoryAsset] {
+        let ids = favorites.memoryIDs
+        guard !ids.isEmpty else { return [] }
+        var seen = Set<AssetID>()
+        return visibleMoments.flatMap(\.assetIDs)
+            .filter { ids.contains($0) && isAvailable($0) && seen.insert($0).inserted }
+            .compactMap { assets[$0] }
+            .sorted { ($0.creationDate ?? .distantPast, $0.id) < ($1.creationDate ?? .distantPast, $1.id) }
+    }
+
+    /// Favorites that can be shown now: memories, moments and kept creations.
+    var visibleFavoritesCount: Int {
+        favoriteMemories.count + creationLibrary.favoriteMoments.count + favoriteKeptItems.count
     }
 
     // MARK: - Photo library picks

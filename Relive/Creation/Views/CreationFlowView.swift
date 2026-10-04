@@ -10,7 +10,10 @@ struct CreationFlowView: View {
     @Environment(StoryStore.self) private var store
     @Environment(\.analytics) private var analytics
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var stage: Stage?
+    /// The source the editor was started from (favorites get their own "not enough" words).
+    @State private var startedFrom: CreationSource?
     /// Photos picked from the photo library for this creation (metadata only, never imported).
     @State private var photoLibraryAssets: [MemoryAsset] = []
     @State private var isPickingFromLibrary = false
@@ -26,6 +29,8 @@ struct CreationFlowView: View {
         case story(StoryMakerModel)
         case book(UUID)
         case notEnough(message: String, preselected: [AssetID])
+        /// A kept creation that was deleted meanwhile.
+        case gone
     }
 
     var body: some View {
@@ -64,12 +69,24 @@ struct CreationFlowView: View {
                 case .collage(let model):
                     CollageEditorView(model: model, onClose: close)
                 case .story(let model):
-                    StoryMakerView(model: model, onClose: close) {
-                        stage = .chooseSource
-                    }
+                    StoryMakerView(
+                        model: model,
+                        onClose: close,
+                        onChoosePhotos: { stage = .chooseSource },
+                        isFromFavorites: startedFrom == .favorites
+                    )
+                case .gone:
+                    QuietMessageView(title: "This isn’t here anymore", message: "It may have been deleted.")
+                        .frame(maxHeight: .infinity)
+                        .reliveBackground()
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Close", action: close)
+                            }
+                        }
                 case .notEnough(let message, let preselected):
                     QuietMessageView(
-                        title: "Not enough photos",
+                        title: startedFrom == .favorites ? "Not enough favorites" : "Not enough photos",
                         message: message,
                         actionTitle: "Choose Photos",
                         action: { stage = .choosePhotos(preselected: preselected) }
@@ -100,12 +117,51 @@ struct CreationFlowView: View {
             case .chooseMonth: stage = .choosePeriod(.month)
             case .chooseYear: stage = .choosePeriod(.year)
             case .source(let source): begin(with: source)
+            case .resume(let id): resume(id)
             }
+        }
+        // Drafts are kept when the app leaves the screen, not only after the editor's pause.
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { flush() }
         }
     }
 
     private func close() {
+        flush()
         dismiss()
+    }
+
+    /// Writes the open collage or story's pending changes now.
+    private func flush() {
+        switch stage {
+        case .collage(let model): model.flush()
+        case .story(let model): model.flush()
+        default: break
+        }
+    }
+
+    /// Reopens a kept book, collage or story where it was left. Photos that are gone are shown
+    /// as missing; nothing is swapped in for them.
+    private func resume(_ id: UUID) {
+        if request.kind == .book {
+            stage = store.book(id: id) == nil ? .gone : .book(id)
+            return
+        }
+        guard let creation = store.creation(id: id) else {
+            stage = .gone
+            return
+        }
+        let library = store.creationLibrary(for: creation)
+        switch creation.kind {
+        case .collage:
+            guard let state = creation.collage else { stage = .gone; return }
+            stage = .collage(CollageEditorModel(restoring: creation, state: state, library: library, store: store))
+        case .story:
+            guard let state = creation.story else { stage = .gone; return }
+            stage = .story(StoryMakerModel(restoring: creation, state: state, library: library, store: store))
+        }
+        startedFrom = creation.source
+        analytics.track(creation.isDraft ? .draftResumed : .creationReopened, ["kind": creation.kind.rawValue])
     }
 
     /// The story, plus the photos picked from the photo library for this creation.
@@ -134,21 +190,27 @@ struct CreationFlowView: View {
     /// Opens the editor for `source`, or explains gently when there isn't enough to work with.
     private func begin(with source: CreationSource) {
         let library = self.library
+        startedFrom = source
         switch request.kind {
         case .collage:
             let photos = sourcePhotos(source, library: library)
             if photos.count < CreationLimits.collage.lowerBound {
-                stage = .notEnough(
-                    message: photos.isEmpty
+                let message: String
+                if source == .favorites {
+                    message = photos.isEmpty
+                        ? "Favorite a few memories to make a collage from them."
+                        : "Add a few more favorites to make a collage. A collage needs at least two photos."
+                } else {
+                    message = photos.isEmpty
                         ? "There are no photos here that can go into a collage."
-                        : "A collage needs at least two photos. Choose another to go with this one.",
-                    preselected: photos.filter { store.assets[$0] != nil }
-                )
+                        : "A collage needs at least two photos. Choose another to go with this one."
+                }
+                stage = .notEnough(message: message, preselected: photos.filter { store.assets[$0] != nil })
             } else {
-                stage = .collage(CollageEditorModel(source: source, photos: photos, library: library))
+                stage = .collage(CollageEditorModel(source: source, photos: photos, library: library, store: store))
             }
         case .story:
-            stage = .story(StoryMakerModel(source: source, library: library))
+            stage = .story(StoryMakerModel(source: source, library: library, store: store))
         case .book:
             switch MemoryBookBuilder(library: library).makeBook(from: source, now: Date()) {
             case .success(let book):
@@ -156,12 +218,17 @@ struct CreationFlowView: View {
                 analytics.track(.memoryBookCreated, ["photos": String(book.photoIDs.count), "origin": request.origin])
                 stage = .book(book.id)
             case .failure(.notEnoughPhotos(let available, let required)):
-                stage = .notEnough(
-                    message: available == 0
+                let message: String
+                if source == .favorites {
+                    message = available == 0
+                        ? "Favorite a few memories to make a book from them. A book needs at least \(required) photos."
+                        : "Add a few more favorites to make a book. A book needs at least \(required) photos, and you have \(available == 1 ? "1 favorite" : "\(available) favorites") that can be used."
+                } else {
+                    message = available == 0
                         ? "A book needs at least \(required) photos, and there are none here that can be used."
-                        : "A book needs at least \(required) photos, and there \(available == 1 ? "is only 1" : "are only \(available)") here. Choose a few more to go with them.",
-                    preselected: library.availablePhotos(for: source).filter { store.assets[$0] != nil }
-                )
+                        : "A book needs at least \(required) photos, and there \(available == 1 ? "is only 1" : "are only \(available)") here. Choose a few more to go with them."
+                }
+                stage = .notEnough(message: message, preselected: library.availablePhotos(for: source).filter { store.assets[$0] != nil })
             }
         }
     }

@@ -14,6 +14,9 @@ struct StoryMakerView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var replacing: Replacement?
     @State private var libraryReplacement: Replacement?
+    @State private var confirmsDelete = false
+    /// Started from favorites: a shortfall asks for a few more favorites.
+    var isFromFavorites = false
 
     private struct Replacement: Identifiable, Equatable {
         let cardID: Int
@@ -37,7 +40,8 @@ struct StoryMakerView: View {
                 Button("Close", action: onClose)
             }
             if model.shortfall == nil {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItemGroup(placement: .primaryAction) {
+                    CreationKeepButton(keeper: model.keeper, onSave: model.markSaved)
                     Menu {
                         Button("Share This Card") { Task { await share(all: false) } }
                         Button("Share All Cards") { Task { await share(all: true) } }
@@ -46,9 +50,11 @@ struct StoryMakerView: View {
                     }
                     .disabled(!model.canExport)
                     .accessibilityIdentifier("storyShare")
+                    CreationMoreMenu(keeper: model.keeper) { confirmsDelete = true }
                 }
             }
         }
+        .confirmsCreationDelete(isPresented: $confirmsDelete, keeper: model.keeper, store: store, onDeleted: onClose)
         .task(id: model.design?.photoIDs) {
             await model.loadPreviews(using: CreationImageSource(loader: loader))
         }
@@ -82,6 +88,18 @@ struct StoryMakerView: View {
 
     private var editor: some View {
         VStack(spacing: Spacing.s) {
+            if !model.missingInStory.isEmpty {
+                AccessBanner(
+                    message: model.missingInStory.count == 1
+                        ? "One photo is no longer in your library. Replace it from Edit Card, or remove it."
+                        : "\(model.missingInStory.count) photos are no longer in your library. Replace them from Edit Card, or remove them.",
+                    actionTitle: "Remove Missing",
+                    action: { withAnimation(animation) { model.removeMissingPhotos() } }
+                )
+                .padding(.horizontal, Spacing.screenMargin)
+                .accessibilityIdentifier("storyMissing")
+            }
+
             TabView(selection: $model.currentCardID) {
                 ForEach(Array(model.cards.enumerated()), id: \.element.id) { index, card in
                     ScaledCanvas(designSize: StoryCardCanvas.size) {
@@ -210,12 +228,18 @@ struct StoryMakerView: View {
         let message: String
         switch shortfall {
         case .notEnoughPhotos(let available, let required):
-            message = available == 0
-                ? "A story needs at least \(required) photos, and there are none here that can be used."
-                : "A story needs at least \(required) photos, and there \(available == 1 ? "is only 1" : "are only \(available)") here."
+            if isFromFavorites {
+                message = available == 0
+                    ? "Favorite a few memories to make a story from them. A story needs at least \(required) photos."
+                    : "Add a few more favorites to make a story. A story needs at least \(required) photos, and you have \(available == 1 ? "1 favorite" : "\(available) favorites") that can be used."
+            } else {
+                message = available == 0
+                    ? "A story needs at least \(required) photos, and there are none here that can be used."
+                    : "A story needs at least \(required) photos, and there \(available == 1 ? "is only 1" : "are only \(available)") here."
+            }
         }
         return QuietMessageView(
-            title: "Not enough photos for a story",
+            title: isFromFavorites ? "Not enough favorites for a story" : "Not enough photos for a story",
             message: message,
             actionTitle: "Choose Photos",
             action: onChoosePhotos
@@ -230,7 +254,7 @@ struct StoryMakerView: View {
     private func save(all: Bool) async {
         let ids = targetIDs(all: all)
         let images = CreationImageSource(loader: loader)
-        await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties) {
+        await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties, onSaved: model.markExported) {
             try await model.renderExport(cardIDs: ids, using: images)
         }
     }
@@ -238,7 +262,7 @@ struct StoryMakerView: View {
     private func share(all: Bool) async {
         let ids = targetIDs(all: all)
         let images = CreationImageSource(loader: loader)
-        await model.export.share(name: "Relive Story", analytics: analytics, properties: model.analyticsProperties) {
+        await model.export.share(name: "Relive Story", analytics: analytics, properties: model.analyticsProperties, onShared: model.markExported) {
             try await model.renderExport(cardIDs: ids, using: images)
         }
     }

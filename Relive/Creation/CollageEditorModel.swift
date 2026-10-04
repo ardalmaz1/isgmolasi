@@ -6,19 +6,20 @@ import UIKit
 /// State of one collage being made: which photos, in what order, how it looks.
 ///
 /// The layout is a pure function of this state (see `CollageLayoutEngine`), so the preview and
-/// the export are drawn from exactly the same arrangement.
+/// the export are drawn from exactly the same arrangement. The same state is what a draft or a
+/// saved collage keeps (`CollageState`); every change is kept by `keeper` after a short pause.
 @Observable
 @MainActor
 final class CollageEditorModel {
     let source: CreationSource
     let range = CreationLimits.collage
 
-    private(set) var photoIDs: [AssetID]
-    var style: CollageStyle = .minimal
-    var aspectRatio: CreationAspectRatio = .portrait
-    var showsTitle = true
-    var showsDate = true
-    var showsPlace = true
+    private(set) var photoIDs: [AssetID] { didSet { noteChange() } }
+    var style: CollageStyle = .minimal { didSet { noteChange() } }
+    var aspectRatio: CreationAspectRatio = .portrait { didSet { noteChange() } }
+    var showsTitle = true { didSet { noteChange() } }
+    var showsDate = true { didSet { noteChange() } }
+    var showsPlace = true { didSet { noteChange() } }
     /// The photo picked up for swapping (tap one, then another).
     var selectedIndex: Int?
 
@@ -28,19 +29,80 @@ final class CollageEditorModel {
     /// Shapes measured from loaded images; they win over stored metadata.
     private(set) var measuredAspects: [AssetID: Double] = [:]
     let export = ExportController()
+    /// Keeps the collage as a draft, then as a finished creation (one record).
+    let keeper: CreationKeeper
 
     @ObservationIgnored private var library: CreationLibrary
     @ObservationIgnored private var suggestionIndex = 0
     @ObservationIgnored private let engine = CollageLayoutEngine()
     @ObservationIgnored private let designer = CollageAutoDesigner()
+    /// Changes are kept only after setup (Relive's first design isn't the user's edit).
+    @ObservationIgnored private var tracksChanges = false
 
-    init(source: CreationSource, photos: [AssetID], library: CreationLibrary) {
+    /// A new collage: Relive chooses its first look.
+    init(source: CreationSource, photos: [AssetID], library: CreationLibrary, store: StoryStore? = nil) {
         self.source = source
         self.library = library
         let initial = Array(photos.prefix(CreationLimits.collage.upperBound))
         self.photoIDs = initial
         self.facts = library.facts(for: source, photos: initial)
+        self.keeper = CreationKeeper(kind: .collage, source: source, store: store)
         makeItForMe()
+        startKeeping()
+    }
+
+    /// A draft or saved collage, reopened exactly as it was. Photos that can't be shown now are
+    /// marked missing; nothing is swapped in for them.
+    init(restoring creation: SavedCreation, state: CollageState, library: CreationLibrary, store: StoryStore?) {
+        self.source = creation.source
+        self.library = library
+        self.photoIDs = state.photoIDs
+        self.style = state.style
+        self.aspectRatio = state.aspectRatio
+        self.showsTitle = state.showsTitle
+        self.showsDate = state.showsDate
+        self.showsPlace = state.showsPlace
+        self.facts = creation.facts(in: library)
+        self.missing = Set(creation.missingPhotos(in: library))
+        self.keeper = CreationKeeper(kind: .collage, source: creation.source, store: store, existing: creation)
+        startKeeping()
+    }
+
+    private func startKeeping() {
+        keeper.content = { [weak self] in
+            guard let self else { return nil }
+            return .collage(self.state)
+        }
+        tracksChanges = true
+    }
+
+    /// What a draft or saved collage keeps.
+    var state: CollageState {
+        CollageState(photoIDs: photoIDs, style: style, aspectRatio: aspectRatio, showsTitle: showsTitle, showsDate: showsDate, showsPlace: showsPlace)
+    }
+
+    /// Any change makes a different image (it can be saved again) and is kept shortly.
+    private func noteChange() {
+        guard tracksChanges else { return }
+        export.clearMessage()
+        keeper.changed()
+    }
+
+    // MARK: - Keeping
+
+    /// Writes pending changes now (closing, going to the background).
+    func flush() {
+        keeper.flush()
+    }
+
+    /// "Save": the collage moves to My Creations.
+    func markSaved() {
+        keeper.markSaved()
+    }
+
+    /// Its image was saved to Photos or shared: it is finished too.
+    func markExported() {
+        keeper.markExported()
     }
 
     /// Photos picked from the photo library become usable here, described by their own
@@ -64,21 +126,30 @@ final class CollageEditorModel {
     var hasPlace: Bool { placeText != nil }
 
     var caption: CaptionContent {
-        let title = showsTitle ? titleText : nil
-        var detail: [String] = []
-        if showsDate, let dateText { detail.append(dateText) }
-        // The place is already the title when they're the same name.
-        if showsPlace, let placeText, placeText != title { detail.append(placeText) }
-        return CaptionContent(title: title, detail: detail.isEmpty ? nil : detail.joined(separator: " · "))
+        Self.caption(facts: facts, showsTitle: showsTitle, showsDate: showsDate, showsPlace: showsPlace)
     }
 
     var captionSpec: CollageCaptionSpec {
-        let content = caption
-        return CollageCaptionSpec(showsTitle: content.title != nil, showsDetail: content.detail != nil)
+        Self.captionSpec(caption)
     }
 
     var layout: CollageLayout {
         engine.layout(photoAspects: aspects, style: style, canvas: aspectRatio.designSize, caption: captionSpec)
+    }
+
+    /// The caption a collage shows: the facts its photos support, as the user chose to show
+    /// them. Shared with previews of saved collages, so they always match the editor.
+    static func caption(facts: CreationFacts, showsTitle: Bool, showsDate: Bool, showsPlace: Bool) -> CaptionContent {
+        let title = showsTitle ? CreationText.title(facts.title) : nil
+        var detail: [String] = []
+        if showsDate, let dateText = CreationText.dateLine(facts.dateSpan) { detail.append(dateText) }
+        // The place is already the title when they're the same name.
+        if showsPlace, let placeText = CreationText.place(facts.place), placeText != title { detail.append(placeText) }
+        return CaptionContent(title: title, detail: detail.isEmpty ? nil : detail.joined(separator: " · "))
+    }
+
+    static func captionSpec(_ caption: CaptionContent) -> CollageCaptionSpec {
+        CollageCaptionSpec(showsTitle: caption.title != nil, showsDetail: caption.detail != nil)
     }
 
     var missingInCollage: [AssetID] {
@@ -166,7 +237,7 @@ final class CollageEditorModel {
     }
 
     private func refreshFacts() {
-        facts = library.facts(for: source, photos: photoIDs)
+        facts = library.facts(for: source, photos: photoIDs.filter(library.isUsable))
     }
 
     // MARK: - Images

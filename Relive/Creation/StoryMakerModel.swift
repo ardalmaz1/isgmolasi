@@ -5,6 +5,7 @@ import UIKit
 
 /// State of a story being made. Relive designs the story (`StoryDesigner`); the user can ask for
 /// another design ("Make it for me"), pick a style, and make small corrections to a card.
+/// Every change is kept by `keeper` (a draft, then a finished story — one record).
 @Observable
 @MainActor
 final class StoryMakerModel {
@@ -21,15 +22,67 @@ final class StoryMakerModel {
     /// The card on screen.
     var currentCardID: Int = 0
     let export = ExportController()
+    /// Keeps the story as a draft, then as a finished creation.
+    let keeper: CreationKeeper
 
     @ObservationIgnored private var library: CreationLibrary
     @ObservationIgnored private var variation = 0
+    /// Relive's own design, untouched by the user: if a photo disappears it may simply design
+    /// the story again. A story the user corrected or reopened is never redesigned behind their
+    /// back — its missing photos are shown as missing instead.
+    @ObservationIgnored private var isRelivesDesign = true
 
-    init(source: CreationSource, library: CreationLibrary) {
+    /// A new story: Relive designs the first version itself.
+    init(source: CreationSource, library: CreationLibrary, store: StoryStore? = nil) {
         self.source = source
         self.library = library
-        // Relive designs the first version itself.
+        self.keeper = CreationKeeper(kind: .story, source: source, store: store)
         apply(StoryDesigner(library: library).makeItForMe(source: source, variation: 0, excluding: []))
+        startKeeping()
+    }
+
+    /// A draft or saved story, reopened exactly as it was: cards, order, layouts, photos, style
+    /// and the user's show/hide choices. Photos that can't be shown now are marked missing.
+    init(restoring creation: SavedCreation, state: StoryState, library: CreationLibrary, store: StoryStore?) {
+        self.source = creation.source
+        self.library = library
+        self.design = state.design
+        self.variation = state.design.variation
+        self.missing = Set(creation.missingPhotos(in: library))
+        self.currentCardID = state.design.cards.first?.id ?? 0
+        self.isRelivesDesign = false
+        self.keeper = CreationKeeper(kind: .story, source: creation.source, store: store, existing: creation)
+        startKeeping()
+    }
+
+    private func startKeeping() {
+        keeper.content = { [weak self] in
+            guard let design = self?.design else { return nil }
+            return .story(StoryState(design: design))
+        }
+    }
+
+    // MARK: - Keeping
+
+    /// Writes pending changes now (closing, going to the background).
+    func flush() {
+        keeper.flush()
+    }
+
+    /// "Save": the story moves to My Creations.
+    func markSaved() {
+        keeper.markSaved()
+    }
+
+    /// Its cards were saved to Photos or shared: it is finished too.
+    func markExported() {
+        keeper.markExported()
+    }
+
+    /// The design changed: a new image, kept shortly.
+    private func noteChange() {
+        export.clearMessage()
+        keeper.changed()
     }
 
     var style: StoryStyle { design?.style ?? .minimal }
@@ -39,7 +92,12 @@ final class StoryMakerModel {
         cards.first { $0.id == currentCardID } ?? cards.first
     }
 
-    var canExport: Bool { !cards.isEmpty && !export.isBusy }
+    /// Photos in the story that can't be shown now (deleted, or no longer shared with Relive).
+    var missingInStory: [AssetID] {
+        (design?.photoIDs ?? []).filter { missing.contains($0) }
+    }
+
+    var canExport: Bool { !cards.isEmpty && missingInStory.isEmpty && !export.isBusy }
 
     var analyticsProperties: [String: String] {
         ["kind": "story", "style": style.rawValue, "cards": String(cards.count), "variation": String(variation)]
@@ -55,8 +113,16 @@ final class StoryMakerModel {
     /// "Make it for me": another complete design — style, sequence, layouts.
     func makeItForMe() {
         variation += 1
-        apply(StoryDesigner(library: library).makeItForMe(source: source, variation: variation, excluding: missing))
-        export.clearMessage()
+        apply(StoryDesigner(library: library).makeItForMe(source: designSource, variation: variation, excluding: missing))
+        isRelivesDesign = true
+        noteChange()
+    }
+
+    /// What "Make it for me" designs from. A reopened story's photos may have moved on from
+    /// its source; it is designed from the photos it holds, and their own facts.
+    private var designSource: CreationSource {
+        guard !isRelivesDesign, let design else { return source }
+        return .photos(design.photoIDs.filter { !missing.contains($0) })
     }
 
     /// A different look for the same cards; the user's corrections stay.
@@ -64,7 +130,20 @@ final class StoryMakerModel {
         guard var design, design.style != style else { return }
         design.style = style
         self.design = design
-        export.clearMessage()
+        isRelivesDesign = false
+        noteChange()
+    }
+
+    /// Takes photos that are gone out of the story (cards left empty go too). Nothing is put in
+    /// their place; the user can replace photos from Edit Card.
+    func removeMissingPhotos() {
+        let gone = Set(missingInStory)
+        guard !gone.isEmpty else { return }
+        edit { design in
+            design.removingPhotos(gone, library: library)
+            return true
+        }
+        if !cards.contains(where: { $0.id == currentCardID }) { currentCardID = cards.first?.id ?? 0 }
     }
 
     private func apply(_ result: Result<StoryDesign, CreationShortfall>) {
@@ -100,7 +179,8 @@ final class StoryMakerModel {
     }
 
     func removeCard(_ cardID: Int) {
-        edit { $0.removeCard(cardID) }
+        let library = self.library
+        edit { $0.removeCard(cardID, library: library) }
         if !cards.contains(where: { $0.id == currentCardID }) { currentCardID = cards.first?.id ?? 0 }
     }
 
@@ -115,7 +195,8 @@ final class StoryMakerModel {
         guard var design else { return }
         guard change(&design) else { return }
         self.design = design
-        export.clearMessage()
+        isRelivesDesign = false
+        noteChange()
     }
 
     private func update(_ design: inout StoryDesign, _ cardID: Int, _ change: (inout StoryCard) -> Void) -> Bool {
@@ -138,8 +219,9 @@ final class StoryMakerModel {
                 lostAny = true
             }
         }
-        if lostAny {
-            // A photo disappeared from the library: design the story again without it.
+        if lostAny, isRelivesDesign, !keeper.exists {
+            // A photo disappeared from Relive's own, untouched design: design it again without
+            // it. (A story the user corrected or kept shows the missing photo instead.)
             apply(StoryDesigner(library: library).makeItForMe(source: source, variation: variation, excluding: missing))
             await loadPreviews(using: images)
         }

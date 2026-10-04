@@ -13,6 +13,7 @@ struct CollageEditorView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var picker: PickerPurpose?
     @State private var libraryPurpose: PickerPurpose?
+    @State private var confirmsDelete = false
 
     private enum PickerPurpose: Identifiable {
         case edit
@@ -75,7 +76,8 @@ struct CollageEditorView: View {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Close", action: onClose)
             }
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItemGroup(placement: .primaryAction) {
+                CreationKeepButton(keeper: model.keeper, onSave: model.markSaved)
                 Button {
                     Task { await share() }
                 } label: {
@@ -83,8 +85,10 @@ struct CollageEditorView: View {
                 }
                 .disabled(!model.canExport)
                 .accessibilityIdentifier("collageShare")
+                CreationMoreMenu(keeper: model.keeper) { confirmsDelete = true }
             }
         }
+        .confirmsCreationDelete(isPresented: $confirmsDelete, keeper: model.keeper, store: store, onDeleted: onClose)
         // The save bar sits below the scrolling controls (not over them): the scroll view's
         // content ends above it, so every control can be scrolled fully into view.
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -140,11 +144,8 @@ struct CollageEditorView: View {
                 }
             }
         }
-        // Any change makes a different image, so it can be saved again.
-        .onChange(of: model.style) { _, _ in model.export.clearMessage() }
-        .onChange(of: model.aspectRatio) { _, _ in model.export.clearMessage() }
-        .onChange(of: model.photoIDs) { _, _ in model.export.clearMessage() }
-        .onChange(of: model.caption) { _, _ in model.export.clearMessage() }
+        // Any change makes a different image (it can be saved again) and is kept as a draft:
+        // see `CollageEditorModel.noteChange`.
     }
 
     private var animation: Animation? {
@@ -358,7 +359,7 @@ struct CollageEditorView: View {
 
     private func save() async {
         let images = CreationImageSource(loader: loader)
-        await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties) {
+        await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties, onSaved: model.markExported) {
             let image = try await model.renderExport(using: images)
             return [image]
         }
@@ -366,7 +367,7 @@ struct CollageEditorView: View {
 
     private func share() async {
         let images = CreationImageSource(loader: loader)
-        await model.export.share(name: "Relive Collage", analytics: analytics, properties: model.analyticsProperties) {
+        await model.export.share(name: "Relive Collage", analytics: analytics, properties: model.analyticsProperties, onShared: model.markExported) {
             let image = try await model.renderExport(using: images)
             return [image]
         }
