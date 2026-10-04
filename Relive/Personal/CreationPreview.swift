@@ -144,7 +144,6 @@ struct CreationCard: View {
         .frame(width: width, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(summary.accessibilityLabel(isFavorite: isFavorite))
-        .accessibilityAddTraits(.isButton)
     }
 }
 

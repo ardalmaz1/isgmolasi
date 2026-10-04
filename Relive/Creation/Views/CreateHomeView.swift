@@ -12,8 +12,8 @@ enum CreateRoute: Hashable {
 
 /// Create: Relive's creative studio, and the couple's own collection.
 ///
-/// In order: Continue Editing (only when there are drafts), Your Creations, Favorites, then the
-/// five tools (Create Something), each shown with the couple's own photos, and Trending Now.
+/// In order: Continue Editing (only when there are drafts), Your Creations, Favorites, then
+/// Create Something — Trending Now and the five tools, each shown with the couple's own photos.
 /// Every line about the couple is a fact ("You have 8 favorites"), never a judgement.
 struct CreateHomeView: View {
     @Environment(AppModel.self) private var app
@@ -55,8 +55,10 @@ struct CreateHomeView: View {
                     } else {
                         favoritesSection(library: library)
                         Text("Create Something")
-                            .eyebrowStyle()
+                            .font(Typography.title2)
+                            .foregroundStyle(Palette.textPrimary)
                             .accessibilityAddTraits(.isHeader)
+                        trendingNow
                         collageFeature(library: library)
                         Hairline()
                         storyFeature(library: library)
@@ -66,7 +68,6 @@ struct CreateHomeView: View {
                         monthlyRecapRow(library: library, months: months)
                         Hairline()
                         yearRow(library: library, years: years)
-                        trendingNow
                     }
                 }
                 .padding(.horizontal, Spacing.screenMargin)

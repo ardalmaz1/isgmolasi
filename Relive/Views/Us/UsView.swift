@@ -155,6 +155,7 @@ private struct StatRow: View {
             Text(value.formatted())
                 .font(Typography.body.monospacedDigit())
                 .foregroundStyle(Palette.textPrimary)
+                .accessibilityIdentifier("stat-\(title)")
         }
     }
 }

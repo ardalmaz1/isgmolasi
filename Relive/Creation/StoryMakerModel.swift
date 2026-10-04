@@ -113,16 +113,18 @@ final class StoryMakerModel {
     /// "Make it for me": another complete design — style, sequence, layouts.
     func makeItForMe() {
         variation += 1
-        apply(StoryDesigner(library: library).makeItForMe(source: designSource, variation: variation, excluding: missing))
+        let designer = StoryDesigner(library: library)
+        var result = designer.makeItForMe(source: source, variation: variation, excluding: missing)
+        if case .failure = result, let photos = design?.photoIDs.filter({ !missing.contains($0) }), !photos.isEmpty {
+            // A reopened story whose source isn't there any more (Start Over, hidden): design
+            // it again from its own photos.
+            result = designer.makeItForMe(source: .photos(photos), variation: variation, excluding: missing)
+        }
+        // Never trade a story the user has for nothing.
+        guard case .success = result else { return }
+        apply(result)
         isRelivesDesign = true
         noteChange()
-    }
-
-    /// What "Make it for me" designs from. A reopened story's photos may have moved on from
-    /// its source; it is designed from the photos it holds, and their own facts.
-    private var designSource: CreationSource {
-        guard !isRelivesDesign, let design else { return source }
-        return .photos(design.photoIDs.filter { !missing.contains($0) })
     }
 
     /// A different look for the same cards; the user's corrections stay.

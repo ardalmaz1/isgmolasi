@@ -34,7 +34,7 @@ struct AssetViewer: View {
 
             HStack(spacing: Spacing.s) {
                 if !currentID.isEmpty {
-                    FavoriteButton(kind: .memory, identifier: currentID, tint: .white)
+                    FavoriteButton(kind: .memory, identifier: currentID, tint: .white, accessibilityID: "photoFavorite")
                         .background(.black.opacity(0.35), in: Circle())
                 }
                 Button {

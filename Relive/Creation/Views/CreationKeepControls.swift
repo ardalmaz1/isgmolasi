@@ -11,8 +11,12 @@ struct CreationKeepButton: View {
 
     var body: some View {
         if keeper.isSaved {
-            FavoriteButton(kind: .creation, identifier: keeper.id.uuidString)
-                .accessibilityLabel(keeper.kind == .collage ? "Favorite collage" : "Favorite story")
+            FavoriteButton(
+                kind: .creation,
+                identifier: keeper.id.uuidString,
+                label: keeper.kind == .collage ? "Favorite collage" : "Favorite story",
+                accessibilityID: "creationFavorite"
+            )
         } else {
             Button {
                 onSave()

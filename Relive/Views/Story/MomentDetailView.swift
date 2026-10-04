@@ -70,6 +70,7 @@ struct MomentDetailView: View {
                             PhotoGridCell(asset: asset, isFavorite: store.isFavorite(.memory, asset.id))
                         }
                         .buttonStyle(.plain)
+                        .accessibilityIdentifier("momentPhoto")
                         .contextMenu {
                             let isFavorite = store.isFavorite(.memory, asset.id)
                             Button {
@@ -104,9 +105,7 @@ struct MomentDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 // The moment itself; its photos keep their own favorites.
-                FavoriteButton(kind: .moment, identifier: moment.id.uuidString)
-                    .accessibilityLabel("Favorite moment")
-                    .accessibilityIdentifier("momentFavorite")
+                FavoriteButton(kind: .moment, identifier: moment.id.uuidString, label: "Favorite moment", accessibilityID: "momentFavorite")
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {

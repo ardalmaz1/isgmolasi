@@ -8,6 +8,9 @@ struct FavoriteButton: View {
     let identifier: String
     /// Colour of the empty heart (white over photos, ink on paper).
     var tint: Color = Palette.textPrimary
+    /// What VoiceOver calls it ("Favorite", "Favorite moment"); it adds "Selected" when it is one.
+    var label = "Favorite"
+    var accessibilityID = "favoriteButton"
 
     @Environment(StoryStore.self) private var store
 
@@ -25,10 +28,10 @@ struct FavoriteButton: View {
         }
         .buttonStyle(.plain)
         .sensoryFeedback(.selection, trigger: isFavorite)
-        .accessibilityLabel("Favorite")
+        .accessibilityLabel(label)
         .accessibilityValue(isFavorite ? "Selected" : "Not selected")
         .accessibilityHint(isFavorite ? "Removes it from your favorites" : "Keeps it in your favorites")
-        .accessibilityIdentifier("favoriteButton")
+        .accessibilityIdentifier(accessibilityID)
     }
 }
 

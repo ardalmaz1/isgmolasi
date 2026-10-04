@@ -36,8 +36,7 @@ struct MemoryBookReaderView: View {
             }
             if store.book(id: bookID) != nil {
                 ToolbarItem(placement: .primaryAction) {
-                    FavoriteButton(kind: .creation, identifier: bookID.uuidString)
-                        .accessibilityLabel("Favorite book")
+                    FavoriteButton(kind: .creation, identifier: bookID.uuidString, label: "Favorite book", accessibilityID: "bookFavorite")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Edit") { isEditing = true }
