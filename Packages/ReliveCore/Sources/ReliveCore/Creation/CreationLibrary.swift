@@ -79,6 +79,8 @@ public enum CreationSource: Hashable, Sendable, Codable {
     case photos([AssetID])
     case month(MonthKey)
     case year(Int)
+    /// Memories the user marked as favorites in Photos.
+    case favorites
 }
 
 /// How many photos each kind of creation works with.
@@ -100,6 +102,9 @@ public struct CreationLibrary: Sendable {
     public var unavailableAssetIDs: Set<AssetID>
     public var calendar: Calendar
     public var scorer: AssetScorer
+    /// Photos chosen straight from the photo library for a creation. They can be used like any
+    /// other photo but are not part of the story: no moment, no trip, no place name.
+    public private(set) var photoLibraryAssetIDs: Set<AssetID> = []
 
     public init(
         story: Story,
@@ -115,6 +120,42 @@ public struct CreationLibrary: Sendable {
         self.unavailableAssetIDs = unavailableAssetIDs
         self.calendar = calendar
         self.scorer = scorer
+    }
+
+    /// This library plus photos chosen from the photo library. A photo that is already a memory
+    /// keeps its memory metadata; the others keep only their own.
+    public func addingPhotoLibraryAssets(_ added: [MemoryAsset]) -> CreationLibrary {
+        var library = self
+        for asset in added where library.assets[asset.id] == nil {
+            library.assets[asset.id] = asset
+            library.photoLibraryAssetIDs.insert(asset.id)
+        }
+        return library
+    }
+
+    // MARK: - Creation assets
+
+    /// Everything known about one photo, from the photo itself and the story it belongs to.
+    public func creationAsset(_ id: AssetID) -> CreationAsset? {
+        guard let asset = assets[id] else { return nil }
+        let moment = photoLibraryAssetIDs.contains(id) ? nil : moment(containing: id)
+        let chapter = moment.flatMap { story.chapter(for: $0) }
+        return CreationAsset(
+            asset: asset,
+            source: photoLibraryAssetIDs.contains(id) ? .photoLibrary : .relive,
+            place: moment.flatMap { $0.place ?? chapter?.place },
+            momentID: moment?.id,
+            tripID: chapter?.id
+        )
+    }
+
+    /// What can truthfully be said about these photos together. A photo Relive knows nothing
+    /// about counts as undated and unplaced.
+    public func metadata(of photos: [AssetID]) -> CreationMetadataSummary {
+        let known = photos.map { id in
+            creationAsset(id) ?? CreationAsset(id: id, source: .photoLibrary, creationDate: nil)
+        }
+        return CreationMetadata.summarize(known, calendar: calendar)
     }
 
     // MARK: - Visibility
@@ -221,7 +262,16 @@ public struct CreationLibrary: Sendable {
             return MonthlyRecapBuilder(library: self).recap(for: month).highlights(limit: limit)
         case .year(let year):
             return YearInReviewBuilder(library: self).review(for: year).highlights(limit: limit)
+        case .favorites:
+            return spreadPick(favoritePhotos, count: limit)
         }
+    }
+
+    /// Usable photos marked as favorites, from visible moments, in the order they were taken.
+    public var favoritePhotos: [AssetID] {
+        visibleMoments.flatMap(usablePhotos(in:))
+            .filter { assets[$0]?.isFavorite == true }
+            .sorted(by: chronologicalOrder)
     }
 
     /// Everything usable a source can draw from (for "not enough photos" checks).
@@ -238,34 +288,46 @@ public struct CreationLibrary: Sendable {
             return MonthlyRecapBuilder(library: self).recap(for: month).moments.flatMap(usablePhotos(in:))
         case .year(let year):
             return YearInReviewBuilder(library: self).review(for: year).moments.flatMap(usablePhotos(in:))
+        case .favorites:
+            return favoritePhotos
         }
     }
 
     /// The facts a creation from `source` may print, given the photos it actually uses.
+    ///
+    /// The source is only a hint: its name, month or year is used when *every* photo really
+    /// belongs to it. A creation started from September that now holds August photos too is not
+    /// "September" any more — it is described from its photos (`facts(forPhotos:)`).
     public func facts(for source: CreationSource, photos: [AssetID]) -> CreationFacts {
+        let summary = metadata(of: photos)
         switch source {
         case .moment(let id):
-            if let moment = story.moment(id: id), Set(photos).isSubset(of: Set(moment.assetIDs)) {
-                return facts(for: moment)
+            if let moment = story.moment(id: id), summary.momentID == moment.id {
+                return facts(for: moment, photos: summary)
             }
-            return facts(forPhotos: photos)
-        case .photos:
-            return facts(forPhotos: photos)
         case .trip(let id):
-            guard let chapter = story.chapter(id: id) else { return facts(forPhotos: photos) }
-            var facts = facts(for: chapter)
-            facts.dateSpan = dateSpan(of: photos) ?? facts.dateSpan
-            return facts
+            if let chapter = story.chapter(id: id), summary.tripID == chapter.id {
+                var facts = facts(for: chapter)
+                facts.dateSpan = summary.dateSpan
+                return facts
+            }
         case .month(let month):
-            let recap = MonthlyRecapBuilder(library: self).recap(for: month)
-            var facts = sharedPlaceFacts(recap.moments)
-            facts.title = .month(month)
-            facts.dateSpan = dateSpan(of: photos) ?? recap.dateSpan
-            return facts
+            if CreationMetadata.fits(summary, month: month, calendar: calendar) {
+                return CreationFacts(
+                    title: .month(month),
+                    dateSpan: summary.dateSpan,
+                    place: summary.place,
+                    coordinate: summary.place == nil ? nil : summary.coordinate
+                )
+            }
         case .year(let year):
-            let review = YearInReviewBuilder(library: self).review(for: year)
-            return CreationFacts(title: .year(year), dateSpan: dateSpan(of: photos) ?? review.dateSpan)
+            if CreationMetadata.fits(summary, year: year, calendar: calendar) {
+                return CreationFacts(title: .year(year), dateSpan: summary.dateSpan)
+            }
+        case .photos, .favorites:
+            break
         }
+        return facts(forPhotos: photos)
     }
 
     /// Visible moments of a trip, chronological.
@@ -302,44 +364,36 @@ public struct CreationLibrary: Sendable {
         )
     }
 
-    /// Facts for an arbitrary set of photos. A title only when they share one moment, one trip
-    /// or one place; the dates are the photos' own.
+    /// Facts for an arbitrary set of photos, derived from the photos themselves:
+    /// - one moment → its name and place; one trip → the trip's;
+    /// - otherwise one shared place → that place;
+    /// - otherwise the calendar: one month ("September Together"), one year ("Our 2026");
+    /// - several years, or photos without dates → no title (nothing true to say).
+    /// Dates appear only when every photo has one.
     public func facts(forPhotos photos: [AssetID]) -> CreationFacts {
-        let span = dateSpan(of: photos)
-        let owners = photos.map { moment(containing: $0) }
-        guard !photos.isEmpty, owners.allSatisfy({ $0 != nil }) else {
-            return CreationFacts(dateSpan: span)
+        guard !photos.isEmpty else { return .none }
+        let summary = metadata(of: photos)
+        if let id = summary.momentID, let moment = story.moment(id: id) {
+            return facts(for: moment, photos: summary)
         }
-        var moments: [Moment] = []
-        for case let owner? in owners where !moments.contains(where: { $0.id == owner.id }) {
-            moments.append(owner)
-        }
-        if moments.count == 1, let only = moments.first {
-            var facts = facts(for: only)
-            facts.dateSpan = span ?? facts.dateSpan
-            return facts
-        }
-        if let chapterID = moments.first?.chapterID, moments.allSatisfy({ $0.chapterID == chapterID }),
-           let chapter = story.chapter(id: chapterID) {
+        if let id = summary.tripID, let chapter = story.chapter(id: id) {
             var facts = facts(for: chapter)
-            facts.dateSpan = span
+            facts.dateSpan = summary.dateSpan
             return facts
         }
-        var facts = sharedPlaceFacts(moments)
-        facts.dateSpan = span
-        if let place = facts.place { facts.title = .named(place.name) }
-        return facts
+        return CreationFacts(
+            title: summary.place.map { .named($0.name) } ?? CreationMetadata.periodTitle(for: summary),
+            dateSpan: summary.dateSpan,
+            place: summary.place,
+            coordinate: summary.coordinate
+        )
     }
 
-    /// Place facts when every moment has the same named place.
-    func sharedPlaceFacts(_ moments: [Moment]) -> CreationFacts {
-        let places = moments.map { $0.place ?? story.chapter(for: $0)?.place }
-        guard let first = places.first.flatMap({ $0 }),
-              places.allSatisfy({ $0?.comparisonKey == first.comparisonKey }) else {
-            return CreationFacts()
-        }
-        let coordinates = moments.compactMap(\.centroid)
-        return CreationFacts(place: first, coordinate: GeoCoordinate.centroid(of: coordinates))
+    /// A moment's facts, dated by the photos actually used.
+    private func facts(for moment: Moment, photos summary: CreationMetadataSummary) -> CreationFacts {
+        var facts = facts(for: moment)
+        facts.dateSpan = summary.dateSpan ?? facts.dateSpan
+        return facts
     }
 
     public func dateSpan(of photos: [AssetID]) -> DateSpan? {

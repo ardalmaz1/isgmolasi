@@ -92,8 +92,10 @@ public struct StorySequenceBuilder: Sendable {
     public func sequence(for source: CreationSource, excluding: Set<AssetID> = []) -> Result<StorySequence, CreationShortfall> {
         let minimum = CreationLimits.story.lowerBound
         var pool = library.availablePhotos(for: source).filter { !excluding.contains($0) }
-        if case .photos = source {
-            pool = Array(pool.prefix(CreationLimits.story.upperBound))
+        switch source {
+        case .photos: pool = Array(pool.prefix(CreationLimits.story.upperBound))
+        case .favorites: pool = library.spreadPick(pool, count: CreationLimits.story.upperBound)
+        default: break
         }
         guard pool.count >= minimum else {
             return .failure(.notEnoughPhotos(available: pool.count, required: minimum))
@@ -108,7 +110,7 @@ public struct StorySequenceBuilder: Sendable {
             if lead.map({ excluding.contains($0) }) ?? true { lead = library.best(pool) }
             return .success(byDay(pool: pool, lead: lead, facts: library.facts(for: moment)))
 
-        case .photos:
+        case .photos, .favorites:
             let facts = library.facts(forPhotos: pool)
             let moments = Set(pool.compactMap { library.moment(containing: $0)?.id })
             if moments.count <= 1 {
