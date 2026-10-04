@@ -221,7 +221,8 @@ final class PersonalCollectionUITests: XCTestCase {
         XCTAssertTrue(tool.waitForExistence(timeout: 10), "\(identifier) is missing")
         let screen = app.windows.firstMatch.frame
         func isClear() -> Bool {
-            tool.isHittable && tool.frame.minY > screen.minY + 80 && tool.frame.maxY < screen.maxY - 140
+            // The tab bar is 83 pt tall (49 + the home indicator area).
+            tool.isHittable && tool.frame.minY > screen.minY + 80 && tool.frame.maxY < screen.maxY - 90
         }
         for _ in 0..<8 where !isClear() {
             if tool.frame.minY <= screen.minY + 80 { app.swipeDown() } else { app.swipeUp() }
