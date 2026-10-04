@@ -22,9 +22,10 @@ public enum BookStyle: String, CaseIterable, Codable, Hashable, Sendable {
 /// How many photos a book works with.
 public enum BookLimits {
     /// Fewer than this is not a book.
-    public static let minimumPhotos = 4
-    /// Keeps a book browsable and its memory use bounded; larger sources are sampled evenly.
-    public static let maximumPhotos = 60
+    public static let minimumPhotos = 6
+    /// Keeps a book browsable (no hundreds of pages) and its memory use bounded; larger sources
+    /// are sampled evenly.
+    public static let maximumPhotos = 40
 }
 
 /// A saved Memory Book: the *definition* of the book, not its pages or pixels.
@@ -50,6 +51,9 @@ public struct MemoryBook: Codable, Hashable, Sendable, Identifiable {
     public var note: String?
     /// Print the notes the user wrote on moments, after each moment's opening page.
     public var includesMomentNotes: Bool
+    /// Metadata (never pixels) of photos chosen straight from the photo library: their own
+    /// dates, locations and sizes, so the book can describe them after the app restarts.
+    public var photoLibraryAssets: [MemoryAsset]
 
     public init(
         id: UUID = UUID(),
@@ -61,7 +65,8 @@ public struct MemoryBook: Codable, Hashable, Sendable, Identifiable {
         photoIDs: [AssetID],
         coverAssetID: AssetID? = nil,
         note: String? = nil,
-        includesMomentNotes: Bool = true
+        includesMomentNotes: Bool = true,
+        photoLibraryAssets: [MemoryAsset] = []
     ) {
         self.id = id
         self.version = version
@@ -73,6 +78,46 @@ public struct MemoryBook: Codable, Hashable, Sendable, Identifiable {
         self.coverAssetID = coverAssetID
         self.note = note
         self.includesMomentNotes = includesMomentNotes
+        self.photoLibraryAssets = photoLibraryAssets
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, version, createdAt, updatedAt, source, style, photoIDs, coverAssetID, note, includesMomentNotes, photoLibraryAssets
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decode(UUID.self, forKey: .id)
+        version = try container.decode(Int.self, forKey: .version)
+        createdAt = try container.decode(Date.self, forKey: .createdAt)
+        updatedAt = try container.decode(Date.self, forKey: .updatedAt)
+        source = try container.decode(CreationSource.self, forKey: .source)
+        style = try container.decode(BookStyle.self, forKey: .style)
+        photoIDs = try container.decode([AssetID].self, forKey: .photoIDs)
+        coverAssetID = try container.decodeIfPresent(AssetID.self, forKey: .coverAssetID)
+        note = try container.decodeIfPresent(String.self, forKey: .note)
+        includesMomentNotes = try container.decodeIfPresent(Bool.self, forKey: .includesMomentNotes) ?? true
+        // Books saved before v0.3.1 have no photo-library photos.
+        photoLibraryAssets = try container.decodeIfPresent([MemoryAsset].self, forKey: .photoLibraryAssets) ?? []
+    }
+
+    /// The library to lay this book out with: `base` plus the book's photo-library photos.
+    public func creationLibrary(base: CreationLibrary) -> CreationLibrary {
+        photoLibraryAssets.isEmpty ? base : base.addingPhotoLibraryAssets(photoLibraryAssets)
+    }
+
+    /// Remembers metadata for photo-library photos in the book (call after adding them).
+    public mutating func rememberPhotoLibraryAssets(_ assets: [MemoryAsset]) {
+        let inBook = Set(photoIDs)
+        for asset in assets where inBook.contains(asset.id) && !photoLibraryAssets.contains(where: { $0.id == asset.id }) {
+            photoLibraryAssets.append(asset)
+        }
+    }
+
+    /// Forgets photo-library metadata for photos no longer in the book.
+    mutating func pruneUnusedAssets() {
+        let used = Set(photoIDs)
+        photoLibraryAssets.removeAll { !used.contains($0.id) }
     }
 
     /// The trimmed note, or nil when there are no words.
@@ -103,13 +148,15 @@ public struct MemoryBookBuilder: Sendable {
         }
     }
 
-    /// A new book, or why there isn't enough to make one.
+    /// A new book, or why there isn't enough to make one. Photos picked from the photo library
+    /// (present in `library`) are remembered by their metadata.
     public func makeBook(from source: CreationSource, id: UUID = UUID(), now: Date) -> Result<MemoryBook, CreationShortfall> {
         let photos = photos(for: source)
         guard photos.count >= BookLimits.minimumPhotos else {
             return .failure(.notEnoughPhotos(available: photos.count, required: BookLimits.minimumPhotos))
         }
-        return .success(MemoryBook(id: id, createdAt: now, source: source, photoIDs: photos))
+        let fromLibrary = photos.filter(library.photoLibraryAssetIDs.contains).compactMap { library.assets[$0] }
+        return .success(MemoryBook(id: id, createdAt: now, source: source, photoIDs: photos, photoLibraryAssets: fromLibrary))
     }
 
     /// Re-reads the source (new photos, deleted ones), keeping the user's style, note and cover.
@@ -122,6 +169,7 @@ public struct MemoryBookBuilder: Sendable {
         if let cover = updated.coverAssetID, !updated.photoIDs.contains(cover) {
             updated.coverAssetID = nil
         }
+        updated.pruneUnusedAssets()
         updated.updatedAt = now
         return updated
     }
@@ -136,6 +184,7 @@ extension MemoryBook {
         guard photoIDs.count > BookLimits.minimumPhotos, let index = photoIDs.firstIndex(of: id) else { return false }
         photoIDs.remove(at: index)
         if coverAssetID == id { coverAssetID = nil }
+        pruneUnusedAssets()
         return true
     }
 
@@ -155,6 +204,7 @@ extension MemoryBook {
         guard let index = photoIDs.firstIndex(of: oldID), !photoIDs.contains(newID) else { return false }
         photoIDs[index] = newID
         if coverAssetID == oldID { coverAssetID = newID }
+        pruneUnusedAssets()
         return true
     }
 
@@ -168,6 +218,7 @@ extension MemoryBook {
         guard updated.count >= BookLimits.minimumPhotos else { return false }
         photoIDs = updated
         if let cover = coverAssetID, !photoIDs.contains(cover) { coverAssetID = nil }
+        pruneUnusedAssets()
         return true
     }
 

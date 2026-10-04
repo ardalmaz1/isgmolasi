@@ -137,7 +137,8 @@ public struct StorySequenceBuilder: Sendable {
                 return .failure(.notEnoughPhotos(available: 0, required: minimum))
             }
             let body = Array(ordered.filter { $0 != lead }.prefix(maximumCards - 2))
-            return .success(assemble(lead: lead, facts: facts, body: body, closing: .year(year)) { id in
+            // "And that's our <year>" only for a year that really has more than one month in it.
+            return .success(assemble(lead: lead, facts: facts, body: body, closing: review.isSufficient ? .year(year) : nil) { id in
                 guard let date = library.assets[id]?.creationDate else { return nil }
                 let month = MonthKey(date: date, calendar: library.calendar)
                 return Group(key: "\(month.year)-\(month.month)", title: .month(month), span: nil)

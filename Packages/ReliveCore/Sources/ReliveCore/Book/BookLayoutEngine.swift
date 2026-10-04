@@ -23,7 +23,10 @@ public enum BookPhotoTemplate: String, Hashable, Sendable {
     case fullBleed
     /// One photo in its own shape, with white space. Used for landscape photos.
     case single
+    /// Two photos of the same orientation, side by side (portraits) or stacked (landscapes).
     case pair
+    /// A portrait and a landscape: the portrait large, the landscape smaller beside it.
+    case feature
     case trio
     case quad
 }
@@ -105,17 +108,20 @@ struct BookStyleMetrics: Sendable {
 
 /// Paginates a `MemoryBook` deterministically.
 ///
-/// - Photos stay in the book's order; a new moment (or day, in a one-moment book) gets an opening
-///   page with its real name, date and place, and a trip inside a longer book gets a title page.
-/// - Photo pages hold one to four photos and follow a varied rhythm, so the same arrangement
-///   doesn't repeat page after page. Portrait photos alone fill the page; landscape photos alone
-///   keep their shape. Pairs keep both photos' shapes; trios and quads crop as little as possible.
+/// - Photos stay in the book's order. A new moment (or day) gets an opening page with its real
+///   name, date and place; a trip inside a longer book gets a title page. Photos from outside the
+///   story are grouped by their own capture day. Nothing is inherited from a neighbouring photo.
+/// - Which photos share a page depends on the photos: the section's strongest photo gets a page
+///   of its own, landscapes pair up, portraits gather in threes and fours, and no lone photo is
+///   left over when another split avoids it. Portrait photos alone fill the page; landscapes keep
+///   their shape; a portrait and a landscape make an asymmetric spread.
+/// - Each page's footer carries the dates of the photos on that page.
 /// - The pagination doesn't depend on the style; only the geometry does. Changing the style
 ///   never moves a photo to another page.
 public struct BookLayoutEngine: Sendable {
     public static let pageSize = CreationAspectRatio.portrait.designSize
-    /// Photos per page, cycled. No two neighbours are equal, so pages vary.
-    static let rhythm = [2, 3, 1, 4, 2, 3, 2, 1]
+    /// A section this long gets one photo on a page of its own.
+    static let heroThreshold = 5
 
     public var library: CreationLibrary
 
@@ -156,7 +162,7 @@ public struct BookLayoutEngine: Sendable {
 
         let sections = self.sections(for: book, photos: usable)
         let isSingleSection = sections.count <= 1
-        var cursor = 0
+        var previousCount = 0
         var announcedTrips = Set<UUID>()
         let sectionsPerTrip = Dictionary(grouping: sections.compactMap(\.tripID), by: { $0 }).mapValues(\.count)
 
@@ -167,8 +173,8 @@ public struct BookLayoutEngine: Sendable {
         for section in sections {
             var photos = section.photos
             guard !photos.isEmpty else { continue }
+            // The book's title covers every page of a one-section book; otherwise the section's.
             let running = isSingleSection ? facts.title : section.title
-            let runningDate = isSingleSection ? facts.dateSpan : section.dateSpan
 
             // A trip inside a longer book gets its own title page, once.
             if let tripID = section.tripID, !isTripBook(book), (sectionsPerTrip[tripID] ?? 0) > 1,
@@ -180,29 +186,26 @@ public struct BookLayoutEngine: Sendable {
                 ))
             }
 
-            if !isSingleSection {
+            // An opening page only when there is something true to say about the section.
+            if !isSingleSection, section.title != nil || section.dateSpan != nil {
                 let first = photos.removeFirst()
                 let geometry = openerGeometry(aspect: aspect(of: first), metrics: metrics)
                 add(BookPage(
                     id: 0, kind: .opener, template: .single,
                     slots: [BookPhotoSlot(assetID: first, frame: geometry.photo)],
                     title: section.title, dateSpan: section.dateSpan, place: section.place,
-                    textFrame: geometry.text, runningTitle: running, runningDate: runningDate
+                    textFrame: geometry.text, runningTitle: running, runningDate: library.metadata(of: [first]).dateSpan
                 ))
                 if book.includesMomentNotes, let note = section.note {
                     add(BookPage(id: 0, kind: .momentNote, slots: [], title: section.title, text: note, textFrame: textPageFrame(metrics)))
                 }
             }
 
-            while !photos.isEmpty {
-                let count = min(Self.rhythm[cursor % Self.rhythm.count], photos.count)
-                cursor += 1
-                let chunk = Array(photos.prefix(count))
-                photos.removeFirst(count)
+            for chunk in pagePlan(photos, previousCount: &previousCount) {
                 let arranged = photoPage(chunk, style: book.style, metrics: metrics)
                 add(BookPage(
                     id: 0, kind: .photos, template: arranged.template, slots: arranged.slots,
-                    runningTitle: running, runningDate: runningDate
+                    runningTitle: running, runningDate: library.metadata(of: chunk).dateSpan
                 ))
             }
         }
@@ -237,7 +240,8 @@ public struct BookLayoutEngine: Sendable {
     }
 
     /// Consecutive photos of the same moment form a section; in a book of one moment, each day
-    /// does.
+    /// does. Photos from outside the story form sections by their own capture day. Every value
+    /// comes from the section's own photos — a photo never takes on its neighbour's name or date.
     func sections(for book: MemoryBook, photos: [AssetID]) -> [Section] {
         let byDay: Bool
         if case .moment = book.source { byDay = true } else { byDay = false }
@@ -245,43 +249,49 @@ public struct BookLayoutEngine: Sendable {
         var sections: [Section] = []
         var currentKey: String?
         for id in photos {
-            let moment = library.moment(containing: id)
-            let date = library.assets[id]?.creationDate
+            let asset = library.creationAsset(id)
+            let moment = asset?.momentID.flatMap { library.story.moment(id: $0) }
+            let dayKey = asset?.creationDate.map { date -> String in
+                let day = library.calendar.dateComponents([.year, .month, .day], from: date)
+                return "day-\(day.year ?? 0)-\(day.month ?? 0)-\(day.day ?? 0)"
+            } ?? "undated"
             let key: String
-            if byDay {
-                if let date {
-                    let day = library.calendar.dateComponents([.year, .month, .day], from: date)
-                    key = "\(day.year ?? 0)-\(day.month ?? 0)-\(day.day ?? 0)"
-                } else {
-                    key = currentKey ?? "undated"
-                }
+            if let moment, !byDay {
+                key = "moment-\(moment.id.uuidString)"
             } else {
-                key = moment?.id.uuidString ?? currentKey ?? "loose"
+                key = dayKey
             }
 
             if key != currentKey || sections.isEmpty {
                 currentKey = key
                 var section = Section(photos: [])
-                if byDay {
-                    section.dateSpan = date.map { DateSpan(start: $0, end: $0) }
-                    section.place = moment.flatMap { $0.place ?? library.story.chapter(for: $0)?.place }
-                    section.note = moment.flatMap(note(of:))
-                } else if let moment {
-                    let facts = library.facts(for: moment)
-                    section.title = facts.title
-                    section.place = facts.place
-                    section.note = note(of: moment)
-                    section.tripID = moment.chapterID
+                if let moment {
+                    if byDay {
+                        section.place = asset?.place
+                        section.note = note(of: moment)
+                    } else {
+                        let facts = library.facts(for: moment)
+                        section.title = facts.title
+                        section.place = facts.place
+                        section.note = note(of: moment)
+                        section.tripID = moment.chapterID
+                    }
                 }
                 sections.append(section)
             }
             sections[sections.count - 1].photos.append(id)
         }
 
-        // Dates span the photos actually in each section.
         for index in sections.indices {
-            if let span = library.dateSpan(of: sections[index].photos) {
-                sections[index].dateSpan = span
+            // Dates span the photos actually in each section, and only when they all have one.
+            sections[index].dateSpan = library.metadata(of: sections[index].photos).dateSpan
+        }
+        // A name already used earlier in the book ("September Evening" twice) gives way to the
+        // section's own date, so generic titles don't repeat.
+        var usedTitles = Set<CreationTitle>()
+        for index in sections.indices {
+            if let title = sections[index].title, !usedTitles.insert(title).inserted {
+                sections[index].title = nil
             }
         }
         // In a one-moment book every day shares the moment's note; print it once (single-section
@@ -290,6 +300,64 @@ public struct BookLayoutEngine: Sendable {
             for index in sections.indices.dropFirst() { sections[index].note = nil }
         }
         return sections
+    }
+
+    // MARK: - Pages
+
+    /// Splits a section's photos into pages, keeping their order:
+    /// - in a long section, its strongest photo gets a page of its own (chosen where it leaves
+    ///   no lone photo beside it);
+    /// - two landscapes share a page (they stack well on a tall page);
+    /// - portraits gather in fours, or threes, varying with the page before;
+    /// - no single photo is left over when another split avoids it.
+    func pagePlan(_ photos: [AssetID], previousCount: inout Int) -> [[AssetID]] {
+        let hero = heroCandidate(in: photos)
+        var pages: [[AssetID]] = []
+        var queue = photos[...]
+        while let first = queue.first {
+            if first == hero {
+                pages.append([first])
+                queue = queue.dropFirst()
+                previousCount = 1
+                continue
+            }
+            let run = Array(queue.prefix { $0 != hero })
+            let shapes = run.prefix(4).map { PhotoOrientation(aspectRatio: aspect(of: $0)) }
+            let count = Self.photosPerPage(shapes: shapes, remaining: run.count, previous: previousCount)
+            pages.append(Array(queue.prefix(count)))
+            queue = queue.dropFirst(count)
+            previousCount = count
+        }
+        return pages
+    }
+
+    /// How many of the next photos share a page.
+    static func photosPerPage(shapes: [PhotoOrientation], remaining: Int, previous: Int) -> Int {
+        guard remaining > 2, shapes.count >= 3 else { return remaining }
+        var count: Int
+        if shapes[0].isLandscape && shapes[1].isLandscape {
+            count = 2
+        } else if remaining >= 4, shapes.prefix(4).allSatisfy({ !$0.isLandscape }), previous != 4 {
+            count = 4
+        } else if previous != 3, shapes.prefix(3).filter(\.isLandscape).count <= 1 {
+            count = 3
+        } else {
+            count = 2
+        }
+        // Never leave one photo on its own at the end.
+        if remaining - count == 1 { count = count > 2 ? count - 1 : count + 1 }
+        return min(count, remaining)
+    }
+
+    /// The section's strongest photo, where giving it a page leaves no lone photo before or
+    /// after it.
+    private func heroCandidate(in photos: [AssetID]) -> AssetID? {
+        guard photos.count >= Self.heroThreshold else { return nil }
+        let allowed = photos.indices.filter { index in
+            let before = index, after = photos.count - index - 1
+            return before != 1 && after != 1
+        }
+        return library.best(allowed.map { photos[$0] }) ?? library.best(photos)
     }
 
     private func note(of moment: Moment) -> String? {
@@ -336,6 +404,9 @@ public struct BookLayoutEngine: Sendable {
                 template = .single
                 frames = CollageLayoutEngine.justified(aspects: aspects.map { min(2.4, $0) }, in: area, gutter: gutter, maxRows: 1)
             }
+        case 2 where PhotoOrientation(aspectRatio: aspects[0]).isLandscape != PhotoOrientation(aspectRatio: aspects[1]).isLandscape:
+            template = .feature
+            frames = featureFrames(aspects: aspects, in: area, gutter: gutter)
         case 2:
             template = .pair
             frames = CollageLayoutEngine.justified(aspects: aspects.map { min(2.4, max(0.5, $0)) }, in: area, gutter: gutter, maxRows: 2)
@@ -349,6 +420,38 @@ public struct BookLayoutEngine: Sendable {
             frames = CollageLayoutEngine.rowGrid(aspects: aspects, in: area, gutter: gutter, maxColumns: 2, maxRows: 3).rects
         }
         return (template, zip(photos, frames).map { BookPhotoSlot(assetID: $0, frame: $1) })
+    }
+
+    /// A portrait and a landscape, neither cropped: the portrait large in one column, the
+    /// landscape smaller in the other, aligned to the portrait's foot (or head, when it comes
+    /// first in the book), leaving deliberate white space.
+    func featureFrames(aspects: [Double], in area: LayoutRect, gutter: Double) -> [LayoutRect] {
+        let portraitIndex = PhotoOrientation(aspectRatio: aspects[0]).isLandscape ? 1 : 0
+        let portraitAspect = min(1.0, max(0.5, aspects[portraitIndex]))
+        let landscapeAspect = min(2.4, max(1.0, aspects[1 - portraitIndex]))
+
+        var bigWidth = area.width * 0.6
+        var bigHeight = bigWidth / portraitAspect
+        if bigHeight > area.height {
+            bigHeight = area.height
+            bigWidth = bigHeight * portraitAspect
+        }
+        let smallWidth = area.width - bigWidth - gutter
+        let smallHeight = smallWidth / landscapeAspect
+        let bigY = area.y + (area.height - bigHeight) / 2
+
+        let big: LayoutRect
+        let small: LayoutRect
+        if portraitIndex == 0 {
+            // Portrait first: on the left; the landscape follows, low on the right.
+            big = LayoutRect(x: area.x, y: bigY, width: bigWidth, height: bigHeight)
+            small = LayoutRect(x: big.maxX + gutter, y: big.maxY - smallHeight, width: smallWidth, height: smallHeight)
+        } else {
+            // Landscape first: high on the left; the portrait follows on the right.
+            small = LayoutRect(x: area.x, y: bigY, width: smallWidth, height: smallHeight)
+            big = LayoutRect(x: small.maxX + gutter, y: bigY, width: bigWidth, height: bigHeight)
+        }
+        return portraitIndex == 0 ? [big, small] : [small, big]
     }
 
     private func openerGeometry(aspect: Double, metrics: BookStyleMetrics) -> (photo: LayoutRect, text: LayoutRect) {

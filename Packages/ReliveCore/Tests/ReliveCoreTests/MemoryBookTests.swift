@@ -78,7 +78,7 @@ struct MemoryBookTests {
 
     @Test("Chosen photos keep the order they were chosen in")
     func chosenPhotos() throws {
-        let chosen = ["coffee-2", "kas-1", "moda-0", "kas-0", "coffee-0"]
+        let chosen = ["coffee-2", "kas-1", "moda-0", "kas-0", "coffee-0", "kekova-2"]
         let book = try book(.photos(chosen))
         #expect(book.photoIDs == chosen)
         let layout = layout(book)
@@ -89,9 +89,11 @@ struct MemoryBookTests {
     @Test("Too few photos, or a hidden moment, makes no book")
     func insufficient() {
         let builder = MemoryBookBuilder(library: fixture.library)
-        #expect(builder.makeBook(from: .moment(fixture.moment("afternoon").id), now: now) == .failure(.notEnoughPhotos(available: 2, required: 4)))
-        #expect(builder.makeBook(from: .moment(fixture.moment("spring").id), now: now) == .failure(.notEnoughPhotos(available: 0, required: 4)))
-        #expect(builder.makeBook(from: .photos(["kas-0", "kas-1", "moda-video"]), now: now) == .failure(.notEnoughPhotos(available: 2, required: 4)))
+        #expect(builder.makeBook(from: .moment(fixture.moment("afternoon").id), now: now) == .failure(.notEnoughPhotos(available: 2, required: 6)))
+        #expect(builder.makeBook(from: .moment(fixture.moment("spring").id), now: now) == .failure(.notEnoughPhotos(available: 0, required: 6)))
+        #expect(builder.makeBook(from: .photos(["kas-0", "kas-1", "moda-video"]), now: now) == .failure(.notEnoughPhotos(available: 2, required: 6)))
+        // Four photos made a book before v0.3.1; a book now starts at six.
+        #expect(builder.makeBook(from: .moment(fixture.moment("kekova").id), now: now) == .failure(.notEnoughPhotos(available: 4, required: 6)))
     }
 
     // MARK: - Layout
@@ -232,7 +234,7 @@ struct MemoryBookTests {
             userStates: [:], unavailableAssetIDs: [], calendar: testCalendar
         )
         let book = try MemoryBookBuilder(library: library).makeBook(from: .year(2024), now: now).get()
-        #expect(book.photoIDs.count == BookLimits.maximumPhotos, "360 photos are sampled down to 60")
+        #expect(book.photoIDs.count == BookLimits.maximumPhotos, "360 photos are sampled down to the 40-photo limit")
         let started = Date()
         let layout = BookLayoutEngine(library: library).layout(book)
         #expect(Date().timeIntervalSince(started) < 1)
@@ -289,7 +291,7 @@ struct MemoryBookTests {
 @Suite("Memory Book editing")
 struct MemoryBookEditingTests {
     func book() -> MemoryBook {
-        MemoryBook(createdAt: date(2026, 1, 1), source: .photos([]), photoIDs: ["a", "b", "c", "d", "e"], coverAssetID: "c")
+        MemoryBook(createdAt: date(2026, 1, 1), source: .photos([]), photoIDs: ["a", "b", "c", "d", "e", "f", "g"], coverAssetID: "c")
     }
 
     @Test("Removing keeps a book a book")
@@ -297,10 +299,10 @@ struct MemoryBookEditingTests {
         var book = book()
         let ok1 = book.removePhoto("c")
         #expect(ok1)
-        #expect(book.photoIDs == ["a", "b", "d", "e"])
+        #expect(book.photoIDs == ["a", "b", "d", "e", "f", "g"])
         #expect(book.coverAssetID == nil, "the removed photo was the cover")
         let ok2 = book.removePhoto("a")
-        #expect(!ok2, "four photos is the minimum")
+        #expect(!ok2, "six photos is the minimum")
         let ok3 = book.removePhoto("missing")
         #expect(!ok3)
     }
@@ -310,8 +312,8 @@ struct MemoryBookEditingTests {
         var book = book()
         let ok4 = book.movePhoto("a", by: 1)
         #expect(ok4)
-        #expect(book.photoIDs == ["b", "a", "c", "d", "e"])
-        let ok5 = book.movePhoto("e", by: 1)
+        #expect(book.photoIDs == ["b", "a", "c", "d", "e", "f", "g"])
+        let ok5 = book.movePhoto("g", by: 1)
         #expect(!ok5)
         let ok6 = book.replacePhoto("c", with: "z")
         #expect(ok6)
@@ -323,12 +325,12 @@ struct MemoryBookEditingTests {
     @Test("Choosing photos again keeps places and limits")
     func setPhotos() {
         var book = book()
-        let ok8 = book.setPhotos(["e", "x", "a", "c", "y"])
+        let ok8 = book.setPhotos(["e", "x", "a", "c", "y", "g"])
         #expect(ok8)
-        #expect(book.photoIDs == ["a", "c", "e", "x", "y"])
+        #expect(book.photoIDs == ["a", "c", "e", "g", "x", "y"])
         let ok9 = book.setPhotos(["a", "b"])
         #expect(!ok9)
-        #expect(book.photoIDs == ["a", "c", "e", "x", "y"])
+        #expect(book.photoIDs == ["a", "c", "e", "g", "x", "y"])
         let ok10 = book.setPhotos((0..<80).map { "p\($0)" })
         #expect(ok10)
         #expect(book.photoIDs.count == BookLimits.maximumPhotos)

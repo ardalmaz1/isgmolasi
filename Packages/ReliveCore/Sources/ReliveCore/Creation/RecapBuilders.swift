@@ -76,6 +76,17 @@ public struct YearMonthSection: Sendable, Identifiable {
     public var id: MonthKey { month }
 }
 
+/// Whether a year has enough in it to be shown as a year — not just a month called a year.
+public enum YearEligibility: Hashable, Sendable {
+    case eligible
+    /// Nothing from this year.
+    case empty
+    /// Everything is from one month ("Your 2026 story is just getting started").
+    case singleMonth(MonthKey)
+    /// Several months, but too few memories or moments to look back on yet.
+    case tooFew(memories: Int)
+}
+
 /// A year together, month by month, built only from what the story contains.
 public struct YearInReview: Sendable {
     public var year: Int
@@ -84,14 +95,17 @@ public struct YearInReview: Sendable {
     public var statistics: StoryStatistics
     public var dateSpan: DateSpan?
     public var places: [PlaceName]
-    /// Months that have memories, chronological.
+    /// Months that have memories, chronological. Months without any are not listed.
     public var months: [YearMonthSection]
-    public var isSufficient: Bool
+    public var eligibility: YearEligibility
     var interleavedPhotos: [AssetID]
     var chronologicalRank: [AssetID: Int]
 
     public var firstMoment: Moment? { moments.first }
     public var lastMoment: Moment? { moments.last }
+
+    /// Enough to present as "Our <year>": memories from at least two months, and enough of them.
+    public var isSufficient: Bool { eligibility == .eligible }
 
     /// The best photos of the year, spread across its months, in the order they were taken.
     public func highlights(limit: Int) -> [AssetID] {
@@ -103,11 +117,14 @@ public struct YearInReviewBuilder: Sendable {
     public var library: CreationLibrary
     public var minimumMemories: Int
     public var minimumMoments: Int
+    /// A year needs memories from at least this many different months.
+    public var minimumMonths: Int
 
-    public init(library: CreationLibrary, minimumMemories: Int = 6, minimumMoments: Int = 2) {
+    public init(library: CreationLibrary, minimumMemories: Int = 8, minimumMoments: Int = 2, minimumMonths: Int = 2) {
         self.library = library
         self.minimumMemories = minimumMemories
         self.minimumMoments = minimumMoments
+        self.minimumMonths = minimumMonths
     }
 
     /// Years with at least one visible dated moment, newest first.
@@ -158,10 +175,21 @@ public struct YearInReviewBuilder: Sendable {
             dateSpan: summary.dateSpan,
             places: summary.places,
             months: sections,
-            isSufficient: summary.statistics.memoryCount >= minimumMemories && moments.count >= minimumMoments,
+            eligibility: eligibility(months: sections, memories: summary.statistics.memoryCount, moments: moments.count),
             interleavedPhotos: summary.interleave(monthGroups),
             chronologicalRank: summary.chronologicalRank
         )
+    }
+}
+
+extension YearInReviewBuilder {
+    /// Deterministic: at least `minimumMonths` different months, `minimumMemories` memories and
+    /// `minimumMoments` moments.
+    func eligibility(months: [YearMonthSection], memories: Int, moments: Int) -> YearEligibility {
+        guard let first = months.first, memories > 0 else { return .empty }
+        if months.count < minimumMonths { return .singleMonth(first.month) }
+        if memories < minimumMemories || moments < minimumMoments { return .tooFew(memories: memories) }
+        return .eligible
     }
 }
 

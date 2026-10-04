@@ -321,7 +321,9 @@ public struct CreationLibrary: Sendable {
                 )
             }
         case .year(let year):
-            if CreationMetadata.fits(summary, year: year, calendar: calendar) {
+            // "Our 2026" only for photos from several months of 2026; one month of it is that
+            // month, not the year.
+            if summary.period == .year(year) {
                 return CreationFacts(title: .year(year), dateSpan: summary.dateSpan)
             }
         case .photos, .favorites:

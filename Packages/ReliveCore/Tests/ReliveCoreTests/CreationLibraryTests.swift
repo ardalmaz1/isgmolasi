@@ -92,7 +92,9 @@ struct CreationLibraryTests {
     func calendarTitles() {
         let library = fixture.library
         #expect(library.facts(for: .month(MonthKey(year: 2025, month: 8)), photos: ["kas-0"]).title == .month(MonthKey(year: 2025, month: 8)))
-        #expect(library.facts(for: .year(2025), photos: ["kas-0"]).title == .year(2025))
+        #expect(library.facts(for: .year(2025), photos: ["kas-0", "moda-0"]).title == .year(2025))
+        // v0.3.1: one photo (or one month) of a year is not "Our 2025".
+        #expect(library.facts(for: .year(2025), photos: ["kas-0"]).title == .named("Kaş"))
     }
 }
 

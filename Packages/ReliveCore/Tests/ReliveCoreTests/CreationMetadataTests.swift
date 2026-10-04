@@ -148,7 +148,9 @@ struct CreationMetadataTests {
     func yearTitleFollowsPhotos() {
         let library = CreationFixture.make().library
         #expect(library.facts(for: .year(2026), photos: ["coffee-0", "kas-0"]).title == nil)
-        #expect(library.facts(for: .year(2026), photos: ["coffee-0", "coffee-1"]).title == .year(2026))
+        #expect(library.facts(for: .year(2025), photos: ["kas-0", "moda-0"]).title == .year(2025))
+        // One April morning is that morning, not "Our 2026".
+        #expect(library.facts(for: .year(2026), photos: ["coffee-0", "coffee-1"]).title == .named("Coffee"))
     }
 
     @Test("A trip creation given photos from outside the trip is no longer called the trip")
