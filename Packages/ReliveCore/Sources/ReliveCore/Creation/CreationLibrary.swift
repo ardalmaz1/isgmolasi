@@ -26,7 +26,7 @@ public struct MonthKey: Hashable, Comparable, Codable, Sendable {
 }
 
 /// A range of real capture dates.
-public struct DateSpan: Hashable, Sendable {
+public struct DateSpan: Hashable, Sendable, Codable {
     public var start: Date
     public var end: Date
 
@@ -44,7 +44,7 @@ public struct DateSpan: Hashable, Sendable {
 
 /// The headline of a creation. Always taken from real data: a name the story already uses, or
 /// the calendar month or year the creation covers.
-public enum CreationTitle: Hashable, Sendable {
+public enum CreationTitle: Hashable, Sendable, Codable {
     /// A moment, trip or place name from the story ("Kaş", "December Evening").
     case named(String)
     case month(MonthKey)
@@ -53,7 +53,7 @@ public enum CreationTitle: Hashable, Sendable {
 
 /// Facts a creation may print. Each is nil when Relive doesn't actually know it — nothing is
 /// guessed or invented.
-public struct CreationFacts: Hashable, Sendable {
+public struct CreationFacts: Hashable, Sendable, Codable {
     public var title: CreationTitle?
     public var dateSpan: DateSpan?
     /// Only when every photo comes from the same named place.
@@ -79,7 +79,7 @@ public enum CreationSource: Hashable, Sendable, Codable {
     case photos([AssetID])
     case month(MonthKey)
     case year(Int)
-    /// Memories the user marked as favorites in Photos.
+    /// Memories the couple marked as favorites in Relive.
     case favorites
 }
 
@@ -105,6 +105,13 @@ public struct CreationLibrary: Sendable {
     /// Photos chosen straight from the photo library for a creation. They can be used like any
     /// other photo but are not part of the story: no moment, no trip, no place name.
     public private(set) var photoLibraryAssetIDs: Set<AssetID> = []
+    /// Memories the couple favorited in Relive (not the Photos app's flag).
+    public var favoriteAssetIDs: Set<AssetID> = []
+    /// Moments the couple favorited in Relive. Independent of their photos' favorites.
+    public var favoriteMomentIDs: Set<MomentID> = []
+    /// How much a favorite counts when Relive chooses among similar photos. Small: chronology,
+    /// shape and the photo's own quality still decide most choices.
+    public static let favoritePreference = 0.2
 
     public init(
         story: Story,
@@ -198,8 +205,10 @@ public struct CreationLibrary: Sendable {
         story.moments.first { $0.assetIDs.contains(id) }
     }
 
+    /// A photo's quality for choosing among photos, with a small preference for favorites.
     public func quality(_ id: AssetID) -> Double {
-        assets[id].map { scorer.score($0) } ?? 0
+        guard let asset = assets[id] else { return 0 }
+        return scorer.score(asset) + (favoriteAssetIDs.contains(id) ? Self.favoritePreference : 0)
     }
 
     /// The highest-scoring photo (earliest on ties).
@@ -267,11 +276,21 @@ public struct CreationLibrary: Sendable {
         }
     }
 
-    /// Usable photos marked as favorites, from visible moments, in the order they were taken.
+    /// Memories favorited in Relive that can go into a creation (usable, from visible moments),
+    /// in the order they were taken. Favorites of photos that aren't in the story right now stay
+    /// saved but aren't offered.
     public var favoritePhotos: [AssetID] {
-        visibleMoments.flatMap(usablePhotos(in:))
-            .filter { assets[$0]?.isFavorite == true }
+        guard !favoriteAssetIDs.isEmpty else { return [] }
+        var seen = Set<AssetID>()
+        return visibleMoments.flatMap { $0.assetIDs.filter(isUsable) }
+            .filter { favoriteAssetIDs.contains($0) && seen.insert($0).inserted }
             .sorted(by: chronologicalOrder)
+    }
+
+    /// Favorited moments that are visible, in story order.
+    public var favoriteMoments: [Moment] {
+        guard !favoriteMomentIDs.isEmpty else { return [] }
+        return visibleMoments.filter { favoriteMomentIDs.contains($0.id) }
     }
 
     /// Everything usable a source can draw from (for "not enough photos" checks).

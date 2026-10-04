@@ -107,11 +107,12 @@ struct MemoryBookMetadataTests {
 
     @Test("Favorites make a book")
     func favoritesBook() throws {
-        var fixture = CreationFixture.make()
-        for id in ["kas-0", "kas-4", "kekova-1", "moda-2", "afternoon-1", "coffee-3"] { fixture.assets[id]?.isFavorite = true }
-        let book = try MemoryBookBuilder(library: fixture.library).makeBook(from: .favorites, now: now).get()
+        // v0.4: Favorites are the couple's favorites in Relive, not the Photos app's flag.
+        var library = CreationFixture.make().library
+        library.favoriteAssetIDs = ["kas-0", "kas-4", "kekova-1", "moda-2", "afternoon-1", "coffee-3"]
+        let book = try MemoryBookBuilder(library: library).makeBook(from: .favorites, now: now).get()
         #expect(book.photoIDs == ["kas-0", "kas-4", "kekova-1", "moda-2", "afternoon-1", "coffee-3"])
-        #expect(layout(book, fixture.library).facts.title == nil, "2025 and 2026: no single label")
+        #expect(layout(book, library).facts.title == nil, "2025 and 2026: no single label")
     }
 
     @Test("A book of photo-library photos keeps their metadata across a restart")

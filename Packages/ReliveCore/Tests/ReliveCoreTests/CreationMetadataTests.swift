@@ -163,9 +163,11 @@ struct CreationMetadataTests {
 
     @Test("Favorites are a source of their own, in the order they were taken")
     func favorites() {
+        // v0.4: Favorites are the couple's favorites in Relive, not the Photos app's flag.
         var fixture = CreationFixture.make()
-        for id in ["moda-1", "kas-3", "coffee-2"] { fixture.assets[id]?.isFavorite = true }
-        let library = fixture.library
+        fixture.assets["kekova-2"]?.isFavorite = true // a Photos favorite only: not a Relive favorite
+        var library = fixture.library
+        library.favoriteAssetIDs = ["moda-1", "kas-3", "coffee-2"]
         #expect(library.favoritePhotos == ["kas-3", "moda-1", "coffee-2"])
         #expect(library.availablePhotos(for: .favorites) == ["kas-3", "moda-1", "coffee-2"])
         #expect(library.facts(for: .favorites, photos: library.favoritePhotos).title == nil, "2025 and 2026: no single label")

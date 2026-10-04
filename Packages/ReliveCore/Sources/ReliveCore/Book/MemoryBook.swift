@@ -51,8 +51,10 @@ public struct MemoryBook: Codable, Hashable, Sendable, Identifiable {
     public var note: String?
     /// Print the notes the user wrote on moments, after each moment's opening page.
     public var includesMomentNotes: Bool
-    /// Metadata (never pixels) of photos chosen straight from the photo library: their own
-    /// dates, locations and sizes, so the book can describe them after the app restarts.
+    /// Metadata (never pixels) of the book's photos: their own dates, locations and sizes, so the
+    /// book can describe and draw them when they aren't in the story right now — photos chosen
+    /// straight from the photo library (v0.3.1), and since v0.4 every photo, so a book still
+    /// opens after Start Over. Memories in the story always win over these snapshots.
     public var photoLibraryAssets: [MemoryAsset]
 
     public init(
@@ -112,6 +114,18 @@ public struct MemoryBook: Codable, Hashable, Sendable, Identifiable {
         for asset in assets where inBook.contains(asset.id) && !photoLibraryAssets.contains(where: { $0.id == asset.id }) {
             photoLibraryAssets.append(asset)
         }
+    }
+
+    /// Records metadata snapshots of every photo in the book from `library` (analysis left out),
+    /// keeping earlier snapshots of photos the library no longer knows.
+    public mutating func captureSnapshots(from library: CreationLibrary) {
+        var byID = Dictionary(photoLibraryAssets.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        for id in photoIDs {
+            guard var asset = library.assets[id] else { continue }
+            asset.analysis = nil
+            byID[id] = asset
+        }
+        photoLibraryAssets = photoIDs.compactMap { byID[$0] }
     }
 
     /// Forgets photo-library metadata for photos no longer in the book.

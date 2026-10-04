@@ -46,11 +46,13 @@ public enum StoryCardRole: String, Codable, Hashable, Sendable {
 
 /// One card of a designed story. Everything printed on it comes from its own photos (or, for
 /// the opening and closing, from the whole story).
-public struct StoryCard: Identifiable, Hashable, Sendable {
+public struct StoryCard: Identifiable, Hashable, Sendable, Codable {
     public var id: Int
     public var role: StoryCardRole
     public var layout: StoryLayout
     public var photos: [AssetID]
+    /// For a place card: the photos it introduces (its facts are theirs).
+    public var describes: [AssetID]
     public var title: CreationTitle?
     public var dateSpan: DateSpan?
     public var place: PlaceName?
@@ -73,12 +75,14 @@ public struct StoryCard: Identifiable, Hashable, Sendable {
         closingYear: Int? = nil,
         showsDate: Bool = true,
         showsPlace: Bool = true,
-        showsCoordinates: Bool = false
+        showsCoordinates: Bool = false,
+        describes: [AssetID] = []
     ) {
         self.id = id
         self.role = role
         self.layout = layout
         self.photos = photos
+        self.describes = describes
         self.title = title
         self.dateSpan = dateSpan
         self.place = place
@@ -95,12 +99,15 @@ public struct StoryCard: Identifiable, Hashable, Sendable {
 }
 
 /// A story Relive designed: a style and a sequence of cards.
-public struct StoryDesign: Hashable, Sendable {
+public struct StoryDesign: Hashable, Sendable, Codable {
     public var style: StoryStyle
     public var cards: [StoryCard]
     public var facts: CreationFacts
     /// Which "Make it for me" variation this is.
     public var variation: Int
+    /// What the story was made from — a hint for its title, used only when every photo still
+    /// belongs to it.
+    public var source: CreationSource?
 
     /// Every photo used, in card order.
     public var photoIDs: [AssetID] {
@@ -262,14 +269,15 @@ public struct StoryDesigner: Sendable {
                 append(StoryCard(
                     id: 0, role: .place, layout: .caption,
                     photos: [], title: summary.place.map { .named($0.name) }, dateSpan: summary.dateSpan,
-                    place: summary.place, coordinate: summary.coordinate, showsCoordinates: style == .travel && summary.coordinate != nil
+                    place: summary.place, coordinate: summary.coordinate, showsCoordinates: style == .travel && summary.coordinate != nil,
+                    describes: segment.photos
                 ))
             }
             append(photoCard(photos, style: style))
         }
         if let closing { append(closing) }
 
-        return StoryDesign(style: style, cards: cards, facts: facts, variation: variation)
+        return StoryDesign(style: style, cards: cards, facts: facts, variation: variation, source: source)
     }
 
     /// Segments where a real place begins (keyed by their first photo) — never more than two.
@@ -414,7 +422,7 @@ public struct StoryDesigner: Sendable {
 
     /// A quiet close with the story's own facts: "And that's our 2026." for a year that really
     /// is one; otherwise its place and dates. None when there is nothing true to say.
-    private func closingCard(facts: CreationFacts, source: CreationSource) -> StoryCard? {
+    func closingCard(facts: CreationFacts, source: CreationSource) -> StoryCard? {
         if case .year(let year) = source, facts.title == .year(year),
            YearInReviewBuilder(library: library).review(for: year).isSufficient {
             return StoryCard(id: 0, role: .closing, layout: .closing, photos: [], dateSpan: facts.dateSpan, closingYear: year)
@@ -456,29 +464,100 @@ extension StoryDesign {
         return true
     }
 
-    /// Puts `newID` in a card's slot. The card's facts follow its new photos.
+    /// Puts `newID` in a card's slot. Every card's facts follow the story's new photos.
     @discardableResult
     public mutating func replacePhoto(cardID: Int, slot: Int, with newID: AssetID, library: CreationLibrary) -> Bool {
         guard let index = cards.firstIndex(where: { $0.id == cardID }), cards[index].photos.indices.contains(slot),
-              library.isUsable(newID) else { return false }
+              library.isUsable(newID), !photoIDs.contains(newID) else { return false }
+        let oldID = cards[index].photos[slot]
         cards[index].photos[slot] = newID
-        if cards[index].role == .photo {
-            let summary = library.metadata(of: cards[index].photos)
-            cards[index].dateSpan = summary.dateSpan
-            cards[index].place = summary.place
-            cards[index].coordinate = summary.coordinate
-            if !StoryDesigner.alternatives(for: cards[index]).contains(cards[index].layout) {
-                cards[index].layout = StoryDesigner.alternatives(for: cards[index])[0]
-            }
+        for other in cards.indices {
+            cards[other].describes = cards[other].describes.map { $0 == oldID ? newID : $0 }
         }
+        if !StoryDesigner.alternatives(for: cards[index]).contains(cards[index].layout) {
+            cards[index].layout = StoryDesigner.alternatives(for: cards[index])[0]
+        }
+        refreshFacts(library: library)
         return true
     }
 
-    /// Removes a card. The opening stays, and a story keeps at least two cards.
+    /// Removes a card. The opening stays, and a story keeps at least two cards. With a library,
+    /// the remaining cards' facts follow the story's remaining photos.
     @discardableResult
-    public mutating func removeCard(_ cardID: Int) -> Bool {
+    public mutating func removeCard(_ cardID: Int, library: CreationLibrary? = nil) -> Bool {
         guard cards.count > 2, let index = cards.firstIndex(where: { $0.id == cardID }), cards[index].role != .opening else { return false }
         cards.remove(at: index)
+        if let library { refreshFacts(library: library) }
         return true
+    }
+
+    /// Recomputes what every card says from the photos it now shows — the one rule for creation
+    /// metadata. The opening and closing describe the whole story; a photo card its photos; a
+    /// place card the photos it introduces. The user's show/hide choices stay.
+    public mutating func refreshFacts(library: CreationLibrary) {
+        let all = photoIDs
+        let storyFacts = source.map { library.facts(for: $0, photos: all) } ?? library.facts(forPhotos: all)
+        facts = storyFacts
+        let closing = StoryDesigner(library: library).closingCard(facts: storyFacts, source: source ?? .photos(all))
+        var removeClosing = false
+        for index in cards.indices {
+            switch cards[index].role {
+            case .opening:
+                cards[index].title = storyFacts.title
+                cards[index].dateSpan = storyFacts.dateSpan
+                cards[index].place = storyFacts.place
+                cards[index].coordinate = storyFacts.coordinate
+            case .photo:
+                let summary = library.metadata(of: cards[index].photos)
+                cards[index].dateSpan = summary.dateSpan
+                cards[index].place = summary.place
+                cards[index].coordinate = summary.coordinate
+            case .place:
+                let subjects = cards[index].describes.filter(all.contains)
+                let summary = library.metadata(of: subjects)
+                cards[index].title = summary.place.map { .named($0.name) }
+                cards[index].dateSpan = summary.dateSpan
+                cards[index].place = summary.place
+                cards[index].coordinate = summary.coordinate
+            case .closing:
+                if let closing {
+                    cards[index].dateSpan = closing.dateSpan
+                    cards[index].place = closing.place
+                    cards[index].closingYear = closing.closingYear
+                } else {
+                    removeClosing = true
+                }
+            }
+        }
+        // Nothing true left to close with: no closing card.
+        if removeClosing, cards.count > 2 { cards.removeAll { $0.role == .closing } }
+    }
+
+    /// The story without photos that are gone: they leave their cards, a card left empty goes,
+    /// and a missing opening photo gives way to the strongest remaining one. Nothing is replaced
+    /// with an unrelated photo.
+    public mutating func removingPhotos(_ missing: Set<AssetID>, library: CreationLibrary) {
+        guard !missing.isEmpty else { return }
+        for index in cards.indices where cards[index].role == .photo {
+            cards[index].photos.removeAll(where: missing.contains)
+            if !cards[index].photos.isEmpty, !StoryDesigner.alternatives(for: cards[index]).contains(cards[index].layout) {
+                cards[index].layout = StoryDesigner.alternatives(for: cards[index])[0]
+            }
+        }
+        cards.removeAll { $0.role == .photo && $0.photos.isEmpty }
+        if let opening = cards.firstIndex(where: { $0.role == .opening }), cards[opening].photos.contains(where: missing.contains) {
+            let remaining = photoIDs.filter { !missing.contains($0) }
+            if let lead = library.best(remaining) {
+                cards[opening].photos = [lead]
+                // The lead now opens the story; it doesn't also need its own card.
+                if let solo = cards.firstIndex(where: { $0.role == .photo && $0.photos == [lead] }), cards.count > 3 {
+                    cards.remove(at: solo)
+                } else if let shared = cards.firstIndex(where: { $0.role == .photo && $0.photos.contains(lead) && $0.photos.count > 1 }) {
+                    cards[shared].photos.removeAll { $0 == lead }
+                    cards[shared].layout = StoryDesigner.alternatives(for: cards[shared])[0]
+                }
+            }
+        }
+        refreshFacts(library: library)
     }
 }
