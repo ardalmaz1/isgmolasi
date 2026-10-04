@@ -45,9 +45,16 @@ final class MemoryBookStoreTests: XCTestCase {
         reopened.deleteBook(id: second.id)
         XCTAssertNil(repository.books[second.id])
 
+        // v0.4: Start Over resets the relationship story, not what the couple made.
         reopened.resetAll()
-        XCTAssertTrue(reopened.books.isEmpty)
-        XCTAssertTrue(repository.books.isEmpty, "Start Over removes books")
+        XCTAssertEqual(reopened.books.map(\.id), [book.id], "Start Over keeps books")
+        XCTAssertNotNil(repository.books[book.id])
+        // The book still describes and lays out its photos from its own snapshots.
+        let kept = try XCTUnwrap(reopened.book(id: book.id))
+        XCTAssertEqual(Set(kept.photoLibraryAssets.map(\.id)), Set(book.photoIDs), "every photo has a metadata snapshot")
+        let layout = BookLayoutEngine(library: reopened.creationLibrary(for: kept)).layout(kept)
+        XCTAssertTrue(layout.missingAssetIDs.isEmpty)
+        XCTAssertEqual(Set(layout.pages.flatMap(\.photoIDs)), Set(book.photoIDs))
     }
 
     /// Books hold references, never pixels; a missing photo drops out instead of breaking the book.
@@ -113,6 +120,65 @@ final class PersistenceMigrationTests: XCTestCase {
         XCTAssertEqual(repository.loadBooks().first?.style, .editorial)
         repository.deleteBook(id: book.id)
         XCTAssertTrue(repository.loadBooks().isEmpty)
+    }
+
+    /// v0.3.1 → v0.4: the same file gains favorites and saved creations; books, the story and
+    /// the list of Relive-made images (the export exclusion) come through untouched.
+    func testV031StoreOpensWithV04Schema() throws {
+        let folder = FileManager.default.temporaryDirectory.appending(path: "relive-migration-\(UUID().uuidString)", directoryHint: .isDirectory)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: folder) }
+        let url = folder.appending(path: "Relive.store")
+
+        // v0.3.1: everything except favorites and saved creations.
+        let v031 = Schema([StoredProfile.self, StoredAsset.self, StoredStorySnapshot.self, StoredMomentState.self, StoredCreatedAsset.self, StoredMemoryBook.self])
+        let momentID = UUID()
+        let library = MemoryAsset(localIdentifier: "library-1", creationDate: Date(timeIntervalSince1970: 1_690_000_000), pixelWidth: 30, pixelHeight: 40)
+        let book = MemoryBook(createdAt: Date(timeIntervalSince1970: 1_700_000_000), source: .moment(momentID), style: .film, photoIDs: ["a", "b", "c", "d", "e", "library-1"], photoLibraryAssets: [library])
+        do {
+            let container = try ModelContainer(for: v031, configurations: [ModelConfiguration(schema: v031, url: url)])
+            let repository = SwiftDataStoryRepository(container: container)
+            var profile = AppProfile()
+            profile.relationship = RelationshipProfile(partnerName: "Emma", userName: "Jake")
+            repository.saveProfile(profile)
+            repository.saveAssets([MemoryAsset(localIdentifier: "a", creationDate: Date(), pixelWidth: 10, pixelHeight: 10)])
+            repository.saveMomentState(MomentUserState(note: "The boat"), for: momentID)
+            repository.recordCreatedAssets(["collage-1", "story-1"])
+            repository.saveBook(book)
+        }
+
+        // v0.4 opens the same file: nothing is lost, nothing needs reinstalling.
+        let v04 = Schema(PersistenceSchema.models)
+        let container = try ModelContainer(for: v04, configurations: [ModelConfiguration(schema: v04, url: url)])
+        let repository = SwiftDataStoryRepository(container: container)
+        XCTAssertEqual(repository.loadProfile().relationship?.coupleDisplayName, "Jake + Emma")
+        XCTAssertEqual(repository.loadAssets().map(\.id), ["a"])
+        XCTAssertEqual(repository.loadMomentStates()[momentID]?.note, "The boat")
+        XCTAssertEqual(repository.loadCreatedAssetIDs(), ["collage-1", "story-1"], "exports stay excluded from import")
+        let migrated = try XCTUnwrap(repository.loadBooks().first)
+        XCTAssertEqual(migrated, book, "the v0.3.1 book opens unchanged")
+        XCTAssertTrue(repository.loadFavorites().isEmpty)
+        XCTAssertTrue(repository.loadCreations().isEmpty)
+
+        // Favorites and creations can now be stored, without duplicates.
+        let favorite = FavoriteRecord(kind: .moment, identifier: momentID.uuidString, favoritedAt: Date(timeIntervalSince1970: 1_700_000_100))
+        repository.saveFavorite(favorite)
+        repository.saveFavorite(favorite)
+        XCTAssertEqual(repository.loadFavorites(), [favorite])
+        var creation = SavedCreation(kind: .collage, createdAt: Date(timeIntervalSince1970: 1_700_000_200), source: .moment(momentID), collage: CollageState(photoIDs: ["a", "b"], style: .film, aspectRatio: .square))
+        repository.saveCreation(creation)
+        creation.markSaved(at: Date(timeIntervalSince1970: 1_700_000_300))
+        repository.saveCreation(creation)
+        XCTAssertEqual(repository.loadCreations(), [creation], "a finished draft is the same record")
+
+        // Start Over keeps what the couple made and chose.
+        repository.deleteAll()
+        XCTAssertNil(repository.loadProfile().relationship)
+        XCTAssertTrue(repository.loadAssets().isEmpty)
+        XCTAssertEqual(repository.loadBooks().map(\.id), [book.id])
+        XCTAssertEqual(repository.loadCreations().map(\.id), [creation.id])
+        XCTAssertEqual(repository.loadFavorites(), [favorite])
+        XCTAssertEqual(repository.loadCreatedAssetIDs(), ["collage-1", "story-1"])
     }
 }
 

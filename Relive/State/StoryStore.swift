@@ -55,8 +55,13 @@ final class StoryStore {
     private(set) var createdAssetIDs: Set<AssetID>
     /// Saved Memory Books, most recently changed first.
     private(set) var books: [MemoryBook]
-    /// Photo-library photos used by books that no longer resolve (deleted, or access removed).
-    private(set) var unavailableBookPhotoIDs: Set<AssetID> = []
+    /// Photos known only from book or creation snapshots that no longer resolve (deleted, or
+    /// access removed).
+    private(set) var unavailableSnapshotIDs: Set<AssetID> = []
+    /// Memories, moments and creations the couple chose to keep close (v0.4).
+    private(set) var favorites: FavoriteCollection
+    /// Collages and stories kept in Relive — drafts and finished — most recently changed first.
+    private(set) var creations: [SavedCreation]
 
     let calendar: Calendar
     let photoLibrary: any PhotoLibraryProviding
@@ -91,6 +96,8 @@ final class StoryStore {
         self.userStates = repository.loadMomentStates()
         self.createdAssetIDs = repository.loadCreatedAssetIDs()
         self.books = repository.loadBooks().sorted { $0.updatedAt > $1.updatedAt }
+        self.favorites = FavoriteCollection(repository.loadFavorites())
+        self.creations = repository.loadCreations().sorted { $0.updatedAt > $1.updatedAt }
         self.accessStatus = photoLibrary.accessStatus()
         recomputeDerived()
     }
@@ -248,13 +255,16 @@ final class StoryStore {
 
     /// A snapshot of the story for making collages, story cards and recaps.
     var creationLibrary: CreationLibrary {
-        CreationLibrary(
+        var library = CreationLibrary(
             story: story,
             assets: assets,
             userStates: userStates,
             unavailableAssetIDs: unavailableAssetIDs,
             calendar: calendar
         )
+        library.favoriteAssetIDs = favorites.memoryIDs
+        library.favoriteMomentIDs = favorites.momentIDs
+        return library
     }
 
     /// Remembers images Relive saved to the photo library, so they are never imported as memories.
@@ -270,9 +280,11 @@ final class StoryStore {
         books.first { $0.id == id }
     }
 
-    /// Saves a new or changed book and keeps the list in most-recent order.
+    /// Saves a new or changed book and keeps the list in most-recent order. Snapshots of its
+    /// photos' metadata are kept with it, so it still opens after Start Over.
     func saveBook(_ book: MemoryBook, now: Date = Date()) {
         var book = book
+        book.captureSnapshots(from: creationLibrary(for: book))
         book.updatedAt = now
         books.removeAll { $0.id == book.id }
         books.insert(book, at: 0)
@@ -282,13 +294,73 @@ final class StoryStore {
     func deleteBook(id: UUID) {
         books.removeAll { $0.id == id }
         repository.deleteBook(id: id)
+        setFavorite(.creation, id.uuidString, isFavorite: false)
     }
 
-    /// The library a book is laid out with: the story plus the book's own photo-library photos.
+    /// The library a book is laid out with: the story plus the book's own photo snapshots.
     func creationLibrary(for book: MemoryBook) -> CreationLibrary {
         var library = book.creationLibrary(base: creationLibrary)
-        library.unavailableAssetIDs.formUnion(unavailableBookPhotoIDs)
+        library.unavailableAssetIDs.formUnion(unavailableSnapshotIDs.subtracting(assets.keys))
         return library
+    }
+
+    // MARK: - Collages and stories kept in Relive
+
+    var drafts: [SavedCreation] { creations.filter(\.isDraft) }
+    var savedCreations: [SavedCreation] { creations.filter { !$0.isDraft } }
+
+    func creation(id: UUID) -> SavedCreation? {
+        creations.first { $0.id == id }
+    }
+
+    /// Saves a new or changed draft or creation (the same record throughout its life) with
+    /// snapshots of its photos' metadata.
+    func saveCreation(_ creation: SavedCreation) {
+        var creation = creation
+        creation.captureSnapshots(from: creationLibrary(for: creation))
+        let isNew = !creations.contains { $0.id == creation.id }
+        creations.removeAll { $0.id == creation.id }
+        creations.insert(creation, at: 0)
+        repository.saveCreation(creation)
+        if isNew, creation.isDraft { analytics.track(.draftCreated, ["kind": creation.kind.rawValue]) }
+    }
+
+    /// Deletes a draft or creation. Its photos — in Relive and in the Photos app — stay.
+    func deleteCreation(id: UUID) {
+        guard let creation = creation(id: id) else { return }
+        creations.removeAll { $0.id == id }
+        repository.deleteCreation(id: id)
+        setFavorite(.creation, id.uuidString, isFavorite: false)
+        analytics.track(creation.isDraft ? .draftDeleted : .creationDeleted, ["kind": creation.kind.rawValue])
+    }
+
+    /// The library a creation is shown with: the story plus its own photo snapshots.
+    func creationLibrary(for creation: SavedCreation) -> CreationLibrary {
+        var library = creation.creationLibrary(base: creationLibrary)
+        library.unavailableAssetIDs.formUnion(unavailableSnapshotIDs.subtracting(assets.keys))
+        return library
+    }
+
+    // MARK: - Favorites
+
+    func isFavorite(_ kind: FavoriteKind, _ identifier: String) -> Bool {
+        favorites.contains(kind, identifier)
+    }
+
+    /// Adds or removes a favorite. Never touches the photo itself or the Photos app.
+    func setFavorite(_ kind: FavoriteKind, _ identifier: String, isFavorite: Bool, now: Date = Date()) {
+        guard favorites.set(kind, identifier, isFavorite: isFavorite, at: now) else { return }
+        if isFavorite {
+            repository.saveFavorite(FavoriteRecord(kind: kind, identifier: identifier, favoritedAt: now))
+            analytics.track(.favoriteAdded, ["kind": kind.rawValue])
+        } else {
+            repository.removeFavorite(kind: kind, identifier: identifier)
+            analytics.track(.favoriteRemoved, ["kind": kind.rawValue])
+        }
+    }
+
+    func toggleFavorite(_ kind: FavoriteKind, _ identifier: String) {
+        setFavorite(kind, identifier, isFavorite: !isFavorite(kind, identifier))
     }
 
     // MARK: - Photo library picks
@@ -476,7 +548,7 @@ final class StoryStore {
     /// becomes active.
     func refreshAvailability() async {
         accessStatus = photoLibrary.accessStatus()
-        await refreshBookPhotoAvailability()
+        await refreshSnapshotAvailability()
         let identifiers = Array(assets.keys)
         guard !identifiers.isEmpty else {
             unavailableAssetIDs = []
@@ -490,16 +562,17 @@ final class StoryStore {
         }
     }
 
-    /// Which photo-library photos used by books still exist.
-    func refreshBookPhotoAvailability() async {
-        let identifiers = Set(books.flatMap { $0.photoLibraryAssets.map(\.id) })
+    /// Which photos known only from book or creation snapshots still exist.
+    func refreshSnapshotAvailability() async {
+        let identifiers = Set(books.flatMap { $0.photoLibraryAssets.map(\.id) } + creations.flatMap { $0.assetSnapshots.map(\.id) })
+            .subtracting(assets.keys)
         guard !identifiers.isEmpty else {
-            unavailableBookPhotoIDs = []
+            unavailableSnapshotIDs = []
             return
         }
         let available = accessStatus.canReadSelection ? await photoLibrary.availableIdentifiers(among: Array(identifiers)) : []
         let missing = identifiers.subtracting(available)
-        if missing != unavailableBookPhotoIDs { unavailableBookPhotoIDs = missing }
+        if missing != unavailableSnapshotIDs { unavailableSnapshotIDs = missing }
     }
 
     // MARK: - User decisions
@@ -562,8 +635,7 @@ final class StoryStore {
         assets = [:]
         userStates = [:]
         unavailableAssetIDs = []
-        books = []
-        unavailableBookPhotoIDs = []
+        // Kept: books, collages, stories, drafts and favorites (see `StoryRepository.deleteAll`).
         processing = .idle
         recomputeDerived()
         Task { await placeResolver.clearCache() }

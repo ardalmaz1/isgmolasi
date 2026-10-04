@@ -44,7 +44,7 @@ final class AppEnvironment {
         let container = SwiftDataStoryRepository.makeContainer()
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains(startFreshArgument) {
-            SwiftDataStoryRepository(container: container).deleteAll()
+            SwiftDataStoryRepository(container: container).eraseEverything()
         }
         #endif
         return AppEnvironment(

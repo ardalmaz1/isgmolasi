@@ -27,6 +27,16 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case trendOpened = "trend_opened"
     /// Photos picked from the photo library for a creation (counts only).
     case photoLibraryPicked = "photo_library_picked"
+    // v0.4 personal collection (kinds and counts only — never identifiers, titles or places).
+    case favoriteAdded = "favorite_added"
+    case favoriteRemoved = "favorite_removed"
+    case creationSaved = "creation_saved"
+    case creationReopened = "creation_reopened"
+    case creationDeleted = "creation_deleted"
+    case draftCreated = "draft_created"
+    case draftResumed = "draft_resumed"
+    case draftDeleted = "draft_deleted"
+    case createFromFavorites = "create_from_favorites"
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {

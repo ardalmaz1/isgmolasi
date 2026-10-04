@@ -115,6 +115,44 @@ final class StoredMemoryBook {
     }
 }
 
+/// A favorite (v0.4): a memory, moment or creation the couple chose to keep close. Local only —
+/// never the Photos app's favorite flag.
+@Model
+final class StoredFavorite {
+    /// `FavoriteKind` raw value: "memory", "moment" or "creation".
+    var kind: String = ""
+    var identifier: String = ""
+    var favoritedAt: Date = Date()
+
+    init(kind: String, identifier: String, favoritedAt: Date) {
+        self.kind = kind
+        self.identifier = identifier
+        self.favoritedAt = favoritedAt
+    }
+}
+
+/// A collage or story kept in Relive (v0.4) — a draft or a finished creation — as JSON state.
+/// Never pixels; it is drawn again from the user's photos whenever it is shown.
+@Model
+final class StoredCreation {
+    var creationID: UUID = UUID()
+    /// `SavedCreationKind` raw value.
+    var kind: String = ""
+    /// `SavedCreationStatus` raw value.
+    var status: String = ""
+    /// JSON-encoded `SavedCreation`.
+    var payload: Data = Data()
+    var updatedAt: Date = Date()
+
+    init(creationID: UUID, kind: String, status: String, payload: Data, updatedAt: Date) {
+        self.creationID = creationID
+        self.kind = kind
+        self.status = status
+        self.payload = payload
+        self.updatedAt = updatedAt
+    }
+}
+
 enum PersistenceSchema {
     static let models: [any PersistentModel.Type] = [
         StoredProfile.self,
@@ -123,5 +161,7 @@ enum PersistenceSchema {
         StoredMomentState.self,
         StoredCreatedAsset.self,
         StoredMemoryBook.self,
+        StoredFavorite.self,
+        StoredCreation.self,
     ]
 }

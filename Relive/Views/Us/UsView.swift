@@ -72,7 +72,7 @@ struct UsView: View {
                 Button("Delete Relive’s Data", role: .destructive) { app.startOver() }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This removes your story, notes and settings from Relive. Your photos in the Photos app are not touched.")
+                Text("This removes your story, notes and settings from Relive, and you’ll set it up again. Your books, collages, stories, drafts and favorites stay. Your photos in the Photos app are not touched.")
             }
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)

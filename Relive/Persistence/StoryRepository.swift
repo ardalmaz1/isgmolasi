@@ -28,8 +28,20 @@ protocol StoryRepository: AnyObject {
     func saveBook(_ book: MemoryBook)
     func deleteBook(id: UUID)
 
-    /// Removes everything Relive stored. Photos in the library are never touched. The list of
-    /// images Relive created is kept, so they still can't come back as memories after a restart.
+    /// Favorites (v0.4).
+    func loadFavorites() -> [FavoriteRecord]
+    func saveFavorite(_ favorite: FavoriteRecord)
+    func removeFavorite(kind: FavoriteKind, identifier: String)
+
+    /// Collages and stories kept in Relive, drafts and finished (v0.4).
+    func loadCreations() -> [SavedCreation]
+    func saveCreation(_ creation: SavedCreation)
+    func deleteCreation(id: UUID)
+
+    /// Start Over: removes the relationship story — profile and onboarding, the selection, the
+    /// story, notes and hidden moments. Photos in the library are never touched. What the couple
+    /// made or chose is kept: books, collages, stories and drafts, favorites, and the list of
+    /// images Relive created (so they still can't come back as memories).
     func deleteAll()
 }
 
@@ -266,6 +278,65 @@ final class SwiftDataStoryRepository: StoryRepository {
         save()
     }
 
+    // MARK: - Favorites
+
+    func loadFavorites() -> [FavoriteRecord] {
+        fetchAll(StoredFavorite.self).compactMap { stored in
+            FavoriteKind(rawValue: stored.kind).map { FavoriteRecord(kind: $0, identifier: stored.identifier, favoritedAt: stored.favoritedAt) }
+        }
+    }
+
+    func saveFavorite(_ favorite: FavoriteRecord) {
+        let matches = fetchAll(StoredFavorite.self).filter { $0.kind == favorite.kind.rawValue && $0.identifier == favorite.identifier }
+        if let stored = matches.first {
+            stored.favoritedAt = favorite.favoritedAt
+            matches.dropFirst().forEach(context.delete)
+        } else {
+            context.insert(StoredFavorite(kind: favorite.kind.rawValue, identifier: favorite.identifier, favoritedAt: favorite.favoritedAt))
+        }
+        save()
+    }
+
+    func removeFavorite(kind: FavoriteKind, identifier: String) {
+        fetchAll(StoredFavorite.self).filter { $0.kind == kind.rawValue && $0.identifier == identifier }.forEach(context.delete)
+        save()
+    }
+
+    // MARK: - Creations
+
+    func loadCreations() -> [SavedCreation] {
+        fetchAll(StoredCreation.self).compactMap { stored in
+            do {
+                return try decoder.decode(SavedCreation.self, from: stored.payload)
+            } catch {
+                Self.logger.error("Dropping unreadable creation: \(error.localizedDescription, privacy: .public)")
+                return nil
+            }
+        }
+    }
+
+    func saveCreation(_ creation: SavedCreation) {
+        guard let payload = try? encoder.encode(creation) else { return }
+        let matches = fetchAll(StoredCreation.self).filter { $0.creationID == creation.id }
+        if let stored = matches.first {
+            stored.payload = payload
+            stored.status = creation.status.rawValue
+            stored.updatedAt = creation.updatedAt
+            matches.dropFirst().forEach(context.delete)
+        } else {
+            context.insert(StoredCreation(
+                creationID: creation.id, kind: creation.kind.rawValue, status: creation.status.rawValue,
+                payload: payload, updatedAt: creation.updatedAt
+            ))
+        }
+        save()
+    }
+
+    func deleteCreation(id: UUID) {
+        fetchAll(StoredCreation.self).filter { $0.creationID == id }.forEach(context.delete)
+        save()
+    }
+
     // MARK: - Reset
 
     func deleteAll() {
@@ -274,12 +345,28 @@ final class SwiftDataStoryRepository: StoryRepository {
             try context.delete(model: StoredAsset.self)
             try context.delete(model: StoredStorySnapshot.self)
             try context.delete(model: StoredMomentState.self)
-            try context.delete(model: StoredMemoryBook.self)
         } catch {
             Self.logger.error("Reset failed: \(error.localizedDescription, privacy: .public)")
         }
         save()
     }
+
+    #if DEBUG
+    /// UI tests only (`-ReliveUITestStartFresh`): a truly empty store, creations and favorites
+    /// included, so one test run can't see another's.
+    func eraseEverything() {
+        deleteAll()
+        do {
+            try context.delete(model: StoredCreatedAsset.self)
+            try context.delete(model: StoredMemoryBook.self)
+            try context.delete(model: StoredFavorite.self)
+            try context.delete(model: StoredCreation.self)
+        } catch {
+            Self.logger.error("Erase failed: \(error.localizedDescription, privacy: .public)")
+        }
+        save()
+    }
+    #endif
 
     // MARK: - Helpers
 

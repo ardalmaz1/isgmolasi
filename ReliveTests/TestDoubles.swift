@@ -11,6 +11,8 @@ final class InMemoryStoryRepository: StoryRepository {
     var states: [MomentID: MomentUserState] = [:]
     var createdAssetIDs: Set<AssetID> = []
     var books: [UUID: MemoryBook] = [:]
+    var favorites: [String: FavoriteRecord] = [:]
+    var creations: [UUID: SavedCreation] = [:]
 
     init(assets: [MemoryAsset] = []) {
         self.assets = assets
@@ -30,12 +32,21 @@ final class InMemoryStoryRepository: StoryRepository {
     func saveBook(_ book: MemoryBook) { books[book.id] = book }
     func deleteBook(id: UUID) { books[id] = nil }
 
+    func loadFavorites() -> [FavoriteRecord] { Array(favorites.values) }
+    func saveFavorite(_ favorite: FavoriteRecord) { favorites["\(favorite.kind.rawValue):\(favorite.identifier)"] = favorite }
+    func removeFavorite(kind: FavoriteKind, identifier: String) { favorites["\(kind.rawValue):\(identifier)"] = nil }
+
+    func loadCreations() -> [SavedCreation] { Array(creations.values) }
+    func saveCreation(_ creation: SavedCreation) { creations[creation.id] = creation }
+    func deleteCreation(id: UUID) { creations[id] = nil }
+
+    /// Like the real store: the relationship story goes; books, creations, drafts, favorites and
+    /// the list of Relive-made images stay.
     func deleteAll() {
         profile = .empty
         assets = []
         story = nil
         states = [:]
-        books = [:]
     }
 }
 
