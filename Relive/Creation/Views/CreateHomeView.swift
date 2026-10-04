@@ -8,12 +8,13 @@ enum CreateRoute: Hashable {
     case years
     case year(Int)
     case trend(String)
-    case book(UUID)
 }
 
-/// Create: Relive's creative studio. Trending Now (current, from the trend catalog) above the
-/// permanent tools, each shown with the user's own photos.
-/// "Choose memories. Relive makes something beautiful from them."
+/// Create: Relive's creative studio, and the couple's own collection.
+///
+/// In order: Continue Editing (only when there are drafts), Your Creations, Favorites, then the
+/// five tools (Create Something), each shown with the couple's own photos, and Trending Now.
+/// Every line about the couple is a fact ("You have 8 favorites"), never a judgement.
 struct CreateHomeView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
@@ -42,14 +43,18 @@ struct CreateHomeView: View {
                     }
                     .padding(.top, Spacing.l)
 
+                    if let draft = store.drafts.first {
+                        continueEditing(draft, count: store.drafts.count)
+                    }
+                    yourCreations
                     if library.visibleMoments.isEmpty {
                         QuietMessageView(
                             title: "Nothing to make from yet",
                             message: "Once your story has memories, you can turn them into collages, stories and recaps here."
                         )
                     } else {
-                        trendingNow
-                        Text("Create")
+                        favoritesSection(library: library)
+                        Text("Create Something")
                             .eyebrowStyle()
                             .accessibilityAddTraits(.isHeader)
                         collageFeature(library: library)
@@ -61,6 +66,7 @@ struct CreateHomeView: View {
                         monthlyRecapRow(library: library, months: months)
                         Hairline()
                         yearRow(library: library, years: years)
+                        trendingNow
                     }
                 }
                 .padding(.horizontal, Spacing.screenMargin)
@@ -77,13 +83,88 @@ struct CreateHomeView: View {
                 case .years: YearListView()
                 case .year(let year): OurYearView(year: year)
                 case .trend(let id): TrendDetailView(trendID: id)
-                case .book(let id): MemoryBookReaderView(bookID: id)
                 }
             }
             .momentDestination()
+            .collectionDestinations()
         }
         .onAppear { analytics.track(.createOpened) }
         .task { await trends.refresh() }
+    }
+
+    // MARK: - Continue Editing
+
+    private func continueEditing(_ draft: SavedCreation, count: Int) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.m) {
+            SectionHeader(title: "Continue Editing", route: .drafts, linkTitle: count > 1 ? "See All Drafts (\(count))" : "See All Drafts", linkIdentifier: "seeAllDrafts")
+            ContinueEditingCard(draft: draft)
+        }
+    }
+
+    // MARK: - Your Creations
+
+    private var yourCreations: some View {
+        let items = store.keptItems
+        return VStack(alignment: .leading, spacing: Spacing.m) {
+            SectionHeader(title: "Your Creations", route: items.isEmpty ? nil : .creations, linkTitle: "See All", linkIdentifier: "seeAllCreations")
+            if items.isEmpty {
+                Text("Things you make with Relive will appear here.")
+                    .font(Typography.callout)
+                    .foregroundStyle(Palette.textSecondary)
+                    .accessibilityIdentifier("creationsEmpty")
+            } else {
+                ScrollView(.horizontal) {
+                    HStack(alignment: .top, spacing: Spacing.m) {
+                        ForEach(items.prefix(Self.recentCreations)) { item in
+                            KeptItemLink(item: item, origin: "create", width: 128)
+                        }
+                    }
+                    .padding(.horizontal, Spacing.screenMargin)
+                }
+                .scrollIndicators(.hidden)
+                .padding(.horizontal, -Spacing.screenMargin)
+                .accessibilityIdentifier("yourCreations")
+            }
+        }
+    }
+
+    /// How many recent creations Create shows before See All.
+    private static let recentCreations = 8
+
+    // MARK: - Favorites
+
+    private func favoritesSection(library: CreationLibrary) -> some View {
+        let photos = library.favoritePhotos
+        let total = store.visibleFavoritesCount
+        return VStack(alignment: .leading, spacing: Spacing.m) {
+            SectionHeader(title: "Favorites", route: total > 0 ? .favorites : nil, linkTitle: "See All", linkIdentifier: "seeAllFavorites")
+            if total == 0 {
+                Text("Favorite memories to keep them close and create from them later.")
+                    .font(Typography.callout)
+                    .foregroundStyle(Palette.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            } else {
+                if !photos.isEmpty {
+                    HStack(spacing: 4) {
+                        ForEach(photos.suffix(4).reversed(), id: \.self) { id in
+                            Color.clear
+                                .aspectRatio(0.8, contentMode: .fit)
+                                .overlay { AssetImageView(assetID: id) }
+                                .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
+                        }
+                    }
+                    .frame(maxHeight: 120, alignment: .leading)
+                    .accessibilityHidden(true)
+                }
+                Text("You have \(Counted.text(total, "favorite", "favorites")).")
+                    .font(Typography.callout)
+                    .foregroundStyle(Palette.textSecondary)
+                    .accessibilityIdentifier("favoritesCount")
+                if !photos.isEmpty {
+                    CreateFromFavoritesMenu(origin: "create", style: .button)
+                }
+            }
+        }
     }
 
     // MARK: - Trending Now
@@ -131,23 +212,6 @@ struct CreateHomeView: View {
                     Button("Start a Book") { choosesBookSource = true }
                         .buttonStyle(.reliveOutline)
                         .accessibilityIdentifier("createBook")
-                }
-            }
-            if !store.books.isEmpty {
-                VStack(alignment: .leading, spacing: Spacing.s) {
-                    Text("Your books").eyebrowStyle()
-                    ScrollView(.horizontal) {
-                        HStack(alignment: .top, spacing: Spacing.m) {
-                            ForEach(store.books) { book in
-                                NavigationLink(value: CreateRoute.book(book.id)) {
-                                    BookShelfItem(book: book)
-                                }
-                                .buttonStyle(.plain)
-                                .accessibilityIdentifier("savedBook")
-                            }
-                        }
-                    }
-                    .scrollIndicators(.hidden)
                 }
             }
         }
@@ -337,27 +401,84 @@ struct BookCoverThumbnail: View {
     }
 }
 
-/// A saved book on the shelf.
-private struct BookShelfItem: View {
-    let book: MemoryBook
-
-    @Environment(StoryStore.self) private var store
+/// "Continue Editing" / "Your Creations": a section title with an optional See All link.
+private struct SectionHeader: View {
+    let title: String
+    let route: CollectionRoute?
+    let linkTitle: String
+    let linkIdentifier: String
 
     var body: some View {
-        let layout = BookLayoutEngine(library: store.creationLibrary(for: book)).layout(book)
-        VStack(alignment: .leading, spacing: Spacing.xs) {
-            BookCoverThumbnail(assetID: layout.pages.first?.slots.first?.assetID)
-                .frame(width: 110)
-            Text(CreationText.title(layout.facts.title) ?? CreationText.periodLine(layout.facts.dateSpan) ?? "Memory Book")
-                .font(Typography.footnote.weight(.semibold))
+        HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(Typography.title2)
                 .foregroundStyle(Palette.textPrimary)
-                .lineLimit(1)
-            Text("\(Counted.text(layout.photoIDs.count, "photo", "photos")) · \(book.style.displayName)")
-                .font(.caption2)
-                .foregroundStyle(Palette.textSecondary)
+                .accessibilityAddTraits(.isHeader)
+            Spacer(minLength: Spacing.s)
+            if let route {
+                NavigationLink(value: route) {
+                    Text(linkTitle)
+                        .font(Typography.callout.weight(.semibold))
+                        .frame(minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityIdentifier(linkIdentifier)
+            }
         }
-        .frame(width: 110, alignment: .leading)
-        .accessibilityElement(children: .combine)
-        .accessibilityHint("Opens the book")
+    }
+}
+
+/// The latest draft, ready to pick up: its picture, "Story · Edited 12 minutes ago", Continue.
+private struct ContinueEditingCard: View {
+    let draft: SavedCreation
+
+    @Environment(AppModel.self) private var app
+    @Environment(StoryStore.self) private var store
+    @State private var confirmsDelete = false
+
+    var body: some View {
+        let summary = KeptSummary(item: .creation(draft), store: store)
+        HStack(alignment: .top, spacing: Spacing.m) {
+            Palette.surface
+                .frame(width: 96, height: 120)
+                .overlay { CreationPreview(item: .creation(draft)).padding(4) }
+                .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                Text(summary.title)
+                    .font(Typography.title3)
+                    .foregroundStyle(Palette.textPrimary)
+                    .lineLimit(2)
+                TimelineView(.everyMinute) { context in
+                    Text("\(summary.kind.name) · \(EditedText.edited(draft.updatedAt, now: context.date))")
+                        .font(Typography.footnote)
+                        .foregroundStyle(Palette.textSecondary)
+                }
+                if summary.missingCount > 0 {
+                    Text(Counted.text(summary.missingCount, "photo is missing", "photos are missing"))
+                        .font(Typography.footnote)
+                        .foregroundStyle(Palette.textTertiary)
+                }
+                Button("Continue") { app.resumeCreation(draft, origin: "create") }
+                    .buttonStyle(.reliveOutline)
+                    .accessibilityLabel("Continue editing \(summary.kind.name.lowercased()), \(summary.title)")
+                    .accessibilityIdentifier("continueEditing")
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(Spacing.m)
+        .background(Palette.surface.opacity(0.6), in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+        .contextMenu {
+            Button { app.resumeCreation(draft, origin: "create") } label: { Label("Continue Editing", systemImage: "pencil") }
+            Button(role: .destructive) { confirmsDelete = true } label: { Label("Delete Draft", systemImage: "trash") }
+        }
+        .accessibilityElement(children: .contain)
+        .accessibilityAction(named: "Delete Draft") { confirmsDelete = true }
+        .confirmationDialog("Delete this draft?", isPresented: $confirmsDelete, titleVisibility: .visible) {
+            Button("Delete Draft", role: .destructive) { store.deleteCreation(id: draft.id) }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("Its photos stay in Relive and in the Photos app.")
+        }
     }
 }

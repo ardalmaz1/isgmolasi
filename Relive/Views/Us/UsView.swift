@@ -25,6 +25,23 @@ struct UsView: View {
                 }
                 .listRowBackground(Palette.surface)
 
+                Section("Kept in Relive") {
+                    NavigationLink(value: CollectionRoute.favorites) {
+                        CountRow(title: "Favorites", count: store.visibleFavoritesCount)
+                    }
+                    .accessibilityIdentifier("usFavorites")
+                    NavigationLink(value: CollectionRoute.creations) {
+                        CountRow(title: "My Creations", count: store.keptItems.count)
+                    }
+                    .accessibilityIdentifier("usCreations")
+                    if !store.drafts.isEmpty {
+                        NavigationLink(value: CollectionRoute.drafts) {
+                            CountRow(title: "Drafts", count: store.drafts.count)
+                        }
+                    }
+                }
+                .listRowBackground(Palette.surface)
+
                 Section("Your story") {
                     Button("Edit Names and Date") { isEditingProfile = true }
                     NavigationLink("Hidden Memories") { HiddenMemoriesView() }
@@ -63,6 +80,8 @@ struct UsView: View {
             .statusBarBackdrop()
             .foregroundStyle(Palette.textPrimary)
             .toolbar(.hidden, for: .navigationBar)
+            .momentDestination()
+            .collectionDestinations()
             .sheet(isPresented: $isEditingProfile) { EditProfileView() }
             .confirmationDialog(
                 "Start over?",
@@ -110,6 +129,20 @@ private struct UsHeader: View {
         .padding(.bottom, Spacing.s)
         .frame(maxWidth: .infinity, alignment: .leading)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// "Favorites   12" inside a navigation row.
+private struct CountRow: View {
+    let title: String
+    let count: Int
+
+    var body: some View {
+        LabeledContent(title) {
+            Text(count.formatted())
+                .font(Typography.body.monospacedDigit())
+                .foregroundStyle(Palette.textSecondary)
+        }
     }
 }
 

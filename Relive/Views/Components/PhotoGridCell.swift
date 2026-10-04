@@ -1,9 +1,12 @@
 import ReliveCore
 import SwiftUI
 
-/// Square thumbnail used in moment grids. Videos show their duration; favorites a small mark.
+/// Square thumbnail used in moment grids. Videos show their duration; Relive favorites a small
+/// mark. (Apple Photos favorites are not shown here: Relive's favorites are its own.)
 struct PhotoGridCell: View {
     let asset: MemoryAsset
+    /// A Relive favorite.
+    var isFavorite = false
 
     var body: some View {
         Color.clear
@@ -22,13 +25,7 @@ struct PhotoGridCell: View {
                 }
             }
             .overlay(alignment: .bottomLeading) {
-                if asset.isFavorite {
-                    Image(systemName: "heart.fill")
-                        .font(.caption2)
-                        .foregroundStyle(.white)
-                        .shadow(color: .black.opacity(0.4), radius: 2)
-                        .padding(6)
-                }
+                if isFavorite { FavoriteMark() }
             }
             .accessibilityElement()
             .accessibilityLabel(accessibilityText)
@@ -40,7 +37,7 @@ struct PhotoGridCell: View {
         if let date = asset.creationDate {
             parts.append(date.formatted(date: .abbreviated, time: .shortened))
         }
-        if asset.isFavorite { parts.append("Favorite") }
+        if isFavorite { parts.append("Favorite") }
         return parts.joined(separator: ", ")
     }
 

@@ -67,10 +67,16 @@ struct MomentDetailView: View {
                         Button {
                             viewerSelection = ViewerSelection(assetID: asset.id)
                         } label: {
-                            PhotoGridCell(asset: asset)
+                            PhotoGridCell(asset: asset, isFavorite: store.isFavorite(.memory, asset.id))
                         }
                         .buttonStyle(.plain)
                         .contextMenu {
+                            let isFavorite = store.isFavorite(.memory, asset.id)
+                            Button {
+                                store.toggleFavorite(.memory, asset.id)
+                            } label: {
+                                Label(isFavorite ? "Remove from Favorites" : "Favorite", systemImage: isFavorite ? "heart.slash" : "heart")
+                            }
                             if asset.kind == .photo {
                                 Button {
                                     store.setCover(asset.id, for: moment.id)
@@ -96,6 +102,12 @@ struct MomentDetailView: View {
         .scrollIndicators(.hidden)
         .reliveBackground()
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                // The moment itself; its photos keep their own favorites.
+                FavoriteButton(kind: .moment, identifier: moment.id.uuidString)
+                    .accessibilityLabel("Favorite moment")
+                    .accessibilityIdentifier("momentFavorite")
+            }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button {

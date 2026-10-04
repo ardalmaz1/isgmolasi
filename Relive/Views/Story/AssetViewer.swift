@@ -2,7 +2,8 @@ import AVKit
 import ReliveCore
 import SwiftUI
 
-/// Full-screen, swipeable photos and videos of one moment.
+/// Full-screen, swipeable photos and videos of one moment. The heart favorites the memory on
+/// screen (in Relive only).
 struct AssetViewer: View {
     let assets: [MemoryAsset]
     let startAssetID: AssetID
@@ -31,17 +32,23 @@ struct AssetViewer: View {
             .tabViewStyle(.page(indexDisplayMode: .never))
             .ignoresSafeArea()
 
-            Button {
-                dismiss()
-            } label: {
-                Image(systemName: "xmark")
-                    .font(.body.weight(.semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: 44, height: 44)
-                    .background(.black.opacity(0.35), in: Circle())
+            HStack(spacing: Spacing.s) {
+                if !currentID.isEmpty {
+                    FavoriteButton(kind: .memory, identifier: currentID, tint: .white)
+                        .background(.black.opacity(0.35), in: Circle())
+                }
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.body.weight(.semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 44, height: 44)
+                        .background(.black.opacity(0.35), in: Circle())
+                }
+                .accessibilityLabel("Close")
             }
             .padding(.trailing, Spacing.m)
-            .accessibilityLabel("Close")
 
             if let caption {
                 Text(caption)
