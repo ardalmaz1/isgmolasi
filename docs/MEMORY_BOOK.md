@@ -133,9 +133,15 @@ always render in their own paper colours (§8, Dark Mode).
   book's JSON definition, which decodes older books unchanged. `PersistenceMigrationTests` writes a v0.2-shaped store to disk, opens it
   with the v0.3 schema and checks that the profile, surprise, assets, moment notes/hidden flags
   and created-asset list all survive, and that books can then be saved, updated and deleted.
-- `StoryStore.books` is the list, newest change first; Start Over deletes books with the rest of
-  the story (the list of photos Relive created stays, as in v0.2, so they're still never
-  resurfaced as memories).
+- `StoryStore.books` is the list, newest change first. **v0.4: Start Over keeps books** (it
+  used to delete them with the story). So a kept book can still describe and lay out its photos
+  when they aren't in the new story, `saveBook` now snapshots the metadata of *every* photo in
+  `photoLibraryAssets` (`MemoryBook.captureSnapshots`; no pixels, no analysis). Memories in the
+  story always win over snapshots. The list of photos Relive created stays too, as before.
+- v0.4: books appear in **My Creations** and **Your Creations** next to collages and stories
+  (`KeptItem`; the book model and storage are unchanged), can be favorited from the reader's
+  heart, and are deleted from Relive with confirmation (never from Photos). A v0.3.1 store opens
+  with the v0.4 schema unchanged (`testV031StoreOpensWithV04Schema`).
 - Missing photos: a photo deleted from the library, hidden in Relive, or no longer shared with
   Relive (limited access) is left out of the layout. Photo Library photos used by books are
   re-checked for availability like memories. The reader says how many were left out and

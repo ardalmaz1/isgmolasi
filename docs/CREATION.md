@@ -1,6 +1,14 @@
-# Creation — Relive v0.2, v0.3, v0.3.1
+# Creation — Relive v0.2, v0.3, v0.3.1, v0.4
 
 > Choose memories. Relive makes something beautiful from them.
+
+**v0.4** keeps what is made: collages and stories are saved as **drafts** while they're being
+made and as **creations** when finished (one record, `SavedCreation`), reopen exactly as they
+were, and appear with books in **My Creations**. **Favorites** (Relive's own) are a creation
+source and get a small preference in automatic picks. The metadata rule below is unchanged and
+applies to reopened and edited creations too: their words are recomputed from their photos. The
+Create tab is now Continue Editing → Your Creations → Favorites → Create Something (Trending
+Now and the five tools). See [PERSONAL_COLLECTION.md](PERSONAL_COLLECTION.md).
 
 **v0.3** adds two things on top of the v0.2 creation infrastructure described here:
 **Memory Book** ([MEMORY_BOOK.md](MEMORY_BOOK.md)) and **Trending Now**
@@ -192,6 +200,9 @@ Full-resolution originals are never requested. JPEG encoding runs off the main t
 - Images Relive saves are recorded (`StoredCreatedAsset`) and **never imported back as
   memories** — with limited photo access they become visible to Relive, and "Add Memories" would
   otherwise pull them into the story. This list survives Start Over for the same reason.
+  v0.4: the same path is used for creations made from favorites, reopened creations and drafts,
+  and saving or completing a share also finishes the draft (`onSaved` / `onShared`). The saver
+  is injectable (`CreationSaving`) so hosted tests can prove it without PhotoKit.
 - A subtle "Made with Relive" appears on exported images (one flag per canvas, ready for a
   future option; there is no monetization logic).
 
@@ -225,4 +236,11 @@ log lines with non-identifying properties (kind, style, shape, counts).
   unavailable, catalog fallback; page and recipe renders are attached for review in CI);
   `ReliveUITests/BookAndTrendsUITests.swift` (trend → studio → variation → Save; AI trend
   disclosure; Memory Book from a trip → pages → Save Page → style → relaunch).
+- **v0.4**: `PersonalCollectionTests` (ReliveCore, Linux: favorites, favorites as a source,
+  saved creations and drafts, story edits keep facts true); `ReliveTests/PersonalCollectionAppTests.swift`
+  (favorites through the store, draft lifecycle and debounce, restart restore, missing photos,
+  delete keeps the source, Start Over, export exclusion for reopened drafts and favorites
+  stories); `PersistenceMigrationTests.testV031StoreOpensWithV04Schema`;
+  `ReliveUITests/PersonalCollectionUITests.swift` (favorite → Create from Favorites → save →
+  reopen/edit → story draft → Continue Editing → delete safety → every tool opens).
 

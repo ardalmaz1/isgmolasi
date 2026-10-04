@@ -106,7 +106,12 @@ without breaking anything, and come back if access returns.
 | `StoredAsset` | Identifier + JSON `MemoryAsset` (metadata and cached analysis) | Derived, rebuildable from the library |
 | `StoredStorySnapshot` | JSON `Story` (versioned) | Derived, rebuildable by re-running the engine |
 | `StoredCreatedAsset` (v0.2) | Identifiers of images Relive saved | So they're never imported back as memories |
-| `StoredMemoryBook` (v0.3) | Book id + JSON `MemoryBook` definition (photo identifiers, style, cover, note) | User-authored; small; never holds image data |
+| `StoredMemoryBook` (v0.3) | Book id + JSON `MemoryBook` definition (photo identifiers, style, cover, note, photo metadata snapshots) | User-authored; small; never holds image data |
+| `StoredFavorite` (v0.4) | Kind (memory / moment / creation), identifier, date | The couple's own list; never Apple Photos' favorite flag |
+| `StoredCreation` (v0.4) | Creation id, kind, status (draft / saved) + JSON `SavedCreation` state | User-authored; one record from draft to finished; never image data |
+
+Start Over (v0.4) clears the profile, assets, story snapshot and moment states; it keeps books,
+creations, favorites and created-asset identifiers (see [PERSONAL_COLLECTION.md](PERSONAL_COLLECTION.md)).
 
 All properties have defaults and there are no unique constraints, which keeps the schema
 compatible with CloudKit-backed SwiftData if sync is added. `StoryRepository` is a protocol, so

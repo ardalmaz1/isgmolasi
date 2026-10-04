@@ -1,4 +1,4 @@
-# Relive — v0.3.1
+# Relive — v0.4
 
 > Your love story already exists in your camera roll. Relive helps you rediscover it.
 
@@ -13,6 +13,30 @@ Prototype 0.1 exists to test one hypothesis:
 Principles: **Remember → Appreciate → Live.** AI organizes the memory; people give it meaning.
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
+
+## New in v0.4 — your personal collection
+
+- **Favorites.** One heart, private to Relive: on a photo (full-screen viewer), on a moment (its
+  toolbar), on a book or a finished collage or story. A moment's favorite and its photos'
+  favorites are independent. Favoriting never changes the photo, its metadata, Apple Photos
+  favorites, clustering or chronology. **Favorites** (from Create or Us) shows Memories, Moments
+  and Creations, and **Create from Favorites** makes a collage, story or book from them — or
+  says plainly when there aren't enough.
+- **My Creations.** Collages, stories and Memory Books in one private library, each drawn again
+  from its state and the couple's photos (no stored image copies). Open one to keep editing,
+  share, save, favorite or delete it (with confirmation; photos are never deleted).
+- **Drafts.** Collage and Story Maker keep work automatically: a short pause after a change, and
+  at once on Close or when the app goes to the background. **Continue Editing** picks a draft up
+  exactly where it was left, even after a restart. Saving turns the same draft into the
+  creation — never a duplicate.
+- **Create Home 2.0.** Continue Editing (only when there are drafts) → Your Creations →
+  Favorites → Create Something. Every line about the couple is a fact ("You have 8 favorites").
+- **Start Over** now resets the story and onboarding but keeps books, collages, stories, drafts,
+  favorites and the list of Relive-made images.
+- Missing photos are shown as missing — never swapped for another photo — with Remove Missing
+  and Replace.
+
+Details: [docs/PERSONAL_COLLECTION.md](docs/PERSONAL_COLLECTION.md).
 
 ## New in v0.3.1 — creation intelligence and the photo library
 
@@ -133,6 +157,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/PERSONAL_COLLECTION.md](docs/PERSONAL_COLLECTION.md) — v0.4 favorites model, saved
+  creation model, draft lifecycle, Create Home architecture, Start Over, missing assets,
+  migration, export exclusion, limitations.
 - [docs/MEMORY_BOOK.md](docs/MEMORY_BOOK.md) — v0.3 Memory Book: model, sources, auto-layout,
   styles, persistence, rendering, performance, accessibility, the future PDF and print paths.
 - [docs/TRENDS.md](docs/TRENDS.md) — v0.3 Trends: trend and catalog model, recipes and versions,
@@ -175,7 +202,19 @@ Us. Screenshots of each step are uploaded as a build artifact.
   summary card and Create Story makes year story cards.
 - Seasons ("Summer") are not used, because they depend on the hemisphere.
 - Collage editing is intentionally limited (no free positioning, filters or text editing).
-- Drafts aren't saved: closing an editor discards it.
+- Drafts aren't saved: closing an editor discards it. *(Fixed in v0.4.)*
+
+## Known limitations of v0.4
+
+- **Not physically verified.** Favorites, My Creations, drafts and Create Home 2.0 were verified
+  by unit tests (Linux), hosted tests and UI tests in the iOS Simulator, and CI builds with
+  Xcode 16.4 and Xcode 26 — not on a physical iPhone. Autosave timing, background flushing,
+  haptics and VoiceOver on a device need a check.
+- Share and Save to Photos for a kept creation happen in its editor (open it from My
+  Creations), not from the card's menu.
+- Monthly Recaps, Our Year and Trend creations are not kept in My Creations.
+- Favorites and creations stay on this iPhone (no sync, by design).
+- The debounced draft write runs on the main actor (small JSON records, no images).
 
 ## Known limitations of v0.3.1
 
@@ -189,7 +228,7 @@ Us. Screenshots of each step are uploaded as a build artifact.
   shows their coordinates only when the photos were taken close together.
 - Story cards can't be repositioned or cropped by hand; photos are cropped around the shared
   focus point.
-- Story Maker drafts and collages are still not saved (books are).
+- Story Maker drafts and collages are still not saved (books are). *(Fixed in v0.4.)*
 
 ## Known limitations of v0.3
 
