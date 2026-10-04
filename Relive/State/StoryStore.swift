@@ -55,6 +55,8 @@ final class StoryStore {
     private(set) var createdAssetIDs: Set<AssetID>
     /// Saved Memory Books, most recently changed first.
     private(set) var books: [MemoryBook]
+    /// Photo-library photos used by books that no longer resolve (deleted, or access removed).
+    private(set) var unavailableBookPhotoIDs: Set<AssetID> = []
 
     let calendar: Calendar
     let photoLibrary: any PhotoLibraryProviding
@@ -282,6 +284,44 @@ final class StoryStore {
         repository.deleteBook(id: id)
     }
 
+    /// The library a book is laid out with: the story plus the book's own photo-library photos.
+    func creationLibrary(for book: MemoryBook) -> CreationLibrary {
+        var library = book.creationLibrary(base: creationLibrary)
+        library.unavailableAssetIDs.formUnion(unavailableBookPhotoIDs)
+        return library
+    }
+
+    // MARK: - Photo library picks
+
+    /// Photos chosen in the system picker for one creation, with their real metadata.
+    struct PhotoLibraryPicks: Equatable {
+        /// In the order they were picked; only photos Relive can read.
+        var ids: [AssetID]
+        /// Metadata of picks that aren't memories already (memories keep their memory metadata).
+        var libraryAssets: [MemoryAsset]
+        /// Picks Relive can't read — with limited access, photos not shared with Relive.
+        var unavailableCount: Int
+    }
+
+    /// Reads the photo library's own metadata (date, location, size) for picked items. Nothing
+    /// is imported into the story, and nothing is assumed for photos Relive can't read.
+    func resolvePhotoLibraryPicks(_ identifiers: [AssetID]) async -> PhotoLibraryPicks {
+        var seen = Set<AssetID>()
+        let unique = identifiers.filter { seen.insert($0).inserted }
+        guard !unique.isEmpty else { return PhotoLibraryPicks(ids: [], libraryAssets: [], unavailableCount: 0) }
+        let fetched = await photoLibrary.assets(withIdentifiers: unique)
+        let byID = Dictionary(fetched.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+        let stills = unique.filter { id in
+            guard let asset = byID[id] else { return false }
+            return asset.kind == .photo
+        }
+        return PhotoLibraryPicks(
+            ids: stills,
+            libraryAssets: stills.compactMap { assets[$0] == nil ? byID[$0] : nil },
+            unavailableCount: unique.count - byID.count
+        )
+    }
+
     // MARK: - Processing
 
     /// Runs the Memory Engine over the whole selection and returns how it ended. Cached analysis
@@ -436,6 +476,7 @@ final class StoryStore {
     /// becomes active.
     func refreshAvailability() async {
         accessStatus = photoLibrary.accessStatus()
+        await refreshBookPhotoAvailability()
         let identifiers = Array(assets.keys)
         guard !identifiers.isEmpty else {
             unavailableAssetIDs = []
@@ -447,6 +488,18 @@ final class StoryStore {
             unavailableAssetIDs = missing
             recomputeDerived()
         }
+    }
+
+    /// Which photo-library photos used by books still exist.
+    func refreshBookPhotoAvailability() async {
+        let identifiers = Set(books.flatMap { $0.photoLibraryAssets.map(\.id) })
+        guard !identifiers.isEmpty else {
+            unavailableBookPhotoIDs = []
+            return
+        }
+        let available = accessStatus.canReadSelection ? await photoLibrary.availableIdentifiers(among: Array(identifiers)) : []
+        let missing = identifiers.subtracting(available)
+        if missing != unavailableBookPhotoIDs { unavailableBookPhotoIDs = missing }
     }
 
     // MARK: - User decisions
@@ -510,6 +563,7 @@ final class StoryStore {
         userStates = [:]
         unavailableAssetIDs = []
         books = []
+        unavailableBookPhotoIDs = []
         processing = .idle
         recomputeDerived()
         Task { await placeResolver.clearCache() }

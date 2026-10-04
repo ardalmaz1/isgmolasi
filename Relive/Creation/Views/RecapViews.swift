@@ -79,9 +79,7 @@ struct MonthlyRecapView: View {
                             .init(title: "Create a Story", identifier: "recapStory") {
                                 app.startCreation(.story, from: .source(.month(month)), origin: "monthly_recap")
                             },
-                        ],
-                        shareTitle: "Share",
-                        onShare: { Task { await share(recap, headline: headline) } }
+                        ]
                     )
 
                     ForEach(recap.chapters) { chapter in
@@ -101,6 +99,13 @@ struct MonthlyRecapView: View {
         .reliveBackground()
         .navigationTitle(CreationText.monthTitle(month))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if recap.isSufficient {
+                ShareToolbarButton(title: "Share", export: export, identifier: "recapShare") {
+                    Task { await share(recap, headline: headline) }
+                }
+            }
+        }
         .onAppear { analytics.track(.recapOpened, ["kind": "month", "sufficient": recap.isSufficient ? "true" : "false"]) }
     }
 
@@ -143,8 +148,8 @@ struct YearListView: View {
                 List(reviews, id: \.year) { review in
                     NavigationLink(value: CreateRoute.year(review.year)) {
                         PeriodRow(
-                            title: "Our \(review.year)",
-                            detail: review.isSufficient ? CreationText.counts(review.statistics, includeTrips: true) : "Just a few memories",
+                            title: review.isSufficient ? "Our \(review.year)" : String(review.year),
+                            detail: review.isSufficient ? CreationText.counts(review.statistics, includeTrips: true) : YearText.notYet(review.eligibility),
                             coverID: review.highlights(limit: 1).first
                         )
                     }
@@ -160,7 +165,9 @@ struct YearListView: View {
     }
 }
 
-/// A year together, month by month — only what happened, in the order it happened.
+/// A year together, month by month — only what happened, in the order it happened. Shown as a
+/// year only when it really is one (memories from at least two months); otherwise an honest
+/// "just getting started" with ways to add more.
 struct OurYearView: View {
     let year: Int
 
@@ -169,6 +176,7 @@ struct OurYearView: View {
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.analytics) private var analytics
     @State private var export = ExportController()
+    @State private var isAddingMemories = false
 
     var body: some View {
         let library = store.creationLibrary
@@ -178,25 +186,19 @@ struct OurYearView: View {
             VStack(alignment: .leading, spacing: Spacing.xl) {
                 PeriodHeader(
                     eyebrow: app.coupleName,
-                    title: "Our \(year)",
+                    title: review.isSufficient ? "Our \(year)" : String(year),
                     detail: review.statistics.memoryCount > 0 ? CreationText.counts(review.statistics, includeTrips: true) : nil
                 )
 
                 if !review.isSufficient {
-                    QuietMessageView(
-                        title: "Just a few memories from \(String(year))",
-                        message: "There isn’t enough here for a look back yet. As you add photos from this year, it will fill in."
-                    )
-                    if !review.moments.isEmpty {
-                        MomentLinks(moments: review.moments)
-                    }
+                    notYetAYear(review)
                 } else {
                     if let lead = library.best(review.highlights(limit: 12)) {
                         FramedAssetImage(assetID: lead, aspectRatio: 4 / 5)
                             .accessibilityHidden(true)
                     }
 
-                    actions(review)
+                    actions(showsStatus: true)
 
                     if let first = review.firstMoment, let date = first.startDate {
                         VStack(alignment: .leading, spacing: Spacing.xxs) {
@@ -208,6 +210,7 @@ struct OurYearView: View {
                         .accessibilityElement(children: .combine)
                     }
 
+                    // Month by month, in order; months without memories aren't shown.
                     ForEach(review.months) { section in
                         MonthSection(section: section, coverForTrip: { chapter in
                             section.moments.first { $0.chapterID == chapter.id }.flatMap(library.lead(of:))
@@ -219,7 +222,7 @@ struct OurYearView: View {
                         Text("And that’s our \(String(year)).")
                             .font(Typography.title)
                             .foregroundStyle(Palette.textPrimary)
-                        actions(review)
+                        actions(showsStatus: false)
                     }
                 }
             }
@@ -228,12 +231,56 @@ struct OurYearView: View {
         }
         .scrollIndicators(.hidden)
         .reliveBackground()
-        .navigationTitle("Our \(String(year))")
+        .navigationTitle(review.isSufficient ? "Our \(String(year))" : String(year))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            if review.isSufficient {
+                ShareToolbarButton(title: "Share Our Year", export: export, identifier: "yearShare") {
+                    Task { await share(review) }
+                }
+            }
+        }
+        .addMemoriesFlow(isPresented: $isAddingMemories)
         .onAppear { analytics.track(.recapOpened, ["kind": "year", "sufficient": review.isSufficient ? "true" : "false"]) }
     }
 
-    private func actions(_ review: YearInReview) -> some View {
+    /// Not a year yet: say so plainly, show what there is, and offer ways to add more.
+    @ViewBuilder
+    private func notYetAYear(_ review: YearInReview) -> some View {
+        VStack(alignment: .leading, spacing: Spacing.s) {
+            Text(YearText.notYetTitle(review.eligibility, year: year))
+                .font(Typography.title2)
+                .foregroundStyle(Palette.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityAddTraits(.isHeader)
+            Text(YearText.notYetMessage(review.eligibility))
+                .font(Typography.body)
+                .foregroundStyle(Palette.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .accessibilityIdentifier("yearNotYet")
+
+        VStack(spacing: Spacing.s) {
+            Button("Add Memories") { isAddingMemories = true }
+                .buttonStyle(.relivePrimary)
+                .accessibilityIdentifier("yearAddMemories")
+            Button("Build from Photo Library") {
+                app.startCreation(.book, from: .choosePhotoLibrary, origin: "our_year")
+            }
+            .buttonStyle(.reliveOutline)
+            .accessibilityHint("Choose photos from several months to make a book of your year")
+            .accessibilityIdentifier("yearBuildFromLibrary")
+        }
+
+        if !review.moments.isEmpty {
+            VStack(alignment: .leading, spacing: Spacing.s) {
+                Text("So far").eyebrowStyle()
+                MomentLinks(moments: review.moments)
+            }
+        }
+    }
+
+    private func actions(showsStatus: Bool) -> some View {
         CreationActions(
             export: export,
             actions: [
@@ -244,8 +291,7 @@ struct OurYearView: View {
                     app.startCreation(.collage, from: .source(.year(year)), origin: "our_year")
                 },
             ],
-            shareTitle: "Share Our Year",
-            onShare: { Task { await share(review) } }
+            showsStatus: showsStatus
         )
     }
 
@@ -262,6 +308,36 @@ struct OurYearView: View {
                 images: source
             )
             return [image]
+        }
+    }
+}
+
+/// Honest words for a year that isn't one yet.
+@MainActor
+enum YearText {
+    static func notYet(_ eligibility: YearEligibility) -> String {
+        switch eligibility {
+        case .singleMonth(let month): "Just getting started · \(CreationText.monthName(month) ?? "one month") so far"
+        case .tooFew: "Just a few memories"
+        case .empty, .eligible: "No memories yet"
+        }
+    }
+
+    static func notYetTitle(_ eligibility: YearEligibility, year: Int) -> String {
+        switch eligibility {
+        case .singleMonth, .empty, .eligible: "Your \(year) story is just getting started."
+        case .tooFew: "Just a few memories from \(year) so far."
+        }
+    }
+
+    static func notYetMessage(_ eligibility: YearEligibility) -> String {
+        switch eligibility {
+        case .singleMonth(let month):
+            "Everything here is from \(CreationText.monthName(month) ?? "one month"). Add memories from another month to build Our Year."
+        case .tooFew:
+            "Add a few more memories from this year to build Our Year."
+        case .empty, .eligible:
+            "Add memories from this year to build Our Year."
         }
     }
 }
@@ -446,8 +522,7 @@ struct CreationActions: View {
 
     let export: ExportController
     let actions: [Action]
-    let shareTitle: String
-    let onShare: () -> Void
+    var showsStatus = true
 
     var body: some View {
         VStack(spacing: Spacing.s) {
@@ -459,14 +534,27 @@ struct CreationActions: View {
                         .accessibilityIdentifier(action.identifier)
                 }
             }
-            Button {
-                onShare()
-            } label: {
-                Label(shareTitle, systemImage: "square.and.arrow.up")
+            if showsStatus {
+                ExportStatusView(controller: export)
             }
-            .buttonStyle(.reliveQuiet)
+        }
+    }
+}
+
+/// Share in the navigation bar, where the tab bar can never cover it.
+struct ShareToolbarButton: ToolbarContent {
+    let title: String
+    let export: ExportController
+    let identifier: String
+    let action: () -> Void
+
+    var body: some ToolbarContent {
+        ToolbarItem(placement: .primaryAction) {
+            Button(action: action) {
+                Label(title, systemImage: "square.and.arrow.up")
+            }
             .disabled(export.isBusy)
-            ExportStatusView(controller: export)
+            .accessibilityIdentifier(identifier)
         }
     }
 }

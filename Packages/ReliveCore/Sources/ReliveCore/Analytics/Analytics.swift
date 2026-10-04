@@ -25,6 +25,8 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case memoryBookCreated = "memory_book_created"
     case memoryBookOpened = "memory_book_opened"
     case trendOpened = "trend_opened"
+    /// Photos picked from the photo library for a creation (counts only).
+    case photoLibraryPicked = "photo_library_picked"
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {

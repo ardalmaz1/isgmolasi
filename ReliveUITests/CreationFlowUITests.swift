@@ -44,12 +44,13 @@ final class CreationFlowUITests: XCTestCase {
 
         app.buttons["9:16"].firstMatch.tap()
         sleep(1)
-        // The taller 9:16 preview pushes the styles below the fold: scroll to them, then along
-        // the row. Only tap what is actually on screen.
-        app.swipeUp()
-        app.scrollViews["styleRow"].swipeLeft()
-        sleep(1)
+        // The taller 9:16 preview pushes the styles below the fold: scroll down to them. Styles
+        // wrap onto more lines rather than running off the edge, so every one is reachable.
         let polaroid = app.buttons["Polaroid"].firstMatch
+        for _ in 0..<4 where !polaroid.isHittable {
+            app.swipeUp()
+            sleep(1)
+        }
         XCTAssertTrue(polaroid.isHittable, "Polaroid style is not reachable")
         polaroid.tap()
         app.swipeDown()

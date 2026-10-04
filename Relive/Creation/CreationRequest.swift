@@ -27,7 +27,10 @@ enum CreationKind: String, Hashable, Sendable {
 
 /// Where a creation starts: by choosing, or from something the user is already looking at.
 enum CreationStart: Hashable, Sendable {
+    /// Choose photos: from Relive, or from the photo library.
     case choosePhotos
+    /// Straight to the system photo picker.
+    case choosePhotoLibrary
     case chooseMoment
     case chooseTrip
     case chooseMonth

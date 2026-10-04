@@ -43,6 +43,12 @@ final class CollageEditorModel {
         makeItForMe()
     }
 
+    /// Photos picked from the photo library become usable here, described by their own
+    /// metadata. They are not added to the story.
+    func addPhotoLibraryAssets(_ assets: [MemoryAsset]) {
+        library = library.addingPhotoLibraryAssets(assets)
+    }
+
     // MARK: - Derived
 
     var aspects: [Double] {

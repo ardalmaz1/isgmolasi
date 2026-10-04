@@ -120,6 +120,7 @@ struct CreateHomeView: View {
     private func bookFeature(library: CreationLibrary, months: [MonthKey], years: [Int]) -> some View {
         let cover = library.visibleMoments.last(where: { $0.kind != .undated }).flatMap(library.lead(of:))
         let hasTrips = !library.visibleTrips.isEmpty
+        let hasFavorites = library.favoritePhotos.count >= BookLimits.minimumPhotos
         return VStack(alignment: .leading, spacing: Spacing.m) {
             HStack(alignment: .top, spacing: Spacing.m) {
                 BookCoverThumbnail(assetID: cover)
@@ -160,6 +161,9 @@ struct CreateHomeView: View {
             }
             if !years.isEmpty {
                 Button("A Year") { app.startCreation(.book, from: .chooseYear, origin: "create") }
+            }
+            if hasFavorites {
+                Button("Favorites") { app.startCreation(.book, from: .source(.favorites), origin: "create") }
             }
             Button("Photos I Choose") { app.startCreation(.book, from: .choosePhotos, origin: "create") }
             Button("Cancel", role: .cancel) {}
@@ -340,7 +344,7 @@ private struct BookShelfItem: View {
     @Environment(StoryStore.self) private var store
 
     var body: some View {
-        let layout = BookLayoutEngine(library: store.creationLibrary).layout(book)
+        let layout = BookLayoutEngine(library: store.creationLibrary(for: book)).layout(book)
         VStack(alignment: .leading, spacing: Spacing.xs) {
             BookCoverThumbnail(assetID: layout.pages.first?.slots.first?.assetID)
                 .frame(width: 110)

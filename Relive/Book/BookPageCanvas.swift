@@ -54,8 +54,13 @@ struct BookPageText {
         let place = CreationText.place(page.place)
         switch page.kind {
         case .cover, .closing:
-            self.title = title ?? CreationText.periodLine(page.dateSpan)
-            subtitle = [title == nil ? nil : CreationText.periodLine(page.dateSpan), place == title ? nil : place]
+            // A name or calendar title when the photos have one; otherwise the day itself, or a
+            // neutral "Our Memories" (several years, or no dates) — never a borrowed title.
+            let period = CreationText.periodLine(page.dateSpan)
+            let singleDay = page.dateSpan.map { Calendar.current.isDate($0.start, inSameDayAs: $0.end) } ?? false
+            let headline = title ?? (singleDay ? CreationText.dateLine(page.dateSpan) : "Our Memories")
+            self.title = headline
+            subtitle = [headline == title ? period : (singleDay ? nil : period), place == headline ? nil : place]
                 .compactMap { $0 }.joined(separator: " · ").nilIfEmpty
         case .tripTitle:
             eyebrow = "A trip"

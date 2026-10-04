@@ -12,6 +12,7 @@ struct CollageEditorView: View {
     @Environment(\.analytics) private var analytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var picker: PickerPurpose?
+    @State private var libraryPurpose: PickerPurpose?
 
     private enum PickerPurpose: Identifiable {
         case edit
@@ -84,8 +85,11 @@ struct CollageEditorView: View {
                 .accessibilityIdentifier("collageShare")
             }
         }
-        .safeAreaInset(edge: .bottom) {
+        // The save bar sits below the scrolling controls (not over them): the scroll view's
+        // content ends above it, so every control can be scrolled fully into view.
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: Spacing.xs) {
+                Hairline()
                 ExportStatusView(controller: model.export)
                 Button {
                     Task { await save() }
@@ -94,12 +98,16 @@ struct CollageEditorView: View {
                 }
                 .buttonStyle(.relivePrimary)
                 .disabled(!model.canExport || model.isSaved)
+                .padding(.horizontal, Spacing.screenMargin)
                 .accessibilityIdentifier("collageSave")
             }
-            .padding(.horizontal, Spacing.screenMargin)
-            .padding(.top, Spacing.s)
             .padding(.bottom, Spacing.xs)
-            .background(Palette.background.opacity(0.97), ignoresSafeAreaEdges: .bottom)
+            .background(Palette.background, ignoresSafeAreaEdges: .bottom)
+        }
+        .photoLibraryPicker(isPresented: libraryPickerPresented, maximum: libraryMaximum) { identifiers in
+            let purpose = libraryPurpose
+            libraryPurpose = nil
+            Task { await usePhotoLibraryPicks(identifiers, for: purpose) }
         }
         .task(id: model.photoIDs) {
             await model.loadPreviews(using: CreationImageSource(loader: loader))
@@ -181,17 +189,16 @@ struct CollageEditorView: View {
         VStack(alignment: .leading, spacing: Spacing.s) {
             Text("Style").eyebrowStyle()
                 .padding(.horizontal, Spacing.screenMargin)
-            ScrollView(.horizontal) {
-                HStack(spacing: Spacing.l) {
-                    ForEach(CollageStyle.allCases, id: \.self) { style in
-                        StyleChoice(title: style.displayName, isSelected: model.style == style) {
-                            withAnimation(animation) { model.style = style }
-                        }
+            // Every style visible at once: the choices wrap instead of running off the edge.
+            FlowLayout {
+                ForEach(CollageStyle.allCases, id: \.self) { style in
+                    StyleChoice(title: style.displayName, isSelected: model.style == style) {
+                        withAnimation(animation) { model.style = style }
                     }
                 }
-                .padding(.horizontal, Spacing.screenMargin)
             }
-            .scrollIndicators(.hidden)
+            .padding(.horizontal, Spacing.screenMargin)
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("styleRow")
         }
     }
@@ -237,9 +244,14 @@ struct CollageEditorView: View {
             HStack {
                 Text("Photos").eyebrowStyle()
                 Spacer()
-                Button("Edit Photos") { picker = .edit }
-                    .font(Typography.callout.weight(.semibold))
-                    .accessibilityIdentifier("collageEditPhotos")
+                Menu {
+                    Button { picker = .edit } label: { Label("From Relive", systemImage: "book.closed") }
+                    Button { libraryPurpose = .edit } label: { Label("From Photo Library", systemImage: "photo.on.rectangle") }
+                } label: {
+                    Text("Edit Photos")
+                        .font(Typography.callout.weight(.semibold))
+                }
+                .accessibilityIdentifier("collageEditPhotos")
             }
             .padding(.horizontal, Spacing.screenMargin)
 
@@ -284,6 +296,7 @@ struct CollageEditorView: View {
         .buttonStyle(.plain)
         .contextMenu {
             Button { picker = .replace(index) } label: { Label("Replace", systemImage: "photo.on.rectangle") }
+            Button { libraryPurpose = .replace(index) } label: { Label("Replace from Photo Library", systemImage: "photo.on.rectangle.angled") }
             if index > 0 {
                 Button { withAnimation(animation) { model.move(from: index, by: -1) } } label: { Label("Move Earlier", systemImage: "arrow.left") }
             }
@@ -299,6 +312,7 @@ struct CollageEditorView: View {
         .accessibilityHint("Double-tap to swap with another photo")
         .accessibilityActions {
             Button("Replace") { picker = .replace(index) }
+            Button("Replace from Photo Library") { libraryPurpose = .replace(index) }
             if index > 0 { Button("Move Earlier") { model.move(from: index, by: -1) } }
             if index < model.photoIDs.count - 1 { Button("Move Later") { model.move(from: index, by: 1) } }
             if model.photoIDs.count > model.range.lowerBound { Button("Remove") { model.removePhoto(at: index) } }
@@ -306,6 +320,30 @@ struct CollageEditorView: View {
     }
 
     // MARK: - Actions
+
+    private var libraryPickerPresented: Binding<Bool> {
+        Binding(get: { libraryPurpose != nil }, set: { if !$0 { libraryPurpose = nil } })
+    }
+
+    private var libraryMaximum: Int {
+        if case .replace = libraryPurpose { return 1 }
+        return max(1, model.range.upperBound - model.photoIDs.count)
+    }
+
+    /// Photos picked from the photo library join the collage with their own metadata.
+    private func usePhotoLibraryPicks(_ identifiers: [AssetID], for purpose: PickerPurpose?) async {
+        let picks = await store.resolvePhotoLibraryPicks(identifiers)
+        guard !picks.ids.isEmpty else { return }
+        model.addPhotoLibraryAssets(picks.libraryAssets)
+        withAnimation(animation) {
+            switch purpose {
+            case .replace(let index)?:
+                if let id = picks.ids.first(where: { !model.photoIDs.contains($0) }) { model.replacePhoto(at: index, with: id) }
+            default:
+                model.setPhotos(model.photoIDs + picks.ids.filter { !model.photoIDs.contains($0) })
+            }
+        }
+    }
 
     private func removeMissing() {
         let keep = model.photoIDs.filter { !model.missing.contains($0) }

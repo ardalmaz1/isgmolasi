@@ -95,9 +95,9 @@ final class CreationRenderingTests: XCTestCase {
     }
 
     func testStoryAndSummaryCardsRenderAtExportSize() throws {
-        let card = StoryCardPlan(id: 0, kind: .opening, assetID: "a", title: .named("Kaş"), dateSpan: DateSpan(start: Date(), end: Date()))
+        let card = StoryCard(id: 0, role: .opening, layout: .cover, photos: ["a"], title: .named("Kaş"), dateSpan: DateSpan(start: Date(), end: Date()))
         for style in StoryStyle.allCases {
-            let canvas = StoryCardCanvas(card: card, style: style, image: CreationTestLibrary.solidImage(width: 300, height: 400))
+            let canvas = StoryCardCanvas(card: card, style: style, images: ["a": CreationTestLibrary.solidImage(width: 300, height: 400)])
             let image = try XCTUnwrap(CreationRenderer.render(canvas, size: StoryCardCanvas.size)?.cgImage)
             XCTAssertEqual(image.width, 2160)
             XCTAssertEqual(image.height, 3840)
@@ -289,8 +289,8 @@ final class StoryMakerModelTests: XCTestCase {
         let trip = store.story.moments[0]
         let model = StoryMakerModel(source: .moment(trip.id), library: store.creationLibrary)
         XCTAssertNil(model.shortfall)
-        XCTAssertTrue((3...6).contains(model.cards.count))
-        XCTAssertEqual(model.cards.first?.kind, .opening)
+        XCTAssertTrue((3...7).contains(model.cards.count))
+        XCTAssertEqual(model.cards.first?.role, .opening)
         XCTAssertEqual(model.style, .travel, "a moment with a real place starts with the Travel look")
     }
 

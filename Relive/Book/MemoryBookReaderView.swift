@@ -20,7 +20,7 @@ struct MemoryBookReaderView: View {
     var body: some View {
         Group {
             if let book = store.book(id: bookID) {
-                reader(book: book, layout: BookLayoutEngine(library: store.creationLibrary).layout(book))
+                reader(book: book, layout: BookLayoutEngine(library: store.creationLibrary(for: book)).layout(book))
             } else {
                 QuietMessageView(title: "This book isn’t here anymore", message: "It may have been deleted.")
                     .frame(maxHeight: .infinity)

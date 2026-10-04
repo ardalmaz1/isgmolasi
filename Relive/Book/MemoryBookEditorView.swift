@@ -12,6 +12,7 @@ struct MemoryBookEditorView: View {
     @State private var isEditingNote = false
     @State private var confirmsDelete = false
     @State private var limitMessage: String?
+    @State private var isPickingFromLibrary = false
 
     private enum PickerPurpose: Identifiable {
         case cover
@@ -48,6 +49,9 @@ struct MemoryBookEditorView: View {
         .sheet(item: $picker) { purpose in
             pickerSheet(purpose)
         }
+        .photoLibraryPicker(isPresented: $isPickingFromLibrary, maximum: max(1, BookLimits.maximumPhotos - (store.book(id: bookID)?.photoIDs.count ?? 0))) { identifiers in
+            Task { await addFromPhotoLibrary(identifiers) }
+        }
         .sheet(isPresented: $isEditingNote) {
             NoteEditorView(
                 initialText: store.book(id: bookID)?.note ?? "",
@@ -62,7 +66,7 @@ struct MemoryBookEditorView: View {
     // MARK: - Form
 
     private func form(_ book: MemoryBook) -> some View {
-        let library = store.creationLibrary
+        let library = store.creationLibrary(for: book)
         let layout = BookLayoutEngine(library: library).layout(book)
         return List {
             Section("Style") {
@@ -109,6 +113,10 @@ struct MemoryBookEditorView: View {
                 .scrollIndicators(.hidden)
                 Button("Add or Remove Photos") { picker = .photos }
                     .accessibilityIdentifier("bookEditPhotos")
+                if book.photoIDs.count < BookLimits.maximumPhotos {
+                    Button("Add from Photo Library") { isPickingFromLibrary = true }
+                        .accessibilityIdentifier("bookAddFromLibrary")
+                }
                 if let limitMessage {
                     Text(limitMessage)
                         .font(Typography.footnote)
@@ -253,6 +261,16 @@ struct MemoryBookEditorView: View {
         }
     }
 
+    /// Photos picked from the photo library join the end of the book with their own metadata.
+    private func addFromPhotoLibrary(_ identifiers: [AssetID]) async {
+        let picks = await store.resolvePhotoLibraryPicks(identifiers)
+        guard !picks.ids.isEmpty, var book = store.book(id: bookID) else { return }
+        guard book.setPhotos(book.photoIDs + picks.ids.filter { !book.photoIDs.contains($0) }) else { return }
+        book.rememberPhotoLibraryAssets(picks.libraryAssets)
+        limitMessage = nil
+        store.saveBook(book)
+    }
+
     private func remove(_ id: AssetID) {
         guard var book = store.book(id: bookID) else { return }
         if book.removePhoto(id) {
@@ -270,6 +288,7 @@ struct MemoryBookEditorView: View {
         case .month(let month): CreationText.monthTitle(month)
         case .year(let year): String(year)
         case .photos: "Your Photos"
+        case .favorites: "Favorites"
         }
     }
 }
