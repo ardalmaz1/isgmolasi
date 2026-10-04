@@ -93,9 +93,10 @@ final class PersonalCollectionUITests: XCTestCase {
         XCTAssertTrue(preview.waitForExistence(timeout: 10), "The saved collage did not reopen")
         XCTAssertEqual(preview.label, savedLabel, "The collage did not reopen as it was")
         let newStyle = savedLabel.contains("Film") ? "Grid" : "Film"
-        app.buttons[newStyle].firstMatch.tap()
+        tapScrollingIntoView(app, app.buttons[newStyle].firstMatch)
         sleep(1)
         let editedLabel = preview.label
+        print("SCREEN edited-collage: \(editedLabel)")
         XCTAssertTrue(editedLabel.contains(newStyle))
         app.buttons["Close"].firstMatch.tap()
         XCTAssertTrue(savedCollage.waitForExistence(timeout: 10))
@@ -222,6 +223,22 @@ final class PersonalCollectionUITests: XCTestCase {
             sleep(1)
         }
         tool.tap()
+    }
+
+    /// A tall (9:16) preview can push the editor's controls below the fold: scroll to the
+    /// control, tap it, and scroll back up.
+    @MainActor
+    private func tapScrollingIntoView(_ app: XCUIApplication, _ element: XCUIElement) {
+        XCTAssertTrue(element.waitForExistence(timeout: 5))
+        var scrolled = 0
+        while !element.isHittable, scrolled < 4 {
+            app.swipeUp()
+            sleep(1)
+            scrolled += 1
+        }
+        XCTAssertTrue(element.isHittable, "\(element.label) is not reachable")
+        element.tap()
+        for _ in 0..<scrolled { app.swipeDown() }
     }
 
     @MainActor
