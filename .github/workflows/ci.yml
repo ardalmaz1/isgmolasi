@@ -138,12 +138,12 @@ jobs:
               if manifest.exists():
                   walk(json.loads(manifest.read_text()), root)
           out = pathlib.Path("build/screenshots")
-          wanted = ("08-", "15-", "C01-", "C02-", "C06-", "C07-", "T01-", "T02-", "T03-", "T04-", "T06-", "B03-", "B04-", "B05-", "B06-", "B07-", "B08-", "P-", "R-")
+          wanted = ("C01-", "C02-", "C06-", "C07-", "B03-", "B05-", "S01-", "S02-", "S03-", "S04-", "S05-", "L01-", "L02-", "Y01-", "P-", "S-")
           for name, file in sorted(found):
               if not name.startswith(wanted) or file.suffix != ".png":
                   continue
               # Renders are reviewed for layout, so smaller thumbnails are enough.
-              size = "300" if name.startswith(("P-", "R-")) else "440"
+              size = "300" if name.startswith(("P-", "R-", "S-")) else "440"
               thumb = out / (name.split("_")[0] + ".jpg")
               subprocess.run(["sips", "-Z", size, "-s", "format", "jpeg", "-s", "formatOptions", "50",
                               str(file), "--out", str(thumb)], check=True, capture_output=True)
