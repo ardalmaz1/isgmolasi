@@ -37,13 +37,27 @@ struct FavoriteButton: View {
 
 /// A small heart on a thumbnail that is a Relive favorite.
 struct FavoriteMark: View {
+    /// Over a photo (white with a shadow) or on paper (the accent heart on a paper disc).
+    var onPhoto = true
+
     var body: some View {
-        Image(systemName: "heart.fill")
-            .font(.caption2)
-            .foregroundStyle(.white)
-            .shadow(color: .black.opacity(0.4), radius: 2)
-            .padding(6)
-            .accessibilityHidden(true)
+        Group {
+            if onPhoto {
+                Image(systemName: "heart.fill")
+                    .font(.caption2)
+                    .foregroundStyle(.white)
+                    .shadow(color: .black.opacity(0.4), radius: 2)
+            } else {
+                Image(systemName: "heart.fill")
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(Palette.favorite)
+                    .frame(width: 22, height: 22)
+                    .background(Palette.background, in: Circle())
+                    .shadow(color: .black.opacity(0.12), radius: 2, y: 1)
+            }
+        }
+        .padding(6)
+        .accessibilityHidden(true)
     }
 }
 

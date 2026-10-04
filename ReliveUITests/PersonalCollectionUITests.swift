@@ -135,6 +135,8 @@ final class PersonalCollectionUITests: XCTestCase {
         XCTAssertTrue(continueEditing.waitForExistence(timeout: 10), "No Continue Editing after closing a changed story")
         printScreen(app, "continue-editing")
         XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", "Story · Edited")).firstMatch.exists, "The draft doesn't say what it is and when it was edited")
+        app.swipeDown()
+        app.swipeDown()
         sleep(1)
         capture("P07-continue-editing")
         continueEditing.tap()

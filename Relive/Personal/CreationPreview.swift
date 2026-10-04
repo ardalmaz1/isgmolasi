@@ -129,13 +129,14 @@ struct CreationCard: View {
                         .padding(Spacing.xs)
                 }
                 .overlay(alignment: .topTrailing) {
-                    if isFavorite { FavoriteMark() }
+                    if isFavorite { FavoriteMark(onPhoto: false) }
                 }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
             Text(summary.title)
                 .font(Typography.footnote.weight(.semibold))
                 .foregroundStyle(Palette.textPrimary)
-                .lineLimit(1)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
             Text(summary.detail)
                 .font(.caption2)
                 .foregroundStyle(Palette.textSecondary)
