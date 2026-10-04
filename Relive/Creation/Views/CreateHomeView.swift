@@ -20,7 +20,9 @@ struct CreateHomeView: View {
     @Environment(StoryStore.self) private var store
     @Environment(TrendCatalogStore.self) private var trends
     @Environment(\.analytics) private var analytics
-    @State private var path: [CreateRoute] = []
+    /// Heterogeneous: Create pushes its own routes, the collection's (`CollectionRoute`) and
+    /// moments (`MomentRoute`). A typed `[CreateRoute]` path silently refuses the others.
+    @State private var path = NavigationPath()
     @State private var choosesBookSource = false
 
     var body: some View {
