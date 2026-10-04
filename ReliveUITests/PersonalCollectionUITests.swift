@@ -21,27 +21,30 @@ final class PersonalCollectionUITests: XCTestCase {
 
         // 1. Favorites: a moment, and two of its photos (separately)
         app.tabBars.buttons["Story"].tap()
-        try openVisibleMoment(app)
+        try openMomentWithSeveralPhotos(app)
         let momentHeart = app.buttons["momentFavorite"]
         XCTAssertTrue(momentHeart.waitForExistence(timeout: 10), "The moment has no favorite button")
         XCTAssertEqual(momentHeart.value as? String, "Not selected")
         momentHeart.tap()
         XCTAssertEqual(momentHeart.value as? String, "Selected", "VoiceOver hears 'Favorite moment, Selected'")
 
-        let photos = app.buttons.matching(identifier: "momentPhoto")
-        XCTAssertTrue(photos.firstMatch.waitForExistence(timeout: 10))
-        for _ in 0..<5 where !photos.firstMatch.isHittable {
-            app.swipeUp()
-            sleep(1)
-        }
-        photos.firstMatch.tap()
+        let cover = app.buttons["Cover photo. Opens full screen."]
+        XCTAssertTrue(cover.waitForExistence(timeout: 10))
+        cover.tap()
         let photoHeart = app.buttons["photoFavorite"]
         XCTAssertTrue(photoHeart.waitForExistence(timeout: 10), "The photo viewer has no favorite button")
         XCTAssertEqual(photoHeart.value as? String, "Not selected", "favoriting a moment doesn't favorite its photos")
         photoHeart.tap()
         XCTAssertEqual(photoHeart.value as? String, "Selected")
+        // The next photo (or the one before, if the cover is the moment's last)
         app.swipeLeft()
         sleep(2)
+        if photoHeart.value as? String == "Selected" {
+            app.swipeRight()
+            sleep(1)
+            app.swipeRight()
+            sleep(2)
+        }
         XCTAssertEqual(photoHeart.value as? String, "Not selected", "the next photo is not a favorite yet")
         photoHeart.tap()
         sleep(1)
@@ -226,18 +229,28 @@ final class PersonalCollectionUITests: XCTestCase {
         app.descendants(matching: .any).matching(NSPredicate(format: "label BEGINSWITH %@", "Opening card")).firstMatch.label
     }
 
-    /// Opens a moment whose card is fully on screen (one peeking under the status bar would
-    /// send the tap to the status bar).
+    /// Scrolls the timeline to a moment with several memories whose card is fully on screen
+    /// (one peeking under the status bar would send the tap to the status bar), and opens it.
     @MainActor
-    private func openVisibleMoment(_ app: XCUIApplication) throws {
+    private func openMomentWithSeveralPhotos(_ app: XCUIApplication) throws {
         let cards = app.buttons.matching(identifier: "momentCard")
         XCTAssertTrue(cards.firstMatch.waitForExistence(timeout: 10), "No moments in the timeline")
         sleep(2)
         let screen = app.windows.firstMatch.frame
-        let visible = cards.allElementsBoundByIndex.first { card in
-            card.isHittable && card.frame.midY > screen.minY + 120 && card.frame.midY < screen.maxY - 140
-        } ?? cards.allElementsBoundByIndex.first { $0.isHittable }
-        try XCTUnwrap(visible, "No tappable moment card").tap()
+        for _ in 0..<20 {
+            let match = cards.allElementsBoundByIndex.first { card in
+                card.label.contains(" memories") && card.isHittable
+                    && card.frame.midY > screen.minY + 120 && card.frame.midY < screen.maxY - 140
+            }
+            if let match {
+                print("SCREEN moment-card: \(match.label)")
+                match.tap()
+                return
+            }
+            app.swipeUp()
+            sleep(1)
+        }
+        XCTFail("No moment with several memories in the timeline")
     }
 
     /// Opens a SwiftUI menu by tapping its centre.
