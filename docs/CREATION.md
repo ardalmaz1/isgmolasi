@@ -1,4 +1,4 @@
-# Creation — Relive v0.2, v0.3
+# Creation — Relive v0.2, v0.3, v0.3.1
 
 > Choose memories. Relive makes something beautiful from them.
 
@@ -15,6 +15,75 @@ v0.2 adds a small set of opinionated ways to turn real memories into something w
 sharing: **Memory Collage**, **Story Maker**, **Monthly Recap**, **Our Year**, plus an occasional
 **Surprise Memory** on Today and **Create from this** on every moment. Everything is made on the
 iPhone; nothing is uploaded, and nothing is invented.
+
+## v0.3.1 — metadata follows the photo
+
+**The rule:** everything a creation prints about its photos — title, dates, place, coordinates
+— is derived from *those photos*. Never from the screen, month, request or first photo a
+creation started from.
+
+**Root cause of the "September Together" bug** (reproduced by tests before the fix):
+
+1. `CreationLibrary.facts(for:photos:)` took a creation's headline from its *source* (`.month`,
+   `.year`, `.trip`) without checking the photos actually in it. A book started from September
+   kept "September Together" / "SEPTEMBER 2026" after photos from other months were added
+   (Add or Remove Photos), and collages and stories did the same after photo edits.
+2. The book's grouping put a photo that had no owning moment into the *previous* section, so it
+   inherited that section's name ("September Evening") and dates.
+3. Page footers in one-section books showed the whole book's dates, not the page's.
+4. Date spans were aggregated with `compactMap`, silently ignoring undated photos.
+
+**The model** (`Creation/CreationAsset.swift`, pure and tested on Linux):
+
+- `CreationAsset` — one photo's own capture date, location, size, favorite flag, and (for
+  memories) its moment, trip and known place name. Photos from the photo library have no place
+  name: none is looked up for a creation.
+- `CreationMetadata.summarize` — what can truthfully be said about a selection:
+  - period: one day / one month / one year (several months) / several years — **only when
+    every photo has a date**;
+  - place: only when every photo has the same known place;
+  - coordinate: only when every photo has a location within 1 km of their centre;
+  - moment / trip: when every photo belongs to the same one.
+- Titles: one moment or trip → its name; one shared place → the place; one month → "September
+  Together"; several months of one year → "Our 2026"; several years or unknown dates → no title
+  (the app shows the date range, or a neutral "Our Memories"). A source's name, month or year
+  is used only when every photo belongs to it. A year source is "Our 2026" only when its photos
+  span several months.
+
+Required cases, all tested (`CreationMetadataTests`): six September photos → September 2026;
+August + September → not September; 2025 + 2026 → no single year; all Aliağa → Aliağa; Aliağa
++ Kaş → no place; no location → no place; no date → no month or year.
+
+**Photo Library source.** Collage, Story Maker and Memory Book can use photos straight from the
+iPhone library: Choose Photos → *From Relive* or *From Photo Library* (the system picker; still
+photos, no screenshots, in pick order). Picked identifiers are read through the existing
+`PhotoLibraryProviding.assets(withIdentifiers:)`, which returns PhotoKit's own date, location
+and size. Picks are **never imported into the story**; a photo that already is a memory keeps
+its memory metadata. `CreationLibrary.addingPhotoLibraryAssets` makes them usable by every
+creation without duplicating any creation code. Books store the picks' metadata (never pixels)
+so they reopen correctly; picks Relive can't read (limited access) are explained, not guessed.
+Exports made from them are still recorded as Relive-created and never imported as memories.
+
+**Story Maker 2.0** (`Creation/StoryDesigner.swift`). Relive designs the story: an opening cover
+from the strongest tall photo, the strongest body photo on its own card, neighbours of one
+moment together (two landscapes stack, two portraits sit side by side, trios when needed), a
+place card only where the place really changes, and a factual close ("And that's our 2026."
+only for a year that is one; otherwise place and dates; nothing when nothing is known). 3–7
+cards from up to ten photos; each card's date and place come from its own photos. Eleven
+layouts (cover, coverFramed, fullBleed, framed, postcard, duo, duoOffset, trio, trioStrip,
+caption, closing), each drawn by the five styles' own design systems from one shared geometry
+(`StoryCardGeometry`), so preview and export match and each photo is exported at its frame's
+size. **Make it for me** ranks styles from known properties only — a real place (Travel), many
+days (Film), a strong portrait and many photos (Editorial), mostly portraits (Romantic), few
+photos (Minimal) — and each press takes the next style and lead photo, deterministically. Edit
+Card: Change Layout, Replace Photo (per slot, from Relive or the library), Show/Hide Date,
+Place, Coordinates, Remove Card. No free positioning, fonts, stickers or text boxes. Cropping
+uses the shared focus point; manual reposition is not offered in this version.
+
+**Our Year eligibility** (`YearEligibility`): at least 2 different months, 8 memories and 2
+moments. One month is not a year however many photos it has: Our Year then says "Your 2026
+story is just getting started", offers Add Memories and Build from Photo Library, lists the
+year as "2026" (not "Our 2026"), and never says "And that's our 2026".
 
 ## Structure
 

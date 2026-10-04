@@ -190,8 +190,13 @@ final class CollageEditorModelTests: XCTestCase {
         let kept = Array(model.photoIDs.prefix(2))
         model.setPhotos(kept.reversed() + ["evening-0"])
         XCTAssertEqual(model.photoIDs, kept + ["evening-0"], "kept photos stay in place; new ones join the end")
-        XCTAssertNil(model.titleText, "photos from two unrelated moments get no invented title")
-        XCTAssertNil(model.placeText)
+        // v0.3.1: the title comes from the photos. Two moments of the same August share no name
+        // or place, but they are both August — so that, and only that, is said.
+        XCTAssertEqual(model.titleText, "August Together", "no moment's name, but the month they share")
+        XCTAssertNil(model.placeText, "Kaş and an evening at home share no place")
+        let other = store.story.moments[2].assetIDs[0] // three months later
+        model.setPhotos(model.photoIDs + [other])
+        XCTAssertNotEqual(model.titleText, "August Together", "a photo from another month ends the August title")
 
         model.removePhoto(at: 0)
         model.removePhoto(at: 0)

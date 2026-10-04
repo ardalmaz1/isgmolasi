@@ -1,4 +1,4 @@
-# Relive — v0.3
+# Relive — v0.3.1
 
 > Your love story already exists in your camera roll. Relive helps you rediscover it.
 
@@ -13,6 +13,28 @@ Prototype 0.1 exists to test one hypothesis:
 Principles: **Remember → Appreciate → Live.** AI organizes the memory; people give it meaning.
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
+
+## New in v0.3.1 — creation intelligence and the photo library
+
+- **Metadata follows the photo.** Titles, dates and places on every creation come from the
+  photos in it. Photos from August and September are not "September"; 2025 and 2026 are not
+  "2026"; Aliağa and Kaş are not "Aliağa"; unknown dates and places are left out. (Fixes the
+  "September Together" bug — root cause in [docs/CREATION.md](docs/CREATION.md).)
+- **Photo Library source.** Collage, Story Maker and Memory Book can use any photo on the
+  iPhone (From Relive / From Photo Library), with its own date, place and size. Such photos are
+  never added to your story.
+- **Memory Book**: grouped by each photo's own moment or day, no repeated generic titles, page
+  footers with each page's own dates, orientation-aware pages with a new asymmetric spread,
+  6–40 photos, Favorites and Photo Library sources.
+- **Our Year** only presents a year that is one (memories from at least two months, eight
+  memories). Otherwise: "Your 2026 story is just getting started", with Add Memories and Build
+  from Photo Library.
+- **Story Maker 2.0**: Relive designs a 3–7 card sequence (cover, hero, pairs and trios, place
+  cards where the place changes, a factual close) in five genuinely different styles, with
+  **Make it for me** and simple card edits (layout, replace photo, show/hide date, place,
+  coordinates, remove).
+- **Layout fixes**: the collage save bar no longer covers controls, styles wrap instead of
+  running off-screen, Share moved to the navigation bar on Our Year and Monthly Recap.
 
 ## New in v0.3 — Memory Book and Trending Now
 
@@ -154,6 +176,20 @@ Us. Screenshots of each step are uploaded as a build artifact.
 - Seasons ("Summer") are not used, because they depend on the hemisphere.
 - Collage editing is intentionally limited (no free positioning, filters or text editing).
 - Drafts aren't saved: closing an editor discards it.
+
+## Known limitations of v0.3.1
+
+- **Not physically verified.** Everything above was verified by unit tests, hosted tests, UI
+  tests in the iOS Simulator and CI builds — not on a physical iPhone.
+- The Photo Library picker itself is Apple's; UI tests replace it with a debug stand-in, so the
+  real picker's behaviour (and limited-access picks) needs a device check.
+- With limited photo access, photos not shared with Relive can't be used; Relive explains this
+  and points to Us → Photo Access.
+- Photos from outside the story have no place names (no network lookups for creations); Travel
+  shows their coordinates only when the photos were taken close together.
+- Story cards can't be repositioned or cropped by hand; photos are cropped around the shared
+  focus point.
+- Story Maker drafts and collages are still not saved (books are).
 
 ## Known limitations of v0.3
 

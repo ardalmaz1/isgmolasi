@@ -1,4 +1,4 @@
-# Memory Book — Relive v0.3
+# Memory Book — Relive v0.3 (updated in v0.3.1)
 
 A Memory Book turns a moment, a trip, a month, a year or a hand-picked set of photos into a book
 the couple can read on their iPhone, page by page. Relive builds the whole book automatically
@@ -21,12 +21,18 @@ The structure is deliberately small: **Book → Section → Page → Slot**.
   - `coverAssetID`: the user's cover choice, or nil for "the best photo"
   - `note`: the couple's own words for the first page, or nil
   - `includesMomentNotes`: whether notes written on moments are printed in the book
+  - `photoLibraryAssets` (v0.3.1): metadata — date, location, size, never pixels — of photos
+    chosen straight from the photo library, so the book can describe them after a restart.
+    Books saved before v0.3.1 decode with an empty list.
 - A **section** is a run of consecutive photos from one moment; in a one-moment book, each day
-  is a section. Sections carry only facts: the moment's real name, date span, place, its note,
-  and the trip (chapter) it belongs to.
+  is a section; photos from outside the story form sections by their own capture day. Sections
+  carry only facts taken from their own photos: the moment's real name, the photos' date span
+  (only when every photo has a date), place, note, and trip. A photo never inherits a
+  neighbour's name or date (v0.3.1 fix).
 - `BookPage` is one page: a kind (`cover`, `bookNote`, `momentNote`, `tripTitle`, `opener`,
-  `photos`, `closing`), a photo template (`fullBleed`, `single`, `pair`, `trio`, `quad`), photo
-  slots with frames, the factual title/date/place, running head and folio.
+  `photos`, `closing`), a photo template (`fullBleed`, `single`, `pair`, `feature`, `trio`,
+  `quad`), photo slots with frames, the factual title/date/place, running head, the dates of
+  *that page's own photos*, and folio.
 - `BookLayout` is the paginated result: pages, the facts for the whole book, the photos that
   were used, the photos that are missing, and `spreads` (pages paired as a printed book would
   pair them — cover alone, then left/right). Spreads are computed but not yet shown; they exist
@@ -40,7 +46,8 @@ later version improves old books without a migration.
 `removePhoto`, `movePhoto(_:by:)`, `replacePhoto(_:with:)`, `setPhotos` (keeps the order of
 photos that stay, appends new ones), `setCover`, `setNote`, and `refreshed(_:)` (rebuild from the
 source after the library changed, keeping style, note and — when still present — cover).
-Every edit enforces the limits: at least 4 photos, at most 60, no duplicates.
+Every edit enforces the limits: at least 6 photos, at most 40 (v0.3.1; was 4–60), no
+duplicates.
 
 ## 2. Source types
 
@@ -50,15 +57,17 @@ Every edit enforces the limits: at least 4 photos, at most 60, no duplicates.
 | A Trip | … → A Trip (only shown when the story has trips) | Every moment of the trip chapter, interleaved fairly, in time order |
 | A Month | … → A Month (months with photos) | The month's moments, like Monthly Recap |
 | A Year | … → A Year (years with photos) | The year's moments, like Our Year |
-| Photos I Choose | … → Photos I Choose | Exactly the chosen photos, in the order chosen |
+| Favorites | … → Favorites (when at least 6 favorites exist) | Memories marked as favorites in Photos, in time order |
+| Photos I Choose | … → Photos I Choose → From Relive | Exactly the chosen memories, in the order chosen |
+| Photo Library | … → Photos I Choose → From Photo Library, or Our Year → Build from Photo Library | Any photos on the iPhone, with their own metadata; not added to the story |
 
 All sources go through `CreationLibrary`, the same rules as v0.2 creation: hidden moments,
 hidden photos and photos no longer in the library are never used. The trip and period pickers
-list only what exists and show each row's photo count; rows below the minimum (4 photos) are
-disabled with "Needs at least 4 photos". If a source still comes up short, the flow shows the
+list only what exists and show each row's photo count; rows below the minimum (6 photos) are
+disabled with "Needs at least 6 photos". If a source still comes up short, the flow shows the
 existing "Not enough photos" screen with a Choose Photos action — never an empty book.
 
-Books are capped at 60 photos. A bigger source is reduced with the same selection v0.2 creation
+Books are capped at 40 photos. A bigger source is reduced with the same selection v0.2 creation
 uses for that source (the strongest photos, spread across the source's moments), then put back
 in time order. Chosen photos keep the order they were chosen in.
 
@@ -68,21 +77,31 @@ in time order. Chosen photos keep the order they were chosen in.
 pages (tested). Order of the book:
 
 1. **Cover** — the user's cover, or the best photo by the existing quality ranking; the factual
-   title (moment/trip name, "March 2026", "2025"), date span and place.
+   title derived from the book's photos (see CREATION.md, "metadata follows the photo"): a
+   moment or trip name, a shared place, "September Together" only when every photo is from
+   September, "Our 2026" for several months of one year; for several years or unknown dates a
+   neutral "Our Memories" with the real date range.
 2. **Note page** — only if the couple wrote one.
 3. For each section (when the book has more than one):
    - a **trip title page** the first time a trip appears inside a longer book (month, year or
      chosen photos), never for a book that *is* the trip;
-   - an **opener** — the section's first photo with its real name, date and place;
+   - an **opener** — the section's first photo with its real name, date and place, only when
+     there is something true to say. A generic name already used earlier in the book ("September
+     Evening" twice) gives way to the section's own date;
    - the moment's **note page**, if the couple wrote one and moment notes are included.
    A one-section book prints its moment note once, after the cover.
-4. **Photo pages** in a rhythm of 2, 3, 1, 4, 2, 3, 2, 1 photos per page, so neighbouring pages
-   differ. Templates by count:
+4. **Photo pages**, split by the photos themselves (v0.3.1; no fixed rhythm): in a section of
+   five or more, its strongest photo gets a page of its own (placed where it leaves no lone photo
+   beside it); two landscapes share a page; portraits gather in fours, or threes when the page
+   before was a four; no single photo is left over when another split avoids it. Templates:
    - 1 photo: portrait/square → `fullBleed`; landscape → `single`, shown whole (no crop).
-   - 2 photos: `pair`, justified so both keep their shape.
+   - 2 photos of one orientation: `pair`, justified so both keep their shape.
+   - a portrait and a landscape: `feature` — the portrait large, the landscape smaller beside
+     it, aligned to the portrait's foot, with deliberate white space; neither cropped.
    - 3 photos: `trio`, an editorial arrangement chosen for the photos' orientations.
    - 4 photos: `quad`, a justified grid of up to 2 columns.
-   Multi-photo templates reuse the v0.2 crop-minimising layout engine.
+   Multi-photo templates reuse the v0.2 crop-minimising layout engine. Each page's footer shows
+   the dates of its own photos (a range when they span days).
 5. **Closing page** — the book's title, dates and place again. No invented sign-off.
 
 Pagination does not depend on the style: changing the style changes only the geometry, never
@@ -110,14 +129,16 @@ always render in their own paper colours (§8, Dark Mode).
 - **No photo data is stored** — not full-resolution, not thumbnails. Pages are drawn from
   PhotoKit every time.
 - The model is additive: v0.2 stores open with the v0.3 schema by SwiftData's automatic
-  lightweight migration. `PersistenceMigrationTests` writes a v0.2-shaped store to disk, opens it
+  lightweight migration. v0.3.1 adds no schema change: Photo Library metadata lives inside the
+  book's JSON definition, which decodes older books unchanged. `PersistenceMigrationTests` writes a v0.2-shaped store to disk, opens it
   with the v0.3 schema and checks that the profile, surprise, assets, moment notes/hidden flags
   and created-asset list all survive, and that books can then be saved, updated and deleted.
 - `StoryStore.books` is the list, newest change first; Start Over deletes books with the rest of
   the story (the list of photos Relive created stays, as in v0.2, so they're still never
   resurfaced as memories).
 - Missing photos: a photo deleted from the library, hidden in Relive, or no longer shared with
-  Relive (limited access) is left out of the layout. The reader says how many were left out and
+  Relive (limited access) is left out of the layout. Photo Library photos used by books are
+  re-checked for availability like memories. The reader says how many were left out and
   offers Edit Book. If fewer than 4 photos remain, the book still opens with what is there.
 
 ## 6. Rendering
@@ -143,7 +164,7 @@ always render in their own paper colours (§8, Dark Mode).
 - The shared preview cache (`PhotoImageLoader`) now has a byte budget (160 MB, cost = pixels × 4)
   in addition to its count limit, and is emptied on memory warnings as before.
 - Layout is pure computation in ReliveCore with no image access. The "large book" test samples
-  a 360-photo year down to 60, lays it out in under a second (Linux CI), and checks every photo
+  a 360-photo year down to 40, lays it out in under a second (Linux CI), and checks every photo
   is placed exactly once.
 
 ## 8. Accessibility

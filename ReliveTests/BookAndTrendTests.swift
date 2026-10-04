@@ -35,7 +35,7 @@ final class MemoryBookStoreTests: XCTestCase {
         var edited = found
         edited.style = .film
         edited.setNote("For us")
-        let second = try MemoryBookBuilder(library: store.creationLibrary).makeBook(from: .photos(Array(trip.assetIDs.prefix(4))), now: Date()).get()
+        let second = try MemoryBookBuilder(library: store.creationLibrary).makeBook(from: .photos(Array(trip.assetIDs.prefix(6))), now: Date()).get()
         reopened.saveBook(second)
         reopened.saveBook(edited)
         XCTAssertEqual(reopened.books.map(\.id), [book.id, second.id])
