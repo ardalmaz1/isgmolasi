@@ -8,6 +8,7 @@ struct FavoritesView: View {
     @Environment(StoryStore.self) private var store
     @State private var segment: Segment = .memories
     @State private var viewerSelection: ViewerSelection?
+    @State private var isAdding = false
 
     enum Segment: String, CaseIterable, Identifiable {
         case memories = "Memories"
@@ -32,7 +33,9 @@ struct FavoritesView: View {
                 if isEmpty {
                     QuietMessageView(
                         title: "No favorites yet",
-                        message: "Favorite memories to keep them close and create from them later."
+                        message: "Favorite memories to keep them close and create from them later.",
+                        actionTitle: "Add Favorites",
+                        action: { isAdding = true }
                     )
                     .accessibilityIdentifier("favoritesEmpty")
                 } else {
@@ -68,6 +71,19 @@ struct FavoritesView: View {
                 ToolbarItem(placement: .primaryAction) {
                     CreateFromFavoritesMenu(origin: "favorites")
                 }
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button { isAdding = true } label: {
+                    Label("Add Favorites", systemImage: "plus")
+                        .frame(minWidth: 44, minHeight: 44)
+                        .contentShape(Rectangle())
+                }
+                .accessibilityIdentifier("addFavorites")
+            }
+        }
+        .sheet(isPresented: $isAdding) {
+            NavigationStack {
+                AddFavoritesView { isAdding = false }
             }
         }
         .fullScreenCover(item: $viewerSelection) { selection in
