@@ -2,9 +2,13 @@ import Foundation
 
 /// A look back at one calendar month. Every number is counted from the story with the same
 /// rules as the rest of the app; nothing is added for months with little in them.
+///
+/// A memory belongs to the month it was taken in (`TemporalIndex`), not the month its moment
+/// began in: a recap holds exactly the memories taken that month.
 public struct MonthlyRecap: Sendable {
     public var month: MonthKey
-    /// Visible moments that began this month, chronological.
+    /// Visible moments with memories taken this month — each narrowed to just those memories —
+    /// chronological.
     public var moments: [Moment]
     /// Trips with at least one of those moments.
     public var chapters: [Chapter]
@@ -34,19 +38,18 @@ public struct MonthlyRecapBuilder: Sendable {
         self.minimumMemories = minimumMemories
     }
 
-    /// Months with at least one visible dated moment, newest first.
+    /// Months with at least one memory taken in them, newest first.
     public func availableMonths() -> [MonthKey] {
-        let months = Set(library.visibleMoments.compactMap { moment in
-            moment.kind == .undated ? nil : moment.startDate.map { MonthKey(date: $0, calendar: library.calendar) }
-        })
-        return months.sorted(by: >)
+        TemporalIndex(library: library).months
     }
 
     public func recap(for month: MonthKey) -> MonthlyRecap {
-        let moments = library.visibleMoments.filter { moment in
-            guard moment.kind != .undated, let start = moment.startDate else { return false }
-            return MonthKey(date: start, calendar: library.calendar) == month
-        }
+        recap(for: month, index: TemporalIndex(library: library))
+    }
+
+    /// The same, reusing an index built once for several months.
+    public func recap(for month: MonthKey, index: TemporalIndex) -> MonthlyRecap {
+        let moments = index.moments(containing: Set(index.entries(in: month).map(\.assetID)))
         let summary = RecapSummary(moments: moments, library: library)
         let usableCount = moments.reduce(0) { $0 + library.usablePhotos(in: $1).count }
         return MonthlyRecap(
@@ -87,9 +90,11 @@ public enum YearEligibility: Hashable, Sendable {
     case tooFew(memories: Int)
 }
 
-/// A year together, month by month, built only from what the story contains.
+/// A year together, month by month, built only from what the story contains — the memories
+/// taken that year (`TemporalIndex`), each in the month it was taken.
 public struct YearInReview: Sendable {
     public var year: Int
+    /// Moments with memories taken this year, each narrowed to just those memories.
     public var moments: [Moment]
     public var chapters: [Chapter]
     public var statistics: StoryStatistics
@@ -98,10 +103,16 @@ public struct YearInReview: Sendable {
     /// Months that have memories, chronological. Months without any are not listed.
     public var months: [YearMonthSection]
     public var eligibility: YearEligibility
+    /// The earliest memory taken this year, and when. Never the first by import or story order.
+    public var firstMemory: TemporalIndex.Entry?
     var interleavedPhotos: [AssetID]
     var chronologicalRank: [AssetID: Int]
 
-    public var firstMoment: Moment? { moments.first }
+    /// The moment the first memory belongs to (narrowed to this year).
+    public var firstMoment: Moment? {
+        guard let firstMemory else { return moments.first }
+        return moments.first { $0.id == firstMemory.momentID } ?? moments.first
+    }
     public var lastMoment: Moment? { moments.last }
 
     /// Enough to present as "Our <year>": memories from at least two months, and enough of them.
@@ -127,34 +138,35 @@ public struct YearInReviewBuilder: Sendable {
         self.minimumMonths = minimumMonths
     }
 
-    /// Years with at least one visible dated moment, newest first.
+    /// Years with at least one memory taken in them, newest first.
     public func availableYears() -> [Int] {
-        let years = Set(library.visibleMoments.compactMap { moment in
-            moment.kind == .undated ? nil : moment.startDate.map { library.calendar.component(.year, from: $0) }
-        })
-        return years.sorted(by: >)
+        TemporalIndex(library: library).years
     }
 
     public func review(for year: Int) -> YearInReview {
+        review(for: year, index: TemporalIndex(library: library))
+    }
+
+    /// The same, reusing an index built once for several years.
+    public func review(for year: Int, index temporal: TemporalIndex) -> YearInReview {
         let calendar = library.calendar
-        let moments = library.visibleMoments.filter { moment in
-            guard moment.kind != .undated, let start = moment.startDate else { return false }
-            return calendar.component(.year, from: start) == year
-        }
+        let yearEntries = temporal.entries(inYear: year)
+        let moments = temporal.moments(containing: Set(yearEntries.map(\.assetID)))
         let summary = RecapSummary(moments: moments, library: library)
 
+        // Each month holds the memories taken in it.
         var sections: [YearMonthSection] = []
-        var monthGroups: [[AssetID]] = []
-        for moment in moments {
-            guard let start = moment.startDate else { continue }
-            let key = MonthKey(date: start, calendar: calendar)
-            if sections.last?.month != key {
-                sections.append(YearMonthSection(month: key, moments: [], chapters: [], memoryCount: 0, highlights: []))
+        var monthIDs: [MonthKey: Set<AssetID>] = [:]
+        for entry in yearEntries {
+            if sections.last?.month != entry.month {
+                sections.append(YearMonthSection(month: entry.month, moments: [], chapters: [], memoryCount: 0, highlights: []))
             }
-            sections[sections.count - 1].moments.append(moment)
+            monthIDs[entry.month, default: []].insert(entry.assetID)
         }
+        var monthGroups: [[AssetID]] = []
         for index in sections.indices {
-            let monthMoments = sections[index].moments
+            let monthMoments = temporal.moments(containing: monthIDs[sections[index].month] ?? [])
+            sections[index].moments = monthMoments
             let monthSummary = RecapSummary(moments: monthMoments, library: library)
             let interleaved = monthSummary.interleave(monthMoments.map { monthSummary.ranked($0) })
             monthGroups.append(interleaved)
@@ -176,6 +188,7 @@ public struct YearInReviewBuilder: Sendable {
             places: summary.places,
             months: sections,
             eligibility: eligibility(months: sections, memories: summary.statistics.memoryCount, moments: moments.count),
+            firstMemory: yearEntries.first,
             interleavedPhotos: summary.interleave(monthGroups),
             chronologicalRank: summary.chronologicalRank
         )

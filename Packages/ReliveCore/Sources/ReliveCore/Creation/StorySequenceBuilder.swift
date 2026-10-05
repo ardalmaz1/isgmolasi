@@ -168,7 +168,8 @@ public struct StorySequenceBuilder: Sendable {
         return assemble(lead: lead, facts: facts, body: body, closing: nil) { id in
             guard let moment = library.moment(containing: id) else { return nil }
             let title = moment.title.primary.trimmingCharacters(in: .whitespacesAndNewlines)
-            let date = library.assets[id]?.creationDate ?? moment.startDate
+            // The photo's own date only: an undated photo says no date, never its moment's.
+            let date = library.assets[id]?.creationDate
             return Group(
                 key: moment.id.uuidString,
                 title: title.isEmpty ? nil : .named(title),

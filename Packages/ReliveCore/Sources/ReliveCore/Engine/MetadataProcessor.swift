@@ -20,18 +20,27 @@ public struct MetadataProcessor: Sendable {
         self.futureTolerance = futureTolerance
     }
 
+    /// The one rule for which source metadata Relive trusts. Everything else is kept exactly as
+    /// the photo library reported it — never replaced with "now", the import date, another
+    /// photo's date or a default. What isn't trusted becomes unknown, not plausible.
+    public func normalized(_ asset: MemoryAsset, now: Date) -> MemoryAsset {
+        var asset = asset
+        if let location = asset.location, !location.isValid {
+            asset.location = nil
+        }
+        if let date = asset.creationDate, date.timeIntervalSince(now) > futureTolerance {
+            asset.creationDate = nil
+        }
+        return asset
+    }
+
     public func process(_ assets: [MemoryAsset], now: Date) -> Output {
         var dated: [MemoryAsset] = []
         var undated: [MemoryAsset] = []
         var seen = Set<AssetID>()
 
-        for var asset in assets where seen.insert(asset.id).inserted {
-            if let location = asset.location, !location.isValid {
-                asset.location = nil
-            }
-            if let date = asset.creationDate, date.timeIntervalSince(now) > futureTolerance {
-                asset.creationDate = nil
-            }
+        for source in assets where seen.insert(source.id).inserted {
+            let asset = normalized(source, now: now)
             if asset.creationDate == nil {
                 undated.append(asset)
             } else {

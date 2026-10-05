@@ -122,7 +122,9 @@ public struct FoundForYouService: Sendable {
         }
 
         guard let choice = best else { return nil }
-        let date = choice.asset.creationDate ?? choice.moment.startDate
+        // "2 years ago" describes the photo, so it comes from the photo's own date; a photo
+        // without one gets no age line rather than its moment's.
+        let date = choice.asset.creationDate
         return FoundMemory(
             momentID: choice.moment.id,
             assetID: choice.asset.id,
