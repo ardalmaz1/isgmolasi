@@ -24,6 +24,12 @@ sharing: **Memory Collage**, **Story Maker**, **Monthly Recap**, **Our Year**, p
 **Surprise Memory** on Today and **Create from this** on every moment. Everything is made on the
 iPhone; nothing is uploaded, and nothing is invented.
 
+## Data integrity pass — months and years follow the photo
+
+Monthly Recap, Our Year and the month/year creation sources group every memory by its **own**
+capture date (`TemporalIndex`), never by the moment it belongs to; moments that cross into a
+period are narrowed to their photos from it. See [DATA_INTEGRITY.md](DATA_INTEGRITY.md).
+
 ## v0.3.1 — metadata follows the photo
 
 **The rule:** everything a creation prints about its photos — title, dates, place, coordinates

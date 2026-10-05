@@ -14,6 +14,26 @@ Principles: **Remember → Appreciate → Live.** AI organizes the memory; peopl
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
 
+## Data integrity pass (after the first physical-device test)
+
+- **Every memory is grouped by its own capture date.** Monthly Recap, Our Year and their
+  creation sources use one shared grouping (`TemporalIndex`): a photo taken on January 1 at
+  00:20 is January, not the December its New Year's Eve moment began in; "the first memory of
+  2026" is literally the earliest 2026 photo.
+- **Stored metadata is repaired from the photo library** on every activation (one batched
+  metadata fetch): dates or places that differ from what the library reports now are corrected,
+  the story is rebuilt with the same moments (notes, favorites, hidden kept), nothing is
+  duplicated, and running it again changes nothing.
+- **Unknown stays unknown.** No feature substitutes a moment's date (or any other) for a photo
+  without one.
+- Development builds log each memory's source vs stored date, a per-month/year audit, and
+  whether the library's date agrees with the date inside the image file — so the next device
+  test can be read from the Xcode console. Root cause and how to read the log:
+  [docs/DATA_INTEGRITY.md](docs/DATA_INTEGRITY.md).
+- Collage: **touch and hold a photo and drag it** to move it. Favorites: **+** adds memories,
+  moments or creations from Relive's own library. Drafts are written on the first change and
+  flushed whenever the app leaves the screen.
+
 ## New in v0.4 — your personal collection
 
 - **Favorites.** One heart, private to Relive: on a photo (full-screen viewer), on a moment (its
@@ -157,6 +177,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/DATA_INTEGRITY.md](docs/DATA_INTEGRITY.md) — capture dates from import to every
+  surface: root-cause investigation, the canonical rule, `TemporalIndex`, the metadata repair,
+  acceptance tests, and how to read the development log on a device.
 - [docs/PERSONAL_COLLECTION.md](docs/PERSONAL_COLLECTION.md) — v0.4 favorites model, saved
   creation model, draft lifecycle, Create Home architecture, Start Over, missing assets,
   migration, export exclusion, limitations.
