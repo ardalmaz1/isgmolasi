@@ -150,7 +150,8 @@ final class CaptureDateIntegrityTests: XCTestCase {
 
         // Next launch: the library reports the real dates.
         let store = IntegrityLibrary.store(repository: try disk.open(), library: library)
-        let result = try XCTUnwrap(await store.repairMetadata(now: IntegrityLibrary.date(2026, 10, 5)))
+        let repaired = await store.repairMetadata(now: IntegrityLibrary.date(2026, 10, 5))
+        let result = try XCTUnwrap(repaired)
         XCTAssertEqual(Set(result.changes.map(\.assetID)), Set((0..<8).map { "apr25-\($0)" }))
         XCTAssertEqual(store.assets.count, 45, "no memory added, removed or duplicated")
         XCTAssertEqual(store.assets["apr25-0"]?.creationDate, IntegrityLibrary.date(2025, 4, 12, 14, 0))
@@ -166,7 +167,8 @@ final class CaptureDateIntegrityTests: XCTestCase {
 
         // Idempotent: running it again changes nothing and rebuilds nothing.
         let generated = store.story.generatedAt
-        let again = try XCTUnwrap(await store.repairMetadata(now: IntegrityLibrary.date(2026, 10, 5)))
+        let secondRun = await store.repairMetadata(now: IntegrityLibrary.date(2026, 10, 5))
+        let again = try XCTUnwrap(secondRun)
         XCTAssertTrue(again.changes.isEmpty)
         XCTAssertEqual(store.story.generatedAt, generated)
         XCTAssertEqual(store.assets.count, 45)
@@ -183,7 +185,8 @@ final class CaptureDateIntegrityTests: XCTestCase {
         let repository = InMemoryStoryRepository(assets: stored)
         // The library now has no date and no place for it (e.g. stripped in an edit).
         let store = IntegrityLibrary.store(repository: repository, library: [MemoryAsset(localIdentifier: "a", creationDate: nil, pixelWidth: 10, pixelHeight: 10)])
-        let result = try XCTUnwrap(await store.repairMetadata())
+        let repaired = await store.repairMetadata()
+        let result = try XCTUnwrap(repaired)
         XCTAssertEqual(result.changes.first?.dateChanged, true)
         XCTAssertNil(store.assets["a"]?.creationDate, "unknown, not now and not the old value")
         XCTAssertNil(store.assets["a"]?.location)
