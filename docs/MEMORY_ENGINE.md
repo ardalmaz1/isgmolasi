@@ -63,6 +63,15 @@ Examples (from the tests):
 
 All thresholds live in `ClusteringConfiguration`.
 
+### Moments are not months
+
+Moments use a 04:00 "logical day" (a 00:40 photo belongs to the evening before) and can run past
+midnight, so a moment's start date is never used to decide a photo's month or year. Monthly
+Recap, Our Year and month/year creations group every photo by its **own** capture date
+(`TemporalIndex`, see [DATA_INTEGRITY.md](DATA_INTEGRITY.md)); a New Year's Eve moment appears in
+December with its December photos and in January with its January photos. Any gap of 8 hours
+or more always splits, so photos from different months can never share a moment.
+
 ## Trips (chapters)
 
 1. **Regions** — located moments are grouped by leader clustering with a 40 km radius (Kaş and
@@ -103,6 +112,9 @@ dates and both distances (`Duplicate: copy … → kept …`) to support tuning 
 The copy kept is: favorite → has location → higher resolution → earlier. Nothing is deleted.
 Thresholds are in `SimilarityConfiguration` and **should be tuned on real libraries** (see
 "Tuning" below).
+
+A copy attached to its original's moment keeps its own capture date, but as the same memory it
+is never placed in a month or year of its own.
 
 ## Hero selection
 
