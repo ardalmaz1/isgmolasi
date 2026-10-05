@@ -205,6 +205,17 @@ final class CollageEditorModel {
         }
     }
 
+    /// Touch and hold a photo, drag it onto another: it takes that place and the photos between
+    /// shift over to make room (the layout is worked out again for the new order).
+    func movePhoto(_ id: AssetID, toPositionOf target: AssetID) {
+        guard id != target, let from = photoIDs.firstIndex(of: id), let to = photoIDs.firstIndex(of: target) else { return }
+        var reordered = photoIDs
+        let moved = reordered.remove(at: from)
+        reordered.insert(moved, at: to)
+        photoIDs = reordered
+        selectedIndex = nil
+    }
+
     func move(from index: Int, by offset: Int) {
         let target = index + offset
         guard photoIDs.indices.contains(index), photoIDs.indices.contains(target) else { return }

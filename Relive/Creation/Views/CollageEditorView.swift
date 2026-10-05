@@ -1,5 +1,6 @@
 import ReliveCore
 import SwiftUI
+import UIKit
 
 /// Memory Collage: a large live preview and a few deliberate choices — style, shape, the
 /// caption lines that are true, and the photos' order. Not a design tool.
@@ -14,6 +15,9 @@ struct CollageEditorView: View {
     @State private var picker: PickerPurpose?
     @State private var libraryPurpose: PickerPurpose?
     @State private var confirmsDelete = false
+    /// The photo a dragged photo would land on.
+    @State private var dropTarget: AssetID?
+    @State private var movedCount = 0
 
     private enum PickerPurpose: Identifiable {
         case edit
@@ -144,6 +148,7 @@ struct CollageEditorView: View {
                 }
             }
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: movedCount)
         // Any change makes a different image (it can be saved again) and is kept as a draft:
         // see `CollageEditorModel.noteChange`.
     }
@@ -167,10 +172,17 @@ struct CollageEditorView: View {
                     highlightedIndex: model.selectedIndex
                 )
                 ForEach(Array(layout.slots.enumerated()), id: \.offset) { _, slot in
+                    let id = model.photoIDs.indices.contains(slot.photoIndex) ? model.photoIDs[slot.photoIndex] : nil
                     Color.clear
                         .contentShape(Rectangle())
                         .onTapGesture {
                             withAnimation(animation) { model.tapPhoto(at: slot.photoIndex) }
+                        }
+                        .reorderable(id: id, image: id.flatMap { model.previewImages[$0] }, dropTarget: $dropTarget, onMove: move)
+                        .overlay {
+                            if let id, dropTarget == id {
+                                Rectangle().strokeBorder(Palette.accent, lineWidth: 10)
+                            }
                         }
                         .placed(at: slot.frame, rotation: slot.rotation)
                         .accessibilityHidden(true)
@@ -268,7 +280,7 @@ struct CollageEditorView: View {
             }
             .scrollIndicators(.hidden)
 
-            Text("Touch and hold a photo to replace, move or remove it.")
+            Text("Touch and hold a photo to drag it somewhere else, or to replace or remove it.")
                 .font(Typography.footnote)
                 .foregroundStyle(Palette.textTertiary)
                 .padding(.horizontal, Spacing.screenMargin)
@@ -286,7 +298,7 @@ struct CollageEditorView: View {
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .overlay {
                     RoundedRectangle(cornerRadius: Radius.photo, style: .continuous)
-                        .strokeBorder(isSelected ? Palette.accent : Color.clear, lineWidth: 3)
+                        .strokeBorder(isSelected || dropTarget == id ? Palette.accent : Color.clear, lineWidth: 3)
                 }
                 .overlay(alignment: .bottomTrailing) {
                     if model.missing.contains(id) {
@@ -297,6 +309,7 @@ struct CollageEditorView: View {
                 }
         }
         .buttonStyle(.plain)
+        .reorderable(id: id, image: model.previewImages[id], dropTarget: $dropTarget, onMove: move)
         .contextMenu {
             Button { picker = .replace(index) } label: { Label("Replace", systemImage: "photo.on.rectangle") }
             Button { libraryPurpose = .replace(index) } label: { Label("Replace from Photo Library", systemImage: "photo.on.rectangle.angled") }
@@ -312,7 +325,7 @@ struct CollageEditorView: View {
         }
         .accessibilityLabel("Photo \(index + 1) of \(model.photoIDs.count)")
         .accessibilityValue(isSelected ? "Picked up for swapping" : "")
-        .accessibilityHint("Double-tap to swap with another photo")
+        .accessibilityHint("Double-tap to swap with another photo. Touch and hold, then drag, to move it.")
         .accessibilityActions {
             Button("Replace") { picker = .replace(index) }
             Button("Replace from Photo Library") { libraryPurpose = .replace(index) }
@@ -323,6 +336,13 @@ struct CollageEditorView: View {
     }
 
     // MARK: - Actions
+
+    /// A dragged photo was dropped on another: it moves there.
+    private func move(_ dragged: AssetID, onto target: AssetID) {
+        guard model.photoIDs.contains(dragged) else { return }
+        withAnimation(animation) { model.movePhoto(dragged, toPositionOf: target) }
+        movedCount += 1
+    }
 
     private var libraryPickerPresented: Binding<Bool> {
         Binding(get: { libraryPurpose != nil }, set: { if !$0 { libraryPurpose = nil } })
@@ -412,6 +432,42 @@ struct LabeledText: View {
                 .font(Typography.footnote)
                 .foregroundStyle(Palette.textSecondary)
                 .lineLimit(1)
+        }
+    }
+}
+
+extension View {
+    /// Touch and hold to pick a collage photo up, drag it onto another to move it there. Only
+    /// photos of this collage are accepted; scrolling still works (dragging starts on hold).
+    @ViewBuilder
+    func reorderable(id: AssetID?, image: UIImage?, dropTarget: Binding<AssetID?>, onMove: @escaping (AssetID, AssetID) -> Void) -> some View {
+        if let id {
+            self
+                .draggable(id) {
+                    Group {
+                        if let image {
+                            Image(uiImage: image).resizable().scaledToFill()
+                        } else {
+                            Palette.placeholder
+                        }
+                    }
+                    .frame(width: 96, height: 120)
+                    .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
+                }
+                .dropDestination(for: String.self) { items, _ in
+                    guard let dragged = items.first, dragged != id else { return false }
+                    onMove(dragged, id)
+                    dropTarget.wrappedValue = nil
+                    return true
+                } isTargeted: { targeted in
+                    if targeted {
+                        dropTarget.wrappedValue = id
+                    } else if dropTarget.wrappedValue == id {
+                        dropTarget.wrappedValue = nil
+                    }
+                }
+        } else {
+            self
         }
     }
 }
