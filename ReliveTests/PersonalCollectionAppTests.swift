@@ -187,15 +187,21 @@ final class DraftLifecycleTests: XCTestCase {
     }
 
     /// The draft is written by itself after a short pause — not on every change.
+    /// The first change creates the draft at once (so closing the app straight away loses
+    /// nothing); later changes are written after a pause, not on every change.
     func testAutosaveIsDebounced() async throws {
         let (store, _) = CollectionTestStore.make()
         let model = collage(store)
         model.style = model.style == .film ? .grid : .film
+        XCTAssertEqual(store.drafts.count, 1, "the first change is kept at once")
+        XCTAssertEqual(store.drafts[0].collage?.showsTitle, true)
         model.showsTitle = false
-        XCTAssertTrue(store.creations.isEmpty, "nothing is written while the user is still changing things")
+        model.showsDate = false
+        XCTAssertEqual(store.drafts[0].collage?.showsTitle, true, "later changes wait for the pause")
         try await Task.sleep(for: CreationKeeper.pause + .milliseconds(700))
         XCTAssertEqual(store.drafts.count, 1)
         XCTAssertEqual(store.drafts[0].collage?.showsTitle, false)
+        XCTAssertEqual(store.drafts[0].collage?.showsDate, false)
     }
 
     /// After a restart, a collage reopens exactly as it was.
