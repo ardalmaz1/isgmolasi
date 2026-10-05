@@ -32,7 +32,7 @@ enum MetadataLog {
     static func imported(source: [MemoryAsset], stored: [AssetID: MemoryAsset]) {
         for asset in source {
             let kept = stored[asset.id]
-            logger.debug("asset_metadata_imported id=\(shortID(asset.id), privacy: .public) sourceDate=\(iso(asset.creationDate), privacy: .public) persistedDate=\(iso(kept?.creationDate), privacy: .public) sourceLocationPresent=\(asset.location != nil, privacy: .public)")
+            logger.notice("asset_metadata_imported id=\(shortID(asset.id), privacy: .public) sourceDate=\(iso(asset.creationDate), privacy: .public) persistedDate=\(iso(kept?.creationDate), privacy: .public) sourceLocationPresent=\(asset.location != nil, privacy: .public)")
         }
     }
 

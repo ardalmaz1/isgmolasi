@@ -367,7 +367,7 @@ final class StoryStore {
         creations.insert(creation, at: 0)
         repository.saveCreation(creation)
         #if DEBUG
-        MetadataLog.logger.debug("creation_written id=\(creation.id.uuidString.prefix(8), privacy: .public) kind=\(creation.kind.rawValue, privacy: .public) status=\(creation.status.rawValue, privacy: .public) photos=\(creation.photoIDs.count, privacy: .public)")
+        MetadataLog.logger.notice("creation_written id=\(creation.id.uuidString.prefix(8), privacy: .public) kind=\(creation.kind.rawValue, privacy: .public) status=\(creation.status.rawValue, privacy: .public) photos=\(creation.photoIDs.count, privacy: .public)")
         #endif
         if previous == nil, creation.isDraft { analytics.track(.draftCreated, ["kind": creation.kind.rawValue]) }
         if !creation.isDraft, previous?.isDraft ?? true { analytics.track(.creationSaved, ["kind": creation.kind.rawValue]) }
