@@ -204,7 +204,7 @@ final class StoryStore {
         guard let moment = story.moment(id: record.momentID), isVisible(moment),
               !userState(for: moment.id).isExcludedFromSurfacing,
               moment.assetIDs.contains(record.assetID), isAvailable(record.assetID) else { return nil }
-        let date = assets[record.assetID]?.creationDate ?? moment.startDate
+        let date = assets[record.assetID]?.creationDate
         return FoundMemory(
             momentID: moment.id,
             assetID: record.assetID,
@@ -248,7 +248,48 @@ final class StoryStore {
         let removed = assets.keys.filter { updated[$0] == nil }.count
         assets = updated
         repository.saveAssets(Array(updated.values))
+        #if DEBUG
+        MetadataLog.imported(source: fetched, stored: updated)
+        #endif
         return SelectionChange(added: added, removed: removed)
+    }
+
+    // MARK: - Metadata repair
+
+    /// Re-reads every memory's metadata from the photo library and repairs what differs from
+    /// what Relive stored (a date corrected in Photos, metadata that synced later, or values an
+    /// earlier version stored). One batched metadata fetch — no images are loaded.
+    ///
+    /// Never adds, removes or duplicates a memory; keeps analysis, notes, favorites, hidden
+    /// moments and creations. When dates or places changed, the story is rebuilt with the same
+    /// moment identities (`MomentReconciler`). Running it again changes nothing.
+    @discardableResult
+    func repairMetadata(now: Date = Date()) async -> MetadataRepair.Result? {
+        guard activeRun == nil, !assets.isEmpty, photoLibrary.accessStatus().canReadSelection else { return nil }
+        let identifiers = Array(assets.keys)
+        let fetched = await photoLibrary.assets(withIdentifiers: identifiers)
+        // Processing or Start Over began meanwhile: leave the selection to them.
+        guard activeRun == nil, !assets.isEmpty else { return nil }
+        let result = MetadataRepair().repair(stored: assets, library: fetched, now: now)
+        if !result.changes.isEmpty {
+            // Keep anything chosen while the fetch ran.
+            var merged = assets
+            for change in result.changes {
+                if let repaired = result.assets[change.assetID], merged[change.assetID] != nil {
+                    merged[change.assetID] = repaired
+                }
+            }
+            assets = merged
+            repository.saveAssets(Array(merged.values))
+        }
+        #if DEBUG
+        MetadataLog.repaired(result.changes)
+        MetadataLog.audit(Array(assets.values), calendar: calendar, repaired: result.changes.count)
+        #endif
+        if result.needsRebuild || (!hasStory && hasSelection) {
+            await process()
+        }
+        return result
     }
 
     // MARK: - Creations
@@ -510,6 +551,10 @@ final class StoryStore {
         repository.saveAssets(result.assets)
         repository.saveStory(reconciled)
         recomputeDerived()
+        #if DEBUG
+        MetadataLog.normalized(source: input, stored: result.assets)
+        MetadataLog.audit(result.assets, calendar: calendar)
+        #endif
 
         #if DEBUG
         logDuplicateDetails(result)

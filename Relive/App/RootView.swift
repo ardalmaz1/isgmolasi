@@ -20,7 +20,16 @@ struct RootView: View {
         .tint(Palette.accent)
         .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }
-            Task { await store.refreshAvailability() }
+            Task {
+                await store.refreshAvailability()
+                // Keep each memory's date and place in step with the photo library, and repair
+                // what an earlier version stored. Not during onboarding: its own run builds the story.
+                guard !app.isOnboarding else { return }
+                await store.repairMetadata()
+                #if DEBUG
+                EmbeddedDateAudit.runOnce(assets: Array(store.assets.values))
+                #endif
+            }
         }
     }
 }

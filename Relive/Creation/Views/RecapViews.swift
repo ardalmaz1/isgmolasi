@@ -9,8 +9,10 @@ struct MonthlyRecapListView: View {
     @Environment(StoryStore.self) private var store
 
     var body: some View {
-        let builder = MonthlyRecapBuilder(library: store.creationLibrary)
-        let recaps = builder.availableMonths().map(builder.recap(for:))
+        let library = store.creationLibrary
+        let builder = MonthlyRecapBuilder(library: library)
+        let index = TemporalIndex(library: library)
+        let recaps = index.months.map { builder.recap(for: $0, index: index) }
 
         Group {
             if recaps.isEmpty {
@@ -138,8 +140,10 @@ struct YearListView: View {
     @Environment(StoryStore.self) private var store
 
     var body: some View {
-        let builder = YearInReviewBuilder(library: store.creationLibrary)
-        let reviews = builder.availableYears().map(builder.review(for:))
+        let library = store.creationLibrary
+        let builder = YearInReviewBuilder(library: library)
+        let index = TemporalIndex(library: library)
+        let reviews = index.years.map { builder.review(for: $0, index: index) }
 
         Group {
             if reviews.isEmpty {
@@ -200,10 +204,11 @@ struct OurYearView: View {
 
                     actions(showsStatus: true)
 
-                    if let first = review.firstMoment, let date = first.startDate {
+                    // Literally the earliest memory taken this year, dated by that photo.
+                    if let first = review.firstMemory, let moment = review.firstMoment {
                         VStack(alignment: .leading, spacing: Spacing.xxs) {
                             Text("The first memory of \(String(year))").eyebrowStyle()
-                            Text("\(first.title.primary) · \(DateText.range(start: date, end: date) ?? "")")
+                            Text("\(moment.title.primary) · \(DateText.range(start: first.date, end: first.date) ?? "")")
                                 .font(Typography.title3)
                                 .foregroundStyle(Palette.textPrimary)
                         }
