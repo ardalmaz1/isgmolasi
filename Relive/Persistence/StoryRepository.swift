@@ -305,18 +305,29 @@ final class SwiftDataStoryRepository: StoryRepository {
     // MARK: - Creations
 
     func loadCreations() -> [SavedCreation] {
-        fetchAll(StoredCreation.self).compactMap { stored in
+        let stored = fetchAll(StoredCreation.self)
+        let creations = stored.compactMap { stored -> SavedCreation? in
             do {
                 return try decoder.decode(SavedCreation.self, from: stored.payload)
             } catch {
-                Self.logger.error("Dropping unreadable creation: \(error.localizedDescription, privacy: .public)")
+                Self.logger.error("Dropping unreadable creation: \(String(describing: error), privacy: .public)")
                 return nil
             }
         }
+        #if DEBUG
+        Self.logger.notice("creations_loaded records=\(stored.count, privacy: .public) drafts=\(creations.filter(\.isDraft).count, privacy: .public) saved=\(creations.filter { !$0.isDraft }.count, privacy: .public)")
+        #endif
+        return creations
     }
 
     func saveCreation(_ creation: SavedCreation) {
-        guard let payload = try? encoder.encode(creation) else { return }
+        let payload: Data
+        do {
+            payload = try encoder.encode(creation)
+        } catch {
+            Self.logger.error("draft_encode_failed kind=\(creation.kind.rawValue, privacy: .public) error=\(error.localizedDescription, privacy: .public)")
+            return
+        }
         let matches = fetchAll(StoredCreation.self).filter { $0.creationID == creation.id }
         if let stored = matches.first {
             stored.payload = payload

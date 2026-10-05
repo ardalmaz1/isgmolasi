@@ -1,5 +1,6 @@
 import ReliveCore
 import SwiftUI
+import UIKit
 
 /// Hosts one creation from start to finish: choosing photos, a moment, a trip, a month or a year
 /// when needed, then the collage editor, Story Maker or the new Memory Book. Presented full
@@ -120,10 +121,15 @@ struct CreationFlowView: View {
             case .resume(let id): resume(id)
             }
         }
-        // Drafts are kept when the app leaves the screen, not only after the editor's pause.
+        // Drafts are kept when the app leaves the screen, not only after the editor's pause —
+        // from the scene phase and, independently, from the app's own lifecycle notifications.
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { flush() }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willResignActiveNotification)) { _ in flush() }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didEnterBackgroundNotification)) { _ in flush() }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willTerminateNotification)) { _ in flush() }
+        .onDisappear { flush() }
     }
 
     private func close() {

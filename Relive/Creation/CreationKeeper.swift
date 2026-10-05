@@ -12,8 +12,9 @@ enum CreationContent {
 ///
 /// - Nothing is written until the user changes something: a story Relive designed and left
 ///   untouched isn't a draft.
-/// - After a change, the draft is written after a short pause (not on every frame), and at once
-///   when the editor closes or the app goes to the background (`flush`).
+/// - The first change writes the draft at once. Later changes are written after a short pause
+///   (not on every frame), and at once when the editor closes or disappears, or the app resigns
+///   active, goes to the background or terminates (`flush`).
 /// - "Save", or saving/sharing the image, turns the same record into a finished creation — the
 ///   draft never lingers as a duplicate.
 /// - Without a store (previews, some tests) it keeps nothing.
@@ -51,11 +52,16 @@ final class CreationKeeper {
     /// Written at least once.
     var exists: Bool { record != nil }
 
-    /// The user changed something: write it shortly.
+    /// The user changed something: write it shortly. The first change creates the draft at once,
+    /// so it exists even if the app is closed straight away.
     func changed() {
         guard store != nil, !isDiscarded else { return }
         hasUnsavedChanges = true
         pending?.cancel()
+        if record == nil {
+            flush()
+            return
+        }
         pending = Task { [weak self] in
             try? await Task.sleep(for: Self.pause)
             guard !Task.isCancelled else { return }
