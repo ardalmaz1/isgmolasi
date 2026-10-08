@@ -14,6 +14,15 @@ Principles: **Remember → Appreciate → Live.** AI organizes the memory; peopl
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
 
+## Real-device validation (iPhone 13, TestFlight 0.4 (1))
+
+On an iPhone 13 whose library has normal historical dates (92 photos, 2017–2026), Story,
+Monthly Recap, Memory Book, Story Maker, Collage, Favorites, drafts and export all passed, and
+the "2025 photos became September 2026" behaviour did not recur. This is strong real-device
+evidence that the earlier report is specific to that transferred library's metadata. The
+investigation on that iPhone is still open. Results, scope and remaining items:
+[docs/REAL_DEVICE_VALIDATION.md](docs/REAL_DEVICE_VALIDATION.md).
+
 ## Data integrity pass (after the first physical-device test)
 
 - **Every memory is grouped by its own capture date.** Monthly Recap, Our Year and their
@@ -177,6 +186,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/REAL_DEVICE_VALIDATION.md](docs/REAL_DEVICE_VALIDATION.md) — iPhone 13 TestFlight
+  validation: device, build, scope, results per flow, remaining items, and the conclusion on the
+  transferred-library date report.
 - [docs/DATA_INTEGRITY.md](docs/DATA_INTEGRITY.md) — capture dates from import to every
   surface: root-cause investigation, the canonical rule, `TemporalIndex`, the metadata repair,
   acceptance tests, and how to read the development log on a device.
@@ -229,10 +241,10 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Known limitations of v0.4
 
-- **Not physically verified.** Favorites, My Creations, drafts and Create Home 2.0 were verified
-  by unit tests (Linux), hosted tests and UI tests in the iOS Simulator, and CI builds with
-  Xcode 16.4 and Xcode 26 — not on a physical iPhone. Autosave timing, background flushing,
-  haptics and VoiceOver on a device need a check.
+- **Partly verified on a physical iPhone.** Favorites persistence, draft restore after a full
+  close and export passed on an iPhone 13
+  ([docs/REAL_DEVICE_VALIDATION.md](docs/REAL_DEVICE_VALIDATION.md)). Haptics and VoiceOver on
+  a device still need a check.
 - Share and Save to Photos for a kept creation happen in its editor (open it from My
   Creations), not from the card's menu.
 - Monthly Recaps, Our Year and Trend creations are not kept in My Creations.

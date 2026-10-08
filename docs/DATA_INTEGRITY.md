@@ -52,6 +52,12 @@ capture date inside the files. Relive follows the canonical rule below (PhotoKit
 and does not silently switch sources; whether to prefer the embedded date for such photos is a
 product decision (see Limitations).
 
+**Real-device follow-up.** On an iPhone 13 whose library has normal historical dates, the
+behaviour did not recur, and every surface dated photos from 2017 to 2026 correctly. This is
+strong real-device evidence that the issue is specific to the library or device metadata, not
+proven. The transferred-library investigation is still open, and its logs need a Debug build
+(TestFlight builds don't produce them). See [REAL_DEVICE_VALIDATION.md](REAL_DEVICE_VALIDATION.md).
+
 ## 2. The canonical rule
 
 - `PHAsset.creationDate` is the capture date, read at import and kept in step with the library
