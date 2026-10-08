@@ -36,15 +36,15 @@ enum StoreFailure: Error, Equatable, Sendable {
 
 /// The App Store's view of this user's entitlements.
 struct EntitlementSnapshot: Equatable, Sendable {
-    var transactions: [EntitlementTransaction] = []
-    var statuses: [SubscriptionStatusSnapshot] = []
+    var transactions: [ReliveCore.EntitlementTransaction] = []
+    var statuses: [ReliveCore.SubscriptionStatusSnapshot] = []
 }
 
 /// Everything Relive asks of StoreKit. The app uses `LiveStoreKitClient`; tests and UI tests use
 /// `FakeStoreKitClient`, so CI never depends on a live App Store.
 /// Methods throw `StoreFailure`.
 protocol StoreKitClient: Sendable {
-    func loadProducts(ids: [String]) async throws -> [PremiumProduct]
+    func loadProducts(ids: [String]) async throws -> [ReliveCore.PremiumProduct]
     func purchase(productID: String) async throws -> PurchaseOutcome
     /// Current entitlements (verified and not) and subscription statuses.
     func entitlements() async -> EntitlementSnapshot
@@ -61,7 +61,7 @@ protocol StoreKitClient: Sendable {
 struct LiveStoreKitClient: StoreKitClient {
     private let cache = ProductCache()
 
-    func loadProducts(ids: [String]) async throws -> [PremiumProduct] {
+    func loadProducts(ids: [String]) async throws -> [ReliveCore.PremiumProduct] {
         let products: [Product]
         do {
             products = try await Product.products(for: ids)
@@ -69,11 +69,11 @@ struct LiveStoreKitClient: StoreKitClient {
             throw Self.failure(error)
         }
         await cache.store(products)
-        var result: [PremiumProduct] = []
+        var result: [ReliveCore.PremiumProduct] = []
         for product in products {
-            guard let role = PremiumProductRole(productID: product.id), let subscription = product.subscription else { continue }
+            guard let role = ReliveCore.PremiumProductRole(productID: product.id), let subscription = product.subscription else { continue }
             let eligible = await subscription.isEligibleForIntroOffer
-            result.append(PremiumProduct(
+            result.append(ReliveCore.PremiumProduct(
                 id: product.id,
                 role: role,
                 displayName: product.displayName,
@@ -159,8 +159,8 @@ struct LiveStoreKitClient: StoreKitClient {
 
     // MARK: Mapping
 
-    private static func entitlement(_ transaction: Transaction, verified: Bool) -> EntitlementTransaction {
-        EntitlementTransaction(
+    private static func entitlement(_ transaction: Transaction, verified: Bool) -> ReliveCore.EntitlementTransaction {
+        ReliveCore.EntitlementTransaction(
             productID: transaction.productID,
             isVerified: verified,
             purchaseDate: transaction.purchaseDate,
@@ -170,7 +170,7 @@ struct LiveStoreKitClient: StoreKitClient {
         )
     }
 
-    private static func status(_ status: Product.SubscriptionInfo.Status) -> SubscriptionStatusSnapshot? {
+    private static func status(_ status: Product.SubscriptionInfo.Status) -> ReliveCore.SubscriptionStatusSnapshot? {
         let transaction: Transaction
         var verified = true
         switch status.transaction {
@@ -182,7 +182,7 @@ struct LiveStoreKitClient: StoreKitClient {
         case .verified(let info): willAutoRenew = info.willAutoRenew
         case .unverified(let info, _): willAutoRenew = info.willAutoRenew; verified = false
         }
-        let state: SubscriptionRenewalState
+        let state: ReliveCore.SubscriptionRenewalState
         switch status.state {
         case .subscribed: state = .subscribed
         case .expired: state = .expired
@@ -191,7 +191,7 @@ struct LiveStoreKitClient: StoreKitClient {
         case .revoked: state = .revoked
         default: return nil
         }
-        return SubscriptionStatusSnapshot(
+        return ReliveCore.SubscriptionStatusSnapshot(
             productID: transaction.productID,
             state: state,
             isVerified: verified,
@@ -253,7 +253,7 @@ private actor ProductCache {
     func product(_ id: String) -> Product? { products[id] }
 
     func anyProduct() -> Product? {
-        for id in PremiumProductRole.productIDs {
+        for id in ReliveCore.PremiumProductRole.productIDs {
             if let product = products[id] { return product }
         }
         return nil
