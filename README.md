@@ -14,6 +14,26 @@ Principles: **Remember → Appreciate → Live.** AI organizes the memory; peopl
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
 
+## Commercial v1 — Relive Premium
+
+**Memories are free. Creating more from them is Premium.**
+
+- **Free, always:** the story and every memory, moment, place, note, hidden memory and favorite.
+  Making, editing and previewing every creation is free, in every design, including reading a
+  whole Memory Book.
+- **One free creation:** the first successful save or share of a collage, story or trend.
+- **Premium:** saving and sharing creations after that, Memory Book export (pages and Save Full
+  Book), and the full Monthly Recap and Our Year. Free previews show counts, first highlights,
+  moments, and the year's first month.
+- **Paywall:** shown only after the user has seen what they'd keep. It's never at launch or after
+  onboarding, and closing it returns them to where they were. Prices are the App Store's
+  localized prices, and trial wording appears only for a real, eligible trial. Restore Purchases
+  is on the paywall and in Us.
+- **Entitlements:** StoreKit 2 with verified transactions only, live transaction updates, and one
+  `PremiumStore`. CI uses a fake App Store.
+
+Details, App Store Connect setup and limitations: [docs/COMMERCIAL.md](docs/COMMERCIAL.md).
+
 ## Real-device validation (iPhone 13, TestFlight 0.4 (1))
 
 On an iPhone 13 whose library has normal historical dates (92 photos, 2017–2026), Story,
@@ -186,6 +206,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/COMMERCIAL.md](docs/COMMERCIAL.md) — Relive Premium: free vs Premium, the free creation,
+  the paywall, StoreKit 2 entitlements, restore, errors, analytics, tests and App Store Connect
+  setup.
 - [docs/REAL_DEVICE_VALIDATION.md](docs/REAL_DEVICE_VALIDATION.md) — iPhone 13 TestFlight
   validation: device, build, scope, results per flow, remaining items, and the conclusion on the
   transferred-library date report.
