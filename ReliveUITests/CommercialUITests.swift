@@ -38,8 +38,14 @@ final class CommercialUITests: XCTestCase {
 
         // 2. The next save opens the paywall; closing it returns to the collage
         changeStyle(app, preview)
-        app.buttons["collageSave"].tap()
-        XCTAssertTrue(paywall(app).waitForExistence(timeout: 10), "The second save did not open the paywall")
+        let save = app.buttons["collageSave"]
+        XCTAssertTrue(save.isEnabled, "A changed collage can be saved again")
+        save.tap()
+        if !paywall(app).waitForExistence(timeout: 10) {
+            printScreen(app, "no-paywall")
+            capture("M02-missing-paywall")
+        }
+        XCTAssertTrue(paywall(app).exists, "The second save did not open the paywall")
         XCTAssertTrue(app.staticTexts["Keep making memories worth keeping"].exists)
         XCTAssertEqual(app.staticTexts["paywallContext"].label.lowercased(), "create without limits")
         let purchase = app.buttons["paywallPurchase"]
@@ -167,6 +173,14 @@ final class CommercialUITests: XCTestCase {
     }
 
     // MARK: - Steps
+
+    /// Prints what's on screen (labels and identifiers), to read a failure from the CI log.
+    @MainActor
+    private func printScreen(_ app: XCUIApplication, _ name: String) {
+        let buttons = app.buttons.allElementsBoundByIndex.prefix(40).map { "\($0.identifier)=\($0.label)" }
+        let texts = app.staticTexts.allElementsBoundByIndex.prefix(40).map(\.label)
+        print("SCREEN \(name): buttons[\(buttons.joined(separator: " | "))] texts[\(texts.joined(separator: " | "))]")
+    }
 
     private func paywall(_ app: XCUIApplication) -> XCUIElement {
         app.buttons["paywallClose"]

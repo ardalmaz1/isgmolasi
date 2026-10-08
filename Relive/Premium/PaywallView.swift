@@ -41,7 +41,6 @@ struct PaywallView: View {
         .reliveBackground()
         .overlay(alignment: .topTrailing) { closeButton }
         .sheet(isPresented: $showsPrivacy) { PrivacySummaryView() }
-        .accessibilityIdentifier("paywall")
         .onAppear {
             premium.trackPaywall(viewed: entry)
             premium.clearPurchaseMessage()
@@ -147,7 +146,6 @@ struct PaywallView: View {
                     .accessibilityIdentifier("paywallRetry")
             }
             .frame(maxWidth: .infinity, minHeight: 120)
-            .accessibilityIdentifier("paywallPricesFailed")
         case .loaded:
             VStack(spacing: Spacing.s) {
                 if let annual = premium.annual {
