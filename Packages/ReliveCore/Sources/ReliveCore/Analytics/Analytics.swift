@@ -37,6 +37,18 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case draftResumed = "draft_resumed"
     case draftDeleted = "draft_deleted"
     case createFromFavorites = "create_from_favorites"
+    // Commercial v1 (entry point, feature and product role only — never content).
+    case paywallViewed = "paywall_viewed"
+    case paywallClosed = "paywall_closed"
+    case premiumPurchaseStarted = "premium_purchase_started"
+    case premiumPurchaseCompleted = "premium_purchase_completed"
+    case premiumPurchaseCancelled = "premium_purchase_cancelled"
+    case premiumPurchasePending = "premium_purchase_pending"
+    case premiumPurchaseFailed = "premium_purchase_failed"
+    case premiumRestoreStarted = "premium_restore_started"
+    case premiumRestoreCompleted = "premium_restore_completed"
+    case freeExportUsed = "free_export_used"
+    case premiumFeatureTapped = "premium_feature_tapped"
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {
