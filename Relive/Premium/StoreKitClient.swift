@@ -200,24 +200,24 @@ struct LiveStoreKitClient: StoreKitClient {
         )
     }
 
-    private static func period(_ period: Product.SubscriptionPeriod) -> SubscriptionPeriod {
-        let unit: SubscriptionPeriod.Unit = switch period.unit {
+    private static func period(_ period: Product.SubscriptionPeriod) -> ReliveCore.SubscriptionPeriod {
+        let unit: ReliveCore.SubscriptionPeriod.Unit = switch period.unit {
         case .day: .day
         case .week: .week
         case .month: .month
         case .year: .year
         @unknown default: .month
         }
-        return SubscriptionPeriod(value: period.value, unit: unit)
+        return ReliveCore.SubscriptionPeriod(value: period.value, unit: unit)
     }
 
-    private static func offer(_ offer: Product.SubscriptionOffer) -> IntroductoryOffer {
-        let mode: IntroductoryOffer.PaymentMode = switch offer.paymentMode {
+    private static func offer(_ offer: Product.SubscriptionOffer) -> ReliveCore.IntroductoryOffer {
+        let mode: ReliveCore.IntroductoryOffer.PaymentMode = switch offer.paymentMode {
         case .freeTrial: .freeTrial
         case .payUpFront: .payUpFront
         default: .payAsYouGo
         }
-        return IntroductoryOffer(paymentMode: mode, period: period(offer.period), periodCount: offer.periodCount, displayPrice: offer.displayPrice)
+        return ReliveCore.IntroductoryOffer(paymentMode: mode, period: period(offer.period), periodCount: offer.periodCount, displayPrice: offer.displayPrice)
     }
 
     private static func failure(_ error: any Error) -> StoreFailure {

@@ -1,0 +1,86 @@
+{
+  "identifier" : "5E1A7C01",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "5E1A7C10",
+      "localizations" : [
+
+      ],
+      "name" : "Relive Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "39.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "5E1A7C11",
+          "introductoryOffer" : {
+            "internalID" : "5E1A7C13",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P1W"
+          },
+          "localizations" : [
+            {
+              "description" : "Everything Relive creates from your memories, every year.",
+              "displayName" : "Relive Premium Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "relive.premium.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Relive Premium Annual",
+          "subscriptionGroupID" : "5E1A7C10",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "4.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "5E1A7C12",
+          "localizations" : [
+            {
+              "description" : "Everything Relive creates from your memories, month by month.",
+              "displayName" : "Relive Premium Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "relive.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Relive Premium Monthly",
+          "subscriptionGroupID" : "5E1A7C10",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}
