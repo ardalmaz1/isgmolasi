@@ -12,12 +12,14 @@ final class AppEnvironment {
     let trendCatalog: TrendCatalogStore
     let imageLoader: PhotoImageLoader
     let analytics: any AnalyticsTracking
+    let premium: PremiumStore
 
     init(
         container: ModelContainer,
         photoLibrary: any PhotoLibraryProviding,
         imageLoader: PhotoImageLoader,
-        analytics: any AnalyticsTracking
+        analytics: any AnalyticsTracking,
+        storeKit: any StoreKitClient = LiveStoreKitClient()
     ) {
         self.container = container
         self.imageLoader = imageLoader
@@ -33,11 +35,30 @@ final class AppEnvironment {
         self.storyStore = storyStore
         self.trendCatalog = TrendCatalogStore()
         self.appModel = AppModel(storyStore: storyStore, repository: repository, analytics: analytics)
+        self.premium = PremiumStore(client: storeKit, analytics: analytics)
     }
 
     #if DEBUG
     /// UI tests pass this to start from onboarding regardless of earlier runs.
     static let startFreshArgument = "-ReliveUITestStartFresh"
+
+    /// UI tests: `-ReliveStoreKit free|premium|trial|unavailable` replaces the App Store with
+    /// `FakeStoreKitClient`, so no test depends on a live purchase. Without it, Debug builds use
+    /// StoreKit (and `StoreKit/Relive.storekit` when run from Xcode).
+    static func storeKitForUITests() -> (any StoreKitClient)? {
+        guard let mode = UserDefaults.standard.string(forKey: "ReliveStoreKit") else { return nil }
+        let fake = FakeStoreKitClient(products: FakeStoreKitClient.sampleProducts(withTrial: mode == "trial"))
+        switch mode {
+        case "premium":
+            fake.snapshot.transactions = [fake.activeTransaction(.annual)]
+        case "unavailable":
+            fake.productFailure = .network
+            fake.syncFailure = .network
+        default:
+            break
+        }
+        return fake
+    }
     #endif
 
     static func live() -> AppEnvironment {
@@ -45,13 +66,18 @@ final class AppEnvironment {
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains(startFreshArgument) {
             SwiftDataStoryRepository(container: container).eraseEverything()
+            PremiumStore.eraseLocalState()
         }
+        let storeKit: any StoreKitClient = storeKitForUITests() ?? LiveStoreKitClient()
+        #else
+        let storeKit: any StoreKitClient = LiveStoreKitClient()
         #endif
         return AppEnvironment(
             container: container,
             photoLibrary: PhotoKitLibraryService(),
             imageLoader: .shared,
-            analytics: LoggingAnalyticsTracker()
+            analytics: LoggingAnalyticsTracker(),
+            storeKit: storeKit
         )
     }
 }

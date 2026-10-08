@@ -14,6 +14,7 @@ struct ReliveApp: App {
                 .environment(environment.appModel)
                 .environment(environment.storyStore)
                 .environment(environment.trendCatalog)
+                .environment(environment.premium)
                 .environment(\.photoImageLoader, environment.imageLoader)
                 .environment(\.analytics, environment.analytics)
         }

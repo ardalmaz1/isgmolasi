@@ -15,7 +15,7 @@ final class PersonalCollectionUITests: XCTestCase {
     @MainActor
     func testFavoritesCreationsAndDrafts() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "premium"]
         app.launch()
         try completeOnboarding(app)
 

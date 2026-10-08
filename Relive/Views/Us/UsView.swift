@@ -5,6 +5,7 @@ import SwiftUI
 struct UsView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
+    @Environment(PremiumStore.self) private var premium
     @State private var isEditingProfile = false
     @State private var isAddingMemories = false
     @State private var confirmsStartOver = false
@@ -39,6 +40,23 @@ struct UsView: View {
                             CountRow(title: "Drafts", count: store.drafts.count)
                         }
                     }
+                }
+                .listRowBackground(Palette.surface)
+
+                Section("Relive Premium") {
+                    NavigationLink {
+                        PremiumSettingsView()
+                    } label: {
+                        LabeledContent("Premium") {
+                            Text(premium.showsPremium ? "Active" : "Free")
+                                .foregroundStyle(Palette.textSecondary)
+                        }
+                    }
+                    .accessibilityIdentifier("usPremium")
+                    Button("Restore Purchases") { Task { await premium.restore(entry: .settings) } }
+                        .disabled(premium.restoreState == .restoring)
+                        .accessibilityIdentifier("usRestore")
+                    RestoreStatusText()
                 }
                 .listRowBackground(Palette.surface)
 

@@ -13,6 +13,8 @@ struct MemoryBookReaderView: View {
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.analytics) private var analytics
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(PremiumStore.self) private var premium
+    @State private var gate = PremiumGate()
     @State private var pageID: Int? = 0
     @State private var isEditing = false
     @State private var export = ExportController()
@@ -47,6 +49,7 @@ struct MemoryBookReaderView: View {
         .sheet(isPresented: $isEditing) {
             MemoryBookEditorView(bookID: bookID)
         }
+        .premiumPaywall(gate)
         .onChange(of: pageID) { _, _ in export.clearMessage() }
         .onChange(of: store.book(id: bookID)?.updatedAt) { _, _ in export.clearMessage() }
     }
@@ -93,24 +96,43 @@ struct MemoryBookReaderView: View {
                 .foregroundStyle(Palette.textSecondary)
                 .accessibilityIdentifier("bookPageLabel")
 
+            // Reading, browsing and editing the whole book are free; keeping it is Premium.
             VStack(spacing: Spacing.xs) {
                 ExportStatusView(controller: export)
                 HStack(spacing: Spacing.s) {
                     Button {
-                        if let current { Task { await share(current, style: book.style, title: layout.facts.title) } }
+                        if let current { Task { await share(current, style: book.style, title: layout.facts.title, hero: layout.photoIDs.first) } }
                     } label: {
                         Label("Share Page", systemImage: "square.and.arrow.up")
                     }
                     .buttonStyle(.reliveOutline)
+                    .frame(maxWidth: .infinity)
                     .disabled(export.isBusy)
                     .accessibilityIdentifier("bookSharePage")
                     Button("Save Page") {
-                        if let current { Task { await save(current, style: book.style) } }
+                        if let current { Task { await save(current, style: book.style, hero: layout.photoIDs.first) } }
                     }
-                    .buttonStyle(.relivePrimary)
+                    .buttonStyle(.reliveOutline)
+                    .frame(maxWidth: .infinity)
                     .disabled(export.isBusy || isSaved)
                     .accessibilityIdentifier("bookSavePage")
                 }
+                Button {
+                    Task { await saveFullBook(layout.pages, style: book.style, hero: layout.photoIDs.first) }
+                } label: {
+                    HStack(spacing: Spacing.xs) {
+                        Text("Save Full Book")
+                        if !premium.showsPremium {
+                            Image(systemName: "sparkles")
+                                .accessibilityHidden(true)
+                        }
+                    }
+                }
+                .buttonStyle(.relivePrimary)
+                .disabled(export.isBusy || layout.pages.isEmpty)
+                .accessibilityLabel("Save Full Book")
+                .accessibilityHint(premium.showsPremium ? "Saves every page to Photos" : "Premium. Saves every page to Photos")
+                .accessibilityIdentifier("bookSaveFullBook")
             }
             .padding(.horizontal, Spacing.screenMargin)
             .padding(.bottom, Spacing.s)
@@ -132,20 +154,41 @@ struct MemoryBookReaderView: View {
 
     private var properties: [String: String] { ["kind": "memory_book_page"] }
 
-    private func save(_ page: BookPage, style: BookStyle) async {
-        let images = CreationImageSource(loader: loader)
-        await export.save(store: store, analytics: analytics, properties: properties) {
-            let image = try await MemoryBookExport.render(page, style: style, using: images)
-            return [image]
+    private func save(_ page: BookPage, style: BookStyle, hero: AssetID?) async {
+        await gate.export(.memoryBookExport, entry: .memoryBook, premium: premium, heroAssetID: hero) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await export.save(store: store, analytics: analytics, properties: properties, onSaved: succeeded) {
+                let image = try await MemoryBookExport.render(page, style: style, using: images)
+                return [image]
+            }
         }
     }
 
-    private func share(_ page: BookPage, style: BookStyle, title: CreationTitle?) async {
-        let images = CreationImageSource(loader: loader)
+    private func share(_ page: BookPage, style: BookStyle, title: CreationTitle?, hero: AssetID?) async {
         let name = CreationText.title(title) ?? "Memory Book"
-        await export.share(name: "\(name) – page \(page.id + 1)", analytics: analytics, properties: properties) {
-            let image = try await MemoryBookExport.render(page, style: style, using: images)
-            return [image]
+        await gate.export(.memoryBookExport, entry: .memoryBook, premium: premium, heroAssetID: hero) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await export.share(name: "\(name) – page \(page.id + 1)", analytics: analytics, properties: properties, onShared: succeeded) {
+                let image = try await MemoryBookExport.render(page, style: style, using: images)
+                return [image]
+            }
+        }
+    }
+
+    /// Every page to Photos, rendered and encoded one at a time.
+    private func saveFullBook(_ pages: [BookPage], style: BookStyle, hero: AssetID?) async {
+        await gate.export(.memoryBookExport, entry: .memoryBook, premium: premium, heroAssetID: hero) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await export.saveEncoded(store: store, analytics: analytics, properties: ["kind": "memory_book"], message: "Saving \(pages.count) pages…", onSaved: succeeded) {
+                var jpegs: [Data] = []
+                for page in pages {
+                    try Task.checkCancellation()
+                    let image = try await MemoryBookExport.render(page, style: style, using: images)
+                    guard let data = await ExportController.encode([image]).first else { throw CreationExportError.renderFailed }
+                    jpegs.append(data)
+                }
+                return jpegs
+            }
         }
     }
 }

@@ -14,7 +14,7 @@ final class CreationFlowUITests: XCTestCase {
     @MainActor
     func testCreationFlows() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "premium"]
         app.launch()
         try completeOnboarding(app)
 

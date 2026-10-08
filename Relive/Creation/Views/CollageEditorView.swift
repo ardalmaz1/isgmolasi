@@ -12,6 +12,8 @@ struct CollageEditorView: View {
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.analytics) private var analytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(PremiumStore.self) private var premium
+    @State private var gate = PremiumGate()
     @State private var picker: PickerPurpose?
     @State private var libraryPurpose: PickerPurpose?
     @State private var confirmsDelete = false
@@ -120,6 +122,7 @@ struct CollageEditorView: View {
         .task(id: model.photoIDs) {
             await model.loadPreviews(using: CreationImageSource(loader: loader))
         }
+        .premiumPaywall(gate)
         .sheet(item: $picker) { purpose in
             NavigationStack {
                 switch purpose {
@@ -377,19 +380,31 @@ struct CollageEditorView: View {
         }
     }
 
+    /// Save and Share go through the Premium gate: the first creation is free, then Premium.
+    /// Editing and the preview never do.
     private func save() async {
-        let images = CreationImageSource(loader: loader)
-        await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties, onSaved: model.markExported) {
-            let image = try await model.renderExport(using: images)
-            return [image]
+        await gate.export(.collageExport, entry: .collageExport, premium: premium, heroAssetID: model.photoIDs.first) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties, onSaved: {
+                model.markExported()
+                succeeded()
+            }) {
+                let image = try await model.renderExport(using: images)
+                return [image]
+            }
         }
     }
 
     private func share() async {
-        let images = CreationImageSource(loader: loader)
-        await model.export.share(name: "Relive Collage", analytics: analytics, properties: model.analyticsProperties, onShared: model.markExported) {
-            let image = try await model.renderExport(using: images)
-            return [image]
+        await gate.export(.collageExport, entry: .collageExport, premium: premium, heroAssetID: model.photoIDs.first) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await model.export.share(name: "Relive Collage", analytics: analytics, properties: model.analyticsProperties, onShared: {
+                model.markExported()
+                succeeded()
+            }) {
+                let image = try await model.renderExport(using: images)
+                return [image]
+            }
         }
     }
 }

@@ -4,6 +4,7 @@ import SwiftUI
 struct RootView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
+    @Environment(PremiumStore.self) private var premium
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -20,6 +21,8 @@ struct RootView: View {
         .tint(Palette.accent)
         .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }
+            // Listens for transaction updates once, and re-checks entitlements on every return.
+            premium.start()
             Task {
                 await store.refreshAvailability()
                 // Keep each memory's date and place in step with the photo library, and repair

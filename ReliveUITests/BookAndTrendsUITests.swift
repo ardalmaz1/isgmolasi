@@ -15,7 +15,7 @@ final class BookAndTrendsUITests: XCTestCase {
     @MainActor
     func testTrendsAndMemoryBook() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "premium"]
         app.launch()
         try completeOnboarding(app)
 
@@ -140,7 +140,7 @@ final class BookAndTrendsUITests: XCTestCase {
         // Reopen the app: the book is still there, and opens
         app.terminate()
         let relaunched = XCUIApplication()
-        relaunched.launchArguments += ["-ReliveUITestImportAllPhotos"]
+        relaunched.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "premium"]
         relaunched.launch()
         XCTAssertTrue(relaunched.tabBars.buttons["Create"].waitForExistence(timeout: 30), "Main app did not appear after relaunch")
         relaunched.tabBars.buttons["Create"].tap()

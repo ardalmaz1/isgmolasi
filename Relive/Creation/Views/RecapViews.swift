@@ -47,10 +47,15 @@ struct MonthlyRecapView: View {
     @Environment(StoryStore.self) private var store
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.analytics) private var analytics
+    @Environment(PremiumStore.self) private var premium
     @State private var export = ExportController()
+    @State private var gate = PremiumGate()
 
     var body: some View {
         let recap = MonthlyRecapBuilder(library: store.creationLibrary).recap(for: month)
+        // Free: the month's counts, its first highlights and every moment (the archive is never
+        // gated). Premium: every highlight, its trips, creating from it, and the shareable card.
+        let isFull = premium.hasAccess(to: .fullMonthlyRecap)
         let headline = CreationText.title(.month(month)) ?? CreationText.monthTitle(month)
 
         ScrollView {
@@ -70,22 +75,34 @@ struct MonthlyRecapView: View {
                         MomentLinks(moments: recap.moments)
                     }
                 } else {
-                    PhotoSpread(photoIDs: recap.highlights(limit: 5))
+                    PhotoSpread(photoIDs: recap.highlights(limit: isFull ? 5 : 3))
 
-                    CreationActions(
-                        export: export,
-                        actions: [
-                            .init(title: "Make a Collage", identifier: "recapCollage") {
-                                app.startCreation(.collage, from: .source(.month(month)), origin: "monthly_recap")
-                            },
-                            .init(title: "Create a Story", identifier: "recapStory") {
-                                app.startCreation(.story, from: .source(.month(month)), origin: "monthly_recap")
-                            },
-                        ]
-                    )
+                    if isFull {
+                        CreationActions(
+                            export: export,
+                            actions: [
+                                .init(title: "Make a Collage", identifier: "recapCollage") {
+                                    app.startCreation(.collage, from: .source(.month(month)), origin: "monthly_recap")
+                                },
+                                .init(title: "Create a Story", identifier: "recapStory") {
+                                    app.startCreation(.story, from: .source(.month(month)), origin: "monthly_recap")
+                                },
+                            ]
+                        )
 
-                    ForEach(recap.chapters) { chapter in
-                        TripHeader(chapter: chapter, coverID: tripCover(chapter, in: recap.moments))
+                        ForEach(recap.chapters) { chapter in
+                            TripHeader(chapter: chapter, coverID: tripCover(chapter, in: recap.moments))
+                        }
+                    } else {
+                        PremiumTeaser(
+                            title: "See the whole month",
+                            message: "The full recap — every highlight, the trips, a collage or story made from this month, and a card to share — is part of Relive Premium.",
+                            actionTitle: "See the Full Recap",
+                            identifier: "recapUnlock"
+                        ) {
+                            gate.showPaywall(.monthlyRecap, premium: premium, heroAssetID: recap.highlights(limit: 1).first)
+                        }
+                        ExportStatusView(controller: export)
                     }
 
                     VStack(alignment: .leading, spacing: Spacing.s) {
@@ -108,6 +125,7 @@ struct MonthlyRecapView: View {
                 }
             }
         }
+        .premiumPaywall(gate)
         .onAppear { analytics.track(.recapOpened, ["kind": "month", "sufficient": recap.isSufficient ? "true" : "false"]) }
     }
 
@@ -119,16 +137,18 @@ struct MonthlyRecapView: View {
     private func share(_ recap: MonthlyRecap, headline: String) async {
         let library = store.creationLibrary
         let source = CreationImageSource(loader: loader)
-        await export.share(name: headline, analytics: analytics, properties: ["kind": "monthly_recap"]) {
-            let image = try await SummaryCardExport.render(
-                eyebrow: String(month.year),
-                title: headline,
-                counts: CreationText.counts(recap.statistics),
-                photoIDs: recap.highlights(limit: 4),
-                library: library,
-                images: source
-            )
-            return [image]
+        await gate.export(.fullMonthlyRecap, entry: .monthlyRecap, premium: premium, heroAssetID: recap.highlights(limit: 1).first) { succeeded in
+            await export.share(name: headline, analytics: analytics, properties: ["kind": "monthly_recap"], onShared: succeeded) {
+                let image = try await SummaryCardExport.render(
+                    eyebrow: String(month.year),
+                    title: headline,
+                    counts: CreationText.counts(recap.statistics),
+                    photoIDs: recap.highlights(limit: 4),
+                    library: library,
+                    images: source
+                )
+                return [image]
+            }
         }
     }
 }
@@ -179,12 +199,17 @@ struct OurYearView: View {
     @Environment(StoryStore.self) private var store
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.analytics) private var analytics
+    @Environment(PremiumStore.self) private var premium
     @State private var export = ExportController()
+    @State private var gate = PremiumGate()
     @State private var isAddingMemories = false
 
     var body: some View {
         let library = store.creationLibrary
         let review = YearInReviewBuilder(library: library).review(for: year)
+        // Free: the cover, the counts, the first memory and the first month. Premium: every
+        // month, the closing, creating from the year, and the shareable card.
+        let isFull = premium.hasAccess(to: .fullYearInReview)
 
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.xl) {
@@ -202,7 +227,9 @@ struct OurYearView: View {
                             .accessibilityHidden(true)
                     }
 
-                    actions(showsStatus: true)
+                    if isFull {
+                        actions(showsStatus: true)
+                    }
 
                     // Literally the earliest memory taken this year, dated by that photo.
                     if let first = review.firstMemory, let moment = review.firstMoment {
@@ -216,18 +243,30 @@ struct OurYearView: View {
                     }
 
                     // Month by month, in order; months without memories aren't shown.
-                    ForEach(review.months) { section in
+                    ForEach(isFull ? review.months : Array(review.months.prefix(1))) { section in
                         MonthSection(section: section, coverForTrip: { chapter in
                             section.moments.first { $0.chapterID == chapter.id }.flatMap(library.lead(of:))
                         })
                     }
 
-                    VStack(alignment: .leading, spacing: Spacing.m) {
-                        Hairline()
-                        Text("And that’s our \(String(year)).")
-                            .font(Typography.title)
-                            .foregroundStyle(Palette.textPrimary)
-                        actions(showsStatus: false)
+                    if isFull {
+                        VStack(alignment: .leading, spacing: Spacing.m) {
+                            Hairline()
+                            Text("And that’s our \(String(year)).")
+                                .font(Typography.title)
+                                .foregroundStyle(Palette.textPrimary)
+                            actions(showsStatus: false)
+                        }
+                    } else {
+                        PremiumTeaser(
+                            title: "Your \(String(year)) is ready",
+                            message: "See all \(Counted.text(review.months.count, "month", "months")) of \(String(year)) with memories, the closing, a story or collage of the year, and a card to share, with Relive Premium.",
+                            actionTitle: "Relive Your Full Year",
+                            identifier: "yearUnlock"
+                        ) {
+                            gate.showPaywall(.ourYear, premium: premium, heroAssetID: library.best(review.highlights(limit: 12)))
+                        }
+                        ExportStatusView(controller: export)
                     }
                 }
             }
@@ -245,6 +284,7 @@ struct OurYearView: View {
                 }
             }
         }
+        .premiumPaywall(gate)
         .addMemoriesFlow(isPresented: $isAddingMemories)
         .onAppear { analytics.track(.recapOpened, ["kind": "year", "sufficient": review.isSufficient ? "true" : "false"]) }
     }
@@ -303,16 +343,18 @@ struct OurYearView: View {
     private func share(_ review: YearInReview) async {
         let library = store.creationLibrary
         let source = CreationImageSource(loader: loader)
-        await export.share(name: "Our \(year)", analytics: analytics, properties: ["kind": "our_year"]) {
-            let image = try await SummaryCardExport.render(
-                eyebrow: app.relationship?.userName == nil ? nil : app.coupleName,
-                title: "Our \(year)",
-                counts: CreationText.counts(review.statistics, includeTrips: true),
-                photoIDs: review.highlights(limit: 6),
-                library: library,
-                images: source
-            )
-            return [image]
+        await gate.export(.fullYearInReview, entry: .ourYear, premium: premium, heroAssetID: library.best(review.highlights(limit: 12))) { succeeded in
+            await export.share(name: "Our \(year)", analytics: analytics, properties: ["kind": "our_year"], onShared: succeeded) {
+                let image = try await SummaryCardExport.render(
+                    eyebrow: app.relationship?.userName == nil ? nil : app.coupleName,
+                    title: "Our \(year)",
+                    counts: CreationText.counts(review.statistics, includeTrips: true),
+                    photoIDs: review.highlights(limit: 6),
+                    library: library,
+                    images: source
+                )
+                return [image]
+            }
         }
     }
 }

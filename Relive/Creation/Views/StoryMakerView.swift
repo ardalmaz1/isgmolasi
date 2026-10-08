@@ -12,6 +12,8 @@ struct StoryMakerView: View {
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.analytics) private var analytics
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(PremiumStore.self) private var premium
+    @State private var gate = PremiumGate()
     @State private var replacing: Replacement?
     @State private var libraryReplacement: Replacement?
     @State private var confirmsDelete = false
@@ -58,6 +60,7 @@ struct StoryMakerView: View {
         .task(id: model.design?.photoIDs) {
             await model.loadPreviews(using: CreationImageSource(loader: loader))
         }
+        .premiumPaywall(gate)
         .sheet(item: $replacing) { replacement in
             NavigationStack {
                 MemoryPickerView(
@@ -251,19 +254,31 @@ struct StoryMakerView: View {
         all ? model.cards.map(\.id) : [model.currentCard?.id].compactMap { $0 }
     }
 
+    /// Save and Share go through the Premium gate: the first creation is free, then Premium.
+    /// Designing, editing and previewing cards never do.
     private func save(all: Bool) async {
         let ids = targetIDs(all: all)
-        let images = CreationImageSource(loader: loader)
-        await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties, onSaved: model.markExported) {
-            try await model.renderExport(cardIDs: ids, using: images)
+        await gate.export(.storyExport, entry: .storyExport, premium: premium, heroAssetID: model.design?.photoIDs.first) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties, onSaved: {
+                model.markExported()
+                succeeded()
+            }) {
+                try await model.renderExport(cardIDs: ids, using: images)
+            }
         }
     }
 
     private func share(all: Bool) async {
         let ids = targetIDs(all: all)
-        let images = CreationImageSource(loader: loader)
-        await model.export.share(name: "Relive Story", analytics: analytics, properties: model.analyticsProperties, onShared: model.markExported) {
-            try await model.renderExport(cardIDs: ids, using: images)
+        await gate.export(.storyExport, entry: .storyExport, premium: premium, heroAssetID: model.design?.photoIDs.first) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await model.export.share(name: "Relive Story", analytics: analytics, properties: model.analyticsProperties, onShared: {
+                model.markExported()
+                succeeded()
+            }) {
+                try await model.renderExport(cardIDs: ids, using: images)
+            }
         }
     }
 }

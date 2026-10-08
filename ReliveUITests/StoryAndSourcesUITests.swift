@@ -15,7 +15,7 @@ final class StoryAndSourcesUITests: XCTestCase {
     @MainActor
     func testStoryMakerPhotoLibraryAndOurYear() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveUITestPhotoLibraryPicks"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveUITestPhotoLibraryPicks", "-ReliveStoreKit", "premium"]
         app.launch()
         try completeOnboarding(app)
         app.tabBars.buttons["Create"].tap()

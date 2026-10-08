@@ -14,7 +14,7 @@ final class IntegrityUITests: XCTestCase {
     @MainActor
     func testFavoritesPlusAndDraftAfterRelaunch() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "premium"]
         app.launch()
         try completeOnboarding(app)
 
@@ -72,7 +72,7 @@ final class IntegrityUITests: XCTestCase {
 
         // Relaunch: the draft is there and resumes as it was; favorites are still there
         let relaunched = XCUIApplication()
-        relaunched.launchArguments += ["-ReliveUITestImportAllPhotos"]
+        relaunched.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "premium"]
         relaunched.launch()
         XCTAssertTrue(relaunched.tabBars.buttons["Create"].waitForExistence(timeout: 30), "Main app did not appear after relaunch")
         relaunched.tabBars.buttons["Create"].tap()

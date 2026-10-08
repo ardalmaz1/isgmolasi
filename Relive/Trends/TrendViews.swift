@@ -407,6 +407,8 @@ struct TrendStudioView: View {
     @Environment(StoryStore.self) private var store
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.analytics) private var analytics
+    @Environment(PremiumStore.self) private var premium
+    @State private var gate = PremiumGate()
 
     var body: some View {
         VStack(spacing: Spacing.m) {
@@ -473,6 +475,7 @@ struct TrendStudioView: View {
                 Button("Close", action: onClose)
             }
         }
+        .premiumPaywall(gate)
         .task {
             await model.load(using: CreationImageSource(loader: loader))
         }
@@ -482,21 +485,26 @@ struct TrendStudioView: View {
         Dictionary(uniqueKeysWithValues: model.photoIDs.compactMap { id in store.assets[id]?.creationDate.map { (id, $0) } })
     }
 
+    /// Save and Share go through the Premium gate: the first creation is free, then Premium.
     private func save() async {
-        let images = CreationImageSource(loader: loader)
         let dates = self.dates
-        await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties) {
-            let image = try await model.renderExport(using: images, dates: dates)
-            return [image]
+        await gate.export(.trendExport, entry: .trendExport, premium: premium, heroAssetID: model.photoIDs.first) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await model.export.save(store: store, analytics: analytics, properties: model.analyticsProperties, onSaved: succeeded) {
+                let image = try await model.renderExport(using: images, dates: dates)
+                return [image]
+            }
         }
     }
 
     private func share() async {
-        let images = CreationImageSource(loader: loader)
         let dates = self.dates
-        await model.export.share(name: model.trend.name, analytics: analytics, properties: model.analyticsProperties) {
-            let image = try await model.renderExport(using: images, dates: dates)
-            return [image]
+        await gate.export(.trendExport, entry: .trendExport, premium: premium, heroAssetID: model.photoIDs.first) { succeeded in
+            let images = CreationImageSource(loader: loader)
+            await model.export.share(name: model.trend.name, analytics: analytics, properties: model.analyticsProperties, onShared: succeeded) {
+                let image = try await model.renderExport(using: images, dates: dates)
+                return [image]
+            }
         }
     }
 }

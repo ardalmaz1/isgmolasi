@@ -177,6 +177,28 @@ final class ExportController {
         }
     }
 
+    /// Saves already-encoded JPEGs (for long exports that render and encode one image at a time,
+    /// so a whole Memory Book never sits in memory as full-size images).
+    func saveEncoded(
+        store: StoryStore,
+        analytics: any AnalyticsTracking,
+        properties: [String: String],
+        message: String = "Saving…",
+        onSaved: @escaping @MainActor () -> Void = {},
+        render: @escaping @MainActor () async throws -> [Data]
+    ) async {
+        let saver = self.saver
+        await run(message: message) {
+            let jpegs = try await render()
+            guard !jpegs.isEmpty else { throw CreationExportError.renderFailed }
+            let ids = try await saver.save(jpegs)
+            store.recordCreatedAssets(ids)
+            analytics.track(.creationExported, properties.merging(["destination": "photos", "images": String(jpegs.count)]) { $1 })
+            onSaved()
+            return jpegs.count == 1 ? "Saved to Photos" : "\(jpegs.count) images saved to Photos"
+        }
+    }
+
     /// Renders with `render`, encodes, and opens the share sheet. `onShared` runs only if
     /// something was actually shared.
     func share(
