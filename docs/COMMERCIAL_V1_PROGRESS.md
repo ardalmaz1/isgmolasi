@@ -23,18 +23,31 @@ run `git status` and `git log --oneline -10`.
 | 13 App Store UX | Done (disclosure, trial only if StoreKit reports eligibility) |
 | 14 Accessibility | Done in code; needs a VoiceOver pass on device |
 | 15 Persistence | Done |
-| 16 Tests | Core done (18 new). Hosted and UI tests: in progress |
-| 17 StoreKit config | Pending |
-| 18 Design polish | Done in code; screenshots pending |
-| 20 Final report | Pending |
+| 16 Tests | Done: core +18, hosted +14, UI +1 (`CommercialUITests`) |
+| 17 StoreKit config | Done (`StoreKit/Relive.storekit`, placeholder prices; select it in the scheme to use) |
+| 18 Design polish | Done; screenshots M01–M09 reviewed from CI |
+| 20 Final report | Done |
 
-## Test results so far
+## Test results (CI run 37849218391, commit b919585)
 
 - ReliveCore (Linux): 271 passed.
-- App sources parse; type-checking and simulator results come from CI.
+- Builds: Xcode 16.4 and Xcode 26 both succeeded.
+- Hosted tests: 95 passed (14 new).
+- UI tests: 7 passed (1 new), with screenshots M01–M09.
+
+## Bugs found and fixed along the way
+
+- Two of Relive's own type names (`SubscriptionPeriod`, `SubscriptionRenewalState`) clashed
+  with StoreKit's. `StoreKitClient.swift` now writes every core type as `ReliveCore.…`.
+- An accessibility identifier on the paywall's container overrode its buttons' own identifiers.
+
+## Still required outside the code
+
+- App Store Connect setup (see `docs/COMMERCIAL.md`).
+- A privacy policy URL in `CommercialLinks.privacyPolicy`.
+- A sandbox purchase pass on a physical device.
 
 ## Next action
 
-Add the hosted tests (`ReliveTests/PremiumAppTests.swift`) and the UI test
-(`ReliveUITests/CommercialUITests.swift`), the StoreKit configuration file, and
-`docs/COMMERCIAL.md`. Then get CI green.
+Commercial v1 is complete. Next: a physical-device sandbox test of purchase, restore and
+refunds, then App Store Connect configuration.
