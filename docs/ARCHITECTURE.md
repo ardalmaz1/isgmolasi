@@ -191,3 +191,27 @@ export infrastructure. `StoryStore` gained the saved books; `StoryRepository` ga
 Persistence is additive (one new entity, `StoredMemoryBook`) and migrates automatically; a
 hosted test opens a v0.2-shaped store with the v0.3 schema. See
 [MEMORY_BOOK.md](MEMORY_BOOK.md) and [TRENDS.md](TRENDS.md).
+
+## Commercial v1: Premium
+
+`ReliveCore/Premium` holds the rules (capabilities, the free creation, entitlement resolution
+from verified StoreKit data, paywall wording). `Relive/Premium` holds the StoreKit 2 client
+behind `StoreKitClient`, the single `PremiumStore` (injected from `AppEnvironment`), the
+per-screen `PremiumGate` and the paywall. See [COMMERCIAL.md](COMMERCIAL.md).
+
+## Intelligence v1: Memory Intelligence
+
+`ReliveCore/Intelligence` turns a group of memories into a `MemorySelectionPlan`.
+
+- **What it reuses:** the signals the story already has (`AssetScorer`, `DuplicateDetector`
+  fingerprints, moments, covers, favorites, the library calendar).
+- **What the plan contains:** a selection with near-duplicates collapsed and diversity spread
+  across moments, days, places and shapes; a lead; the period; a factual title; a chronological
+  sequence with sections; and creation recommendations.
+- **Properties:** deterministic, pixel-free and Linux-tested.
+- **Where it's used:** `CreationLibrary.initialPhotos` (automatic sources), `StoryDesigner`
+  (photos and lead), `BookLayoutEngine` (default cover) and collage "Make it for me" (lead
+  order).
+- **What it leaves alone:** chosen photos are never swapped.
+
+The app only installs a DEBUG log sink. See [MEMORY_INTELLIGENCE.md](MEMORY_INTELLIGENCE.md).

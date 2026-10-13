@@ -14,6 +14,22 @@ Principles: **Remember → Appreciate → Live.** AI organizes the memory; peopl
 No scores, streaks, comparisons, guilt or claims about the relationship. Titles are factual
 ("Kaş • August 2025").
 
+## Intelligence v1 (phase 1) — Memory Intelligence
+
+Creations now choose fewer, better photos.
+
+- **Duplicates:** near-identical shots collapse to one (a favorite stands for its group), and
+  re-saved copies are left out.
+- **Spread:** the photos cover the moments, days, places and shapes the source really has.
+- **Cover and lead:** these follow the user's cover, then favorites, then the moment's cover,
+  then image quality. Older memories aren't ranked lower.
+- **Titles:** the plan's period and title are factual ("Bergama · August 2025", "Our 2026 ·
+  August – October 2026", "Our Memories · 2025 – 2026"), never feelings.
+- **Chosen photos:** these are never swapped.
+
+Everything is on-device and deterministic. Collage, Story Maker and Memory Book share it.
+Details: [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md).
+
 ## Commercial v1 — Relive Premium
 
 **Memories are free. Creating more from them is Premium.**
@@ -206,6 +222,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md) — Memory Intelligence: signals
+  used and not used, ranking, duplicates and diversity, periods, factual titles, sequences,
+  recommendations, user intent, performance, privacy, future AI and Movie seams.
 - [docs/COMMERCIAL.md](docs/COMMERCIAL.md) — Relive Premium: free vs Premium, the free creation,
   the paywall, StoreKit 2 entitlements, restore, errors, analytics, tests and App Store Connect
   setup.
