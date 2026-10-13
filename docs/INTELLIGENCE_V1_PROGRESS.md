@@ -25,8 +25,8 @@ run `git status` and `git log --oneline -10`.
 - the DEBUG `IntelligenceLog` sink (`Relive/Services/MetadataDiagnostics.swift`, installed in
   `AppEnvironment.live()`)
 
-**Tests:** `Packages/ReliveCore/Tests/ReliveCoreTests/MemoryIntelligenceTests.swift`, 30 tests
-covering fixtures A–K, user intent, periods and titles, plans, integration, and creation minimums (32 in all).
+**Tests:** `Packages/ReliveCore/Tests/ReliveCoreTests/MemoryIntelligenceTests.swift`, 32 tests
+covering fixtures A–K, user intent, periods and titles, plans, integration, and creation minimums.
 
 **Docs:** `docs/MEMORY_INTELLIGENCE.md`, plus additions to `docs/ARCHITECTURE.md` and the
 README.
@@ -34,8 +34,13 @@ README.
 ## Test results
 
 - ReliveCore on Linux: 303 passed (271 before this phase; 32 new; no existing test changed).
-- The app build, hosted tests and UI tests come from CI on the final commit (see the final
-  report).
+- CI run 38473871505 on commit a98dde2 (all four jobs green):
+  - builds with Xcode 16.4 and Xcode 26;
+  - 95 hosted tests;
+  - 7 UI tests.
+- The first full CI run of the integration found one regression, now fixed: a collage from a
+  look-alike moment had collapsed to one photo. Near-identical photos now fill in up to each
+  creation's minimum.
 
 ## Next step (Phase 2)
 

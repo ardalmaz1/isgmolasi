@@ -99,6 +99,10 @@ the same output.
 - **A group contributes a second photo only to reach the target's minimum.** For example, a
   story needs three photos and the moment is one burst. When that happens it's recorded as a
   `repeatedSimilar` limitation.
+- **Creation minimums are honored.** `CreationLibrary.initialPhotos` asks for enough photos for
+  a collage or story (3), and books ask for 6. A source the pickers offer is therefore never
+  turned into "not enough photos" by de-duplication. Simulator CI caught this case: a moment
+  whose featured photos still looked alike.
 
 ## Diversity
 
