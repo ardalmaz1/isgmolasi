@@ -21,6 +21,9 @@ public struct IntelligenceRequest: Hashable, Sendable {
     public var userTitle: String?
     /// Overrides the target's maximum.
     public var limit: Int?
+    /// Overrides the target's minimum: near-identical photos fill in up to it when there aren't
+    /// enough distinct ones (a creation that needs three photos still gets three).
+    public var minimum: Int?
 
     public init(
         pool: [AssetID],
@@ -29,7 +32,8 @@ public struct IntelligenceRequest: Hashable, Sendable {
         required: [AssetID] = [],
         preferredLead: AssetID? = nil,
         userTitle: String? = nil,
-        limit: Int? = nil
+        limit: Int? = nil,
+        minimum: Int? = nil
     ) {
         self.pool = pool
         self.target = target
@@ -38,6 +42,7 @@ public struct IntelligenceRequest: Hashable, Sendable {
         self.preferredLead = preferredLead
         self.userTitle = userTitle
         self.limit = limit
+        self.minimum = minimum
     }
 }
 
@@ -148,15 +153,15 @@ public struct MemoryIntelligenceEngine: Sendable {
 
     /// A plan for a creation source: automatic for moments, trips, months, years and favorites
     /// (the moment's cover is always included); the user's own photos for `.photos`.
-    public func plan(for source: CreationSource, target: IntelligenceTarget, limit: Int? = nil) -> MemorySelectionPlan {
+    public func plan(for source: CreationSource, target: IntelligenceTarget, limit: Int? = nil, minimum: Int? = nil) -> MemorySelectionPlan {
         switch source {
         case .photos(let ids):
-            return plan(IntelligenceRequest(pool: ids, target: target, mode: .userSelected, limit: limit))
+            return plan(IntelligenceRequest(pool: ids, target: target, mode: .userSelected, limit: limit, minimum: minimum))
         case .moment(let id):
             let lead = library.story.moment(id: id).flatMap(library.lead(of:))
-            return plan(IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, required: lead.map { [$0] } ?? [], limit: limit))
+            return plan(IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, required: lead.map { [$0] } ?? [], limit: limit, minimum: minimum))
         default:
-            return plan(IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, limit: limit))
+            return plan(IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, limit: limit, minimum: minimum))
         }
     }
 
@@ -179,7 +184,7 @@ public struct MemoryIntelligenceEngine: Sendable {
 
         let clusters = SimilarityClusters(candidates: shown.filter { !duplicates.contains($0.assetID) }, library: library, detector: detector)
         let maximum = max(0, request.limit ?? request.target.range.upperBound)
-        let minimum = min(request.target.range.lowerBound, maximum)
+        let minimum = min(request.minimum ?? request.target.range.lowerBound, maximum)
         var chosen: [MemoryCandidate]
         var collapsed: [AssetID: AssetID] = [:]
         var alternates: [MemoryCandidate] = []

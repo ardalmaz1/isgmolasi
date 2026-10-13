@@ -258,7 +258,11 @@ public struct CreationLibrary: Sendable {
     /// the moments, days, places and shapes the source really has, the moment's cover included
     /// — in the order they were taken. For chosen photos it is those photos (usable ones only),
     /// never swapped for others.
-    public func initialPhotos(for source: CreationSource, limit: Int) -> [AssetID] {
+    ///
+    /// Near-identical photos fill in up to `minimum` (default: enough for a collage or story)
+    /// when the source doesn't have that many distinct ones — a source the pickers offer is
+    /// never turned into "not enough photos" by de-duplication.
+    public func initialPhotos(for source: CreationSource, limit: Int, minimum: Int = CreationLimits.story.lowerBound) -> [AssetID] {
         switch source {
         case .photos(let ids):
             var seen = Set<AssetID>()
@@ -271,7 +275,7 @@ public struct CreationLibrary: Sendable {
         guard limit > 0 else { return [] }
         var engine = MemoryIntelligenceEngine(library: self)
         engine.logsDiagnostics = limit > 1
-        return engine.plan(for: source, target: .general(limit: limit)).selected
+        return engine.plan(for: source, target: .general(limit: limit), minimum: min(minimum, limit)).selected
     }
 
     /// Memories favorited in Relive that can go into a creation (usable, from visible moments),

@@ -157,7 +157,7 @@ public struct MemoryBookBuilder: Sendable {
         case .photos(let ids):
             return library.initialPhotos(for: source, limit: min(ids.count, BookLimits.maximumPhotos))
         default:
-            return library.initialPhotos(for: source, limit: BookLimits.maximumPhotos)
+            return library.initialPhotos(for: source, limit: BookLimits.maximumPhotos, minimum: BookLimits.minimumPhotos)
                 .sorted(by: library.chronologicalOrder)
         }
     }

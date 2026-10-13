@@ -26,14 +26,14 @@ run `git status` and `git log --oneline -10`.
   `AppEnvironment.live()`)
 
 **Tests:** `Packages/ReliveCore/Tests/ReliveCoreTests/MemoryIntelligenceTests.swift`, 30 tests
-covering fixtures A–K, user intent, periods and titles, plans, and integration.
+covering fixtures A–K, user intent, periods and titles, plans, integration, and creation minimums (32 in all).
 
 **Docs:** `docs/MEMORY_INTELLIGENCE.md`, plus additions to `docs/ARCHITECTURE.md` and the
 README.
 
 ## Test results
 
-- ReliveCore on Linux: 301 passed (271 before this phase; 30 new; no existing test changed).
+- ReliveCore on Linux: 303 passed (271 before this phase; 32 new; no existing test changed).
 - The app build, hosted tests and UI tests come from CI on the final commit (see the final
   report).
 

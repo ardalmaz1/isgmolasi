@@ -581,3 +581,31 @@ struct MemoryIntelligenceIntegrationTests {
         #expect(BookLayoutEngine(library: library).layout(book).pages.first?.slots.first?.assetID == "small-4", "the user's cover wins")
     }
 }
+
+@Suite("Memory intelligence: minimums")
+struct MemoryIntelligenceMinimumTests {
+    /// Regression (simulator CI): a moment whose featured photos still look alike (Relive's
+    /// star grouping can leave two look-alikes featured) must not become "not enough photos".
+    @Test func lookAlikeMomentsStillStartACollageStoryAndBook() throws {
+        let start = date(2026, 3, 1, 12)
+        let shots = (0..<6).map { IntelligenceFixture.Shot(id: "alike-\($0)", date: start.addingTimeInterval(Double($0) * 20), look: IntelligenceFixture.near(0, drift: Float($0) * 0.02)) }
+        let fixture = IntelligenceFixture(moments: [.init(key: "alike", title: "March Afternoon", shots: shots)])
+        let library = fixture.library
+        let source = CreationSource.moment(IntelligenceFixture.momentID("alike"))
+
+        let collage = library.initialPhotos(for: source, limit: CreationLimits.collagePreselection)
+        #expect(collage.count >= CreationLimits.collage.lowerBound)
+        #expect(collage.count >= CreationLimits.story.lowerBound)
+        let story = try StoryDesigner(library: library).design(source: source, style: .minimal).get()
+        #expect(story.cards.flatMap(\.photos).count >= CreationLimits.story.lowerBound)
+        let book = try MemoryBookBuilder(library: library).makeBook(from: source, now: date(2026, 10, 13)).get()
+        #expect(book.photoIDs.count >= BookLimits.minimumPhotos)
+    }
+
+    @Test func twoPhotoMomentsStillMakeACollage() {
+        let start = date(2026, 3, 1, 12)
+        let shots = (0..<2).map { IntelligenceFixture.Shot(id: "pair-\($0)", date: start.addingTimeInterval(Double($0) * 20), look: IntelligenceFixture.near(0, drift: Float($0) * 0.02)) }
+        let library = IntelligenceFixture(moments: [.init(key: "pair", title: "March Afternoon", shots: shots)]).library
+        #expect(library.initialPhotos(for: .moment(IntelligenceFixture.momentID("pair")), limit: CreationLimits.collagePreselection).count == 2)
+    }
+}
