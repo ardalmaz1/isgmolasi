@@ -161,3 +161,18 @@ enum EmbeddedDateAudit {
     }
 }
 #endif
+
+#if DEBUG
+/// Development builds only: why Memory Intelligence picked what it did, one line per plan
+/// (counts and reasons — no identifiers, places, coordinates or notes). Console filter:
+/// `intelligence`.
+enum IntelligenceLog {
+    private static let logger = Logger(subsystem: "app.relive", category: "intelligence")
+
+    static func install() {
+        IntelligenceDiagnostics.setSink { line in
+            logger.notice("\(line, privacy: .public)")
+        }
+    }
+}
+#endif

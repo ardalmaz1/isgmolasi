@@ -173,12 +173,16 @@ final class CollageEditorModel {
     // MARK: - Make it for me
 
     /// Chooses a style, a shape and an order. Pressing again offers the next-best distinct look.
+    /// Only the order, style and shape change: the user's photos stay the user's photos.
     func makeItForMe() {
+        // Memory Intelligence picks the lead (a user's cover, a favorite, a moment's cover, then
+        // the best photo); only its order is used here.
+        let ranks = MemoryIntelligenceEngine(library: library).leadRanks(photoIDs, target: .collage)
         let infos = photoIDs.map { id in
             CollagePhotoInfo(
                 id: id,
                 aspectRatio: measuredAspects[id] ?? library.assets[id]?.aspectRatio ?? 1,
-                quality: library.quality(id),
+                quality: -Double(ranks[id] ?? photoIDs.count),
                 date: library.assets[id]?.creationDate
             )
         }

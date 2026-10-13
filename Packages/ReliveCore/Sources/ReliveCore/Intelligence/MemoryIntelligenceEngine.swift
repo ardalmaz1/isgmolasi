@@ -129,6 +129,8 @@ public struct MemoryIntelligenceEngine: Sendable {
     public var ranker: MemoryRanker
     public var detector: DuplicateDetector
     public var locale: Locale
+    /// Whether plans go to the DEBUG diagnostics sink (off for quick lookups like a cover).
+    public var logsDiagnostics = true
 
     public init(
         library: CreationLibrary,
@@ -272,7 +274,7 @@ public struct MemoryIntelligenceEngine: Sendable {
             recommendations: recommendations,
             limitations: limitations
         )
-        IntelligenceDiagnostics.emit(plan.diagnosticsLine)
+        if logsDiagnostics { IntelligenceDiagnostics.emit(plan.diagnosticsLine) }
         return plan
     }
 
@@ -282,6 +284,12 @@ public struct MemoryIntelligenceEngine: Sendable {
     /// then image quality (and, for stories, a tall photo).
     public func lead(among ids: [AssetID], target: IntelligenceTarget) -> AssetID? {
         chooseLead(among: MemoryCandidate.build(ids, library: library).filter { $0.isAvailable && $0.isUsable }, preferred: nil, target: target).id
+    }
+
+    /// Each photo's place in the lead ranking (0 = best), for code that only needs an order —
+    /// the suitability itself never leaves the engine.
+    public func leadRanks(_ ids: [AssetID], target: IntelligenceTarget) -> [AssetID: Int] {
+        Dictionary(rankedLeads(ids, target: target).enumerated().map { ($0.element, $0.offset) }, uniquingKeysWith: { first, _ in first })
     }
 
     /// `ids` ranked as leads, best first (for "Make it for me" variations).

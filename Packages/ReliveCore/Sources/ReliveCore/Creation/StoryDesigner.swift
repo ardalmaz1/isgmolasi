@@ -139,14 +139,18 @@ public struct StoryDesigner: Sendable {
         case .photos(let ids):
             pool = library.initialPhotos(for: .photos(ids.filter { !excluding.contains($0) }), limit: Self.maximumPhotos)
         default:
+            // Memory Intelligence: fewer near-identical photos, every moment represented.
             let available = library.availablePhotos(for: source).filter { !excluding.contains($0) }
-            if case .moment(let id) = source, let moment = library.story.moment(id: id) {
-                let lead = library.lead(of: moment).flatMap { excluding.contains($0) ? nil : $0 }
-                pool = library.spreadPick(available, count: Self.maximumPhotos, include: lead)
-            } else {
-                let highlights = library.initialPhotos(for: source, limit: Self.maximumPhotos).filter { !excluding.contains($0) }
-                pool = highlights.count >= CreationLimits.story.lowerBound ? highlights : library.spreadPick(available, count: Self.maximumPhotos)
-            }
+            let lead: AssetID? = {
+                guard case .moment(let id) = source, let moment = library.story.moment(id: id) else { return nil }
+                return library.lead(of: moment).flatMap { excluding.contains($0) ? nil : $0 }
+            }()
+            var engine = MemoryIntelligenceEngine(library: library)
+            engine.logsDiagnostics = excluding.isEmpty
+            let plan = engine.plan(IntelligenceRequest(pool: available, target: .story, required: lead.map { [$0] } ?? [], limit: Self.maximumPhotos))
+            pool = plan.selected.count >= CreationLimits.story.lowerBound
+                ? plan.selected
+                : library.spreadPick(available, count: Self.maximumPhotos)
         }
         return pool.sorted(by: library.chronologicalOrder)
     }
@@ -307,18 +311,11 @@ public struct StoryDesigner: Sendable {
     }
 
     /// The opening photo: a strong one that suits a tall card. Variations take the next best.
+    /// Ranked by Memory Intelligence as a story lead (a user's cover, a favorite, the moment's
+    /// cover, then quality, with a tall photo preferred for the 9:16 card).
     private func leadPhoto(_ pool: [AssetID], variation: Int) -> AssetID {
-        let ranked = pool.sorted { lhs, rhs in
-            let left = leadScore(lhs), right = leadScore(rhs)
-            if abs(left - right) > 1e-9 { return left > right }
-            return library.chronologicalOrder(lhs, rhs)
-        }
+        let ranked = MemoryIntelligenceEngine(library: library).rankedLeads(pool, target: .story)
         return ranked[variation % min(3, ranked.count)]
-    }
-
-    private func leadScore(_ id: AssetID) -> Double {
-        let shape = library.creationAsset(id)?.orientation
-        return library.quality(id) + (shape?.isLandscape == true ? 0 : 0.15)
     }
 
     /// Consecutive photos of one moment (or, outside the story, one day).

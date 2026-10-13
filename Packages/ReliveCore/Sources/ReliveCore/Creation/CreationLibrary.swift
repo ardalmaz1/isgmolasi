@@ -253,8 +253,11 @@ public struct CreationLibrary: Sendable {
 
     // MARK: - Sources
 
-    /// The photos a new creation starts with. For a moment, month or year this is a
-    /// representative handful; for chosen photos it is those photos (still usable ones only).
+    /// The photos a new creation starts with. For a moment, trip, month, year or favorites this
+    /// is Memory Intelligence's selection — one photo per near-identical group, spread across
+    /// the moments, days, places and shapes the source really has, the moment's cover included
+    /// — in the order they were taken. For chosen photos it is those photos (usable ones only),
+    /// never swapped for others.
     public func initialPhotos(for source: CreationSource, limit: Int) -> [AssetID] {
         switch source {
         case .photos(let ids):
@@ -262,18 +265,13 @@ public struct CreationLibrary: Sendable {
             return Array(ids.filter { isUsable($0) && seen.insert($0).inserted }.prefix(limit))
         case .moment(let id):
             guard let moment = story.moment(id: id), isVisible(moment) else { return [] }
-            return spreadPick(usablePhotos(in: moment), count: limit, include: lead(of: moment))
-        case .trip(let id):
-            let summary = RecapSummary(moments: tripMoments(id), library: self)
-            let interleaved = summary.interleave(summary.moments.map { summary.ranked($0) })
-            return Array(interleaved.prefix(limit)).sorted(by: chronologicalOrder)
-        case .month(let month):
-            return MonthlyRecapBuilder(library: self).recap(for: month).highlights(limit: limit)
-        case .year(let year):
-            return YearInReviewBuilder(library: self).review(for: year).highlights(limit: limit)
-        case .favorites:
-            return spreadPick(favoritePhotos, count: limit)
+        case .trip, .month, .year, .favorites:
+            break
         }
+        guard limit > 0 else { return [] }
+        var engine = MemoryIntelligenceEngine(library: self)
+        engine.logsDiagnostics = limit > 1
+        return engine.plan(for: source, target: .general(limit: limit)).selected
     }
 
     /// Memories favorited in Relive that can go into a creation (usable, from visible moments),

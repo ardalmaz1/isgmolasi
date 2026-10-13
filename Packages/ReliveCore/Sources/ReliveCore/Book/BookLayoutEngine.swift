@@ -147,7 +147,10 @@ public struct BookLayoutEngine: Sendable {
         }
 
         // Cover
-        let coverID = book.coverAssetID.flatMap { usable.contains($0) ? $0 : nil } ?? library.best(usable)
+        // The user's cover always wins; otherwise Memory Intelligence's lead (a user's moment
+        // cover, a favorite, a moment's cover, then the best photo).
+        let coverID = book.coverAssetID.flatMap { usable.contains($0) ? $0 : nil }
+            ?? MemoryIntelligenceEngine(library: library).lead(among: usable, target: .book)
         var cover = BookPage(id: 0, kind: .cover, slots: [], title: facts.title, dateSpan: facts.dateSpan, place: facts.place)
         if let coverID {
             let geometry = coverGeometry(style: book.style, aspect: aspect(of: coverID), metrics: metrics)

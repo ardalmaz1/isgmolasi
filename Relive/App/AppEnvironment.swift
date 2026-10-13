@@ -64,6 +64,7 @@ final class AppEnvironment {
     static func live() -> AppEnvironment {
         let container = SwiftDataStoryRepository.makeContainer()
         #if DEBUG
+        IntelligenceLog.install()
         if ProcessInfo.processInfo.arguments.contains(startFreshArgument) {
             SwiftDataStoryRepository(container: container).eraseEverything()
             PremiumStore.eraseLocalState()

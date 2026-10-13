@@ -532,3 +532,52 @@ struct MemoryIntelligencePlanTests {
         #expect(elapsed < .seconds(3), "500 memories × 3 plans took \(elapsed)")
     }
 }
+
+// MARK: - Integration with the existing creation logic
+
+@Suite("Memory intelligence: creations")
+struct MemoryIntelligenceIntegrationTests {
+    @Test func favoritesCollageHasNoNearDuplicates() {
+        // Favorites keep every favorited shot (they're never collapsed in the moment), so a
+        // couple who favorited three takes of one selfie used to get all three.
+        let start = date(2026, 4, 2, 18)
+        var shots = (0..<3).map { IntelligenceFixture.Shot(id: "take-\($0)", date: start.addingTimeInterval(Double($0) * 8), favorite: true, look: IntelligenceFixture.near(0, drift: Float($0) * 0.02), quality: 0.6) }
+        shots += (0..<3).map { IntelligenceFixture.Shot(id: "fav-\($0)", date: start.addingTimeInterval(3_600 * Double($0 + 1)), favorite: true, look: IntelligenceFixture.look($0 + 10)) }
+        let library = IntelligenceFixture(moments: [.init(key: "f", title: "April Evening", shots: shots)]).library
+        let picked = library.initialPhotos(for: .favorites, limit: CreationLimits.collagePreselection)
+        #expect(picked.filter { $0.hasPrefix("take") }.count == 1, "\(picked)")
+        #expect(picked.count == 4)
+    }
+
+    @Test func tripCreationsRepresentEveryDay() {
+        let fixture = IntelligenceFixture.mixedTrip()
+        let picked = fixture.library.initialPhotos(for: .trip(IntelligenceFixture.tripID("Kaş & Kekova")), limit: CreationLimits.collagePreselection)
+        let moments = Set(picked.compactMap { fixture.library.moment(containing: $0)?.id })
+        #expect(moments.count == 3)
+        let dates = picked.compactMap { fixture.library.assets[$0]?.creationDate }
+        #expect(dates == dates.sorted())
+    }
+
+    @Test func storiesFromABurstAreNotRepetitive() throws {
+        let fixture = IntelligenceFixture.burstHeavy()
+        let design = try StoryDesigner(library: fixture.library).design(source: .moment(IntelligenceFixture.momentID("burst")), style: .minimal).get()
+        let photos = design.cards.flatMap(\.photos)
+        #expect(photos.filter { $0.hasPrefix("selfie") }.count == 1, "\(photos)")
+        // The user's own photos are never swapped.
+        let chosen = ["selfie-1", "selfie-2", "selfie-3", "landscape-0"]
+        let mine = try StoryDesigner(library: fixture.library).design(source: .photos(chosen), style: .minimal).get()
+        #expect(Set(mine.cards.flatMap(\.photos)) == Set(chosen))
+    }
+
+    @Test func bookCoverUsesTheSharedLeadButTheUsersCoverWins() throws {
+        var fixture = IntelligenceFixture.smallMoment()
+        fixture.moments[0].shots[1].favorite = true
+        fixture.moments[0].shots.append(.init(id: "small-5", date: date(2026, 6, 8, 18), look: IntelligenceFixture.look(30)))
+        let library = fixture.library
+        var book = try MemoryBookBuilder(library: library).makeBook(from: .moment(IntelligenceFixture.momentID("small")), now: date(2026, 10, 13)).get()
+        #expect(book.photoIDs.count == 6)
+        #expect(BookLayoutEngine(library: library).layout(book).pages.first?.slots.first?.assetID == "small-1", "the favorite leads the cover")
+        _ = book.setCover("small-4")
+        #expect(BookLayoutEngine(library: library).layout(book).pages.first?.slots.first?.assetID == "small-4", "the user's cover wins")
+    }
+}
