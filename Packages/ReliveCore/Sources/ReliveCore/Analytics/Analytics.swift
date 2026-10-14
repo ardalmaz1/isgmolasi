@@ -50,7 +50,6 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case freeExportUsed = "free_export_used"
     case premiumFeatureTapped = "premium_feature_tapped"
     // Intelligence v1 phase 3: immersive recaps (period kind, chapter kind and counts only).
-    case recapOpened2 = "recap_opened_v2"
     case recapChapterViewed = "recap_chapter_viewed"
     case recapCompleted = "recap_completed"
     case recapCreationStarted = "recap_creation_started"
