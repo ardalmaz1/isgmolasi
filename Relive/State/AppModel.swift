@@ -39,6 +39,10 @@ final class AppModel {
     private(set) var surpriseMemory: SurpriseMemory?
     /// The collage or story being made, presented over everything.
     var activeCreation: CreationRequest?
+    /// The immersive Monthly Recap / Our Year being watched, presented over everything.
+    var activeRecap: RecapRequest?
+    /// A creation started from inside a recap: opened once the recap has closed.
+    @ObservationIgnored private var creationAfterRecap: CreationRequest?
 
     let storyStore: StoryStore
     private let repository: any StoryRepository
@@ -226,6 +230,24 @@ final class AppModel {
     // MARK: - Creating
 
     /// Opens the collage or story maker over the current screen.
+    /// Opens the immersive recap of a month or year (never a paywall by itself).
+    func openRecap(_ period: RecapPeriod, origin: String) {
+        activeRecap = RecapRequest(period: period, origin: origin)
+    }
+
+    /// Closes the recap and opens a creation from it (two full-screen views can't stack).
+    func startCreationFromRecap(_ kind: CreationKind, source: CreationSource) {
+        creationAfterRecap = CreationRequest(kind: kind, start: .source(source), origin: "recap")
+        activeRecap = nil
+    }
+
+    /// Called when the recap has finished closing.
+    func recapDismissed() {
+        guard let request = creationAfterRecap else { return }
+        creationAfterRecap = nil
+        startCreation(request.kind, from: request.start, origin: request.origin)
+    }
+
     func startCreation(_ kind: CreationKind, from start: CreationStart, origin: String) {
         activeCreation = CreationRequest(kind: kind, start: start, origin: origin)
         switch start {

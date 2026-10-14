@@ -40,6 +40,14 @@ enum CreationStart: Hashable, Sendable {
     case resume(UUID)
 }
 
+/// A request to watch a Monthly Recap or Our Year.
+struct RecapRequest: Identifiable, Hashable, Sendable {
+    let id = UUID()
+    var period: RecapPeriod
+    /// Non-identifying label of the entry point ("monthly_recap", "made_for_you"…).
+    var origin: String
+}
+
 /// A request to open the collage or story maker. Any screen can make one through `AppModel`;
 /// the main tab view presents it over everything.
 struct CreationRequest: Identifiable, Hashable, Sendable {

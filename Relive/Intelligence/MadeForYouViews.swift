@@ -186,18 +186,17 @@ extension View {
     }
 }
 
-/// Opening a suggestion: recaps show the existing recap screens; creations open the existing
+/// Opening a suggestion: recaps open the immersive recap; creations open the existing
 /// editors with Memory Intelligence's photos. Nothing is saved, and nothing asks for Premium.
 @MainActor
 enum MadeForYouOpener {
-    /// - Parameter push: shows a Create route (month, year) in the current navigation stack.
-    static func open(_ suggestion: MadeForYouSuggestion, app: AppModel, madeForYou: MadeForYouStore, origin: String, push: (CreateRoute) -> Void) {
+    static func open(_ suggestion: MadeForYouSuggestion, app: AppModel, madeForYou: MadeForYouStore, origin: String) {
         madeForYou.recordOpened(suggestion)
         switch suggestion.creation {
         case .monthlyRecap:
-            if case .month(let month) = suggestion.source { push(.month(month)) }
+            if case .month(let month) = suggestion.source { app.openRecap(.month(month), origin: origin) }
         case .yearInReview:
-            if case .year(let year) = suggestion.source { push(.year(year)) }
+            if case .year(let year) = suggestion.source { app.openRecap(.year(year), origin: origin) }
         case .collage:
             app.startCreation(.collage, from: .source(suggestion.source), origin: origin)
         case .story:

@@ -25,6 +25,9 @@ struct MainTabView: View {
         .fullScreenCover(item: $app.activeCreation) { request in
             CreationFlowView(request: request)
         }
+        .fullScreenCover(item: $app.activeRecap, onDismiss: { app.recapDismissed() }) { request in
+            RecapExperienceView(request: request)
+        }
     }
 }
 

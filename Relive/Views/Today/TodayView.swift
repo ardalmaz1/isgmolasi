@@ -53,7 +53,7 @@ struct TodayView: View {
                         MadeForYouTodayCard(
                             suggestion: suggestion,
                             onOpen: {
-                                MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you_today") { path.append($0) }
+                                MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you_today")
                             },
                             onDismiss: { withAnimation { madeForYou.dismiss(suggestion, store: store) } }
                         )

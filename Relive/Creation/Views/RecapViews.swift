@@ -75,6 +75,9 @@ struct MonthlyRecapView: View {
                         MomentLinks(moments: recap.moments)
                     }
                 } else {
+                    RecapPlayButton(title: "Play \(headline)", identifier: "recapPlay") {
+                        app.openRecap(.month(month), origin: "monthly_recap")
+                    }
                     PhotoSpread(photoIDs: recap.highlights(limit: isFull ? 5 : 3))
 
                     if isFull {
@@ -222,6 +225,9 @@ struct OurYearView: View {
                 if !review.isSufficient {
                     notYetAYear(review)
                 } else {
+                    RecapPlayButton(title: "Play Our \(String(year))", identifier: "yearPlay") {
+                        app.openRecap(.year(year), origin: "our_year")
+                    }
                     if let lead = library.best(review.highlights(limit: 12)) {
                         FramedAssetImage(assetID: lead, aspectRatio: 4 / 5)
                             .accessibilityHidden(true)

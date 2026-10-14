@@ -82,6 +82,15 @@ final class MadeForYouStore {
         save(refreshing: false)
     }
 
+    /// A recap of `source` was shared: its recap suggestion has been made, so it steps away
+    /// (for `SuggestionHistory.createdDays`) like any suggestion something was made from.
+    func recordMade(source: CreationSource) {
+        let made = suggestions.filter { $0.source == source && ($0.creation == .monthlyRecap || $0.creation == .yearInReview) }
+        guard !made.isEmpty else { return }
+        for suggestion in made { history.recordCreated(suggestion.id, now: now()) }
+        save(refreshing: true)
+    }
+
     /// "Not now": it goes away (for a while), and the next best takes its place.
     func dismiss(_ suggestion: MadeForYouSuggestion, store: StoryStore) {
         history.recordDismissed(suggestion.id, now: now())

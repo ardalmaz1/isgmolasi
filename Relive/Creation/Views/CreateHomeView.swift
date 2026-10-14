@@ -51,7 +51,7 @@ struct CreateHomeView: View {
                     MadeForYouSection(
                         suggestions: Self.hidesMadeForYou ? [] : madeForYou.suggestions,
                         onOpen: { suggestion in
-                            MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you") { path.append($0) }
+                            MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you")
                         },
                         onDismiss: { suggestion in
                             withAnimation { madeForYou.dismiss(suggestion, store: store) }
