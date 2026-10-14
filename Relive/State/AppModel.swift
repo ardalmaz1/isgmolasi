@@ -229,7 +229,6 @@ final class AppModel {
 
     // MARK: - Creating
 
-    /// Opens the collage or story maker over the current screen.
     /// Opens the immersive recap of a month or year (never a paywall by itself).
     func openRecap(_ period: RecapPeriod, origin: String) {
         activeRecap = RecapRequest(period: period, origin: origin)

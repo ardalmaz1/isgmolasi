@@ -22,12 +22,37 @@ struct MainTabView: View {
                 UsView()
             }
         }
-        .fullScreenCover(item: $app.activeCreation) { request in
-            CreationFlowView(request: request)
+        // One cover for both: a second cover chained on the same view doesn't reliably present.
+        .fullScreenCover(item: cover, onDismiss: { app.recapDismissed() }) { cover in
+            switch cover {
+            case .creation(let request): CreationFlowView(request: request)
+            case .recap(let request): RecapExperienceView(request: request)
+            }
         }
-        .fullScreenCover(item: $app.activeRecap, onDismiss: { app.recapDismissed() }) { request in
-            RecapExperienceView(request: request)
+    }
+
+    /// What's open over everything: a creation, or the immersive recap.
+    private enum Cover: Identifiable {
+        case creation(CreationRequest)
+        case recap(RecapRequest)
+
+        var id: UUID {
+            switch self {
+            case .creation(let request): request.id
+            case .recap(let request): request.id
+            }
         }
+    }
+
+    private var cover: Binding<Cover?> {
+        Binding(
+            get: { app.activeCreation.map(Cover.creation) ?? app.activeRecap.map(Cover.recap) },
+            set: { value in
+                guard value == nil else { return }
+                app.activeCreation = nil
+                app.activeRecap = nil
+            }
+        )
     }
 }
 

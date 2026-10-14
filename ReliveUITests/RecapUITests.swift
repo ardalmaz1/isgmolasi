@@ -144,7 +144,11 @@ final class RecapUITests: XCTestCase {
             if play.waitForExistence(timeout: 5) {
                 capture("R00-monthly-recap-with-play")
                 play.tap()
-                XCTAssertTrue(app.buttons["recapClose"].waitForExistence(timeout: 15), "The recap did not open")
+                if !app.buttons["recapClose"].waitForExistence(timeout: 15) {
+                    printScreen(app, "recap-did-not-open")
+                    capture("R00-recap-did-not-open")
+                }
+                XCTAssertTrue(app.buttons["recapClose"].exists, "The recap did not open")
                 XCTAssertTrue(app.descendants(matching: .any)["recapProgress"].exists, "progress is always visible")
                 return
             }
