@@ -39,6 +39,8 @@ struct MadeForYouHeroCard: View {
     let onOpen: () -> Void
     let onDismiss: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         Button(action: onOpen) {
             VStack(alignment: .leading, spacing: Spacing.s) {
@@ -51,12 +53,16 @@ struct MadeForYouHeroCard: View {
                         .foregroundStyle(Palette.textPrimary)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
-                    HStack(alignment: .firstTextBaseline, spacing: Spacing.xs) {
+                    // Side by side normally; stacked at accessibility text sizes, so neither is squeezed.
+                    let layout = dynamicTypeSize.isAccessibilitySize
+                        ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.xxs))
+                        : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: Spacing.xs))
+                    layout {
                         Text(suggestion.subtitle)
                             .font(Typography.footnote)
                             .foregroundStyle(Palette.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
-                        Spacer(minLength: Spacing.s)
+                        if !dynamicTypeSize.isAccessibilitySize { Spacer(minLength: Spacing.s) }
                         CreationLabel(creation: suggestion.creation)
                     }
                 }

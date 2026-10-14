@@ -42,7 +42,7 @@ README.
   look-alike moment had collapsed to one photo. Near-identical photos now fill in up to each
   creation's minimum.
 
-## Phase 2 (Made for You): in progress
+## Phase 2 (Made for You): complete
 
 **Core:**
 
@@ -62,12 +62,22 @@ README.
 
 **Docs:** `docs/MADE_FOR_YOU.md`.
 
-**Core tests:** 323 passed on Linux.
+## Test results
 
-## Next step
+- CI run 38611262856 on fbce238 (all four jobs green):
+  - 323 core tests;
+  - builds with Xcode 16.4 and Xcode 26;
+  - 104 hosted tests;
+  - 8 UI tests.
+- The sample library produced 3 suggestions: the Kaş trip (as a Memory Book), Spring 2025 and
+  Winter 2025. Its 2025 book and year were suppressed by overlap.
+- Fixed along the way:
+  - a hosted test assumed a collage where the engine (correctly) offers a story;
+  - a container accessibility identifier hid the cards' own identifiers;
+  - the hero card's subtitle row was squeezed at accessibility text sizes (now stacked).
 
-1. Get CI green.
-2. Review the F screenshots.
-3. Write the final report.
+## Next step (Phase 3)
 
-Phase 3 candidate: Monthly Recap 2.0 / Relive Wrapped built on plans and suggestions.
+Monthly Recap 2.0 / Relive Wrapped, built on plans (`sequence.sections`) and Made for You
+suggestions. Then tune the ranking and suggestion weights on a real library, using the DEBUG
+`intelligence` log lines.
