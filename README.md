@@ -30,6 +30,19 @@ Creations now choose fewer, better photos.
 Everything is on-device and deterministic. Collage, Story Maker and Memory Book share it.
 Details: [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md).
 
+## Intelligence v1 (phases 2–3) — Made for You and Recap 2.0
+
+- **Made for You:** a few prepared creations (a book, story or collage, a month or a year) built
+  from real memories, in Create and as at most one Today card. Details:
+  [docs/MADE_FOR_YOU.md](docs/MADE_FOR_YOU.md).
+- **Monthly Recap 2.0 / Our Year 2.0:** a full-screen, chapter-by-chapter recap of a real month
+  or year. Its chapters are adaptive: a trip, a place you kept returning to, a day with more to
+  remember, favorites, places and the shape of the month. Weak chapters are left out and sparse
+  periods get one honest page. Every sentence comes from structured facts through a factual
+  text contract that a future AI could only rephrase. There's no auto-advance, Close is always
+  there, and from the recap you can make a collage, story or book. Details:
+  [docs/RECAP_2.md](docs/RECAP_2.md).
+
 ## Commercial v1 — Relive Premium
 
 **Memories are free. Creating more from them is Premium.**
@@ -222,6 +235,8 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/RECAP_2.md](docs/RECAP_2.md) — Monthly Recap 2.0 / Our Year 2.0: chapters, insights,
+  the editorial text and AI contract, the experience, Premium, analytics, performance, tests.
 - [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md) — Memory Intelligence: signals
   used and not used, ranking, duplicates and diversity, periods, factual titles, sequences,
   recommendations, user intent, performance, privacy, future AI and Movie seams.

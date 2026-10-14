@@ -201,7 +201,7 @@ struct RecapPageView: View {
                     .accessibilityHidden(true)
             }
             PremiumTeaser(
-                title: isYear ? "The rest of \(actions.periodName)" : "The rest of \(actions.periodName)",
+                title: "The rest of \(actions.periodName)",
                 message: "\(remaining == 1 ? "One more chapter" : "\(remaining) more chapters") — and a card to share — are part of Relive Premium.",
                 actionTitle: isYear ? "Relive Your Full Year" : "See the Full Recap",
                 identifier: "recapSeeAll",

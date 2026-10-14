@@ -215,3 +215,18 @@ per-screen `PremiumGate` and the paywall. See [COMMERCIAL.md](COMMERCIAL.md).
 - **What it leaves alone:** chosen photos are never swapped.
 
 The app only installs a DEBUG log sink. See [MEMORY_INTELLIGENCE.md](MEMORY_INTELLIGENCE.md).
+
+### Recap 2.0
+
+`ReliveCore/Intelligence/Recap` plans a `RecapPlan` for a month or year.
+
+- **Inputs:** `TemporalIndex`, the existing recap builders and the engine.
+- **The plan:** factual `RecapInsights` and adaptive `RecapChapter`s, each with
+  `EditorialFacts` and the words an `EditorialTextProviding` wrote for them.
+- **Words:** `ValidatedEditorialTextProvider` is the factual contract any future AI text must pass.
+- **Presentation:** `AppModel.activeRecap` presents `RecapExperienceView` as a full-screen cover
+  from `MainTabView`.
+- **Creating from a recap:** this closes the recap and opens the creation in the cover's
+  `onDismiss`.
+
+See [RECAP_2.md](RECAP_2.md).
