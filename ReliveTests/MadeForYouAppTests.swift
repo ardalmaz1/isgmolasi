@@ -105,11 +105,10 @@ final class MadeForYouAppTests: XCTestCase {
         let suggestion = try XCTUnwrap(madeForYou.suggestions.first { $0.creation == .story || $0.creation == .collage })
         XCTAssertEqual(suggestion.creation, .story)
         let app = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
-        var pushed: [CreateRoute] = []
-        MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you") { pushed.append($0) }
+        MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you")
         XCTAssertEqual(app.activeCreation?.kind, .story)
         XCTAssertEqual(app.activeCreation?.start, .source(suggestion.source))
-        XCTAssertTrue(pushed.isEmpty)
+        XCTAssertNil(app.activeRecap)
 
         // The prepared story is the plan's photos, editable as usual; nothing is saved yet.
         let design = try StoryDesigner(library: store.creationLibrary).design(source: suggestion.source, style: .minimal).get()
@@ -131,18 +130,19 @@ final class MadeForYouAppTests: XCTestCase {
         XCTAssertEqual(gate.request?.entry, .storyExport)
     }
 
-    func testRecapSuggestionsOpenTheExistingScreens() {
+    func testRecapSuggestionsOpenTheImmersiveRecap() {
         let (store, repository) = CreationTestLibrary.makeStore()
         let app = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
         let madeForYou = makeStore()
         let month = MadeForYouSuggestionFixture.make(creation: .monthlyRecap, source: .month(MonthKey(year: 2026, month: 7)))
-        var pushed: [CreateRoute] = []
-        MadeForYouOpener.open(month, app: app, madeForYou: madeForYou, origin: "test") { pushed.append($0) }
-        XCTAssertEqual(pushed, [.month(MonthKey(year: 2026, month: 7))])
+        MadeForYouOpener.open(month, app: app, madeForYou: madeForYou, origin: "test")
+        XCTAssertEqual(app.activeRecap?.period, .month(MonthKey(year: 2026, month: 7)))
+        XCTAssertEqual(app.activeRecap?.origin, "test")
         XCTAssertNil(app.activeCreation)
+        XCTAssertNotNil(madeForYou.history.entries[month.id]?.openedAt)
         let year = MadeForYouSuggestionFixture.make(creation: .yearInReview, source: .year(2026))
-        MadeForYouOpener.open(year, app: app, madeForYou: madeForYou, origin: "test") { pushed.append($0) }
-        XCTAssertEqual(pushed.last, .year(2026))
+        MadeForYouOpener.open(year, app: app, madeForYou: madeForYou, origin: "test")
+        XCTAssertEqual(app.activeRecap?.period, .year(2026))
     }
 
     func testChosenPhotoSuggestionsKeepExactlyTheirPhotos() {

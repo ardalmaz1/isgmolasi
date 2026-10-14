@@ -72,10 +72,11 @@ final class MadeForYouUITests: XCTestCase {
             capture("F03-free-export")
             app.buttons["Close"].firstMatch.tap()
         default:
-            // A recap: the existing screen, with its free preview.
+            // A recap: the immersive recap, with its free preview.
+            XCTAssertTrue(app.buttons["recapClose"].waitForExistence(timeout: 15), "The recap did not open")
             sleep(2)
             capture("F02-recap")
-            app.navigationBars.buttons.firstMatch.tap()
+            app.buttons["recapClose"].tap()
         }
 
         // Today shows at most one Made for You card.
