@@ -42,8 +42,32 @@ README.
   look-alike moment had collapsed to one photo. Near-identical photos now fill in up to each
   creation's minimum.
 
-## Next step (Phase 2)
+## Phase 2 (Made for You): in progress
 
-Build the first user-facing surface on the plan — "Made for You" or Monthly Recap 2.0 — using
-`MemoryIntelligenceEngine.plan(for:target:)`, `recommendations` and `sequence.sections`. Then
-tune `RankingWeights` on a real library, using the DEBUG `intelligence_plan` lines.
+**Core:**
+
+- `Packages/ReliveCore/Sources/ReliveCore/Intelligence/MadeForYou.swift`:
+  `MadeForYouEngine`, `MadeForYouSuggestion`, `SuggestionHistory`.
+- Tests: `MadeForYouTests.swift` (20).
+
+**App:**
+
+- `Relive/Intelligence/MadeForYouStore.swift` and `MadeForYouViews.swift`.
+- The Create section and the Today card; injected from `AppEnvironment`.
+
+**Tests:**
+
+- `ReliveTests/MadeForYouAppTests.swift` (9 hosted tests).
+- `ReliveUITests/MadeForYouUITests.swift` (screenshots F01–F07).
+
+**Docs:** `docs/MADE_FOR_YOU.md`.
+
+**Core tests:** 323 passed on Linux.
+
+## Next step
+
+1. Get CI green.
+2. Review the F screenshots.
+3. Write the final report.
+
+Phase 3 candidate: Monthly Recap 2.0 / Relive Wrapped built on plans and suggestions.
