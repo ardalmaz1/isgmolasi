@@ -61,10 +61,13 @@ struct RecapExperienceView: View {
                 }
             } else {
                 ProgressView()
+                    .accessibilityLabel("Preparing the recap")
+                    .safeAreaInset(edge: .top) { header(count: 0) }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
         }
         .premiumPaywall(gate)
-        .task { load() }
+        .task { await load() }
     }
 
     // MARK: - Chrome
@@ -73,7 +76,7 @@ struct RecapExperienceView: View {
         HStack(spacing: Spacing.m) {
             // One segment per page: where you are, and how much there is.
             HStack(spacing: 4) {
-                ForEach(0..<count, id: \.self) { index in
+                ForEach(0..<max(count, 0), id: \.self) { index in
                     Capsule()
                         .fill(index <= page ? Palette.textPrimary : Palette.hairline)
                         .frame(height: 3)
@@ -177,13 +180,19 @@ struct RecapExperienceView: View {
 
     // MARK: - Actions
 
-    private func load() {
+    /// Plans once per presentation, off the main thread (metadata only, never pixels), so the
+    /// recap — and its Close button — appear at once even for a large library.
+    private func load() async {
         guard plan == nil else { return }
-        let planned = RecapStoryPlanner(library: store.creationLibrary).plan(request.period)
+        let planner = RecapStoryPlanner(library: store.creationLibrary)
+        let period = request.period
+        let started = Date()
+        let planned = await Task.detached(priority: .userInitiated) { planner.plan(period) }.value
         plan = planned
         analytics.track(.recapOpened, ["kind": request.period.kindCode, "experience": "immersive", "rich": planned.isRich ? "true" : "false", "origin": request.origin])
         #if DEBUG
-        Logger(subsystem: "app.relive", category: "intelligence").notice("\(planned.diagnosticsLine, privacy: .public)")
+        let milliseconds = Int(Date().timeIntervalSince(started) * 1000)
+        Logger(subsystem: "app.relive", category: "intelligence").notice("\(planned.diagnosticsLine, privacy: .public) ms=\(milliseconds, privacy: .public)")
         #endif
     }
 

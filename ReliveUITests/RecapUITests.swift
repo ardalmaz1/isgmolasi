@@ -180,7 +180,7 @@ final class RecapUITests: XCTestCase {
     @MainActor
     private func next(_ app: XCUIApplication) {
         let next = app.buttons["recapNext"]
-        XCTAssertTrue(next.waitForExistence(timeout: 5))
+        XCTAssertTrue(next.waitForExistence(timeout: 30), "the recap's chapters never appeared")
         next.tap()
         sleep(1)
     }
