@@ -49,6 +49,13 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case premiumRestoreCompleted = "premium_restore_completed"
     case freeExportUsed = "free_export_used"
     case premiumFeatureTapped = "premium_feature_tapped"
+    // Intelligence v1 phase 3: immersive recaps (period kind, chapter kind and counts only).
+    case recapOpened2 = "recap_opened_v2"
+    case recapChapterViewed = "recap_chapter_viewed"
+    case recapCompleted = "recap_completed"
+    case recapCreationStarted = "recap_creation_started"
+    case recapShareStarted = "recap_share_started"
+    case recapShareCompleted = "recap_share_completed"
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {
