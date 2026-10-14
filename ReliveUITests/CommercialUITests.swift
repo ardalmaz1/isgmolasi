@@ -17,7 +17,7 @@ final class CommercialUITests: XCTestCase {
     @MainActor
     func testFreeCreationPaywallAndPremium() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestHideMadeForYou"]
         app.launch()
         try completeOnboarding(app)
 
@@ -120,7 +120,7 @@ final class CommercialUITests: XCTestCase {
         // 5. Relaunch as free (the fake App Store forgets the purchase): the free creation is
         //    still used, and the recap shows its free preview
         let free = XCUIApplication()
-        free.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free"]
+        free.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free", "-ReliveUITestHideMadeForYou"]
         free.launch()
         XCTAssertTrue(free.tabBars.buttons["Create"].waitForExistence(timeout: 30), "Main app did not appear after relaunch")
         free.tabBars.buttons["Create"].tap()
@@ -151,7 +151,7 @@ final class CommercialUITests: XCTestCase {
 
         // 6. Premium: saving again and again never shows the paywall
         let premium = XCUIApplication()
-        premium.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "premium"]
+        premium.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "premium", "-ReliveUITestHideMadeForYou"]
         premium.launch()
         XCTAssertTrue(premium.tabBars.buttons["Create"].waitForExistence(timeout: 30))
         premium.tabBars.buttons["Create"].tap()

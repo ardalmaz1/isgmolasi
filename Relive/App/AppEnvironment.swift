@@ -13,6 +13,7 @@ final class AppEnvironment {
     let imageLoader: PhotoImageLoader
     let analytics: any AnalyticsTracking
     let premium: PremiumStore
+    let madeForYou: MadeForYouStore
 
     init(
         container: ModelContainer,
@@ -36,6 +37,7 @@ final class AppEnvironment {
         self.trendCatalog = TrendCatalogStore()
         self.appModel = AppModel(storyStore: storyStore, repository: repository, analytics: analytics)
         self.premium = PremiumStore(client: storeKit, analytics: analytics)
+        self.madeForYou = MadeForYouStore()
     }
 
     #if DEBUG
@@ -68,6 +70,7 @@ final class AppEnvironment {
         if ProcessInfo.processInfo.arguments.contains(startFreshArgument) {
             SwiftDataStoryRepository(container: container).eraseEverything()
             PremiumStore.eraseLocalState()
+            MadeForYouStore.eraseLocalState()
         }
         let storeKit: any StoreKitClient = storeKitForUITests() ?? LiveStoreKitClient()
         #else

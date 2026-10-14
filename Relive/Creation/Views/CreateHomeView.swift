@@ -19,6 +19,7 @@ struct CreateHomeView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
     @Environment(TrendCatalogStore.self) private var trends
+    @Environment(MadeForYouStore.self) private var madeForYou
     @Environment(\.analytics) private var analytics
     /// Heterogeneous: Create pushes its own routes, the collection's (`CollectionRoute`) and
     /// moments (`MomentRoute`). A typed `[CreateRoute]` path silently refuses the others.
@@ -44,6 +45,19 @@ struct CreateHomeView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.top, Spacing.l)
+
+                    // Made for You: real memories Relive noticed, ready to look at. Nothing when
+                    // there's nothing good to suggest.
+                    MadeForYouSection(
+                        suggestions: Self.hidesMadeForYou ? [] : madeForYou.suggestions,
+                        onOpen: { suggestion in
+                            MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you") { path.append($0) }
+                        },
+                        onDismiss: { suggestion in
+                            withAnimation { madeForYou.dismiss(suggestion, store: store) }
+                        }
+                    )
+                    .onAppear { madeForYou.recordShown(madeForYou.suggestions) }
 
                     if let draft = store.drafts.first {
                         continueEditing(draft, count: store.drafts.count)
@@ -91,8 +105,25 @@ struct CreateHomeView: View {
             .momentDestination()
             .collectionDestinations()
         }
-        .onAppear { analytics.track(.createOpened) }
+        .onAppear {
+            analytics.track(.createOpened)
+            madeForYou.refresh(from: store)
+        }
+        .onChange(of: store.story.generatedAt) { _, _ in madeForYou.refresh(from: store) }
+        .onChange(of: store.favorites) { _, _ in madeForYou.refresh(from: store) }
+        .onChange(of: store.userStates) { _, _ in madeForYou.refresh(from: store) }
+        .onChange(of: store.keptItems.count) { _, _ in madeForYou.refresh(from: store) }
         .task { await trends.refresh() }
+    }
+
+    /// UI tests of other flows hide Made for You so Create keeps the layout they were written
+    /// for (`-ReliveUITestHideMadeForYou`, DEBUG only).
+    private static var hidesMadeForYou: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-ReliveUITestHideMadeForYou")
+        #else
+        false
+        #endif
     }
 
     // MARK: - Continue Editing

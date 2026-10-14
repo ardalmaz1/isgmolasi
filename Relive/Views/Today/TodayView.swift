@@ -5,6 +5,7 @@ import SwiftUI
 struct TodayView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
+    @Environment(MadeForYouStore.self) private var madeForYou
     @State private var path = NavigationPath()
     @State private var isAddingMemories = false
 
@@ -46,6 +47,19 @@ struct TodayView: View {
                         )
                     }
 
+                    // At most one Made for You card, and only a strong one; never the surprise's moment.
+                    if !ProcessInfo.processInfo.arguments.contains("-ReliveUITestHideMadeForYou"),
+                       let suggestion = madeForYou.todaySuggestion(excluding: app.surpriseMemory?.momentID) {
+                        MadeForYouTodayCard(
+                            suggestion: suggestion,
+                            onOpen: {
+                                MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you_today") { path.append($0) }
+                            },
+                            onDismiss: { withAnimation { madeForYou.dismiss(suggestion, store: store) } }
+                        )
+                        .onAppear { madeForYou.recordShown([suggestion]) }
+                    }
+
                     if let next = app.nextMomentToContinue {
                         ContinueStoryCard(moment: next) {
                             app.continueStory()
@@ -67,6 +81,15 @@ struct TodayView: View {
             .navigationDestination(for: SurpriseRoute.self) { route in
                 SurpriseMemoryView(route: route)
             }
+            .navigationDestination(for: CreateRoute.self) { route in
+                switch route {
+                case .months: MonthlyRecapListView()
+                case .month(let month): MonthlyRecapView(month: month)
+                case .years: YearListView()
+                case .year(let year): OurYearView(year: year)
+                case .trend(let id): TrendDetailView(trendID: id)
+                }
+            }
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)
         .onAppear { refreshResurfacing() }
@@ -77,6 +100,7 @@ struct TodayView: View {
     private func refreshResurfacing() {
         app.refreshFoundMemory()
         app.refreshSurprise()
+        madeForYou.refresh(from: store)
     }
 }
 

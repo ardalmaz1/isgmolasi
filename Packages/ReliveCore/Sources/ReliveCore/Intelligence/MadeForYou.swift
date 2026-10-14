@@ -44,6 +44,11 @@ public struct MadeForYouSuggestion: Hashable, Sendable, Codable, Identifiable {
     var quality: Double
     /// The moment it comes from, for anniversaries (so Today doesn't repeat a surprise).
     public var momentID: MomentID?
+
+    /// Strong enough to be the single Made for You card on Today.
+    public var isStrongEnoughForToday: Bool {
+        quality >= MadeForYouEngine.todayQuality && [.anniversary, .throwback, .monthRecap, .yearRecap, .trip].contains(kind)
+    }
 }
 
 /// What the couple did with suggestions, kept on the device: shown, opened, dismissed, made.
@@ -122,6 +127,8 @@ public struct MadeForYouEngine: Sendable {
     public var locale: Locale
     /// Suggestions below this internal quality never appear.
     public var minimumQuality = 1.0
+    /// Today shows at most one suggestion, and only one at least this good.
+    public static let todayQuality = 1.6
     /// Two suggestions sharing more than this share of the smaller one's memories are one too many.
     public var overlapLimit = 0.5
 

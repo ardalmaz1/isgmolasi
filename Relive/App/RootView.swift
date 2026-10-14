@@ -19,6 +19,10 @@ struct RootView: View {
         }
         .animation(.easeInOut(duration: 0.45), value: app.isOnboarding)
         .tint(Palette.accent)
+        #if DEBUG
+        // Screenshot review in dark mode (UI tests: -ReliveUITestDarkMode).
+        .preferredColorScheme(ProcessInfo.processInfo.arguments.contains("-ReliveUITestDarkMode") ? .dark : nil)
+        #endif
         .onChange(of: scenePhase, initial: true) { _, phase in
             guard phase == .active else { return }
             // Listens for transaction updates once, and re-checks entitlements on every return.
