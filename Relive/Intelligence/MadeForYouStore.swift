@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import os
 import ReliveCore
 
 /// The app's Made for You: the current suggestions and what the couple did with them.
@@ -57,6 +58,11 @@ final class MadeForYouStore {
         }
         suggestions = found
         signature = signature(of: store)
+        #if DEBUG
+        // Kinds and counts only — no titles, places or identifiers.
+        Logger(subsystem: "app.relive", category: "intelligence")
+            .notice("made_for_you suggestions=\(found.count, privacy: .public) kinds=[\(found.map { "\($0.kind.rawValue):\($0.creation.rawValue)" }.joined(separator: ","), privacy: .public)]")
+        #endif
     }
 
     /// The single Today card, if one is strong enough (and isn't the surprise already shown).

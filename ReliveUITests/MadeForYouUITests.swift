@@ -20,7 +20,12 @@ final class MadeForYouUITests: XCTestCase {
 
         app.tabBars.buttons["Create"].tap()
         let cards = app.buttons.matching(identifier: "madeForYouCard")
-        XCTAssertTrue(cards.firstMatch.waitForExistence(timeout: 15), "Made for You found nothing in the sample library")
+        if !cards.firstMatch.waitForExistence(timeout: 15) {
+            let buttons = app.buttons.allElementsBoundByIndex.prefix(30).map { "\($0.identifier)=\($0.label)" }
+            print("SCREEN create-without-cards: \(buttons.joined(separator: " | "))")
+            capture("F00-no-cards")
+        }
+        XCTAssertTrue(cards.firstMatch.exists, "Made for You found nothing in the sample library")
         sleep(2)
         capture("F01-create-made-for-you")
         let all = cards.allElementsBoundByIndex

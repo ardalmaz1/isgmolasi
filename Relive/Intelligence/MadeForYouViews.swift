@@ -26,6 +26,8 @@ struct MadeForYouSection: View {
                     }
                 }
             }
+            // A container: its own identifier must not replace the cards' identifiers.
+            .accessibilityElement(children: .contain)
             .accessibilityIdentifier("madeForYou")
         }
     }
@@ -126,6 +128,7 @@ struct MadeForYouTodayCard: View {
         }
         .padding(Spacing.m)
         .background(RoundedRectangle(cornerRadius: Radius.card, style: .continuous).fill(Palette.surface))
+        .accessibilityElement(children: .contain)
         .accessibilityIdentifier("madeForYouToday")
     }
 }
