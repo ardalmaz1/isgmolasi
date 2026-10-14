@@ -101,18 +101,19 @@ final class MadeForYouAppTests: XCTestCase {
         let (store, repository) = CreationTestLibrary.makeStore()
         let madeForYou = makeStore()
         madeForYou.refresh(from: store)
-        let suggestion = try XCTUnwrap(madeForYou.suggestions.first { $0.creation == .collage })
+        // The 9-photo anniversary is offered as a story (a collage only for six photos or fewer).
+        let suggestion = try XCTUnwrap(madeForYou.suggestions.first { $0.creation == .story || $0.creation == .collage })
+        XCTAssertEqual(suggestion.creation, .story)
         let app = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
         var pushed: [CreateRoute] = []
         MadeForYouOpener.open(suggestion, app: app, madeForYou: madeForYou, origin: "made_for_you") { pushed.append($0) }
-        XCTAssertEqual(app.activeCreation?.kind, .collage)
+        XCTAssertEqual(app.activeCreation?.kind, .story)
         XCTAssertEqual(app.activeCreation?.start, .source(suggestion.source))
         XCTAssertTrue(pushed.isEmpty)
 
-        // The prepared collage is the plan's photos, editable as usual; nothing is saved yet.
-        let library = store.creationLibrary
-        let photos = library.initialPhotos(for: suggestion.source, limit: CreationLimits.collagePreselection)
-        XCTAssertFalse(photos.isEmpty)
+        // The prepared story is the plan's photos, editable as usual; nothing is saved yet.
+        let design = try StoryDesigner(library: store.creationLibrary).design(source: suggestion.source, style: .minimal).get()
+        XCTAssertGreaterThanOrEqual(design.cards.count, StoryDesigner.cardRange.lowerBound)
         XCTAssertTrue(store.keptItems.isEmpty, "opening never saves anything")
 
         // Free user: the first save is free, the second shows the paywall — unchanged rules.
@@ -120,14 +121,14 @@ final class MadeForYouAppTests: XCTestCase {
         let gate = PremiumGate()
         XCTAssertNil(gate.request, "opening asked for nothing")
         let export = ExportController(saver: FakeCreationSaver(identifiers: ["s1", "s2"]))
-        await gate.export(.collageExport, entry: .collageExport, premium: premium) { succeeded in
+        await gate.export(.storyExport, entry: .storyExport, premium: premium) { succeeded in
             await export.save(store: store, analytics: InMemoryAnalyticsTracker(), properties: [:], onSaved: succeeded) {
                 [CreationTestLibrary.solidImage(width: 8, height: 8)]
             }
         }
         XCTAssertEqual(export.phase, .finished("Saved to Photos"))
-        await gate.export(.collageExport, entry: .collageExport, premium: premium) { _ in XCTFail("not without Premium") }
-        XCTAssertEqual(gate.request?.entry, .collageExport)
+        await gate.export(.storyExport, entry: .storyExport, premium: premium) { _ in XCTFail("not without Premium") }
+        XCTAssertEqual(gate.request?.entry, .storyExport)
     }
 
     func testRecapSuggestionsOpenTheExistingScreens() {
