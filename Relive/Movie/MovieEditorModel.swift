@@ -30,10 +30,12 @@ final class MovieEditorModel {
     @ObservationIgnored private var library: CreationLibrary
     @ObservationIgnored private let analytics: any AnalyticsTracking
     @ObservationIgnored private var tracksChanges = false
+    @ObservationIgnored private let editorial: EditorialService
 
     /// A new movie: Relive makes the first cut.
-    init(source: CreationSource, library: CreationLibrary, store: StoryStore? = nil, analytics: any AnalyticsTracking = InMemoryAnalyticsTracker(), settings: MovieSettings = MovieSettings()) {
+    init(source: CreationSource, library: CreationLibrary, store: StoryStore? = nil, analytics: any AnalyticsTracking = InMemoryAnalyticsTracker(), settings: MovieSettings = MovieSettings(), editorial: EditorialService = .shared) {
         self.source = source
+        self.editorial = editorial
         self.library = library
         self.analytics = analytics
         self.settings = settings
@@ -47,8 +49,9 @@ final class MovieEditorModel {
 
     /// A draft or saved movie, reopened as it was. Photos that are gone are left out of the cut
     /// and reported; nothing is swapped in for them.
-    init(restoring creation: SavedCreation, state: MovieState, library: CreationLibrary, store: StoryStore?, analytics: any AnalyticsTracking = InMemoryAnalyticsTracker()) {
+    init(restoring creation: SavedCreation, state: MovieState, library: CreationLibrary, store: StoryStore?, analytics: any AnalyticsTracking = InMemoryAnalyticsTracker(), editorial: EditorialService = .shared) {
         self.source = creation.source
+        self.editorial = editorial
         self.library = library
         self.analytics = analytics
         self.settings = state.settings
@@ -65,6 +68,7 @@ final class MovieEditorModel {
             return .movie(self.state)
         }
         tracksChanges = true
+        offerMoreTitles()
     }
 
     /// What a draft or saved movie keeps.
@@ -168,6 +172,78 @@ final class MovieEditorModel {
         logPlan()
         changed()
         analytics.track(.movieRegenerated, analyticsProperties)
+    }
+
+    // MARK: - The opening title (Relive's words; the user's words win)
+
+    var titleChoice: EditorialChoice { settings.titleChoice ?? EditorialChoice() }
+
+    /// The title as the movie opens with it (`nil`: the user removed it).
+    var openingTitle: String? { plan.openingTitle }
+
+    /// More than one safe title is on offer, and the user hasn't written their own.
+    var canTryAnotherTitle: Bool {
+        plan.titleVariants.count > 1 || (!titleChoice.isDefault && !plan.titleVariants.isEmpty)
+    }
+
+    /// "Try another": the next of Relive's validated titles. Never changes the photos.
+    func tryAnotherTitle() {
+        guard canTryAnotherTitle else { return }
+        let next = titleChoice.next(in: plan.titleVariants)
+        settings.titleChoice = next.isDefault ? nil : next
+        replan()
+        analytics.track(.editorialVariantChanged, editorialProperties(["variant": String(next.variant)]))
+    }
+
+    /// The user's own title: kept exactly as written (trimmed), never checked or rewritten.
+    /// Empty words bring Relive's title back.
+    func setOwnTitle(_ text: String) {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            resetTitle()
+            return
+        }
+        guard trimmed != openingTitle || plan.openingTitleAuthorship != .user else { return }
+        settings.titleChoice = EditorialChoice(userText: String(trimmed.prefix(Self.maximumTitleLength)))
+        replan()
+        analytics.track(.editorialUserEdited, editorialProperties(["action": "edited"]))
+    }
+
+    /// No opening title (the period still shows when it is known).
+    func removeTitle() {
+        settings.titleChoice = EditorialChoice(isRemoved: true)
+        replan()
+        analytics.track(.editorialUserEdited, editorialProperties(["action": "removed"]))
+    }
+
+    /// Relive's first choice again.
+    func resetTitle() {
+        guard settings.titleChoice != nil else { return }
+        settings.titleChoice = nil
+        replan()
+        analytics.track(.editorialUserEdited, editorialProperties(["action": "reset"]))
+    }
+
+    static let maximumTitleLength = 60
+
+    private func editorialProperties(_ extra: [String: String]) -> [String: String] {
+        ["surface": EditorialSurface.movie.rawValue, "kind": EditorialRequestKind.title.rawValue].merging(extra) { $1 }
+    }
+
+    /// Where an on-device model can run, it may add a validated alternative or two for "Try
+    /// another". What is on screen doesn't change; nothing waits for it.
+    private func offerMoreTitles() {
+        let request = plan.titleRequest
+        let editorial = editorial
+        Task { [weak self] in
+            guard await editorial.enhance(request) else { return }
+            self?.refreshWords()
+        }
+    }
+
+    /// The same cut with the words available now (no change to the draft).
+    private func refreshWords() {
+        plan = MovieStoryPlanner(library: library).plan(source: source, photos: plan.photoIDs, cover: plan.cover, settings: settings, isUserCut: isUserCut)
     }
 
     /// Photos that could replace `id`: the source's own photos not already in the movie.

@@ -287,7 +287,8 @@ public final class EditorialPipeline: @unchecked Sendable {
     /// further variants after the first. Refused ones are only counted, never shown or logged.
     public func merging(_ base: EditorialResult, candidates: [EditorialCandidate], request: EditorialRequest) -> EditorialResult {
         var result = base
-        for candidate in candidates {
+        var accepted = 0
+        for candidate in candidates.prefix(6) {
             let found = validator.rejections(for: candidate, request: request)
             IntelligenceDiagnostics.emit("editorial_validation surface=\(request.context.surface.rawValue) kind=\(request.kind.rawValue) provider=\(candidate.provider) accepted=\(found.isEmpty) reason=\(found.first?.rawValue ?? "none")")
             if let reason = found.first {
@@ -297,8 +298,12 @@ public final class EditorialPipeline: @unchecked Sendable {
             }
             if found.isEmpty {
                 let text = candidate.text.trimmingCharacters(in: .whitespacesAndNewlines)
-                if !result.variants.contains(text), result.variants.count < Self.maximumVariants + 1 {
-                    result.variants.append(text)
+                // After Relive's first choice (what is shown never jumps), before its other
+                // alternatives; still at most `maximumVariants`.
+                if !result.variants.contains(text) {
+                    result.variants.insert(text, at: min(accepted + 1, result.variants.count))
+                    result.variants = Array(result.variants.prefix(Self.maximumVariants))
+                    accepted += 1
                     result.provider = candidate.provider
                 }
             } else {
@@ -306,6 +311,17 @@ public final class EditorialPipeline: @unchecked Sendable {
             }
         }
         return result
+    }
+
+    /// Keeps an enhanced result for `request` (the facts are the same, so are the words).
+    public func remember(_ result: EditorialResult, for request: EditorialRequest) {
+        lock.withLock {
+            if cache[request] == nil {
+                order.append(request)
+                if order.count > capacity { cache[order.removeFirst()] = nil }
+            }
+            cache[request] = result
+        }
     }
 
     var cacheStatistics: (hits: Int, misses: Int, entries: Int) {
@@ -342,7 +358,8 @@ public struct EditorialRouter: Sendable {
     /// failure (unavailable, error, everything refused) the deterministic result is returned.
     public func enhanced(_ request: EditorialRequest) async -> EditorialResult {
         let base = pipeline.result(for: request)
-        guard let model else { return base }
+        // Already enhanced for these facts: nothing is generated again.
+        guard let model, base.provider == "deterministic" else { return base }
         guard await model.isAvailable() else {
             IntelligenceDiagnostics.emit("editorial_fallback surface=\(request.context.surface.rawValue) kind=\(request.kind.rawValue) provider=\(model.name) reason=unavailable")
             pipeline.emit(.fallbackUsed(surface: request.context.surface, kind: request.kind, reason: "unavailable"))
@@ -351,6 +368,8 @@ public struct EditorialRouter: Sendable {
         do {
             let texts = try await model.candidates(for: request)
             let merged = pipeline.merging(base, candidates: texts.map { EditorialCandidate(text: $0, provider: model.name) }, request: request)
+            // Kept, so a redraw (and every surface asking for the same facts) reuses it.
+            pipeline.remember(merged, for: request)
             return merged
         } catch {
             IntelligenceDiagnostics.emit("editorial_fallback surface=\(request.context.surface.rawValue) kind=\(request.kind.rawValue) provider=\(model.name) reason=error")

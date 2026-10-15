@@ -349,7 +349,7 @@ public enum IntelligenceDiagnostics {
         lock.withLock { sink = newSink }
     }
 
-    static func emit(_ line: String) {
+    public static func emit(_ line: String) {
         let current = lock.withLock { sink }
         current?(line)
     }

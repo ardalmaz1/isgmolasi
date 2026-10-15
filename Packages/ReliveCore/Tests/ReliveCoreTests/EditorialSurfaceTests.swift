@@ -29,7 +29,7 @@ struct EditorialSurfaceTests {
         let source = CreationSource.trip(F.tripID("Lycian Coast"))
         let base = planner.plan(source: source)
         var settings = base.settings
-        settings.titleChoice = EditorialChoice().next(count: base.titleVariants.count)
+        settings.titleChoice = EditorialChoice().next(in: base.titleVariants)
         let second = planner.plan(source: source, photos: base.photoIDs, cover: base.cover, settings: settings, isUserCut: false)
         #expect(second.scenes.first?.text?.title == base.titleVariants[1])
         #expect(second.scenes.first?.text?.eyebrow == "August 6–9, 2025")
@@ -62,7 +62,13 @@ struct EditorialSurfaceTests {
         let variants = ["Kaş", "Four days in Kaş.", "Kaş · August 2026"]
         #expect(EditorialChoice().resolve(variants).text == "Kaş")
         #expect(EditorialChoice(variant: 4).resolve(variants).text == "Four days in Kaş.")
-        #expect(EditorialChoice(variant: 2).next(count: 3).variant == 0)
+        #expect(EditorialChoice(variant: 2).next(in: variants).variant == 0)
+        #expect(EditorialChoice().next(in: variants) == EditorialChoice(variant: 1, chosenText: "Four days in Kaş."))
+        #expect(EditorialChoice(userText: "Bizim").next(in: variants).isDefault, "Try another after own words: Relive's first")
+        // A chosen variant survives a change in what is on offer, while it is still true.
+        let kept = EditorialChoice(variant: 1, chosenText: "Kaş, in August.")
+        #expect(kept.resolve(variants, stillTrue: { _ in true }).text == "Kaş, in August.")
+        #expect(kept.resolve(variants).text == "Four days in Kaş.")
         #expect(EditorialChoice(userText: "   ").resolve(variants).text == "Kaş", "blank is not the user's words")
         #expect(EditorialChoice(variant: 1, userText: "Bizim").resolve(variants) == ("Bizim", .user))
         #expect(EditorialChoice().resolve([]).text == nil)
@@ -108,7 +114,30 @@ struct EditorialSurfaceTests {
                 #expect(!value.contains("Kaş") && !value.contains("August") && !value.contains("days"), "\(value)")
             }
         }
-        _ = await EditorialRouter(pipeline: pipeline, model: EditorialPipelineTests.FakeModel(available: false)).enhanced(request)
+        _ = await EditorialRouter(pipeline: pipeline, model: EditorialPipelineTests.FakeModel(available: false)).enhanced(EditorialRequest(context: EditorialFixture.kas(), kind: .subtitle))
         #expect(log.events.last?.analyticsName == .editorialFallbackUsed)
+    }
+}
+
+@Suite("Editorial: on-device model prompt")
+struct EditorialPromptTests {
+    @Test func thePromptCarriesFactsOnlyAndTheReplyIsParsed() {
+        var context = EditorialFixture.kas()
+        context.userText = "Our secret note"
+        let prompt = EditorialPrompt.prompt(for: EditorialRequest(context: context, kind: .title))
+        #expect(prompt.contains("Kaş"))
+        #expect(!prompt.contains("secret"), "the user's words are never sent to a model")
+        #expect(EditorialPrompt.instructions(for: .turkish).contains("Turkish"))
+        #expect(EditorialPrompt.lines(from: "1. \"Kaş, in August.\"\n- August in Kaş\n\n• Kaş") == ["Kaş, in August.", "August in Kaş", "Kaş"])
+    }
+
+    @Test func modelVariantsFollowRelivesFirstChoiceAndAreKept() async {
+        let pipeline = EditorialPipeline()
+        let request = EditorialRequest(context: EditorialFixture.kas(), kind: .title)
+        let model = EditorialPipelineTests.FakeModel(replies: ["Kaş, in August."])
+        let enhanced = await EditorialRouter(pipeline: pipeline, model: model).enhanced(request)
+        #expect(enhanced.variants.count <= EditorialPipeline.maximumVariants)
+        #expect(enhanced.variants[1] == "Kaş, in August.")
+        #expect(pipeline.result(for: request) == enhanced, "kept for the next redraw")
     }
 }

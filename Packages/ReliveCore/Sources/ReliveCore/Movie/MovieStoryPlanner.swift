@@ -95,9 +95,9 @@ public struct MovieStoryPlanner: Sendable {
 
     /// Up to three safe opening titles: the factual title, then editorial alternatives that the
     /// shared validator accepted for this movie's facts ("Four days in Kaş.", "Kaş · August 2026").
-    func titleVariants(title: FactualTitle, periodLabel: String?, days: [DayKey?], count: Int) -> [String] {
+    func titleVariants(title: FactualTitle, periodLabel: String?, days: [DayKey?], count: Int) -> ([String], EditorialRequest?) {
         let primary = title.primary.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !primary.isEmpty else { return [] }
+        guard !primary.isEmpty else { return ([], nil) }
         let allDated = !days.isEmpty && !days.contains(nil)
         let sorted = days.compactMap { $0 }.sorted()
         var seenMonths = Set<MonthKey>()
@@ -116,12 +116,13 @@ public struct MovieStoryPlanner: Sendable {
             factualTitle: primary,
             knownPhrases: [title.secondary].compactMap { $0 }
         )
-        let result = EditorialPipeline.shared.result(for: EditorialRequest(context: context, kind: .title))
+        let request = EditorialRequest(context: context, kind: .title)
+        let result = EditorialPipeline.shared.result(for: request)
         var seen = Set<String>()
-        return ([primary] + result.variants)
+        let variants = ([primary] + result.variants)
             .filter { $0 != title.combined && seen.insert($0).inserted }
             .prefix(EditorialPipeline.maximumVariants)
-            .map { $0 }
+        return (Array(variants), request)
     }
 
     // MARK: - The edit
@@ -158,8 +159,11 @@ public struct MovieStoryPlanner: Sendable {
         let candidates = Dictionary(uniqueKeysWithValues: built.map { ($0.assetID, $0) })
         // The opening title: Relive's factual title first, then the shared editorial layer's
         // validated alternatives; the user's choice (or own words) wins.
-        plan.titleVariants = titleVariants(title: title, periodLabel: periodLabel, days: built.map(\.day), count: ordered.count)
-        let opening = (settings.titleChoice ?? EditorialChoice()).resolve(plan.titleVariants)
+        (plan.titleVariants, plan.titleRequest) = titleVariants(title: title, periodLabel: periodLabel, days: built.map(\.day), count: ordered.count)
+        let titleRequest = plan.titleRequest
+        let opening = (settings.titleChoice ?? EditorialChoice()).resolve(plan.titleVariants) { text in
+            titleRequest.map { EditorialValidator().accepts(EditorialCandidate(text: text, provider: "kept"), request: $0) } ?? false
+        }
         plan.openingTitle = opening.text
         plan.openingTitleAuthorship = opening.authorship
         let isReliveFirstChoice = opening.authorship == .relive && opening.text == title.primary

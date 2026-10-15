@@ -235,6 +235,8 @@ public struct MoviePlan: Hashable, Codable, Sendable {
     /// Safe ways to title the opening ("Try another"), Relive's first choice first. Each passed
     /// the editorial validator against this movie's facts.
     public var titleVariants: [String] = []
+    /// The facts the opening title is phrased from (so an on-device model may add alternatives).
+    public var titleRequest: EditorialRequest?
     /// The opening title as shown (`nil` when the user removed it), and who wrote it.
     public var openingTitle: String?
     public var openingTitleAuthorship: EditorialAuthorship = .relive

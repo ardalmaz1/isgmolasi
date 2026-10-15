@@ -296,13 +296,17 @@ public struct EditorialResult: Hashable, Codable, Sendable {
 public struct EditorialChoice: Hashable, Codable, Sendable {
     /// Which of Relive's variants (0 = Relive's first choice).
     public var variant: Int
+    /// The variant's words when the user chose them, so a reopened draft shows the same words
+    /// even if the alternatives on offer changed (they are re-checked against the facts).
+    public var chosenText: String?
     /// The user's own words, shown as written and never checked or rewritten.
     public var userText: String?
     /// The user removed the words.
     public var isRemoved: Bool
 
-    public init(variant: Int = 0, userText: String? = nil, isRemoved: Bool = false) {
+    public init(variant: Int = 0, chosenText: String? = nil, userText: String? = nil, isRemoved: Bool = false) {
         self.variant = variant
+        self.chosenText = chosenText
         self.userText = userText
         self.isRemoved = isRemoved
     }
@@ -312,16 +316,25 @@ public struct EditorialChoice: Hashable, Codable, Sendable {
         !(userText?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
     }
 
-    /// The text to show from `variants`, and who wrote it. `nil` text: removed (or nothing to show).
-    public func resolve(_ variants: [String]) -> (text: String?, authorship: EditorialAuthorship) {
+    /// Relive's first choice, untouched.
+    public var isDefault: Bool { !isRemoved && !hasUserText && variant == 0 && chosenText == nil }
+
+    /// The text to show from `variants`, and who wrote it. `nil` text: removed (or nothing to
+    /// show). `stillTrue` re-checks a previously chosen variant that is no longer on offer.
+    public func resolve(_ variants: [String], stillTrue: (String) -> Bool = { _ in false }) -> (text: String?, authorship: EditorialAuthorship) {
         if isRemoved { return (nil, .user) }
         if hasUserText, let userText { return (userText.trimmingCharacters(in: .whitespacesAndNewlines), .user) }
+        if let chosenText, variants.contains(chosenText) || stillTrue(chosenText) { return (chosenText, .relive) }
         guard !variants.isEmpty else { return (nil, .relive) }
         return (variants[((variant % variants.count) + variants.count) % variants.count], .relive)
     }
 
-    /// The next of Relive's variants (and back to Relive's words if the user had their own).
-    public func next(count: Int) -> EditorialChoice {
-        EditorialChoice(variant: count > 0 ? (variant + 1) % count : 0)
+    /// "Try another": the variant after the one shown (and back to Relive's words if the user had
+    /// their own or removed them).
+    public func next(in variants: [String]) -> EditorialChoice {
+        guard !variants.isEmpty else { return EditorialChoice() }
+        let shown = (isRemoved || hasUserText) ? nil : resolve(variants).text
+        let index = shown.flatMap { variants.firstIndex(of: $0) }.map { ($0 + 1) % variants.count } ?? 0
+        return EditorialChoice(variant: index, chosenText: index == 0 ? nil : variants[index])
     }
 }

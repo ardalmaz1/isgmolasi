@@ -66,6 +66,16 @@ jobs:
             CODE_SIGNING_ALLOWED=NO \
             build 2>&1 | tee build/xcodebuild.log | grep -E "error:|warning:|BUILD (SUCCEEDED|FAILED)" || true
           grep -q "BUILD SUCCEEDED" build/xcodebuild.log
+      - name: On-device model linking (the app must still launch on iOS 18)
+        run: |
+          APP="build/DerivedData/Build/Products/Debug-iphonesimulator/Relive.app"
+          for BIN in "$APP/Relive" "$APP/Relive.debug.dylib"; do
+            [ -f "$BIN" ] || continue
+            if otool -l "$BIN" | grep -A2 -E "LC_LOAD_DYLIB" | grep -q "FoundationModels"; then
+              echo "FOUNDATION_MODELS strongly linked in $(basename "$BIN")"; exit 1
+            fi
+            otool -l "$BIN" | grep -A2 "LC_LOAD_WEAK_DYLIB" | grep "FoundationModels" | sed "s/^/FOUNDATION_MODELS weak $(basename "$BIN") /" || true
+          done
       - name: Summarize diagnostics
         if: always()
         run: |
@@ -108,7 +118,7 @@ jobs:
             -only-testing:ReliveTests \
             -derivedDataPath build/DerivedData \
             -resultBundlePath build/AppUnitTests.xcresult \
-            2>&1 | tee build/unittest.log | grep -E "error:|warning:|Test Case|Executed|MOVIE_|\*\* TEST" || true
+            2>&1 | tee build/unittest.log | grep -E "error:|warning:|Test Case|Executed|MOVIE_|EDITORIAL_|\*\* TEST" || true
           grep -q "\*\* TEST SUCCEEDED \*\*" build/unittest.log
       - name: Run UI flow
         run: |
@@ -120,7 +130,7 @@ jobs:
             -only-testing:ReliveUITests \
             -derivedDataPath build/DerivedData \
             -resultBundlePath build/UIFlow.xcresult \
-            2>&1 | tee build/uitest.log | grep -E "error:|TIMELINE|SCREEN|Test Case|\*\* TEST" || true
+            2>&1 | tee build/uitest.log | grep -E "error:|TIMELINE|SCREEN|EDITORIAL|Test Case|\*\* TEST" || true
           grep -q "\*\* TEST SUCCEEDED \*\*" build/uitest.log
       - name: Recap and Memory Movie on a small screen (iPhone SE)
         run: |
@@ -177,7 +187,7 @@ jobs:
                     "M01-", "M02-", "M03-", "M04-", "M05-", "M06-", "M07-", "M08-", "M09-",
                     "F01-", "F02-", "F03-", "F04-", "F05-", "F06-", "F07-",
                     "R0", "R1", "R4", "R5", "R8", "E0", "E1", "E8", "M00", "B00",
-                    "V0", "V8", "W0", "W8")
+                    "V0", "V1", "V8", "W0", "W1", "W8")
           for name, file in sorted(found):
               if not name.startswith(wanted) or file.suffix != ".png":
                   continue

@@ -38,6 +38,7 @@ final class AppEnvironment {
         self.appModel = AppModel(storyStore: storyStore, repository: repository, analytics: analytics)
         self.premium = PremiumStore(client: storeKit, analytics: analytics)
         self.madeForYou = MadeForYouStore()
+        EditorialService.connect(analytics: analytics)
     }
 
     #if DEBUG
@@ -76,6 +77,7 @@ final class AppEnvironment {
         #else
         let storeKit: any StoreKitClient = LiveStoreKitClient()
         #endif
+        EditorialService.shared.logProvider()
         return AppEnvironment(
             container: container,
             photoLibrary: PhotoKitLibraryService(),

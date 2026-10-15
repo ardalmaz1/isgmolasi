@@ -4,7 +4,8 @@ import XCTest
 /// free: Create → Memory Movie → Choose a Trip → Relive's cut → play → change style and shape →
 /// move and remove a scene → Save Video → paywall ("Keep this movie") → close, the edit is as it
 /// was → paywall again → close. Relaunch as Premium: the draft is still there → Save Video →
-/// progress → saved. Then Made for You → the trip's movie (no paywall), and dark mode and the
+/// progress → saved. The opening title: Try another → the user's own words → still there after
+/// the relaunch. Then Made for You → the trip's movie (no paywall), and dark mode and the
 /// largest text size for review.
 ///
 /// Screenshots start with "V" (or "W" on an iPhone SE, where CI runs this test again).
@@ -90,6 +91,31 @@ final class MovieUITests: XCTestCase {
         let edited = summary.label
         XCTAssertNotEqual(edited, before, "removing a scene changes the movie: \(before) → \(edited)")
 
+        // Words: Relive's title → another safe one → the user's own, which the draft keeps.
+        let titleText = app.staticTexts["movieTitleText"]
+        let tryAnother = app.buttons["movieTitleTryAnother"]
+        reveal(app, tryAnother)
+        let reliveTitle = titleText.label
+        XCTAssertEqual(tryAnother.label, "Try another title", "VoiceOver says what Try another does")
+        tryAnother.tap()
+        sleep(1)
+        XCTAssertNotEqual(titleText.label, reliveTitle, "Try another shows another title")
+        print("EDITORIAL title-variant-changed=\(titleText.label != reliveTitle)")
+        capture("\(prefix)10-title-another")
+        app.buttons["movieTitleEdit"].tap()
+        let field = app.alerts.textFields.firstMatch
+        XCTAssertTrue(field.waitForExistence(timeout: 5), "Edit title opens a text field")
+        field.tap()
+        if let value = field.value as? String, !value.isEmpty {
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
+        }
+        field.typeText("Our favorite trip")
+        app.alerts.buttons["Save"].tap()
+        sleep(1)
+        XCTAssertEqual(titleText.label, "Title: Our favorite trip", "the user's words are kept as written")
+        XCTAssertTrue(app.buttons["movieTitleReset"].exists, "the user can go back to Relive's title")
+        capture("\(prefix)11-title-own")
+
         // Keeping it is Premium; closing the paywall returns to the movie exactly as it was.
         app.buttons["movieSave"].tap()
         XCTAssertTrue(paywall(app).waitForExistence(timeout: 10), "Save Video asks for Premium")
@@ -117,6 +143,7 @@ final class MovieUITests: XCTestCase {
         let restoredSummary = premium.descendants(matching: .any)["movieSummary"]
         XCTAssertTrue(restoredSummary.waitForExistence(timeout: 20))
         XCTAssertEqual(restoredSummary.label, edited, "the draft reopens as it was")
+        XCTAssertEqual(premium.staticTexts["movieTitleText"].label, "Title: Our favorite trip", "the user's title survives closing and reopening")
         premium.buttons["movieSave"].tap()
         XCTAssertFalse(paywall(premium).waitForExistence(timeout: 2), "Premium saw the paywall")
         let progress = premium.descendants(matching: .any)["movieExportProgress"]

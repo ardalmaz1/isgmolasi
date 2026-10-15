@@ -23,6 +23,8 @@ struct MovieEditorView: View {
     @State private var hasPreviewed = false
     @State private var replacing: AssetID?
     @State private var confirmsDelete = false
+    @State private var editsTitle = false
+    @State private var draftTitle = ""
 
     var body: some View {
         ScrollView {
@@ -49,6 +51,7 @@ struct MovieEditorView: View {
                         .accessibilityIdentifier("movieNote")
                 }
 
+                titleSection
                 styleSection
                 shapeSection
                 scenesSection
@@ -80,6 +83,14 @@ struct MovieEditorView: View {
             }
         }
         .confirmsCreationDelete(isPresented: $confirmsDelete, keeper: model.keeper, store: store, onDeleted: onClose)
+        .alert("Movie Title", isPresented: $editsTitle) {
+            TextField("Title", text: $draftTitle)
+                .accessibilityIdentifier("movieTitleField")
+            Button("Cancel", role: .cancel) {}
+            Button("Save") { model.setOwnTitle(draftTitle) }
+        } message: {
+            Text("Your own words, shown just as you write them.")
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) { saveBar }
         .overlay { exportOverlay }
         .premiumPaywall(gate)
@@ -172,6 +183,53 @@ struct MovieEditorView: View {
     }
 
     // MARK: - Choices
+
+    /// Relive's words for the opening — never more than a few, all true of these photos — and
+    /// the user's own. No sparkles, no prompt box: a title, and three plain choices.
+    private var titleSection: some View {
+        VStack(alignment: .leading, spacing: Spacing.s) {
+            Text("Title").eyebrowStyle()
+            Text(model.openingTitle ?? "No title")
+                .font(Typography.title3)
+                .foregroundStyle(model.openingTitle == nil ? Palette.textSecondary : Palette.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityLabel(model.openingTitle.map { "Title: \($0)" } ?? "No title")
+                .accessibilityIdentifier("movieTitleText")
+            FlowLayout {
+                Button("Try another") {
+                    withAnimation(animation) { model.tryAnotherTitle() }
+                }
+                .disabled(!model.canTryAnotherTitle)
+                .opacity(model.canTryAnotherTitle ? 1 : 0.4)
+                .accessibilityLabel("Try another title")
+                .accessibilityHint("Shows another title made from this movie's dates and places")
+                .accessibilityIdentifier("movieTitleTryAnother")
+                Button("Edit") {
+                    draftTitle = model.openingTitle ?? ""
+                    editsTitle = true
+                }
+                .accessibilityLabel("Edit title")
+                .accessibilityIdentifier("movieTitleEdit")
+                if model.titleChoice.isDefault {
+                    Button("Remove") {
+                        withAnimation(animation) { model.removeTitle() }
+                    }
+                    .accessibilityLabel("Remove title")
+                    .accessibilityIdentifier("movieTitleRemove")
+                } else {
+                    Button("Reset") {
+                        withAnimation(animation) { model.resetTitle() }
+                    }
+                    .accessibilityLabel("Reset title")
+                    .accessibilityHint("Goes back to Relive's title")
+                    .accessibilityIdentifier("movieTitleReset")
+                }
+            }
+            .buttonStyle(.reliveOutline)
+            .accessibilityElement(children: .contain)
+        }
+        .padding(.horizontal, Spacing.screenMargin)
+    }
 
     private var styleSection: some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
