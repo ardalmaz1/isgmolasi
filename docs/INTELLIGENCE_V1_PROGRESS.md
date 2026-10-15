@@ -122,6 +122,8 @@ README.
 - **Screenshot review:**
   - the Premium page's 4:5 blurred photo pushed its action behind the footer (now 4:3);
   - photo chapters' 4:5 hero hid the smaller photos (now square).
+  - at accessibility text sizes the hero filled the screen and pushed the words below the fold
+    (heroes are now 16:9 at those sizes).
 - **Test infrastructure:**
   - A hosted test that put the whole tab view in a window broke every later UI test's
     onboarding on the shared simulator. It has been removed; it had already shown that

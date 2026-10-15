@@ -9,7 +9,13 @@ struct RecapPageView: View {
     let actions: RecapActions
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var typeSize
     @State private var appeared = false
+
+    /// At accessibility text sizes a wide photo, so the words still come first on the screen.
+    private func heroRatio(_ regular: CGFloat) -> CGFloat {
+        typeSize.isAccessibilitySize ? 16 / 9 : regular
+    }
 
     var body: some View {
         ScrollView {
@@ -39,7 +45,7 @@ struct RecapPageView: View {
         switch chapter.kind {
         case .opening:
             if let hero = chapter.hero {
-                FramedAssetImage(assetID: hero, aspectRatio: 4 / 5, cornerRadius: Radius.card)
+                FramedAssetImage(assetID: hero, aspectRatio: heroRatio(4 / 5), cornerRadius: Radius.card)
                     .accessibilityHidden(true)
             }
             words(chapter.text, large: true)
@@ -60,7 +66,7 @@ struct RecapPageView: View {
         case .firstMemory, .tripHighlight, .placeHighlight, .dayHighlight, .peopleGallery, .favoriteHighlight:
             // Square, so the words and the smaller photos fit above the footer on one screen.
             if let hero = chapter.hero {
-                FramedAssetImage(assetID: hero, aspectRatio: 1, cornerRadius: Radius.card)
+                FramedAssetImage(assetID: hero, aspectRatio: heroRatio(1), cornerRadius: Radius.card)
                     .accessibilityHidden(true)
             }
             words(chapter.text, large: false)
@@ -159,7 +165,7 @@ struct RecapPageView: View {
     private func closing(_ chapter: RecapChapter) -> some View {
         VStack(alignment: .leading, spacing: Spacing.l) {
             if let hero = chapter.hero {
-                FramedAssetImage(assetID: hero, aspectRatio: 4 / 3, cornerRadius: Radius.card)
+                FramedAssetImage(assetID: hero, aspectRatio: heroRatio(4 / 3), cornerRadius: Radius.card)
                     .accessibilityHidden(true)
             }
             words(chapter.text, large: true)
@@ -196,7 +202,7 @@ struct RecapPageView: View {
         let remaining = max(0, plan.chapters.count - 1 - (1 + RecapExperienceView.freePreviewChapters))
         return VStack(alignment: .leading, spacing: Spacing.l) {
             if let hero = plan.chapters.dropFirst().compactMap(\.hero).last {
-                FramedAssetImage(assetID: hero, aspectRatio: 4 / 3, cornerRadius: Radius.card)
+                FramedAssetImage(assetID: hero, aspectRatio: heroRatio(4 / 3), cornerRadius: Radius.card)
                     .blur(radius: 18)
                     .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
                     .accessibilityHidden(true)

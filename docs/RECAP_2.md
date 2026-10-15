@@ -107,7 +107,8 @@ facts never include photos, coordinates, notes, captions or identifiers. An
 ## The experience
 
 - **Layout:** full screen, one chapter per page. Each page scrolls vertically, so the largest text
-  sizes and an iPhone SE never clip it.
+  sizes and an iPhone SE never clip it. At accessibility text sizes the hero photos turn wide
+  (16:9), so the words still come first on screen.
 - **Controls:**
   - Swipe, or use Next / Previous.
   - Nothing advances on its own.
