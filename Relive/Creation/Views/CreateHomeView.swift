@@ -13,7 +13,7 @@ enum CreateRoute: Hashable {
 /// Create: Relive's creative studio, and the couple's own collection.
 ///
 /// In order: Continue Editing (only when there are drafts), Your Creations, Favorites, then
-/// Create Something — Trending Now and the five tools, each shown with the couple's own photos.
+/// Create Something — Trending Now and the six tools, each shown with the couple's own photos.
 /// Every line about the couple is a fact ("You have 8 favorites"), never a judgement.
 struct CreateHomeView: View {
     @Environment(AppModel.self) private var app
@@ -80,6 +80,8 @@ struct CreateHomeView: View {
                         storyFeature(library: library)
                         Hairline()
                         bookFeature(library: library, months: months, years: years)
+                        Hairline()
+                        movieFeature(library: library)
                         Hairline()
                         monthlyRecapRow(library: library, months: months)
                         Hairline()
@@ -265,6 +267,32 @@ struct CreateHomeView: View {
             }
             Button("Photos I Choose") { app.startCreation(.book, from: .choosePhotos, origin: "create") }
             Button("Cancel", role: .cancel) {}
+        }
+    }
+
+    // MARK: - Memory Movie
+
+    private func movieFeature(library: CreationLibrary) -> some View {
+        let cover = library.visibleMoments.last(where: { $0.kind != .undated }).flatMap(library.lead(of:))
+        return HStack(alignment: .top, spacing: Spacing.m) {
+            Color.black
+                .frame(width: 90, height: 160)
+                .overlay { AssetImageView(assetID: cover).opacity(0.92) }
+                .overlay {
+                    Image(systemName: "play.fill")
+                        .font(.title3)
+                        .foregroundStyle(.white)
+                        .frame(width: 40, height: 40)
+                        .background(Circle().fill(.black.opacity(0.4)))
+                }
+                .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
+                .accessibilityHidden(true)
+            VStack(alignment: .leading, spacing: Spacing.s) {
+                FeatureText(title: "Memory Movie", subtitle: "A short film, edited by Relive from your memories.")
+                Button("Make a Movie") { app.startCreation(.movie, from: .choosePhotos, origin: "create") }
+                    .buttonStyle(.reliveOutline)
+                    .accessibilityIdentifier("createMovie")
+            }
         }
     }
 

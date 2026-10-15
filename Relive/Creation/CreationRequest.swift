@@ -6,6 +6,7 @@ enum CreationKind: String, Hashable, Sendable {
     case collage
     case story
     case book
+    case movie
 
     /// Photos a creation of this kind works with.
     var photoRange: ClosedRange<Int> {
@@ -13,6 +14,7 @@ enum CreationKind: String, Hashable, Sendable {
         case .collage: CreationLimits.collage
         case .story: CreationLimits.story
         case .book: BookLimits.minimumPhotos...BookLimits.maximumPhotos
+        case .movie: MovieEligibility.minimumPhotos...MovieEligibility.maximumPhotos
         }
     }
 
@@ -21,6 +23,7 @@ enum CreationKind: String, Hashable, Sendable {
         case .collage: "Memory Collage"
         case .story: "Story Maker"
         case .book: "Memory Book"
+        case .movie: "Memory Movie"
         }
     }
 }

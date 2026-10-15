@@ -23,7 +23,12 @@ enum KeptItem: Identifiable, Hashable {
 
     var kind: KeptKind {
         switch self {
-        case .creation(let creation): creation.kind == .collage ? .collage : .story
+        case .creation(let creation):
+            switch creation.kind {
+            case .collage: .collage
+            case .story: .story
+            case .movie: .movie
+            }
         case .book: .book
         }
     }
@@ -37,6 +42,7 @@ enum KeptKind: String, CaseIterable, Hashable, Identifiable {
     case collage
     case story
     case book
+    case movie
 
     var id: String { rawValue }
 
@@ -46,6 +52,7 @@ enum KeptKind: String, CaseIterable, Hashable, Identifiable {
         case .collage: "Collage"
         case .story: "Story"
         case .book: "Book"
+        case .movie: "Movie"
         }
     }
 
@@ -54,6 +61,7 @@ enum KeptKind: String, CaseIterable, Hashable, Identifiable {
         case .collage: "Collages"
         case .story: "Stories"
         case .book: "Books"
+        case .movie: "Movies"
         }
     }
 
@@ -63,6 +71,7 @@ enum KeptKind: String, CaseIterable, Hashable, Identifiable {
         case .collage: "Memory Collage"
         case .story: "Memory Story"
         case .book: "Memory Book"
+        case .movie: "Memory Movie"
         }
     }
 }

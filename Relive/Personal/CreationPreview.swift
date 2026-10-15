@@ -49,6 +49,20 @@ private struct SavedCreationPreview: View {
                 if let state = creation.collage {
                     collage(state, library: library, missing: missing)
                 }
+            case .movie:
+                // A movie's opening photo, with a quiet film mark (never a rendered frame).
+                Color.black
+                    .aspectRatio(creation.movie?.settings.aspect.ratio ?? 9 / 16, contentMode: .fit)
+                    .overlay { AssetImageView(assetID: creation.movie?.cover ?? creation.photoIDs.first) }
+                    .clipped()
+                    .overlay(alignment: .bottomLeading) {
+                        Image(systemName: "film")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .padding(6)
+                            .background(Circle().fill(.black.opacity(0.45)))
+                            .padding(6)
+                    }
             case .story:
                 if let design = creation.story?.design, let card = design.cards.first {
                     let aspects = card.photos.map { library.assets[$0]?.aspectRatio ?? 0.75 }
@@ -78,6 +92,7 @@ private struct SavedCreationPreview: View {
         switch creation.kind {
         case .collage: creation.collage?.photoIDs ?? []
         case .story: creation.story?.design.cards.first?.photos ?? []
+        case .movie: []
         }
     }
 
@@ -170,6 +185,7 @@ struct KeptSummary {
             switch creation.kind {
             case .collage: parts.append(Counted.text(creation.photoIDs.count, "photo", "photos"))
             case .story: parts.append(Counted.text(creation.story?.design.cards.count ?? 0, "card", "cards"))
+            case .movie: parts.append(Counted.text(creation.photoIDs.count, "photo", "photos"))
             }
             if let period = CreationText.periodLine(facts.dateSpan), period != title { parts.append(period) }
             detail = parts.joined(separator: " · ")

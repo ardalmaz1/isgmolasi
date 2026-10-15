@@ -188,10 +188,17 @@ struct RecapPageView: View {
                         .frame(maxWidth: .infinity)
                         .accessibilityIdentifier("recapCreateStory")
                 }
-                Button("Make a Memory Book") { actions.create(.book) }
-                    .buttonStyle(.reliveOutline)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityIdentifier("recapMakeBook")
+                HStack(spacing: Spacing.s) {
+                    Button("Make a Memory Book") { actions.create(.book) }
+                        .buttonStyle(.reliveOutline)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityIdentifier("recapMakeBook")
+                    // The same period, the same Memory Intelligence selection, as a short film.
+                    Button("Make a Movie") { actions.create(.movie) }
+                        .buttonStyle(.reliveOutline)
+                        .frame(maxWidth: .infinity)
+                        .accessibilityIdentifier("recapMakeMovie")
+                }
                 ExportStatusView(controller: actions.export)
             }
         }

@@ -273,7 +273,12 @@ final class AppModel {
     }
 
     func resumeCreation(_ creation: SavedCreation, origin: String) {
-        startCreation(creation.kind == .collage ? .collage : .story, from: .resume(creation.id), origin: origin)
+        let kind: CreationKind = switch creation.kind {
+        case .collage: .collage
+        case .story: .story
+        case .movie: .movie
+        }
+        startCreation(kind, from: .resume(creation.id), origin: origin)
     }
 
     // MARK: - Validation question

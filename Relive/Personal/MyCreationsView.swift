@@ -79,7 +79,7 @@ struct KeptItemLink: View {
                 } label: {
                     CreationCard(item: item, width: width)
                 }
-                .accessibilityIdentifier(creation.kind == .collage ? "savedCollage" : "savedStory")
+                .accessibilityIdentifier(creation.kind == .collage ? "savedCollage" : creation.kind == .story ? "savedStory" : "savedMovie")
             }
         }
         .buttonStyle(.plain)

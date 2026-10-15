@@ -6,9 +6,10 @@ import ReliveCore
 enum CreationContent {
     case collage(CollageState)
     case story(StoryState)
+    case movie(MovieState)
 }
 
-/// Keeps one collage or story safe while it is made.
+/// Keeps one collage, story or movie safe while it is made.
 ///
 /// - Nothing is written until the user changes something: a story Relive designed and left
 ///   untouched isn't a draft.
@@ -104,6 +105,7 @@ final class CreationKeeper {
         switch content {
         case .collage(let state): creation.collage = state
         case .story(let state): creation.story = state
+        case .movie(let state): creation.movie = state
         }
         creation.updatedAt = now
         change(&creation)

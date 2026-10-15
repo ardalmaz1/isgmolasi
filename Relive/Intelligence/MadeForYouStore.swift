@@ -82,10 +82,15 @@ final class MadeForYouStore {
         save(refreshing: false)
     }
 
-    /// A recap of `source` was shared: its recap suggestion has been made, so it steps away
-    /// (for `SuggestionHistory.createdDays`) like any suggestion something was made from.
-    func recordMade(source: CreationSource) {
-        let made = suggestions.filter { $0.source == source && ($0.creation == .monthlyRecap || $0.creation == .yearInReview) }
+    /// Something was made from `source` and kept (a recap shared, a movie exported): that
+    /// suggestion has been made, so it steps away (for `SuggestionHistory.createdDays`) like
+    /// any suggestion something was made from. Without `creation`, recap suggestions.
+    func recordMade(source: CreationSource, creation: ReliveCore.CreationKind? = nil) {
+        let made = suggestions.filter { suggestion in
+            guard suggestion.source == source else { return false }
+            if let creation { return suggestion.creation == creation }
+            return suggestion.creation == .monthlyRecap || suggestion.creation == .yearInReview
+        }
         guard !made.isEmpty else { return }
         for suggestion in made { history.recordCreated(suggestion.id, now: now()) }
         save(refreshing: true)

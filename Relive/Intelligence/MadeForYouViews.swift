@@ -157,7 +157,7 @@ struct CreationLabel: View {
         case .book: "Memory Book"
         case .monthlyRecap: "Monthly Recap"
         case .yearInReview: "Our Year"
-        case .movieFuture: "Movie"
+        case .movie: "Memory Movie"
         }
     }
 
@@ -168,7 +168,7 @@ struct CreationLabel: View {
         case .book: "book.closed"
         case .monthlyRecap: "calendar"
         case .yearInReview: "calendar.badge.clock"
-        case .movieFuture: "film"
+        case .movie: "film"
         }
     }
 }
@@ -186,8 +186,8 @@ extension View {
     }
 }
 
-/// Opening a suggestion: recaps open the immersive recap; creations open the existing
-/// editors with Memory Intelligence's photos. Nothing is saved, and nothing asks for Premium.
+/// Opening a suggestion: recaps open the immersive recap; creations (including a Memory Movie)
+/// open the existing editors with Memory Intelligence's photos. Nothing is saved, and nothing asks for Premium.
 @MainActor
 enum MadeForYouOpener {
     static func open(_ suggestion: MadeForYouSuggestion, app: AppModel, madeForYou: MadeForYouStore, origin: String) {
@@ -203,8 +203,8 @@ enum MadeForYouOpener {
             app.startCreation(.story, from: .source(suggestion.source), origin: origin)
         case .book:
             app.startCreation(.book, from: .source(suggestion.source), origin: origin)
-        case .movieFuture:
-            break
+        case .movie:
+            app.startCreation(.movie, from: .source(suggestion.source), origin: origin)
         }
     }
 }

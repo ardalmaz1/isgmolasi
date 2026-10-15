@@ -3,7 +3,7 @@ import SwiftUI
 import UIKit
 
 /// Hosts one creation from start to finish: choosing photos, a moment, a trip, a month or a year
-/// when needed, then the collage editor, Story Maker or the new Memory Book. Presented full
+/// when needed, then the collage editor, Story Maker, the new Memory Book or a Memory Movie. Presented full
 /// screen over the app.
 struct CreationFlowView: View {
     let request: CreationRequest
@@ -29,6 +29,8 @@ struct CreationFlowView: View {
         case collage(CollageEditorModel)
         case story(StoryMakerModel)
         case book(UUID)
+        case chooseMovieSource
+        case movie(MovieEditorModel)
         case notEnough(message: String, preselected: [AssetID])
         /// A kept creation that was deleted meanwhile.
         case gone
@@ -67,6 +69,17 @@ struct CreationFlowView: View {
                     PeriodPickerView(kind: kind, minimumPhotos: request.kind.photoRange.lowerBound, onPick: begin(with:), onCancel: close)
                 case .book(let id):
                     MemoryBookReaderView(bookID: id, onClose: close)
+                case .chooseMovieSource:
+                    MovieSourceChooserView(
+                        onMoment: { stage = .chooseMoment },
+                        onTrip: { stage = .choosePeriod(.trip) },
+                        onMonth: { stage = .choosePeriod(.month) },
+                        onYear: { stage = .choosePeriod(.year) },
+                        onPhotos: { stage = .chooseSource },
+                        onCancel: close
+                    )
+                case .movie(let model):
+                    MovieEditorView(model: model, onClose: close)
                 case .collage(let model):
                     CollageEditorView(model: model, onClose: close)
                 case .story(let model):
@@ -109,7 +122,7 @@ struct CreationFlowView: View {
         .onAppear {
             guard stage == nil else { return }
             switch request.start {
-            case .choosePhotos: stage = .chooseSource
+            case .choosePhotos: stage = request.kind == .movie ? .chooseMovieSource : .chooseSource
             case .choosePhotoLibrary:
                 stage = .chooseSource
                 isPickingFromLibrary = true
@@ -142,6 +155,7 @@ struct CreationFlowView: View {
         switch stage {
         case .collage(let model): model.flush()
         case .story(let model): model.flush()
+        case .movie(let model): model.flush()
         default: break
         }
     }
@@ -165,6 +179,9 @@ struct CreationFlowView: View {
         case .story:
             guard let state = creation.story else { stage = .gone; return }
             stage = .story(StoryMakerModel(restoring: creation, state: state, library: library, store: store))
+        case .movie:
+            guard let state = creation.movie else { stage = .gone; return }
+            stage = .movie(MovieEditorModel(restoring: creation, state: state, library: library, store: store, analytics: analytics))
         }
         startedFrom = creation.source
         analytics.track(creation.isDraft ? .draftResumed : .creationReopened, ["kind": creation.kind.rawValue])
@@ -217,6 +234,10 @@ struct CreationFlowView: View {
             }
         case .story:
             stage = .story(StoryMakerModel(source: source, library: library, store: store))
+        case .movie:
+            let model = MovieEditorModel(source: source, library: library, store: store, analytics: analytics)
+            analytics.track(.movieStarted, ["source": source.kindCode, "origin": request.origin, "ready": model.plan.isReady ? "true" : "false"])
+            stage = .movie(model)
         case .book:
             switch MemoryBookBuilder(library: library).makeBook(from: source, now: Date()) {
             case .success(let book):

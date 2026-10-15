@@ -14,7 +14,7 @@ struct CreationKeepButton: View {
             FavoriteButton(
                 kind: .creation,
                 identifier: keeper.id.uuidString,
-                label: keeper.kind == .collage ? "Favorite collage" : "Favorite story",
+                label: "Favorite \(keeper.kind.rawValue)",
                 accessibilityID: "creationFavorite"
             )
         } else {
@@ -56,14 +56,18 @@ struct CreationMoreMenu: View {
         }
     }
 
-    private var noun: String { keeper.kind == .collage ? "Collage" : "Story" }
+    private var noun: String { keeper.kind.rawValue.capitalized }
 }
 
 extension View {
     /// Asks before deleting a kept draft or creation, then deletes it and closes the editor.
     /// The photos it used stay, in Relive and in the Photos app.
     func confirmsCreationDelete(isPresented: Binding<Bool>, keeper: CreationKeeper, store: StoryStore, onDeleted: @escaping @MainActor () -> Void) -> some View {
-        let noun = keeper.kind == .collage ? "collage" : "story"
+        let noun = switch keeper.kind {
+        case .collage: "collage"
+        case .story: "story"
+        case .movie: "movie"
+        }
         let title = keeper.isSaved ? "Delete this \(noun)?" : "Delete this draft?"
         return confirmationDialog(title, isPresented: isPresented, titleVisibility: .visible) {
             Button(keeper.isSaved ? "Delete \(noun.capitalized)" : "Delete Draft", role: .destructive) {

@@ -51,6 +51,58 @@ struct PhotoSourceChooserView: View {
     }
 }
 
+/// What a Memory Movie is made from: something Relive already understands (a moment, a trip, a
+/// month, a year), or photos chosen by hand.
+struct MovieSourceChooserView: View {
+    let onMoment: () -> Void
+    let onTrip: () -> Void
+    let onMonth: () -> Void
+    let onYear: () -> Void
+    let onPhotos: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: Spacing.l) {
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    Text("Make a Memory Movie")
+                        .font(Typography.title)
+                        .foregroundStyle(Palette.textPrimary)
+                        .accessibilityAddTraits(.isHeader)
+                    Text("Relive chooses the photos, the order and the rhythm. You can change anything after.")
+                        .font(Typography.callout)
+                        .foregroundStyle(Palette.textSecondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.top, Spacing.m)
+
+                VStack(spacing: Spacing.s) {
+                    SourceRow(title: "Choose a Moment", detail: "One afternoon, one evening, one day.", systemImage: "sparkles", action: onMoment)
+                        .accessibilityIdentifier("movieSourceMoment")
+                    SourceRow(title: "Choose a Trip", detail: "Every day of it, in order.", systemImage: "airplane", action: onTrip)
+                        .accessibilityIdentifier("movieSourceTrip")
+                    SourceRow(title: "Choose a Month", detail: "A month of your story.", systemImage: "calendar", action: onMonth)
+                        .accessibilityIdentifier("movieSourceMonth")
+                    SourceRow(title: "Choose a Year", detail: "Your year, as a short film.", systemImage: "calendar.badge.clock", action: onYear)
+                        .accessibilityIdentifier("movieSourceYear")
+                    SourceRow(title: "Choose Photos", detail: "Pick the photos yourself; Relive keeps them as you chose.", systemImage: "photo.on.rectangle", action: onPhotos)
+                        .accessibilityIdentifier("movieSourcePhotos")
+                }
+            }
+            .padding(.horizontal, Spacing.screenMargin)
+            .padding(.bottom, Spacing.xl)
+        }
+        .reliveBackground()
+        .navigationTitle("Memory Movie")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel", action: onCancel)
+            }
+        }
+    }
+}
+
 private struct SourceRow: View {
     let title: String
     let detail: String
@@ -98,6 +150,7 @@ extension CreationKind {
         case .collage: "collage"
         case .story: "story"
         case .book: "book"
+        case .movie: "movie"
         }
     }
 }
