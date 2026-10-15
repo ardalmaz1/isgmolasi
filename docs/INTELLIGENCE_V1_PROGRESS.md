@@ -76,8 +76,59 @@ README.
   - a container accessibility identifier hid the cards' own identifiers;
   - the hero card's subtitle row was squeezed at accessibility text sizes (now stacked).
 
-## Next step (Phase 3)
+## Phase 3 (Monthly Recap 2.0 / Our Year 2.0): complete
 
-Monthly Recap 2.0 / Relive Wrapped, built on plans (`sequence.sections`) and Made for You
-suggestions. Then tune the ranking and suggestion weights on a real library, using the DEBUG
-`intelligence` log lines.
+**Core** (`Packages/ReliveCore/Sources/ReliveCore/Intelligence/Recap/`):
+
+- `RecapStoryPlanner.swift`: `RecapPeriod`, `RecapInsights`, `RecapChapter`, `RecapPlan`, and
+  the planner itself (adaptive chapters, compact fallback, DEBUG `diagnosticsLine`).
+- `EditorialText.swift`: `EditorialFacts`, `EditorialTextProviding`, the deterministic provider,
+  and `ValidatedEditorialTextProvider` (the factual contract for any future AI text).
+- Tests: `RecapStoryPlannerTests.swift` (18). The suite now has 341 core tests.
+
+**App:**
+
+- `Relive/Recap/RecapExperienceView.swift` and `RecapPageView.swift`.
+- `AppModel.openRecap / startCreationFromRecap / recapDismissed`; one full-screen cover in
+  `MainTabView`.
+- Made for You / Today recap suggestions open the immersive recap. Play buttons on Monthly
+  Recap and Our Year. `MadeForYouStore.recordMade(source:)`.
+- Analytics: `recap_chapter_viewed`, `recap_completed`, `recap_creation_started`,
+  `recap_share_started`, `recap_share_completed`; `recap_opened` carries `experience`.
+
+**Tests:**
+
+- `ReliveTests/RecapAppTests.swift` (7) and the updated Made for You routing test.
+- `ReliveUITests/RecapUITests.swift` (screenshots R*), also run on an iPhone SE in CI
+  (screenshots E*).
+
+**Docs:** `docs/RECAP_2.md`.
+
+### Found and fixed along the way
+
+- **Play did nothing (a pre-existing app bug).**
+  - Cause: `AssetImageView` draws a fill-mode photo larger than its frame and only clipped the
+    drawing, so the invisible overflow still took touches. A tall photo under Monthly Recap's
+    Play button swallowed every tap. The DEBUG log confirmed it: no recap request at all.
+  - Fix: photos now take touches only inside their frame and are not touch targets.
+  - Impact: this affected any control next to a tall photo in a fill frame.
+- **Thin recaps.** A month with enough memories but only an opening and a closing worth telling
+  (24 near-identical photos of one evening) was a two-page "recap". Fewer than 5 true chapters
+  now gives one compact page.
+- **Planning thread.** Planning now runs off the main thread, and the header with Close shows
+  while it does. It takes 26–31 ms on the sample library.
+- **Duplicate identifier.** The closing card's Share and Monthly Recap's toolbar Share shared
+  an identifier.
+- **Screenshot review:**
+  - the Premium page's 4:5 blurred photo pushed its action behind the footer (now 4:3);
+  - photo chapters' 4:5 hero hid the smaller photos (now square).
+- **Test infrastructure:**
+  - A hosted test that put the whole tab view in a window broke every later UI test's
+    onboarding on the shared simulator. It has been removed; it had already shown that
+    presentation works.
+  - Commercial's tab-bar scrolling now uses short drags without momentum.
+
+## Next step
+
+Tune the ranking, the suggestion weights and the recap chapter thresholds on a real library,
+using the DEBUG `intelligence` lines (`intelligence_plan`, `made_for_you`, `recap_plan`).
