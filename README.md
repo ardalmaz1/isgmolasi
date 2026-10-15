@@ -55,6 +55,28 @@ Details: [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md).
   silent: no music is shipped.
 - Details: [docs/MEMORY_MOVIE.md](docs/MEMORY_MOVIE.md).
 
+## Intelligence v1 (phase 5) — Editorial Intelligence
+
+**Relive may improve how a fact is said. It never invents what happened.**
+
+- **One layer for every surface.** Structured facts go in and a few short words come out, for
+  Made for You, Recap, Our Year, Movie, Book, Story and Collage.
+- **One validator.** It works in English and Turkish, and rejects:
+  - numbers, dates, places and names the facts don't hold;
+  - identity claims (faces are never identities);
+  - relationship events;
+  - feelings and rankings;
+  - picture contents, seasons and trips that aren't known.
+- **The user's words always win.** In the Memory Movie editor, the title offers Try another,
+  Edit, Remove and Reset, and the choice stays with the draft.
+- **Apple's on-device model.** FoundationModels on iOS 26 with Apple Intelligence, checked in the
+  Xcode 26 SDK. It may add validated alternatives. It is sent facts only and runs on the device,
+  with no network and no API key.
+  - Everywhere else, Relive's deterministic words are used, silently.
+  - It is not verified on a physical device yet.
+- There is no chat, prompt box, sparkle or AI tier, and Premium is unchanged.
+- Details: [docs/EDITORIAL_INTELLIGENCE.md](docs/EDITORIAL_INTELLIGENCE.md).
+
 ## Commercial v1 — Relive Premium
 
 **Memories are free. Creating more from them is Premium.**
@@ -247,6 +269,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/EDITORIAL_INTELLIGENCE.md](docs/EDITORIAL_INTELLIGENCE.md) — Editorial Intelligence:
+  facts and fact classes, the validator, Relive's own words, variants and the user's choice, the
+  Apple on-device model, surfaces, caching, privacy, analytics, Premium, tests.
 - [docs/MEMORY_MOVIE.md](docs/MEMORY_MOVIE.md) — Memory Movie V1: plan, planner, eligibility,
   framing, motion, transitions, styles, editor, renderer and export settings, Premium, drafts,
   privacy, performance, music and video limitations.

@@ -242,3 +242,29 @@ the live preview and the `AVAssetWriter` exporter (`MovieRenderer`). The two the
 
 Drafts are `MovieState` in `SavedCreation`, through `CreationKeeper`. Saving and sharing go
 through `PremiumGate` (`.memoryMovie`). See [MEMORY_MOVIE.md](MEMORY_MOVIE.md).
+
+### Editorial Intelligence
+
+`ReliveCore/Intelligence/Editorial` is the one editorial layer. It works on structured facts
+(`EditorialContext`), not on screens. It runs:
+
+```
+facts → DeterministicEditorialWriter
+      → (EditorialRouter: + an EditorialModelProviding's lines)
+      → EditorialValidator → EditorialResult
+```
+
+- `EditorialPipeline` caches results by request.
+- The planners call it synchronously:
+  - `MadeForYouEngine` for trip wording;
+  - `MovieStoryPlanner` for the opening title variants;
+  - `ValidatedEditorialTextProvider` for recap text.
+- In the app, `EditorialService` holds the router with `AppleOnDeviceEditorialProvider`
+  (FoundationModels, iOS 26+, weak-linked). It forwards pipeline events to local analytics as
+  codes only.
+- The movie editor asks it for extra alternatives in the background. A model's lines are only
+  ever extra variants after Relive's first choice.
+- The user's decision is an `EditorialChoice`, kept in the creation's state
+  (`MovieSettings.titleChoice`).
+
+See [EDITORIAL_INTELLIGENCE.md](EDITORIAL_INTELLIGENCE.md).

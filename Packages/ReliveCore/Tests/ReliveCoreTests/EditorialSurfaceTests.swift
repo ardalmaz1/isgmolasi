@@ -141,3 +141,23 @@ struct EditorialPromptTests {
         #expect(pipeline.result(for: request) == enhanced, "kept for the next redraw")
     }
 }
+
+@Suite("Editorial: performance")
+struct EditorialPerformanceTests {
+    @Test func wordsAreCheapAndCachedWordsAreFree() {
+        let pipeline = EditorialPipeline(capacity: 1_000)
+        let clock = ContinuousClock()
+        var requests: [EditorialRequest] = []
+        for index in 0..<400 {
+            var context = EditorialFixture.kas()
+            context.counts.memories = 10 + index
+            requests.append(EditorialRequest(context: context, kind: EditorialRequestKind.allCases[index % EditorialRequestKind.allCases.count]))
+        }
+        let cold = clock.measure { for request in requests { _ = pipeline.result(for: request) } }
+        let warm = clock.measure { for request in requests { _ = pipeline.result(for: request) } }
+        print("EDITORIAL_PERF requests=\(requests.count) cold=\(cold) warm=\(warm)")
+        #expect(cold < .seconds(4), "\(cold)")
+        #expect(warm < cold)
+        #expect(pipeline.cacheStatistics.hits == requests.count)
+    }
+}

@@ -178,7 +178,57 @@ README.
   - the movie UI test checks Made for You before exporting (exporting retires that suggestion,
     which is now asserted) and reviews dark mode and the largest text size with a trip.
 
+## Phase 5 (AI Editorial Intelligence): complete
+
+**Core** (`Packages/ReliveCore/Sources/ReliveCore/Intelligence/Editorial/`):
+
+- `EditorialModel.swift`: the shared model:
+  - surfaces, request kinds, languages, fact classes, authorship;
+  - context, request (length limits), candidate, rejection codes, result;
+  - `EditorialChoice`, the user's decision.
+- `EditorialValidator.swift`: one validator for every surface, English and Turkish.
+- `EditorialPipeline.swift`:
+  - the deterministic writer (English and Turkish, with Turkish case endings);
+  - the pipeline (cache, at most three variants, events);
+  - the router (model alternatives, silent fallback).
+- `EditorialPrompt.swift`: facts-only instructions and prompt, and reply parsing.
+- `FactualTextPolicy` was extended (English and Turkish feelings and rankings).
+- Recap text uses the shared validator.
+- Made for You trip wording comes from the pipeline. Movie opening-title variants are stored in
+  `MovieSettings.titleChoice`.
+- New analytics events: `editorial_*`.
+- Tests: `EditorialIntelligenceTests.swift`, `EditorialSurfaceTests.swift`. Core total: 396.
+
+**App** (`Relive/Editorial/`):
+
+- `AppleOnDeviceEditorialProvider`: FoundationModels behind `canImport` and `#available(iOS 26)`.
+- `EditorialService`: the router, analytics forwarding, and a DEBUG `editorial_provider` line.
+- Memory Movie editor: a **Title** section with Try another / Edit / Remove / Reset.
+
+**Tests:**
+
+- `ReliveTests/EditorialAppTests.swift` (hosted).
+- `ReliveUITests/MovieUITests.swift`: title → Try another → own words → relaunch → kept.
+  Screenshots V10/V11, and W10/W11 on iPhone SE.
+
+**CI:**
+
+- `scripts/check-no-secrets.sh`, run in the Linux job.
+- FoundationModels SDK inspection and a weak-linking check in the Xcode jobs.
+
+**Docs:** `docs/EDITORIAL_INTELLIGENCE.md`.
+
+**Not done in this phase (documented):**
+
+- Memory Book title choice. It needs a SwiftData field; Book, Story and Collage keep their
+  factual titles.
+- The on-device model has not been run on a physical Apple Intelligence device.
+
 ## Next step
+
+- Run the Memory Movie title on an iPhone with Apple Intelligence. Check the
+  `editorial_provider` status, then compare the `editorial_validation` accept and reject codes.
+  Tune the instructions if most lines are refused.
 
 - Validate Memory Movie on a real iPhone: export time, memory, backgrounding and Photos saving.
 - Tune the ranking, the suggestion weights, the recap chapter thresholds and the movie rhythm on
