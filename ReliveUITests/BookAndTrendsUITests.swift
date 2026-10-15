@@ -89,7 +89,11 @@ final class BookAndTrendsUITests: XCTestCase {
         capture("B01-book-sources")
         fromTrip.tap()
         let rows = app.descendants(matching: .any).matching(identifier: "periodPickerRow")
-        XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 10), "No trips listed")
+        if !rows.firstMatch.waitForExistence(timeout: 20) {
+            printScreen(app, "no-trips")
+            capture("B00-no-trips")
+        }
+        XCTAssertTrue(rows.firstMatch.exists, "No trips listed")
         sleep(1)
         capture("B02-trips")
         let trip = try XCTUnwrap(rows.allElementsBoundByIndex.first { $0.isEnabled && $0.isHittable }, "No trip with enough photos")

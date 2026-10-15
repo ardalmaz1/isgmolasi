@@ -212,9 +212,17 @@ final class CommercialUITests: XCTestCase {
         func isClear() -> Bool {
             element.isHittable && element.frame.minY > screen.minY + 80 && element.frame.maxY < screen.maxY - 90
         }
-        for _ in 0..<8 where !isClear() {
-            if element.frame.minY <= screen.minY + 80 { app.swipeDown() } else { app.swipeUp() }
+        // Short drags without momentum, so a fling can't carry the element past the clear band.
+        let window = app.windows.firstMatch
+        for _ in 0..<12 where !isClear() {
+            let down = element.frame.minY <= screen.minY + 80
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.35 : 0.65))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.6 : 0.4)))
             sleep(1)
+        }
+        if !isClear() {
+            printScreen(app, "not-reachable-\(element.identifier) frame=\(element.frame) exists=\(element.exists)")
+            capture("M00-not-reachable-\(element.identifier)")
         }
         XCTAssertTrue(isClear(), "\(element.identifier) is not reachable")
         element.tap()

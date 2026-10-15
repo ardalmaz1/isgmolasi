@@ -46,7 +46,9 @@ final class RecapUITests: XCTestCase {
             XCTAssertTrue(app.buttons["recapClose"].waitForExistence(timeout: 5), "closing the paywall returns to the recap")
             next(app)
         }
-        XCTAssertTrue(share.waitForExistence(timeout: 5) && share.isHittable, "the closing chapter is always reachable")
+        XCTAssertTrue(share.waitForExistence(timeout: 5), "the closing chapter is always reachable")
+        reveal(app, share)
+        XCTAssertTrue(share.isHittable, "Share is reachable on the closing chapter")
         capture("\(prefix)12-month-closing-free")
 
         // Creating and sharing from the recap follow the existing Premium rules.
@@ -144,13 +146,21 @@ final class RecapUITests: XCTestCase {
             if play.waitForExistence(timeout: 5) {
                 capture("R00-monthly-recap-with-play")
                 play.tap()
-                if !app.buttons["recapClose"].waitForExistence(timeout: 15) {
+                let close = app.buttons["recapClose"]
+                if !close.waitForExistence(timeout: 15) {
                     printScreen(app, "recap-did-not-open")
                     capture("R00-recap-did-not-open")
                 }
-                XCTAssertTrue(app.buttons["recapClose"].exists, "The recap did not open")
+                XCTAssertTrue(close.exists, "The recap did not open")
                 XCTAssertTrue(app.descendants(matching: .any)["recapProgress"].exists, "progress is always visible")
-                return
+                XCTAssertTrue(app.buttons["recapNext"].waitForExistence(timeout: 30), "the recap's chapters never appeared")
+                if app.buttons["recapNext"].isEnabled { return }
+                // A quiet month is one honest page; look for a month with a story to tell.
+                sleep(1)
+                capture("R03-month-compact")
+                printScreen(app, "recap-compact")
+                close.tap()
+                XCTAssertTrue(close.waitForNonExistence(timeout: 10))
             }
             app.navigationBars.buttons.firstMatch.tap()
             sleep(1)
