@@ -33,12 +33,13 @@ final class RecapAppTests: XCTestCase {
         pages.map(\.code)
     }
 
-    func testTheFixtureMonthPlansARealRecap() {
+    func testTheSmallFixtureMonthIsOneCompactPage() {
         let (store, _) = CreationTestLibrary.makeStore()
         let plan = RecapStoryPlanner(library: store.creationLibrary).plan(.month(tripMonth))
         XCTAssertEqual(plan.insights.memoryCount, 14)
-        XCTAssertTrue([.opening, .compactSummary].contains(plan.chapters.first?.kind))
-        XCTAssertEqual(plan.chapters.last?.kind, .closing)
+        // Two moments, fewer than five true chapters: told as one compact page, not padded.
+        XCTAssertFalse(plan.isRich)
+        XCTAssertEqual(plan.chapters.map(\.kind), [.compactSummary])
         XCTAssertEqual(plan.creationSource, .month(tripMonth))
         XCTAssertFalse(plan.diagnosticsLine.contains("Kaş"), "diagnostics carry counts, never places")
         // Nothing from another period: the small moment is months later.
