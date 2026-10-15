@@ -64,6 +64,14 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case movieExportCompleted = "movie_export_completed"
     case movieExportFailed = "movie_export_failed"
     case movieShared = "movie_shared"
+    // Intelligence v1 phase 5: editorial intelligence (surface, kind, provider, codes only —
+    // never the words, places, dates or names).
+    case editorialRequested = "editorial_requested"
+    case editorialCandidateAccepted = "editorial_candidate_accepted"
+    case editorialCandidateRejected = "editorial_candidate_rejected"
+    case editorialFallbackUsed = "editorial_fallback_used"
+    case editorialVariantChanged = "editorial_variant_changed"
+    case editorialUserEdited = "editorial_user_edited"
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {

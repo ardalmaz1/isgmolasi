@@ -92,8 +92,8 @@ struct MadeForYouKindTests {
         let trip = IntelligenceFixture.mixedTrip()
         let suggestion = F.engine(trip).trips().first
         #expect(suggestion?.kind == .trip)
-        #expect(suggestion?.title == "Kaş & Kekova · August 2025")
-        #expect(suggestion?.subtitle == "30 memories · 3 days")
+        #expect(suggestion?.title == "Three days in Kaş & Kekova.")
+        #expect(suggestion?.subtitle == "30 memories · August 2025")
         // Thirty distinct photos over three days: varied enough for a film.
         #expect(suggestion?.creation == .movie)
         #expect(suggestion?.id == "trip:\(IntelligenceFixture.momentID("d1").uuidString)")

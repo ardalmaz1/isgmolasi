@@ -191,6 +191,37 @@ public protocol EditorialModelProviding: Sendable {
 /// Deterministic results are immediate and cached by request (the facts, not the screen), so a
 /// redraw never regenerates text. A model, when available, only adds validated alternatives
 /// after Relive's first choice: what is on screen doesn't jump.
+/// What happened inside the pipeline, for local analytics. Codes only: never the text.
+public enum EditorialEvent: Hashable, Sendable {
+    case requested(surface: EditorialSurface, kind: EditorialRequestKind, provider: String, variants: Int)
+    case candidateAccepted(surface: EditorialSurface, kind: EditorialRequestKind, provider: String)
+    case candidateRejected(surface: EditorialSurface, kind: EditorialRequestKind, provider: String, reason: EditorialRejection)
+    case fallbackUsed(surface: EditorialSurface, kind: EditorialRequestKind, reason: String)
+
+    public var analyticsName: AnalyticsEventName {
+        switch self {
+        case .requested: .editorialRequested
+        case .candidateAccepted: .editorialCandidateAccepted
+        case .candidateRejected: .editorialCandidateRejected
+        case .fallbackUsed: .editorialFallbackUsed
+        }
+    }
+
+    /// Non-identifying properties.
+    public var analyticsProperties: [String: String] {
+        switch self {
+        case .requested(let surface, let kind, let provider, let variants):
+            ["surface": surface.rawValue, "kind": kind.rawValue, "provider": provider, "variants": String(variants)]
+        case .candidateAccepted(let surface, let kind, let provider):
+            ["surface": surface.rawValue, "kind": kind.rawValue, "provider": provider]
+        case .candidateRejected(let surface, let kind, let provider, let reason):
+            ["surface": surface.rawValue, "kind": kind.rawValue, "provider": provider, "reason": reason.rawValue]
+        case .fallbackUsed(let surface, let kind, let reason):
+            ["surface": surface.rawValue, "kind": kind.rawValue, "reason": reason]
+        }
+    }
+}
+
 public final class EditorialPipeline: @unchecked Sendable {
     public static let shared = EditorialPipeline()
     /// How many variants "Try another" cycles through at most.
@@ -205,8 +236,19 @@ public final class EditorialPipeline: @unchecked Sendable {
     private(set) var hits = 0
     private(set) var misses = 0
 
+    private var observer: (@Sendable (EditorialEvent) -> Void)?
+
     public init(capacity: Int = 300) {
         self.capacity = capacity
+    }
+
+    /// Receives what happens (the app forwards it to local analytics). Codes only.
+    public func observe(_ observer: (@Sendable (EditorialEvent) -> Void)?) {
+        lock.withLock { self.observer = observer }
+    }
+
+    func emit(_ event: EditorialEvent) {
+        lock.withLock { observer }?(event)
     }
 
     /// Relive's own words for `request`, validated, from the cache when the facts are the same.
@@ -226,8 +268,11 @@ public final class EditorialPipeline: @unchecked Sendable {
         let variants = Array((accepted.isEmpty ? [fallback] : accepted).prefix(Self.maximumVariants))
         let result = EditorialResult(text: variants.first ?? fallback, variants: variants, provider: "deterministic", usedFallback: accepted.isEmpty, rejections: rejections)
         IntelligenceDiagnostics.emit("editorial_request surface=\(request.context.surface.rawValue) kind=\(request.kind.rawValue) provider=deterministic factCount=\(request.context.facts.count) variants=\(variants.count)")
+        emit(.requested(surface: request.context.surface, kind: request.kind, provider: "deterministic", variants: variants.count))
+        if accepted.isEmpty {
+            emit(.fallbackUsed(surface: request.context.surface, kind: request.kind, reason: rejections.first?.rawValue ?? "noFacts"))
+        }
         lock.withLock {
-            hits += 0
             misses += 1
             cache[request] = result
             order.append(request)
@@ -245,6 +290,11 @@ public final class EditorialPipeline: @unchecked Sendable {
         for candidate in candidates {
             let found = validator.rejections(for: candidate, request: request)
             IntelligenceDiagnostics.emit("editorial_validation surface=\(request.context.surface.rawValue) kind=\(request.kind.rawValue) provider=\(candidate.provider) accepted=\(found.isEmpty) reason=\(found.first?.rawValue ?? "none")")
+            if let reason = found.first {
+                emit(.candidateRejected(surface: request.context.surface, kind: request.kind, provider: candidate.provider, reason: reason))
+            } else {
+                emit(.candidateAccepted(surface: request.context.surface, kind: request.kind, provider: candidate.provider))
+            }
             if found.isEmpty {
                 let text = candidate.text.trimmingCharacters(in: .whitespacesAndNewlines)
                 if !result.variants.contains(text), result.variants.count < Self.maximumVariants + 1 {
@@ -292,13 +342,19 @@ public struct EditorialRouter: Sendable {
     /// failure (unavailable, error, everything refused) the deterministic result is returned.
     public func enhanced(_ request: EditorialRequest) async -> EditorialResult {
         let base = pipeline.result(for: request)
-        guard let model, await model.isAvailable() else { return base }
+        guard let model else { return base }
+        guard await model.isAvailable() else {
+            IntelligenceDiagnostics.emit("editorial_fallback surface=\(request.context.surface.rawValue) kind=\(request.kind.rawValue) provider=\(model.name) reason=unavailable")
+            pipeline.emit(.fallbackUsed(surface: request.context.surface, kind: request.kind, reason: "unavailable"))
+            return base
+        }
         do {
             let texts = try await model.candidates(for: request)
             let merged = pipeline.merging(base, candidates: texts.map { EditorialCandidate(text: $0, provider: model.name) }, request: request)
             return merged
         } catch {
             IntelligenceDiagnostics.emit("editorial_fallback surface=\(request.context.surface.rawValue) kind=\(request.kind.rawValue) provider=\(model.name) reason=error")
+            pipeline.emit(.fallbackUsed(surface: request.context.surface, kind: request.kind, reason: "error"))
             return base
         }
     }

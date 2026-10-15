@@ -196,13 +196,17 @@ public struct MovieSettings: Hashable, Codable, Sendable {
     public var showsText: Bool
     /// "Make it for me" again: a different but still reasonable cut (0 = Relive's first choice).
     public var variation: Int
+    /// The user's decision about the opening title (`nil`: Relive's first choice). Optional so
+    /// drafts kept before editorial intelligence still open.
+    public var titleChoice: EditorialChoice?
 
-    public init(aspect: MovieAspect = .portrait, length: MovieLength = .standard, style: MovieStyle = .classic, showsText: Bool = true, variation: Int = 0) {
+    public init(aspect: MovieAspect = .portrait, length: MovieLength = .standard, style: MovieStyle = .classic, showsText: Bool = true, variation: Int = 0, titleChoice: EditorialChoice? = nil) {
         self.aspect = aspect
         self.length = length
         self.style = style
         self.showsText = showsText
         self.variation = variation
+        self.titleChoice = titleChoice
     }
 }
 
@@ -228,6 +232,12 @@ public struct MoviePlan: Hashable, Codable, Sendable {
     public var limitations: [MemorySelectionPlan.Limitation]
     /// Always silent in V1.
     public var soundtrack: MovieSoundtrack = .silent
+    /// Safe ways to title the opening ("Try another"), Relive's first choice first. Each passed
+    /// the editorial validator against this movie's facts.
+    public var titleVariants: [String] = []
+    /// The opening title as shown (`nil` when the user removed it), and who wrote it.
+    public var openingTitle: String?
+    public var openingTitleAuthorship: EditorialAuthorship = .relive
     /// Memories considered.
     public var sourceCount: Int
     public var duplicatesRemoved: Int

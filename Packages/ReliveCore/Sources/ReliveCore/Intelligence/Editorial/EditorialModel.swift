@@ -34,6 +34,11 @@ public enum EditorialRequestKind: String, CaseIterable, Codable, Hashable, Senda
 public enum EditorialLanguage: String, CaseIterable, Codable, Hashable, Sendable {
     case english = "en"
     case turkish = "tr"
+
+    /// Turkish for a Turkish locale; English otherwise (Relive's development language).
+    public init(locale: Locale) {
+        self = locale.identifier.lowercased().hasPrefix("tr") ? .turkish : .english
+    }
 }
 
 /// How sure Relive is of a piece of information.
@@ -283,4 +288,40 @@ public struct EditorialResult: Hashable, Codable, Sendable {
     /// A provider's candidates were refused or unavailable, and Relive's own words are shown.
     public var usedFallback: Bool
     public var rejections: [EditorialRejection]
+}
+
+/// What the user decided about one piece of Relive's wording: keep Relive's first choice, pick
+/// another safe variant ("Try another"), write their own, or have none. Kept with a draft, so a
+/// reopened creation shows exactly what the user chose. The user's own words always win.
+public struct EditorialChoice: Hashable, Codable, Sendable {
+    /// Which of Relive's variants (0 = Relive's first choice).
+    public var variant: Int
+    /// The user's own words, shown as written and never checked or rewritten.
+    public var userText: String?
+    /// The user removed the words.
+    public var isRemoved: Bool
+
+    public init(variant: Int = 0, userText: String? = nil, isRemoved: Bool = false) {
+        self.variant = variant
+        self.userText = userText
+        self.isRemoved = isRemoved
+    }
+
+    /// The user wrote their own words (non-empty).
+    public var hasUserText: Bool {
+        !(userText?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ?? true)
+    }
+
+    /// The text to show from `variants`, and who wrote it. `nil` text: removed (or nothing to show).
+    public func resolve(_ variants: [String]) -> (text: String?, authorship: EditorialAuthorship) {
+        if isRemoved { return (nil, .user) }
+        if hasUserText, let userText { return (userText.trimmingCharacters(in: .whitespacesAndNewlines), .user) }
+        guard !variants.isEmpty else { return (nil, .relive) }
+        return (variants[((variant % variants.count) + variants.count) % variants.count], .relive)
+    }
+
+    /// The next of Relive's variants (and back to Relive's words if the user had their own).
+    public func next(count: Int) -> EditorialChoice {
+        EditorialChoice(variant: count > 0 ? (variant + 1) % count : 0)
+    }
 }

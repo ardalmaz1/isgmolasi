@@ -356,13 +356,32 @@ public struct MadeForYouEngine: Sendable {
             let period = general.period
             let when: String? = period.singleMonth.map { "\(MonthNames(locale: locale, calendar: calendar).full($0.month)) \($0.year)" }
                 ?? period.label(locale: locale, calendar: calendar)
-            let days = Set(MemoryCandidate.build(usable, library: library).compactMap(\.day)).count
+            let candidateDays = MemoryCandidate.build(usable, library: library).map(\.day)
+            let days = Set(candidateDays.compactMap { $0 }).count
+            let factualTitle = [placeName, when].compactMap { $0 }.joined(separator: " · ")
+            // Presentation only: the engine chose the trip; editorial intelligence phrases it
+            // ("Four days in Kaş."), from facts alone, through the shared validator.
+            let allDated = !candidateDays.isEmpty && !candidateDays.contains(nil)
+            let sortedDays = candidateDays.compactMap { $0 }.sorted()
+            var context = EditorialContext(
+                surface: .madeForYou,
+                language: EditorialLanguage(locale: locale),
+                firstDay: allDated ? sortedDays.first : nil,
+                lastDay: allDated ? sortedDays.last : nil,
+                months: allDated ? Self.months(of: sortedDays) : [],
+                tripName: placeName,
+                counts: EditorialContext.Counts(memories: usable.count, moments: moments.count),
+                periodLabel: when,
+                factualTitle: factualTitle
+            )
+            if let place = trip.place?.name, place != placeName { context.knownPhrases = [place] }
+            let editorial = EditorialPipeline.shared.result(for: EditorialRequest(context: context, kind: .title))
             return MadeForYouSuggestion(
                 id: "trip:\(first.id.uuidString)",
                 kind: .trip,
                 eyebrow: "A trip",
-                title: [placeName, when].compactMap { $0 }.joined(separator: " · "),
-                subtitle: "\(Self.count(usable.count, "memory", "memories")) · \(Self.count(days, "day", "days"))",
+                title: editorial.text.isEmpty ? factualTitle : editorial.text,
+                subtitle: [Self.count(usable.count, "memory", "memories"), when ?? Self.count(days, "day", "days")].joined(separator: " · "),
                 creation: creation,
                 source: source,
                 coverAssetID: plan.lead,
@@ -483,6 +502,12 @@ public struct MadeForYouEngine: Sendable {
 
     private func plan(_ source: CreationSource, target: IntelligenceTarget) -> MemorySelectionPlan {
         MemoryIntelligenceEngine(library: library, locale: locale).quiet.plan(for: source, target: target)
+    }
+
+    /// The months the days fall in, in order, each once.
+    static func months(of days: [DayKey]) -> [MonthKey] {
+        var seen = Set<MonthKey>()
+        return days.sorted().map { MonthKey(year: $0.year, month: $0.month) }.filter { seen.insert($0).inserted }
     }
 
     static func count(_ value: Int, _ one: String, _ many: String) -> String {

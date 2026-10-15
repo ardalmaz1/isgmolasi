@@ -91,6 +91,39 @@ public struct MovieStoryPlanner: Sendable {
         )
     }
 
+    // MARK: - Words
+
+    /// Up to three safe opening titles: the factual title, then editorial alternatives that the
+    /// shared validator accepted for this movie's facts ("Four days in Kaş.", "Kaş · August 2026").
+    func titleVariants(title: FactualTitle, periodLabel: String?, days: [DayKey?], count: Int) -> [String] {
+        let primary = title.primary.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !primary.isEmpty else { return [] }
+        let allDated = !days.isEmpty && !days.contains(nil)
+        let sorted = days.compactMap { $0 }.sorted()
+        var seenMonths = Set<MonthKey>()
+        let months = allDated ? sorted.map { MonthKey(year: $0.year, month: $0.month) }.filter { seenMonths.insert($0).inserted } : []
+        let context = EditorialContext(
+            surface: .movie,
+            language: EditorialLanguage(locale: locale),
+            firstDay: allDated ? sorted.first : nil,
+            lastDay: allDated ? sorted.last : nil,
+            months: months,
+            places: title.basis == .place ? [primary] : [],
+            tripName: title.basis == .trip ? primary : nil,
+            momentName: title.basis == .moment ? primary : nil,
+            counts: EditorialContext.Counts(memories: count),
+            periodLabel: periodLabel,
+            factualTitle: primary,
+            knownPhrases: [title.secondary].compactMap { $0 }
+        )
+        let result = EditorialPipeline.shared.result(for: EditorialRequest(context: context, kind: .title))
+        var seen = Set<String>()
+        return ([primary] + result.variants)
+            .filter { $0 != title.combined && seen.insert($0).inserted }
+            .prefix(EditorialPipeline.maximumVariants)
+            .map { $0 }
+    }
+
     // MARK: - The edit
 
     private func build(
@@ -121,7 +154,15 @@ public struct MovieStoryPlanner: Sendable {
         )
         guard !ordered.isEmpty else { return plan }
 
-        let candidates = Dictionary(uniqueKeysWithValues: MemoryCandidate.build(ordered, library: library).map { ($0.assetID, $0) })
+        let built = MemoryCandidate.build(ordered, library: library)
+        let candidates = Dictionary(uniqueKeysWithValues: built.map { ($0.assetID, $0) })
+        // The opening title: Relive's factual title first, then the shared editorial layer's
+        // validated alternatives; the user's choice (or own words) wins.
+        plan.titleVariants = titleVariants(title: title, periodLabel: periodLabel, days: built.map(\.day), count: ordered.count)
+        let opening = (settings.titleChoice ?? EditorialChoice()).resolve(plan.titleVariants)
+        plan.openingTitle = opening.text
+        plan.openingTitleAuthorship = opening.authorship
+        let isReliveFirstChoice = opening.authorship == .relive && opening.text == title.primary
         let sections = Self.sections(ordered.compactMap { candidates[$0] })
         var scenes: [MovieScene] = []
         var previousMotion: MovieMotion?
@@ -154,7 +195,14 @@ public struct MovieStoryPlanner: Sendable {
             var text: MovieText?
             if settings.showsText {
                 if isFirst {
-                    text = MovieText(eyebrow: title.secondary ?? (title.basis == .period ? nil : periodLabel), title: title.primary)
+                    if isReliveFirstChoice {
+                        text = MovieText(eyebrow: title.secondary ?? (title.basis == .period ? nil : periodLabel), title: title.primary)
+                    } else if let openingTitle = opening.text {
+                        let eyebrow = periodLabel.flatMap { openingTitle.localizedCaseInsensitiveContains($0) ? nil : $0 }
+                        text = MovieText(eyebrow: eyebrow, title: openingTitle)
+                    } else if let periodLabel {
+                        text = MovieText(title: periodLabel)
+                    }
                 } else if isLast {
                     text = MovieText(title: periodLabel ?? title.primary, detail: "Made with Relive")
                 } else if multiSection, info.opensSection, labels < maxLabels, [.newPlace, .newMonth, .newYear].contains(info.change),
