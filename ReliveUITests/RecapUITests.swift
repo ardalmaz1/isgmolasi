@@ -228,21 +228,26 @@ final class RecapUITests: XCTestCase {
     private func tapClearOfTabBar(_ app: XCUIApplication, _ element: XCUIElement) {
         XCTAssertTrue(element.waitForExistence(timeout: 10), "\(element.identifier) is missing")
         let screen = app.windows.firstMatch.frame
-        // The centre, not the whole element: at the largest text sizes a tile can be taller than
-        // the band between the navigation bar and the tab bar.
-        func isClear() -> Bool {
-            element.isHittable && element.frame.midY > screen.minY + 100 && element.frame.midY < screen.maxY - 110
+        // Any part of it in the band between the navigation bar and the tab bar is enough: at
+        // the largest text sizes a tile can be taller than that band. Tap the middle of what's
+        // visible there.
+        let top = screen.minY + 100, bottom = screen.maxY - 110
+        func visible() -> ClosedRange<CGFloat>? {
+            guard element.exists else { return nil }
+            let low = max(element.frame.minY, top), high = min(element.frame.maxY, bottom)
+            return high - low >= 30 ? low...high : nil
         }
-        let window = app.windows.firstMatch
-        for _ in 0..<14 where !isClear() {
-            let down = element.frame.midY <= screen.minY + 100
-            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.35 : 0.65))
-                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.6 : 0.4)))
+        for _ in 0..<10 where visible() == nil {
+            if element.frame.midY > (top + bottom) / 2 { app.swipeUp() } else { app.swipeDown() }
             sleep(1)
         }
-        if !isClear() { printScreen(app, "not-reachable-\(element.identifier) frame=\(element.frame)") }
-        XCTAssertTrue(isClear(), "\(element.identifier) is not reachable")
-        element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        guard let band = visible() else {
+            printScreen(app, "not-reachable-\(element.identifier) frame=\(element.frame)")
+            return XCTFail("\(element.identifier) is not reachable")
+        }
+        app.windows.firstMatch.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: element.frame.midX, dy: (band.lowerBound + band.upperBound) / 2))
+            .tap()
     }
 
     @MainActor
