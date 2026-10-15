@@ -228,15 +228,21 @@ final class RecapUITests: XCTestCase {
     private func tapClearOfTabBar(_ app: XCUIApplication, _ element: XCUIElement) {
         XCTAssertTrue(element.waitForExistence(timeout: 10), "\(element.identifier) is missing")
         let screen = app.windows.firstMatch.frame
+        // The centre, not the whole element: at the largest text sizes a tile can be taller than
+        // the band between the navigation bar and the tab bar.
         func isClear() -> Bool {
-            element.isHittable && element.frame.minY > screen.minY + 80 && element.frame.maxY < screen.maxY - 90
+            element.isHittable && element.frame.midY > screen.minY + 100 && element.frame.midY < screen.maxY - 110
         }
-        for _ in 0..<8 where !isClear() {
-            if element.frame.minY <= screen.minY + 80 { app.swipeDown() } else { app.swipeUp() }
+        let window = app.windows.firstMatch
+        for _ in 0..<14 where !isClear() {
+            let down = element.frame.midY <= screen.minY + 100
+            window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.35 : 0.65))
+                .press(forDuration: 0.05, thenDragTo: window.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: down ? 0.6 : 0.4)))
             sleep(1)
         }
+        if !isClear() { printScreen(app, "not-reachable-\(element.identifier) frame=\(element.frame)") }
         XCTAssertTrue(isClear(), "\(element.identifier) is not reachable")
-        element.tap()
+        element.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
     }
 
     @MainActor
