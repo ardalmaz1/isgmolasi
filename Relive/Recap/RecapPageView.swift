@@ -58,8 +58,9 @@ struct RecapPageView: View {
         case .closing:
             closing(chapter)
         case .firstMemory, .tripHighlight, .placeHighlight, .dayHighlight, .peopleGallery, .favoriteHighlight:
+            // Square, so the words and the smaller photos fit above the footer on one screen.
             if let hero = chapter.hero {
-                FramedAssetImage(assetID: hero, aspectRatio: 4 / 5, cornerRadius: Radius.card)
+                FramedAssetImage(assetID: hero, aspectRatio: 1, cornerRadius: Radius.card)
                     .accessibilityHidden(true)
             }
             words(chapter.text, large: false)
@@ -170,7 +171,7 @@ struct RecapPageView: View {
                 }
                 .buttonStyle(.relivePrimary)
                 .disabled(actions.export.isBusy)
-                .accessibilityIdentifier("recapShare")
+                .accessibilityIdentifier("recapShareCard")
                 HStack(spacing: Spacing.s) {
                     Button("Make Collage") { actions.create(.collage) }
                         .buttonStyle(.reliveOutline)
@@ -195,7 +196,7 @@ struct RecapPageView: View {
         let remaining = max(0, plan.chapters.count - 1 - (1 + RecapExperienceView.freePreviewChapters))
         return VStack(alignment: .leading, spacing: Spacing.l) {
             if let hero = plan.chapters.dropFirst().compactMap(\.hero).last {
-                FramedAssetImage(assetID: hero, aspectRatio: 4 / 5, cornerRadius: Radius.card)
+                FramedAssetImage(assetID: hero, aspectRatio: 4 / 3, cornerRadius: Radius.card)
                     .blur(radius: 18)
                     .clipShape(RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
                     .accessibilityHidden(true)

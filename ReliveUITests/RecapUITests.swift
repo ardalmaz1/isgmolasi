@@ -29,7 +29,7 @@ final class RecapUITests: XCTestCase {
         printScreen(app, "recap-opening")
 
         let seeAll = app.buttons["recapSeeAll"]
-        let share = app.buttons["recapShare"]
+        let share = app.buttons["recapShareCard"]
         var step = 2
         while !seeAll.isHittable, !share.isHittable, app.buttons["recapNext"].isEnabled, step < 20 {
             next(app)
