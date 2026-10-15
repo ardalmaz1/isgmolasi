@@ -177,7 +177,7 @@ extension View {
     /// One VoiceOver element per suggestion, with "Not now" as an action.
     fileprivate func madeForYouAccessibility(_ suggestion: MadeForYouSuggestion, onDismiss: @escaping () -> Void) -> some View {
         accessibilityElement(children: .ignore)
-            .accessibilityLabel("\(suggestion.eyebrow). \(suggestion.title). \(suggestion.subtitle). \(CreationLabel.name(suggestion.creation))")
+            .accessibilityLabel(AccessibilitySentences.join([suggestion.eyebrow, suggestion.title, suggestion.subtitle, CreationLabel.name(suggestion.creation)]))
             .accessibilityHint("Opens it, ready to look at and edit")
             .accessibilityAddTraits(.isButton)
             .accessibilityAction(named: "Not now", onDismiss)
@@ -206,5 +206,16 @@ enum MadeForYouOpener {
         case .movie:
             app.startCreation(.movie, from: .source(suggestion.source), origin: origin)
         }
+    }
+}
+
+/// Joins phrases into one spoken label, one sentence each, without doubling a full stop the
+/// phrase already has ("Four days in Kaş." stays one sentence).
+enum AccessibilitySentences {
+    static func join(_ parts: [String]) -> String {
+        parts.map { $0.trimmingCharacters(in: .whitespaces) }
+            .filter { !$0.isEmpty }
+            .map { $0.hasSuffix(".") || $0.hasSuffix("!") || $0.hasSuffix("?") ? $0 : $0 + "." }
+            .joined(separator: " ")
     }
 }

@@ -105,9 +105,10 @@ final class MovieUITests: XCTestCase {
         app.buttons["movieTitleEdit"].tap()
         let field = app.alerts.textFields.firstMatch
         XCTAssertTrue(field.waitForExistence(timeout: 5), "Edit title opens a text field")
-        field.tap()
+        // The field holds the current title: put the cursor at its end, then clear it.
+        field.coordinate(withNormalizedOffset: CGVector(dx: 0.97, dy: 0.5)).tap()
         if let value = field.value as? String, !value.isEmpty {
-            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count))
+            field.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: value.count + 4))
         }
         field.typeText("Our favorite trip")
         app.alerts.buttons["Save"].tap()
