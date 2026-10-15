@@ -98,23 +98,46 @@ public struct FactualTitleBuilder: Sendable {
     }
 }
 
-/// The rule every generated word must follow — and the seam a future AI captioner must pass
-/// through: no claims about feelings, and no ranking of a couple's memories.
+/// The rule every generated word must follow — and the seam an AI captioner must pass through:
+/// no claims about feelings, and no ranking of a couple's memories. English and Turkish.
+///
+/// It applies to Relive's own words only. User-written text is the user's and is never checked
+/// against it (see `EditorialValidator`, which accepts `authorship == .user` as it is).
 public enum FactualTextPolicy {
-    /// Words and phrases Relive never generates. User-written text is the user's and is never
-    /// checked against this.
+    /// Words and phrases (folded: lowercase, no diacritics) Relive never generates.
     public static let claims: [String] = [
+        // English: feelings and judgements.
         "happiest", "happy", "best", "favorite", "favourite", "greatest", "perfect", "unforgettable",
-        "never forget", "magical", "dream", "love of", "true love", "most beautiful", "special",
-        "amazing", "incredible", "meant the most", "of our lives", "forever",
+        "never forget", "magical", "dream", "dreamy", "love of", "true love", "most beautiful", "special",
+        "amazing", "incredible", "meant the most", "of our lives", "of your life", "of your lives", "forever",
+        "romantic", "romance", "in love", "fell in love", "deeply", "beautiful", "breathtaking", "stunning",
+        "wonderful", "precious", "cherished", "lifetime", "life changing", "changed everything", "soulmate",
+        "soul mate", "sweetest", "loveliest", "dearest", "finest", "the most", "number one", "top", "bliss",
+        "blissful", "heartwarming", "joyful", "joy", "peaceful", "adventurous", "meaningful", "memorable",
+        "fairytale", "fairy tale", "escaped", "escape", "glorious", "epic", "ultimate",
+        // Turkish: duygular ve yargılar.
+        "en mutlu", "mutlu", "mutluluk", "en guzel", "guzel", "en romantik", "romantik", "en iyi", "en ozel", "ozel",
+        "unutulmaz", "mukemmel", "muhtesem", "harika", "buyulu", "ruya", "sonsuza", "sonsuz", "ask", "askin",
+        "favori", "en sevdiginiz", "en sevdigin", "hayatinizin", "hayatinin", "efsane", "essiz", "inanilmaz",
     ]
 
-    /// The claims `text` makes, if any (case- and diacritic-insensitive, whole words).
+    /// The claims that rank memories against each other.
+    public static let rankingClaims: Set<String> = [
+        "happiest", "best", "favorite", "favourite", "greatest", "most beautiful", "sweetest", "loveliest",
+        "dearest", "finest", "the most", "number one", "top", "ultimate", "en mutlu", "en guzel", "en romantik",
+        "en iyi", "en ozel", "en sevdiginiz", "en sevdigin", "favori", "en",
+    ]
+
+    /// The claims `text` makes, if any (case- and diacritic-insensitive, whole words). A Turkish
+    /// superlative ("en …") is a ranking whatever the word after it.
     public static func violations(in text: String) -> [String] {
-        let folded = " " + text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
-            .map { $0.isLetter || $0.isNumber ? $0 : " " }
-            .reduce(into: "") { $0.append($1) } + " "
-        return claims.filter { folded.contains(" \($0) ") }
+        let folded = " " + EditorialValidator.fold(text) + " "
+        var found = claims.filter { folded.contains(" \($0) ") }
+        let tokens = folded.split(separator: " ")
+        if let index = tokens.firstIndex(of: "en"), index + 1 < tokens.count, !found.contains(where: { $0.hasPrefix("en ") }) {
+            found.append("en")
+        }
+        return found
     }
 
     public static func isFactual(_ text: String) -> Bool { violations(in: text).isEmpty }

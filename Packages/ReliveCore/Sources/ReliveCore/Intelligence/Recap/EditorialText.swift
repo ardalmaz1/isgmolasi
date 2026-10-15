@@ -45,7 +45,9 @@ public enum EditorialFacts: Hashable, Sendable, Codable {
         case .trip(_, let days, let memories, let label): Set([days, memories]).union(label.map(Self.numbers) ?? [])
         case .repeatedPlace(_, let moments, let days, _): [moments, days]
         case .busyDay(let label, let memories, let places): Self.numbers(in: label).union([memories, places])
-        case .people(let count), .favorites(let count): [count]
+        // People photos are, by definition, photos with two or more faces ("Two in the frame").
+        case .people(let count): [count, 2]
+        case .favorites(let count): [count]
         case .frames(let name, let count): Self.numbers(in: name).union([count])
         case .places(let count, _): [count]
         case .timeline(let name, let entries): Self.numbers(in: name).union([entries])
@@ -159,9 +161,9 @@ public struct DeterministicEditorialTextProvider: EditorialTextProviding {
     }
 }
 
-/// The factual contract for any non-deterministic provider (a future AI): its text is used only
-/// if it makes no feeling claim (`FactualTextPolicy`), mentions no number the facts don't
-/// contain, and isn't empty — otherwise the deterministic text is used instead.
+/// The factual contract for any non-deterministic provider (an on-device model): its text is used
+/// only if the shared `EditorialValidator` accepts every part and it isn't empty — otherwise the
+/// deterministic text is used instead.
 public struct ValidatedEditorialTextProvider: EditorialTextProviding {
     public var candidate: any EditorialTextProviding
     public var fallback: any EditorialTextProviding
@@ -176,11 +178,13 @@ public struct ValidatedEditorialTextProvider: EditorialTextProviding {
         return Self.isAcceptable(proposed, for: facts) ? proposed : fallback.text(for: facts)
     }
 
+    /// The shared editorial validator (`EditorialValidator`) on every part: no feelings or
+    /// rankings, no number, date, place or name the facts don't hold.
     public static func isAcceptable(_ text: EditorialText, for facts: EditorialFacts) -> Bool {
         guard !text.title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { return false }
+        let context = facts.editorialContext()
         for part in text.all {
-            if !FactualTextPolicy.isFactual(part) { return false }
-            if !EditorialFacts.numbers(in: part).isSubset(of: facts.allowedNumbers) { return false }
+            if !EditorialValidator.rejections(in: part, context: context).isEmpty { return false }
         }
         return true
     }
