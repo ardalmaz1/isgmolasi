@@ -9,6 +9,7 @@ public enum PaywallEntryPoint: String, CaseIterable, Codable, Sendable {
     case monthlyRecap = "monthly_recap"
     case ourYear = "our_year"
     case premiumStyle = "premium_style"
+    case memoryMovie = "memory_movie"
     case settings
 
     /// The capability the user was reaching for (for analytics and for the unlock check).
@@ -21,6 +22,7 @@ public enum PaywallEntryPoint: String, CaseIterable, Codable, Sendable {
         case .monthlyRecap: .fullMonthlyRecap
         case .ourYear: .fullYearInReview
         case .premiumStyle: .premiumStyles
+        case .memoryMovie: .memoryMovie
         case .settings: nil
         }
     }
@@ -41,13 +43,14 @@ public struct PaywallCopy: Equatable, Sendable {
         case .collageExport, .trendExport: "Create without limits"
         case .storyExport: "Keep every story"
         case .premiumStyle: "Every design"
+        case .memoryMovie: "Keep this movie"
         case .settings: nil
         }
         title = "Keep making memories worth keeping"
         message = "Your memories are always yours.\nPremium gives you everything Relive can create from them."
         benefits = [
             "Unlimited Memory Books",
-            "Stories, Collages & future Movies",
+            "Stories, Collages & Memory Movies",
             "Monthly and yearly recaps",
             "Every premium design",
             "Full-quality exports",

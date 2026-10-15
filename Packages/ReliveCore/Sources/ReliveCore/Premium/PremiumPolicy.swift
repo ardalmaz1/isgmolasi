@@ -24,9 +24,11 @@ public enum PremiumCapability: String, CaseIterable, Codable, Sendable {
     /// Reserved for designs that become Premium-only (today every design is previewable and
     /// exportable with the export rules above).
     case premiumStyles = "premium_styles"
+    /// Saving or sharing a Memory Movie. Not covered by the one free creation (previewing and
+    /// editing the whole movie stays free).
+    case memoryMovie = "memory_movie"
     /// Reserved for future passes; listed so the entitlement check already covers them.
     case madeForYou = "made_for_you"
-    case memoryMovie = "memory_movie"
     case reliveAI = "relive_ai"
     case anniversaryCreations = "anniversary_creations"
 

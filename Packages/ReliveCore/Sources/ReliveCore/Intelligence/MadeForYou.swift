@@ -338,9 +338,17 @@ public struct MadeForYouEngine: Sendable {
             guard usable.count >= 8, let first = moments.first else { return nil }
             let source = CreationSource.trip(trip.id)
             let general = plan(source, target: .general(limit: 40))
-            let preferred: [CreationKind] = [.book, .story, .collage]
-            let creation = general.recommendations.map(\.kind).first(where: preferred.contains) ?? .story
-            let plan = plan(source, target: creation == .book ? .book : creation == .story ? .story : .collage)
+            // A large, varied trip is offered as a film; otherwise what suits it best.
+            let preferred: [CreationKind] = [.movie, .book, .story, .collage]
+            let available = Set(general.recommendations.filter(\.isAvailable).map(\.kind))
+            let creation = preferred.first(where: available.contains) ?? .story
+            let target: IntelligenceTarget = switch creation {
+            case .movie: .general(limit: MovieSettings().length.sceneCap)
+            case .book: .book
+            case .story: .story
+            default: .collage
+            }
+            let plan = plan(source, target: target)
             guard plan.isReady else { return nil }
             let name = trip.title.primary.trimmingCharacters(in: .whitespacesAndNewlines)
             let placeName = name.isEmpty ? (trip.place?.name ?? "") : name

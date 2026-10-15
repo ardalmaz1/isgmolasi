@@ -103,8 +103,8 @@ public enum CreationKind: String, Hashable, Sendable, Codable, CaseIterable {
     case book
     case monthlyRecap
     case yearInReview
-    /// Not built yet: listed so the plan can say when a set would suit a Memory Movie.
-    case movieFuture
+    /// A Memory Movie (Intelligence v1, phase 4).
+    case movie
 }
 
 /// A suggestion, never a requirement: the user can always make something else.
@@ -122,11 +122,13 @@ public struct CreationRecommendation: Hashable, Sendable, Codable {
         case spreadAcrossYear
         /// A large, varied trip.
         case largeTrip
+        /// Enough different photos, over several moments and days, to carry a short film.
+        case visualVariety
     }
 
     public var kind: CreationKind
     public var reason: Reason
-    /// False for kinds Relive can't make yet (`movieFuture`).
+    /// False for kinds Relive can't make yet.
     public var isAvailable: Bool
 }
 
@@ -167,8 +169,12 @@ public enum CreationRecommender {
             let collage = CreationRecommendation(kind: .collage, reason: reason, isAvailable: true)
             if count <= 6 { result.insert(collage, at: 0) } else { result.append(collage) }
         }
+        // A movie needs visual variety, not just many photos: these are distinct photos
+        // (re-saved copies and near-identical shots already collapsed).
         if trip != nil, count >= 15, days >= 3 {
-            result.append(.init(kind: .movieFuture, reason: .largeTrip, isAvailable: false))
+            result.append(.init(kind: .movie, reason: .largeTrip, isAvailable: true))
+        } else if count >= MovieEligibility.recommendedPhotos, moments >= 3, days >= 2 {
+            result.append(.init(kind: .movie, reason: .visualVariety, isAvailable: true))
         }
         if count >= CreationLimits.story.lowerBound, count < 5, days < 2, moments < 2,
            !result.contains(where: { $0.kind == .story }) {

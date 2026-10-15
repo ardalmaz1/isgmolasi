@@ -219,8 +219,8 @@ struct MemoryIntelligenceSelectionTests {
         #expect(book.sequence.sections.count == 3)
         #expect(book.sequence.sections.map(\.transition).dropFirst().allSatisfy { $0 == .newDay })
         let kinds = book.recommendations.map(\.kind)
-        #expect(kinds.contains(.book) && kinds.contains(.story) && kinds.contains(.movieFuture))
-        #expect(book.recommendations.first { $0.kind == .movieFuture }?.isAvailable == false)
+        #expect(kinds.contains(.book) && kinds.contains(.story) && kinds.contains(.movie))
+        #expect(book.recommendations.first { $0.kind == .movie }?.isAvailable == true)
     }
 
     @Test func mixedYearsNeverClaimOneMonth() {

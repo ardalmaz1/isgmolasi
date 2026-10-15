@@ -94,7 +94,8 @@ struct MadeForYouKindTests {
         #expect(suggestion?.kind == .trip)
         #expect(suggestion?.title == "Kaş & Kekova · August 2025")
         #expect(suggestion?.subtitle == "30 memories · 3 days")
-        #expect(suggestion?.creation == .book)
+        // Thirty distinct photos over three days: varied enough for a film.
+        #expect(suggestion?.creation == .movie)
         #expect(suggestion?.id == "trip:\(IntelligenceFixture.momentID("d1").uuidString)")
 
         // Without a trip in the story, the same photos are never called a trip.

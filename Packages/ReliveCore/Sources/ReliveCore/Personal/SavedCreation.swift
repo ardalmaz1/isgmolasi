@@ -4,6 +4,7 @@ import Foundation
 public enum SavedCreationKind: String, Codable, CaseIterable, Hashable, Sendable {
     case collage
     case story
+    case movie
 }
 
 /// A creation's place in its lifecycle. One record moves from draft to saved; it is never
@@ -46,6 +47,25 @@ public struct StoryState: Codable, Hashable, Sendable {
     }
 }
 
+/// Everything needed to reopen a Memory Movie as it was: its photos in order, the opening photo,
+/// the settings, and whether the user edited the cut (then "Make it for me" is the only thing
+/// that may replace it). Never frames or rendered video; the movie is planned and drawn again
+/// from the photos.
+public struct MovieState: Codable, Hashable, Sendable {
+    public var photoIDs: [AssetID]
+    public var cover: AssetID?
+    public var settings: MovieSettings
+    /// The user reordered, removed or replaced photos, or chose the opening.
+    public var isUserCut: Bool
+
+    public init(photoIDs: [AssetID], cover: AssetID?, settings: MovieSettings, isUserCut: Bool) {
+        self.photoIDs = photoIDs
+        self.cover = cover
+        self.settings = settings
+        self.isUserCut = isUserCut
+    }
+}
+
 /// A collage or story kept in Relive — a draft or a finished creation. Its *state*, never its
 /// pixels: it is drawn again from the user's own photos whenever it is shown or exported.
 public struct SavedCreation: Codable, Hashable, Sendable, Identifiable {
@@ -66,6 +86,7 @@ public struct SavedCreation: Codable, Hashable, Sendable, Identifiable {
     public var source: CreationSource
     public var collage: CollageState?
     public var story: StoryState?
+    public var movie: MovieState?
     /// Metadata of the creation's photos (identifier, date, location, size — never pixels or
     /// analysis), so it can still be described and drawn when a photo isn't in the story right
     /// now: one picked from the photo library, or after Start Over.
@@ -80,6 +101,7 @@ public struct SavedCreation: Codable, Hashable, Sendable, Identifiable {
         source: CreationSource,
         collage: CollageState? = nil,
         story: StoryState? = nil,
+        movie: MovieState? = nil,
         assetSnapshots: [MemoryAsset] = []
     ) {
         self.id = id
@@ -91,6 +113,7 @@ public struct SavedCreation: Codable, Hashable, Sendable, Identifiable {
         self.source = source
         self.collage = collage
         self.story = story
+        self.movie = movie
         self.assetSnapshots = assetSnapshots
     }
 
@@ -101,6 +124,7 @@ public struct SavedCreation: Codable, Hashable, Sendable, Identifiable {
         switch kind {
         case .collage: collage?.photoIDs ?? []
         case .story: story?.design.photoIDs ?? []
+        case .movie: movie?.photoIDs ?? []
         }
     }
 

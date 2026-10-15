@@ -55,6 +55,15 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case recapCreationStarted = "recap_creation_started"
     case recapShareStarted = "recap_share_started"
     case recapShareCompleted = "recap_share_completed"
+    // Intelligence v1 phase 4: Memory Movie (source kind, style, aspect, length, result only).
+    case movieStarted = "movie_started"
+    case moviePreviewed = "movie_previewed"
+    case movieStyleChanged = "movie_style_changed"
+    case movieRegenerated = "movie_regenerated"
+    case movieExportStarted = "movie_export_started"
+    case movieExportCompleted = "movie_export_completed"
+    case movieExportFailed = "movie_export_failed"
+    case movieShared = "movie_shared"
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {
