@@ -218,6 +218,28 @@ README.
 
 **Docs:** `docs/EDITORIAL_INTELLIGENCE.md`.
 
+### Results
+
+- CI run 38810719425 on c2208c4, all four jobs green:
+  - 396 core tests;
+  - Xcode 16.4 and Xcode 26 builds;
+  - 130 hosted tests;
+  - 12 UI tests on iPhone 16, plus the recap and movie UI tests again on iPhone SE.
+- The FoundationModels API was confirmed in the Xcode 26.3 SDK (iPhoneSimulator 26.2). The app
+  links it weakly (`LC_LOAD_WEAK_DYLIB`).
+- On the CI simulator the provider reports `sdkWithoutFoundationModels`, because the simulator
+  job builds with Xcode 16.4. Relive's own words are used.
+- Editorial wording takes about 0.6 ms per uncached request and about 2 µs cached (Linux CI
+  container).
+- Screenshot review:
+  - V10/V11 and W10/W11 show the title flow;
+  - V8x/W8x show dark mode and the largest text size; at that size the title buttons wrap one
+    per row;
+  - F01 shows the Made for You card "Four days in Kas.".
+- Fixed during review:
+  - the UI test now clears the title field from its end;
+  - the card's spoken label no longer doubles the full stop.
+
 **Not done in this phase (documented):**
 
 - Memory Book title choice. It needs a SwiftData field; Book, Story and Collage keep their
