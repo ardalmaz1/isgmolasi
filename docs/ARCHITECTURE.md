@@ -230,3 +230,15 @@ The app only installs a DEBUG log sink. See [MEMORY_INTELLIGENCE.md](MEMORY_INTE
   `onDismiss`.
 
 See [RECAP_2.md](RECAP_2.md).
+
+### Memory Movie
+
+`ReliveCore/Movie` plans a `MoviePlan` from a `MemorySelectionPlan`: scenes with framing,
+motion, durations, transitions and factual text. `MovieTimeline` and `MovieGeometry` say what is
+on screen at any moment.
+
+The app draws those frames with one Core Graphics drawer (`MovieFrameDrawer`) in two places:
+the live preview and the `AVAssetWriter` exporter (`MovieRenderer`). The two therefore match.
+
+Drafts are `MovieState` in `SavedCreation`, through `CreationKeeper`. Saving and sharing go
+through `PremiumGate` (`.memoryMovie`). See [MEMORY_MOVIE.md](MEMORY_MOVIE.md).

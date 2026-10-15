@@ -33,9 +33,14 @@ enum MovieFrameDrawer {
 
         for layer in frame.layers {
             let scene = plan.scenes[layer.sceneIndex]
+            // A fully opaque photo is drawn straight in; only a dissolving one needs its own layer
+            // (most frames: much less work for the exporter).
+            let blends = layer.opacity < 0.999
             context.saveGState()
-            context.setAlpha(layer.opacity)
-            context.beginTransparencyLayer(auxiliaryInfo: nil)
+            if blends {
+                context.setAlpha(layer.opacity)
+                context.beginTransparencyLayer(auxiliaryInfo: nil)
+            }
             if let pixels = images[layer.sceneIndex] {
                 if scene.framing == .fit {
                     if let background = pixels.background {
@@ -50,7 +55,7 @@ enum MovieFrameDrawer {
                 UIColor(white: 0.12, alpha: 1).setFill()
                 context.fill(bounds)
             }
-            context.endTransparencyLayer()
+            if blends { context.endTransparencyLayer() }
             context.restoreGState()
         }
 
@@ -136,12 +141,12 @@ enum MovieCaptionDrawer {
             let base = UIFont.systemFont(ofSize: size * unit, weight: weight)
             return base.fontDescriptor.withDesign(design).map { UIFont(descriptor: $0, size: size * unit) } ?? base
         }
-        let titleSize: CGFloat = isOpening ? 76 : 58
+        let titleSize: CGFloat = isOpening ? 96 : 70
         let (eyebrowFont, titleFont, detailFont): (UIFont, UIFont, UIFont) = switch style {
-        case .classic: (font(25, .semibold, design: .default), font(titleSize, .regular, design: .serif), font(25, .medium, design: .default))
-        case .editorial: (font(24, .semibold, design: .default), font(titleSize * 0.9, .semibold, design: .default), font(24, .medium, design: .default))
-        case .film: (font(24, .regular, design: .monospaced), font(titleSize * 0.62, .regular, design: .monospaced), font(23, .regular, design: .monospaced))
-        case .warm: (font(25, .medium, design: .rounded), font(titleSize, .semibold, design: .rounded), font(25, .medium, design: .rounded))
+        case .classic: (font(30, .semibold, design: .default), font(titleSize, .regular, design: .serif), font(30, .medium, design: .default))
+        case .editorial: (font(29, .semibold, design: .default), font(titleSize * 0.82, .semibold, design: .default), font(29, .medium, design: .default))
+        case .film: (font(29, .regular, design: .monospaced), font(titleSize * 0.56, .regular, design: .monospaced), font(28, .regular, design: .monospaced))
+        case .warm: (font(30, .medium, design: .rounded), font(titleSize, .semibold, design: .rounded), font(30, .medium, design: .rounded))
         }
 
         var lines: [NSAttributedString] = []

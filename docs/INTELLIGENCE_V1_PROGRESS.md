@@ -130,7 +130,57 @@ README.
     presentation works.
   - Commercial's tab-bar scrolling now uses short drags without momentum.
 
+## Phase 4 (Memory Movie V1): complete
+
+**Core** (`Packages/ReliveCore/Sources/ReliveCore/Movie/`):
+
+- `MoviePlan.swift`: plan, scene, settings, motion, transition, framing, text, soundtrack
+  (silent), eligibility.
+- `MovieStoryPlanner.swift`: the edit, on top of Memory Intelligence.
+- `MovieTimeline.swift`: frames over time and geometry, shared by the preview and the export.
+- Movie is a real `CreationKind`/recommendation, and Made for You offers large varied trips as a
+  film.
+- `memoryMovie` is Premium and not part of the free creation; there is a `.memoryMovie` paywall
+  entry ("Keep this movie"); local analytics events.
+- `MovieState` in `SavedCreation` (drafts).
+- Tests: `MovieStoryPlannerTests.swift` (24). Core total: 365.
+
+**App** (`Relive/Movie/`):
+
+- `MovieEditorModel`, `MovieEditorView`, `MoviePreviewView`.
+- `MovieDrawing` (one Core Graphics frame drawer for preview and export).
+- `MovieRenderer` (AVAssetWriter, H.264, 30 fps, 1080×1920 / 1920×1080).
+- `MovieExportController` (progress, cancel, background, Save to Photos, Share).
+- Create, Made for You / Today, Recap closing, My Creations and drafts are wired.
+
+**Tests:**
+
+- `ReliveTests/MovieAppTests.swift` (11 hosted tests, including real renders).
+- `ReliveUITests/MovieUITests.swift` (screenshots V*, and W* on iPhone SE).
+
+**Docs:** `docs/MEMORY_MOVIE.md`.
+
+### Results
+
+- CI run 38762667081 on 100f15a, all four jobs green:
+  - 365 core tests;
+  - Xcode 16.4 and Xcode 26 builds;
+  - 122 hosted tests;
+  - 10 UI tests on iPhone 16, plus the recap and movie UI tests again on iPhone SE.
+- Export timing on the CI simulator (not physical-device figures):
+  - hosted test, 16:9 1920×1080, 25.4 s movie, 14 scenes, solid stand-in photos: rendered in
+    34.7 s, 3.6 MB;
+  - UI test with the sample library, 9:16 1080×1920, 38.1 s movie, 14 scenes, 1,142 frames:
+    rendered in 67.3 s, 31 MB.
+- Screenshot review fixes:
+  - larger movie captions;
+  - opaque frames are drawn without an offscreen layer, to make export faster;
+  - the movie UI test checks Made for You before exporting (exporting retires that suggestion,
+    which is now asserted) and reviews dark mode and the largest text size with a trip.
+
 ## Next step
 
-Tune the ranking, the suggestion weights and the recap chapter thresholds on a real library,
-using the DEBUG `intelligence` lines (`intelligence_plan`, `made_for_you`, `recap_plan`).
+- Validate Memory Movie on a real iPhone: export time, memory, backgrounding and Photos saving.
+- Tune the ranking, the suggestion weights, the recap chapter thresholds and the movie rhythm on
+  a real library, using the DEBUG `intelligence` and `movie` lines (`intelligence_plan`,
+  `made_for_you`, `recap_plan`, `movie_plan`, `movie_export_*`).

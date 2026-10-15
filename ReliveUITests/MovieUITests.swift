@@ -21,8 +21,20 @@ final class MovieUITests: XCTestCase {
         try completeOnboarding(app)
         let prefix = app.windows.firstMatch.frame.height < 700 ? "W" : "V"
 
-        // Create → Memory Movie → a trip.
+        // Made for You: the Kaş trip, offered as a film, opens straight into the editor — no
+        // paywall, nothing saved.
         app.tabBars.buttons["Create"].tap()
+        let movieCard = app.buttons.matching(identifier: "madeForYouCard").matching(NSPredicate(format: "value == %@", "movie")).firstMatch
+        XCTAssertTrue(movieCard.waitForExistence(timeout: 15), "Made for You offers the trip as a movie")
+        movieCard.tap()
+        XCTAssertTrue(app.descendants(matching: .any)["moviePreview"].waitForExistence(timeout: 20), "Made for You did not open the movie")
+        XCTAssertFalse(paywall(app).exists, "opening a suggestion never asks for Premium")
+        sleep(2)
+        capture("\(prefix)09-made-for-you-movie")
+        app.buttons["movieClose"].tap()
+        sleep(1)
+
+        // Create → Memory Movie → a trip.
         tapClearOfTabBar(app, app.buttons["createMovie"])
         capture("\(prefix)00-movie-sources")
         app.buttons["movieSourceTrip"].tap()
@@ -115,18 +127,9 @@ final class MovieUITests: XCTestCase {
         capture("\(prefix)08-saved")
         premium.buttons["movieClose"].tap()
         sleep(1)
-
-        // Made for You: the Kaş trip as a film opens straight into the editor, no paywall.
-        let movieCard = premium.buttons.matching(identifier: "madeForYouCard").matching(NSPredicate(format: "value == %@", "movie")).firstMatch
-        if movieCard.waitForExistence(timeout: 5) {
-            movieCard.tap()
-            XCTAssertTrue(premium.descendants(matching: .any)["moviePreview"].waitForExistence(timeout: 20), "Made for You did not open the movie")
-            sleep(2)
-            capture("\(prefix)09-made-for-you-movie")
-            premium.buttons["movieClose"].tap()
-        } else {
-            printScreen(premium, "no-movie-suggestion")
-        }
+        // Exporting that trip's movie made its suggestion: it steps away.
+        let retired = premium.buttons.matching(identifier: "madeForYouCard").matching(NSPredicate(format: "value == %@", "movie")).firstMatch
+        XCTAssertFalse(retired.waitForExistence(timeout: 3), "a made movie suggestion retires")
         premium.terminate()
 
         // Review: dark mode and the largest accessibility text size.
@@ -138,10 +141,10 @@ final class MovieUITests: XCTestCase {
             XCTAssertTrue(review.tabBars.buttons["Create"].waitForExistence(timeout: 30))
             review.tabBars.buttons["Create"].tap()
             tapClearOfTabBar(review, review.buttons["createMovie"])
-            review.buttons["movieSourceMonth"].tap()
-            let month = review.descendants(matching: .any).matching(identifier: "periodPickerRow").firstMatch
-            XCTAssertTrue(month.waitForExistence(timeout: 10))
-            month.tap()
+            review.buttons["movieSourceTrip"].tap()
+            let row = review.descendants(matching: .any).matching(identifier: "periodPickerRow").firstMatch
+            XCTAssertTrue(row.waitForExistence(timeout: 10))
+            row.tap()
             XCTAssertTrue(review.descendants(matching: .any)["moviePreview"].waitForExistence(timeout: 20))
             sleep(3)
             capture("\(prefix)8\(name == "dark" ? "0" : "2")-\(name)-editor")

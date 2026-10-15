@@ -43,6 +43,18 @@ Details: [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md).
   there, and from the recap you can make a collage, story or book. Details:
   [docs/RECAP_2.md](docs/RECAP_2.md).
 
+## Intelligence v1 (phase 4) — Memory Movie
+
+- **What it makes:** a short film of a moment, trip, month, year, recap or hand-picked photos,
+  edited by Relive.
+- **The edit:** Memory Intelligence chooses and orders the photos, then the movie planner adds
+  restrained motion, editorial transitions, a calm rhythm and a few factual words.
+- **Editing:** "Make it for me", style, 9:16 or 16:9, length, titles, and a scene strip.
+- **Rendering:** on-device with AVFoundation (H.264, 30 fps, 1080p).
+- **Premium and sound:** previewing and editing are free; saving and sharing are Premium. It is
+  silent: no music is shipped.
+- Details: [docs/MEMORY_MOVIE.md](docs/MEMORY_MOVIE.md).
+
 ## Commercial v1 — Relive Premium
 
 **Memories are free. Creating more from them is Premium.**
@@ -235,6 +247,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/MEMORY_MOVIE.md](docs/MEMORY_MOVIE.md) — Memory Movie V1: plan, planner, eligibility,
+  framing, motion, transitions, styles, editor, renderer and export settings, Premium, drafts,
+  privacy, performance, music and video limitations.
 - [docs/RECAP_2.md](docs/RECAP_2.md) — Monthly Recap 2.0 / Our Year 2.0: chapters, insights,
   the editorial text and AI contract, the experience, Premium, analytics, performance, tests.
 - [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md) — Memory Intelligence: signals
