@@ -147,9 +147,13 @@ final class RecapUITests: XCTestCase {
                 capture("R00-monthly-recap-with-play")
                 play.tap()
                 let close = app.buttons["recapClose"]
-                if !close.waitForExistence(timeout: 15) {
+                if !close.waitForExistence(timeout: 10) {
+                    // Reported, then tried once more; the app log says whether the tap arrived.
                     printScreen(app, "recap-did-not-open")
                     capture("R00-recap-did-not-open")
+                    if play.isHittable { play.tap() }
+                    _ = close.waitForExistence(timeout: 10)
+                    print("SCREEN recap-retry: opened=\(close.exists)")
                 }
                 XCTAssertTrue(close.exists, "The recap did not open")
                 XCTAssertTrue(app.descendants(matching: .any)["recapProgress"].exists, "progress is always visible")

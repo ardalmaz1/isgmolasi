@@ -1,4 +1,5 @@
 import Foundation
+import os
 import Observation
 import ReliveCore
 
@@ -232,6 +233,9 @@ final class AppModel {
     /// Opens the immersive recap of a month or year (never a paywall by itself).
     func openRecap(_ period: RecapPeriod, origin: String) {
         activeRecap = RecapRequest(period: period, origin: origin)
+        #if DEBUG
+        Logger(subsystem: "app.relive", category: "intelligence").notice("recap_open_requested origin=\(origin, privacy: .public)")
+        #endif
     }
 
     /// Closes the recap and opens a creation from it (two full-screen views can't stack).

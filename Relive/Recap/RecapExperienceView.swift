@@ -67,6 +67,11 @@ struct RecapExperienceView: View {
             }
         }
         .premiumPaywall(gate)
+        .onAppear {
+            #if DEBUG
+            Logger(subsystem: "app.relive", category: "intelligence").notice("recap_presented origin=\(request.origin, privacy: .public)")
+            #endif
+        }
         .task { await load() }
     }
 
