@@ -237,9 +237,12 @@ final class RecapUITests: XCTestCase {
             let low = max(element.frame.minY, top), high = min(element.frame.maxY, bottom)
             return high - low >= 30 ? low...high : nil
         }
-        for _ in 0..<10 where visible() == nil {
-            // Slow swipes: a fast one can carry a tall tile right past the band on a small screen.
-            if element.frame.midY > (top + bottom) / 2 { app.swipeUp(velocity: .slow) } else { app.swipeDown(velocity: .slow) }
+        for _ in 0..<20 where visible() == nil {
+            // Fast while it is far away, slow once it is close: a fast swipe can carry a tall tile
+            // right past the band on a small screen.
+            let far = element.frame.minY > bottom + screen.height * 0.4 || element.frame.maxY < top - screen.height * 0.4
+            let velocity: XCUIGestureVelocity = far ? .fast : .slow
+            if element.frame.midY > (top + bottom) / 2 { app.swipeUp(velocity: velocity) } else { app.swipeDown(velocity: velocity) }
             sleep(1)
         }
         guard let band = visible() else {
