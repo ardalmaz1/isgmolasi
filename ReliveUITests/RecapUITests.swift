@@ -145,16 +145,19 @@ final class RecapUITests: XCTestCase {
             let play = app.buttons["recapPlay"]
             if play.waitForExistence(timeout: 5) {
                 capture("R00-monthly-recap-with-play")
+                // Let the photos below finish loading: a tap while the scroll view is still
+                // settling can be taken as the start of a scroll.
+                sleep(2)
                 play.tap()
                 let close = app.buttons["recapClose"]
-                if !close.waitForExistence(timeout: 10) {
-                    // Reported, then tried once more; the app log says whether the tap arrived.
-                    printScreen(app, "recap-did-not-open")
+                var attempt = 1
+                while !close.waitForExistence(timeout: 8), attempt < 3 {
+                    attempt += 1
+                    printScreen(app, "recap-did-not-open-\(attempt)")
                     capture("R00-recap-did-not-open")
-                    if play.isHittable { play.tap() }
-                    _ = close.waitForExistence(timeout: 10)
-                    print("SCREEN recap-retry: opened=\(close.exists)")
+                    play.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(forDuration: 0.15)
                 }
+                print("SCREEN recap-open: opened=\(close.exists) attempts=\(attempt)")
                 XCTAssertTrue(close.exists, "The recap did not open")
                 XCTAssertTrue(app.descendants(matching: .any)["recapProgress"].exists, "progress is always visible")
                 XCTAssertTrue(app.buttons["recapNext"].waitForExistence(timeout: 30), "the recap's chapters never appeared")
