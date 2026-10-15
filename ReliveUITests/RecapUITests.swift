@@ -158,6 +158,7 @@ final class RecapUITests: XCTestCase {
                     play.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(forDuration: 0.15)
                 }
                 print("SCREEN recap-open: opened=\(close.exists) attempts=\(attempt)")
+                XCTAssertEqual(attempt, 1, "Play must open the recap on the first tap")
                 XCTAssertTrue(close.exists, "The recap did not open")
                 XCTAssertTrue(app.descendants(matching: .any)["recapProgress"].exists, "progress is always visible")
                 XCTAssertTrue(app.buttons["recapNext"].waitForExistence(timeout: 30), "the recap's chapters never appeared")

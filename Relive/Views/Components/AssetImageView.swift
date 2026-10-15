@@ -25,6 +25,11 @@ struct AssetImageView: View {
                         .aspectRatio(contentMode: contentMode)
                         .frame(width: proxy.size.width, height: proxy.size.height)
                         .clipped()
+                        // A filled photo is drawn larger than its frame; `clipped()` only clips
+                        // the drawing. Without this, the invisible overflow takes touches meant
+                        // for the controls around it (a Play button above a tall photo).
+                        .contentShape(Rectangle())
+                        .allowsHitTesting(false)
                         .transition(.opacity.animation(.easeOut(duration: 0.25)))
                 } else if failed {
                     Image(systemName: "photo")
