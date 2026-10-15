@@ -17,6 +17,8 @@ jobs:
     container: swift:6.1-noble
     steps:
       - uses: actions/checkout@v5
+      - name: No secrets or remote model endpoints
+        run: sh scripts/check-no-secrets.sh
       - name: Test
         working-directory: Packages/ReliveCore
         run: swift test
@@ -39,6 +41,16 @@ jobs:
           fi
           sudo xcode-select -s "$XCODE"
           xcodebuild -version
+      - name: On-device model SDK (FoundationModels)
+        run: |
+          SDK="$(xcrun --sdk iphonesimulator --show-sdk-path)"
+          IFACE="$(find "$SDK/System/Library/Frameworks/FoundationModels.framework" -name '*.swiftinterface' 2>/dev/null | head -1)"
+          if [ -z "$IFACE" ]; then
+            echo "FOUNDATION_MODELS absent in $(basename "$SDK")"
+          else
+            echo "FOUNDATION_MODELS present in $(basename "$SDK")"
+            grep -nE "class SystemLanguageModel|static let \`?default|var availability|var isAvailable|enum Availability|case (available|unavailable|deviceNotEligible|appleIntelligenceNotEnabled|modelNotReady)|func supportsLocale|supportedLanguages|class LanguageModelSession|convenience init\(model|init\(model|instructions:|func respond\(to prompt: Swift.String|struct GenerationOptions|maximumResponseTokens|temperature:|enum GenerationError|guardrailViolation|exceededContextWindowSize|unsupportedLanguageOrLocale" "$IFACE" | grep -v "^.*//" | head -80 | sed 's/^/FOUNDATION_MODELS_API /'
+          fi
       - name: ReliveCore tests (macOS)
         run: swift test --package-path Packages/ReliveCore
       - name: Build app for iOS Simulator
