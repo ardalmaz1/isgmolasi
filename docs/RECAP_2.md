@@ -49,8 +49,14 @@ A rich recap is built in this order. Any chapter whose facts are weak is left ou
 Limits are 5–10 chapters for a month and 8–16 for a year. Trimming removes places first, then
 favorites, people, the busy day, the timeline and the repeated place.
 
-**A period is sparse** when it isn't sufficient for its existing recap, or (for a month) has fewer
-than 8 memories. A sparse period gets one compact summary page and the closing:
+**A period is sparse** when any of these is true:
+
+- it isn't sufficient for its existing recap;
+- for a month, it has fewer than 8 memories;
+- its true chapters number fewer than 5, opening and closing included. For example, 24
+  near-identical photos of one evening give only an opening and a closing.
+
+A sparse period gets one compact summary page, with no padding and no Premium page:
 
 - a month reads "September was a quiet one in Relive."
 - a year reads "Your 2026 is just getting started."

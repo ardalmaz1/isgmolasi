@@ -108,6 +108,10 @@ public struct RecapStoryPlanner: Sendable {
     public static let yearChapterLimit = 16
     /// A rich month needs at least this many memories (and a sufficient recap).
     public static let richMonthMinimum = 8
+    /// A rich recap that finds fewer true chapters than this (opening and closing included) is
+    /// told as one compact page instead: never padded to look bigger than it was.
+    public static let monthChapterMinimum = 5
+    public static let yearChapterMinimum = 5
 
     public init(library: CreationLibrary, text: any EditorialTextProviding = DeterministicEditorialTextProvider(), locale: Locale = Locale(identifier: "en_US")) {
         self.library = library
@@ -126,7 +130,7 @@ public struct RecapStoryPlanner: Sendable {
         let entries: [TemporalIndex.Entry]
         let moments: [Moment]
         let trips: [Chapter]
-        let sufficient: Bool
+        var sufficient: Bool
         switch period {
         case .month(let month):
             let recap = MonthlyRecapBuilder(library: library).recap(for: month, index: index)
@@ -165,6 +169,11 @@ public struct RecapStoryPlanner: Sendable {
             if !period.isYear { builder.timeline(moments: moments) }
             builder.closing(photos: overview.selected)
             builder.trim(to: period.isYear ? Self.yearChapterLimit : Self.monthChapterLimit)
+            if builder.chapters.count < (period.isYear ? Self.yearChapterMinimum : Self.monthChapterMinimum) {
+                sufficient = false
+                builder = Chapters(planner: self, insights: insights, period: period)
+                builder.compact(photos: overview.selected)
+            }
         }
 
         return RecapPlan(

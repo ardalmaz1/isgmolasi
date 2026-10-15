@@ -188,6 +188,16 @@ struct MonthlyRecapPlanTests {
         #expect((grid?.photos.filter { $0.hasPrefix("b1") }.count ?? 0) <= 1, "one selfie stands for the burst")
     }
 
+    /// Enough memories, but all near-identical in one moment: only an opening and a closing would
+    /// be true, so it is told as one compact page rather than a two-page "recap".
+    @Test func aThinMonthIsCompactNotPadded() {
+        let fixture = IntelligenceFixture(moments: [RecapFixture.moment("a", "October Night", start: date(2026, 10, 14, 20), count: 24, look: 0)])
+        let plan = RecapFixture.planner(fixture).plan(RecapFixture.month(2026, 10))
+        #expect(!plan.isRich, "\(plan.chapters.map(\.kind))")
+        #expect(plan.chapters.map(\.kind) == [.compactSummary])
+        #expect(plan.chapters.first?.text.detail == "24 memories · 1 moment")
+    }
+
     @Test func almostNoLocationMeansNoPlaceChapters() {
         let fixture = IntelligenceFixture(moments: [
             RecapFixture.moment("a", "Morning", start: date(2026, 9, 3, 9), count: 5, look: 0),
