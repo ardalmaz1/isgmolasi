@@ -134,6 +134,13 @@ public enum MovieFraming: String, Codable, Hashable, Sendable {
     case fit
 }
 
+/// Sound for a movie. V1 is silent: Relive ships no music, downloads none and connects to no
+/// music service. Future bundled, properly licensed tracks would add cases here and an audio
+/// input to the renderer; the plan and the edit stay the same.
+public enum MovieSoundtrack: String, CaseIterable, Codable, Hashable, Sendable {
+    case silent
+}
+
 /// Words on screen. Facts only, from the factual title system; never a feeling.
 public struct MovieText: Hashable, Codable, Sendable {
     public var eyebrow: String?
@@ -219,6 +226,8 @@ public struct MoviePlan: Hashable, Codable, Sendable {
     /// The user chose these photos (or edited the cut): they are kept as they are.
     public var isUserCut: Bool
     public var limitations: [MemorySelectionPlan.Limitation]
+    /// Always silent in V1.
+    public var soundtrack: MovieSoundtrack = .silent
     /// Memories considered.
     public var sourceCount: Int
     public var duplicatesRemoved: Int
