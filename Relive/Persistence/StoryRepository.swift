@@ -104,6 +104,8 @@ final class SwiftDataStoryRepository: StoryRepository {
         if let momentID = stored.surpriseMomentID, let assetID = stored.surpriseAssetID, let day = stored.surpriseOnDay {
             profile.surprise = SurpriseRecord(momentID: momentID, assetID: assetID, day: day, isDismissed: stored.surpriseDismissed)
         }
+        profile.relationshipStartSkipped = stored.relationshipStartSkipped
+        profile.photoStartPath = stored.photoStartPath
         return profile
     }
 
@@ -130,6 +132,8 @@ final class SwiftDataStoryRepository: StoryRepository {
         stored.surpriseAssetID = profile.surprise?.assetID
         stored.surpriseOnDay = profile.surprise?.day
         stored.surpriseDismissed = profile.surprise?.isDismissed ?? false
+        stored.relationshipStartSkipped = profile.relationshipStartSkipped
+        stored.photoStartPath = profile.photoStartPath
         save()
     }
 

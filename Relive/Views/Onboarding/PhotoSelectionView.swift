@@ -1,4 +1,5 @@
 import PhotosUI
+import ReliveCore
 import SwiftUI
 
 /// Explains why photos are needed, then hands over to Apple's selection UI.
@@ -9,22 +10,16 @@ struct PhotoSelectionView: View {
     @State private var selection = PhotoSelectionModel()
 
     var body: some View {
-        OnboardingScaffold(onBack: { app.advance(to: .startDate) }) {
-            Text("Your photos tell the story.")
+        OnboardingScaffold(onBack: { app.advance(to: .chooseStart) }) {
+            Text("Choose a few memories of the two of you.")
                 .font(Typography.display)
                 .foregroundStyle(Palette.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text("Choose the memories you’d like Relive to organize.")
+            Text("About \(PhotoSelectionModel.suggestedStart) is plenty to get started. Add more anytime.")
                 .font(Typography.title3)
                 .foregroundStyle(Palette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
-
-            Text("Trips, dinners, ordinary days — photos and videos of the two of you. Somewhere between 50 and 500 works best.")
-                .font(Typography.callout)
-                .foregroundStyle(Palette.textSecondary)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.top, Spacing.xs)
 
             PrivacyNote()
                 .padding(.top, Spacing.m)
@@ -48,7 +43,8 @@ struct PhotoSelectionView: View {
             Task { await selection.handlePickedItems(store: store, analytics: analytics) }
         }
         .onChange(of: selection.phase) { _, phase in
-            if case .finished = phase, store.selectionCount >= PhotoSelectionModel.recommendedMinimum {
+            if case .finished = phase, store.selectionCount >= PhotoSelectionModel.minimumToBegin {
+                analytics.track(.manualSelectionCompleted, ["photos": AnalyticsBucket.count(store.selectionCount)])
                 app.advance(to: .processing)
             }
         }
@@ -70,7 +66,7 @@ struct PhotoSelectionView: View {
                 actionTitle: "Open Settings",
                 action: { SystemPresenter.openSettings() }
             )
-        case .finished where store.selectionCount < PhotoSelectionModel.recommendedMinimum:
+        case .finished where store.selectionCount < PhotoSelectionModel.minimumToBegin:
             Text(fewPhotosMessage)
                 .font(Typography.callout)
                 .foregroundStyle(Palette.textPrimary)
@@ -84,25 +80,17 @@ struct PhotoSelectionView: View {
 
     @ViewBuilder
     private var footer: some View {
-        if case .finished = selection.phase, store.selectionCount > 0, store.selectionCount < PhotoSelectionModel.recommendedMinimum {
-            Button("Continue with \(Counted.text(store.selectionCount, "memory", "memories"))") {
-                app.advance(to: .processing)
-            }
+        Button(store.selectionCount > 0 ? "Choose More Photos" : "Choose Our Photos", action: choose)
             .buttonStyle(.relivePrimary)
-            Button("Add more photos", action: choose)
-                .buttonStyle(.reliveQuiet)
-        } else {
-            Button("Choose Our Photos", action: choose)
-                .buttonStyle(.relivePrimary)
-                .disabled(selection.phase == .importing || selection.phase == .requestingAccess)
-        }
+            .disabled(selection.phase == .importing || selection.phase == .requestingAccess)
+            .accessibilityIdentifier("manualChoosePhotos")
     }
 
     private var fewPhotosMessage: String {
         if store.selectionCount == 0 {
             return "No photos chosen yet. Pick a few that feel like the two of you."
         }
-        return "You chose \(Counted.text(store.selectionCount, "memory", "memories")). Relive finds more moments with 50 or more, but you can continue with these."
+        return "Relive needs at least \(PhotoSelectionModel.minimumToBegin) photos to begin — you chose \(store.selectionCount). Choose a few more."
     }
 
     private func choose() {
@@ -123,7 +111,7 @@ struct PrivacyNote: View {
                 Text("You control what Relive can see.")
                     .font(Typography.callout.weight(.semibold))
                     .foregroundStyle(Palette.textPrimary)
-                Text("Only the photos you choose. They stay on this iPhone and are organized on-device — nothing is uploaded, and there’s no account.")
+                Text("Only the photos you choose. They’re organized on this iPhone — your photos aren’t uploaded, and there’s no account.")
                     .font(Typography.footnote)
                     .foregroundStyle(Palette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)

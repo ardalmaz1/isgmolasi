@@ -137,6 +137,11 @@ final class MadeForYouUITests: XCTestCase {
         nameField.typeText("Emma\n")
         XCTAssertTrue(app.staticTexts["When did your story begin?"].waitForExistence(timeout: 5))
         app.buttons["Continue"].tap()
+        // First Experience V2: begin by choosing memories (the picker is replaced by an import
+        // of the simulator's library in UI tests).
+        let manual = app.buttons["startManual"]
+        XCTAssertTrue(manual.waitForExistence(timeout: 5))
+        manual.tap()
         let choose = app.buttons["Choose Our Photos"]
         XCTAssertTrue(choose.waitForExistence(timeout: 5))
         choose.tap()

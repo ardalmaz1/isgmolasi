@@ -49,6 +49,13 @@ struct RecapRequest: Identifiable, Hashable, Sendable {
     var period: RecapPeriod
     /// Non-identifying label of the entry point ("monthly_recap", "made_for_you"…).
     var origin: String
+
+    /// First Experience V2, first-session protection: the recap a brand-new couple opens from
+    /// "We found something for you" is shown in full that one time — every chapter, no Premium
+    /// page in the middle. Keeping or sharing it still follows the Premium rules; opening it again
+    /// later (from Today, Create…) is the usual preview.
+    static let firstDiscoveryOrigin = "first_discovery"
+    var isFirstDiscovery: Bool { origin == Self.firstDiscoveryOrigin }
 }
 
 /// A request to open the collage or story maker. Any screen can make one through `AppModel`;

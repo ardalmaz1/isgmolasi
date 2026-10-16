@@ -63,6 +63,20 @@ struct ProcessingView: View {
                     }
                 }
                 .accessibilityElement(children: .combine)
+
+                // What the run has actually found so far — never estimated.
+                if !Self.facts(progress.facts).isEmpty {
+                    VStack(alignment: .leading, spacing: Spacing.xxs) {
+                        ForEach(Self.facts(progress.facts), id: \.self) { fact in
+                            Label(fact, systemImage: "checkmark")
+                                .font(Typography.callout)
+                                .foregroundStyle(Palette.textPrimary)
+                                .transition(.opacity)
+                        }
+                    }
+                    .accessibilityElement(children: .combine)
+                    .accessibilityIdentifier("processingFacts")
+                }
             }
 
             Spacer()
@@ -71,6 +85,7 @@ struct ProcessingView: View {
         .padding(.horizontal, Spacing.screenMargin)
         .reliveBackground()
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.4), value: progress.stage)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.4), value: progress.facts)
         .animation(reduceMotion ? nil : .easeInOut(duration: 0.5), value: isReady)
         .task(id: attempt) {
             await runUntilHandedOver()
@@ -134,6 +149,15 @@ struct ProcessingView: View {
         }
     }
 
+    /// "12 moments found", "1 trip found", "3 places found" — only once the run knows.
+    static func facts(_ facts: MemoryEngineFacts) -> [String] {
+        var lines: [String] = []
+        if let moments = facts.moments, moments > 0 { lines.append("\(Counted.text(moments, "moment", "moments")) found") }
+        if let trips = facts.trips, trips > 0 { lines.append("\(Counted.text(trips, "trip", "trips")) found") }
+        if let places = facts.places, places > 0 { lines.append("\(Counted.text(places, "place", "places")) found") }
+        return lines
+    }
+
     static func detail(for progress: MemoryEngineProgress) -> String? {
         guard progress.stage == .analyzingImages, progress.totalUnits > 0 else { return nil }
         return "\(progress.completedUnits.formatted()) of \(progress.totalUnits.formatted())"
@@ -146,7 +170,7 @@ struct OnboardingProcessingView: View {
 
     var body: some View {
         ProcessingView {
-            app.advance(to: .reveal)
+            app.advance(to: .firstDiscovery)
         }
     }
 }

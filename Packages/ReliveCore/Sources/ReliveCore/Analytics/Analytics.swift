@@ -72,6 +72,42 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case editorialFallbackUsed = "editorial_fallback_used"
     case editorialVariantChanged = "editorial_variant_changed"
     case editorialUserEdited = "editorial_user_edited"
+    // First Experience V2 (path, counts/buckets, result type, duration bucket — no content).
+    case photoStartChoice = "photo_start_choice"
+    case discoveryStarted = "discovery_started"
+    case discoveryCompleted = "discovery_completed"
+    case discoveryCancelled = "discovery_cancelled"
+    case candidateMomentKept = "candidate_moment_kept"
+    case candidateMomentRejected = "candidate_moment_rejected"
+    case manualSelectionCompleted = "manual_selection_completed"
+    case firstDiscoveryShown = "first_discovery_shown"
+    case firstDiscoveryOpened = "first_discovery_opened"
+}
+
+/// Coarse buckets, so analytics never carry exact library sizes or timings.
+public enum AnalyticsBucket {
+    public static func count(_ value: Int) -> String {
+        switch value {
+        case ..<1: "0"
+        case 1..<5: "1-4"
+        case 5..<20: "5-19"
+        case 20..<50: "20-49"
+        case 50..<200: "50-199"
+        case 200..<1_000: "200-999"
+        case 1_000..<10_000: "1000-9999"
+        default: "10000+"
+        }
+    }
+
+    public static func seconds(_ value: Double) -> String {
+        switch value {
+        case ..<5: "<5s"
+        case 5..<15: "5-15s"
+        case 15..<60: "15-60s"
+        case 60..<180: "1-3m"
+        default: "3m+"
+        }
+    }
 }
 
 public struct AnalyticsEvent: Equatable, Sendable {

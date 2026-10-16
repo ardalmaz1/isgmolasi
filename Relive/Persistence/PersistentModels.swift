@@ -33,6 +33,9 @@ final class StoredProfile {
     var surpriseAssetID: String?
     var surpriseOnDay: Date?
     var surpriseDismissed: Bool = false
+    // First Experience V2. Defaults keep existing stores migrating automatically.
+    var relationshipStartSkipped: Bool = false
+    var photoStartPath: String?
 
     init() {}
 }

@@ -31,7 +31,8 @@ final class PhotoImageLoader: @unchecked Sendable {
         for id: AssetID,
         pixelSize: CGSize,
         contentMode: PHImageContentMode = .aspectFill,
-        caches: Bool = true
+        caches: Bool = true,
+        allowsNetwork: Bool = true
     ) async -> UIImage? {
         let key = "\(id)|\(Int(pixelSize.width))x\(Int(pixelSize.height))|\(contentMode.rawValue)" as NSString
         if let cached = cache.object(forKey: key) {
@@ -44,7 +45,8 @@ final class PhotoImageLoader: @unchecked Sendable {
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
         options.resizeMode = .fast
-        options.isNetworkAccessAllowed = true
+        // Discovery's possible moments show only what is already on this iPhone.
+        options.isNetworkAccessAllowed = allowsNetwork
         let image = await request(asset: asset, pixelSize: pixelSize, contentMode: contentMode, options: options)
         if let image, caches {
             let pixels = image.size.width * image.scale * image.size.height * image.scale

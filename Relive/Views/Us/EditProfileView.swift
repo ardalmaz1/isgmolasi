@@ -8,6 +8,8 @@ struct EditProfileView: View {
     @State private var partnerName = ""
     @State private var userName = ""
     @State private var date = RelationshipDateDraft()
+    /// Off when the couple skipped the date: no date is invented on Save.
+    @State private var hasDate = true
 
     var body: some View {
         NavigationStack {
@@ -27,11 +29,17 @@ struct EditProfileView: View {
                     Text("Used for “\(previewName)”.")
                 }
                 Section {
-                    RelationshipDatePicker(draft: $date)
+                    Toggle("I know when it began", isOn: $hasDate)
+                        .accessibilityIdentifier("profileHasStartDate")
+                    if hasDate {
+                        RelationshipDatePicker(draft: $date)
+                    }
                 } header: {
                     Text("When your story began")
                 } footer: {
-                    Text("An estimate is perfectly fine.")
+                    Text(hasDate
+                         ? "An estimate is perfectly fine. Memories from before it are shown separately."
+                         : "Without a date, Relive doesn’t count days together.")
                 }
             }
             .scrollContentBackground(.hidden)
@@ -54,6 +62,9 @@ struct EditProfileView: View {
             userName = app.relationship?.userName ?? ""
             if let start = app.relationship?.start {
                 date = RelationshipDateDraft(start: start)
+                hasDate = true
+            } else {
+                hasDate = false
             }
         }
     }
@@ -65,7 +76,11 @@ struct EditProfileView: View {
     private func save() {
         app.setPartnerName(partnerName)
         app.setUserName(userName)
-        app.setRelationshipStart(date.start)
+        if hasDate {
+            app.setRelationshipStart(date.start)
+        } else {
+            app.skipRelationshipStart()
+        }
         dismiss()
     }
 }

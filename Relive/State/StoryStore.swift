@@ -62,11 +62,27 @@ final class StoryStore {
     private(set) var favorites: FavoriteCollection
     /// Collages and stories kept in Relive — drafts and finished — most recently changed first.
     private(set) var creations: [SavedCreation]
+    /// The couple's start, when they gave one. Moments before it are shown apart ("Before
+    /// March 2021"), never as part of "Together since…". Set by `AppModel`.
+    var relationshipStart: RelationshipStart? {
+        didSet {
+            guard relationshipStart != oldValue else { return }
+            recomputeDerived()
+        }
+    }
+
+    /// The earliest dated memory in the story (for "Since your first memory" when no start
+    /// date was given). Never used as the relationship's start.
+    var firstMemoryDate: Date? {
+        visibleMoments.compactMap(\.startDate).min()
+    }
 
     let calendar: Calendar
     let photoLibrary: any PhotoLibraryProviding
     private let repository: any StoryRepository
     private let analyzer: any AssetAnalyzing
+    /// The on-device analyser, for discovery's few representative thumbnails.
+    var thumbnailAnalyzer: any AssetAnalyzing { analyzer }
     private let placeResolver: any ManagedPlaceNameResolving
     private let analytics: any AnalyticsTracking
     private static let logger = Logger(subsystem: "app.relive", category: "story")
@@ -714,7 +730,12 @@ final class StoryStore {
     // MARK: - Derived values
 
     private func recomputeDerived() {
-        sections = TimelineBuilder(calendar: calendar).sections(for: story, isVisible: isVisible)
+        sections = TimelineBuilder(calendar: calendar).sections(
+            for: story,
+            isVisible: isVisible,
+            storyStart: relationshipStart?.date,
+            beforeStartTitle: relationshipStart.map { "Before \(DateText.relationshipStart($0))" } ?? "Before"
+        )
         statistics = StoryStatistics.compute(story: story, assets: assets, userStates: userStates, isAvailable: isAvailable)
     }
 }

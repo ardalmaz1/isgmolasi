@@ -40,7 +40,7 @@ struct RecapExperienceView: View {
         ZStack {
             Palette.background.ignoresSafeArea()
             if let plan {
-                let pages = Self.pages(for: plan, isFull: premium.hasAccess(to: capability))
+                let pages = Self.pages(for: plan, isFull: premium.hasAccess(to: capability) || request.isFirstDiscovery)
                 TabView(selection: $page) {
                     ForEach(Array(pages.enumerated()), id: \.offset) { index, page in
                         RecapPageView(page: page, plan: plan, actions: actions)

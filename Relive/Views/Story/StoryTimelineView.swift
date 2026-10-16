@@ -57,6 +57,12 @@ struct StoryTimelineView: View {
                 .scrollIndicators(.hidden)
                 .reliveBackground()
                 .statusBarBackdrop()
+                // "Open This Memory" from the first discovery.
+                .onChange(of: app.pendingMomentID, initial: true) { _, id in
+                    guard let id else { return }
+                    app.pendingMomentID = nil
+                    path.append(MomentRoute(momentID: id, source: "first_discovery"))
+                }
                 .onChange(of: app.storyScrollTarget, initial: true) { _, target in
                     guard let target else { return }
                     path = []
@@ -116,7 +122,7 @@ struct StoryTimelineView: View {
     }
 }
 
-/// "Our Story · You + Emma · Since March 2021"
+/// "Our Story · You + Emma · Together since March 2021 · 24 moments"
 private struct StoryHeader: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
@@ -139,12 +145,19 @@ private struct StoryHeader: View {
         .accessibilityAddTraits(.isHeader)
     }
 
+    /// "Together since March 2021 · 24 moments" counts only moments from the start on; without a
+    /// start date there is no "together since" claim — "Since your first memory · June 2019".
     private var subtitle: String? {
         var parts: [String] = []
         if let start = app.relationship?.start {
-            parts.append("Since \(DateText.relationshipStart(start))")
+            parts.append("Together since \(DateText.relationshipStart(start))")
+        } else if let first = store.firstMemoryDate {
+            parts.append("Since your first memory · \(DateText.monthYear(first))")
         }
-        let moments = store.statistics.momentCount
+        let moments = store.sections
+            .filter { $0.id != TimelineBuilder.beforeStartID }
+            .flatMap(\.items)
+            .reduce(0) { $0 + $1.moments.count }
         if moments > 0 {
             parts.append(Counted.text(moments, "moment", "moments"))
         }

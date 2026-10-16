@@ -22,10 +22,12 @@ final class PhotoSelectionModel {
         case finished(SelectionChange)
     }
 
-    /// Recommended upper bound for one pick; the prototype is tuned for 50–500 memories.
+    /// Upper bound for one pick (more can always be added later).
     static let pickerLimit = 500
-    /// Below this, clustering has little to work with, so we gently suggest adding more.
-    static let recommendedMinimum = 30
+    /// A story can begin with this many photos (enough for a first moment or a short movie).
+    static let minimumToBegin = 5
+    /// "About 20 is plenty to get started" — a suggestion, never a requirement.
+    static let suggestedStart = 20
 
     #if DEBUG
     static let importAllForUITestsArgument = "-ReliveUITestImportAllPhotos"

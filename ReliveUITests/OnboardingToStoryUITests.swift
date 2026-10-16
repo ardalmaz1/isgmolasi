@@ -36,6 +36,11 @@ final class OnboardingToStoryUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["When did your story begin?"].waitForExistence(timeout: 5))
         snapshot("03-start-date")
         app.buttons["Continue"].tap()
+        // First Experience V2: begin by choosing memories (the picker is replaced by an import
+        // of the simulator's library in UI tests).
+        let manual = app.buttons["startManual"]
+        XCTAssertTrue(manual.waitForExistence(timeout: 5))
+        manual.tap()
 
         // Photos
         let choose = app.buttons["Choose Our Photos"]

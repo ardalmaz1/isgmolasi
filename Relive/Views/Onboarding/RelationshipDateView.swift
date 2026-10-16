@@ -15,15 +15,23 @@ struct RelationshipDateView: View {
             RelationshipDatePicker(draft: $draft)
                 .padding(.top, Spacing.s)
 
-            Text("Not sure? An estimate is perfectly fine.")
+            Text("An estimate is perfectly fine. You can change it later in Us.")
                 .font(Typography.footnote)
                 .foregroundStyle(Palette.textSecondary)
         } footer: {
             Button("Continue") {
                 app.setRelationshipStart(draft.start)
-                app.advance(to: .photos)
+                app.advance(to: .chooseStart)
             }
             .buttonStyle(.relivePrimary)
+            .accessibilityIdentifier("startDateContinue")
+            Button("I’m not sure — skip") {
+                app.skipRelationshipStart()
+                app.advance(to: .chooseStart)
+            }
+            .buttonStyle(.reliveQuiet)
+            .accessibilityHint("Relive won’t count days together until you add a date in Us")
+            .accessibilityIdentifier("startDateSkip")
         }
         .onAppear {
             if let start = app.relationship?.start {

@@ -1,8 +1,13 @@
 import SwiftUI
 
-/// Welcome → Partner → Start date → Photos → Processing → Reveal.
+/// First Experience V2: Welcome → Partner → Start date (or skip) → How to begin →
+/// (Relive finds possible moments, you keep yours) or (you choose a few photos) → Processing →
+/// "We found something for you." → Our Story.
 struct OnboardingFlowView: View {
     @Environment(AppModel.self) private var app
+    @Environment(\.analytics) private var analytics
+    /// Discovery's possible moments live only here, for the length of onboarding.
+    @State private var discovery = DiscoveryModel()
 
     var body: some View {
         ZStack {
@@ -12,11 +17,15 @@ struct OnboardingFlowView: View {
                 case .welcome: WelcomeView()
                 case .partner: PartnerNameView()
                 case .startDate: RelationshipDateView()
+                case .chooseStart: ChooseStartView()
+                case .discoveryPrivacy: DiscoveryPrivacyView()
+                case .discovering: DiscoveringView()
                 case .photos: PhotoSelectionView()
                 case .processing: OnboardingProcessingView()
-                case .reveal: StoryRevealView()
+                case .firstDiscovery: FirstDiscoveryView()
                 }
             }
+            .environment(discovery)
             .id(app.onboardingStep)
             .transition(.asymmetric(
                 insertion: .opacity.combined(with: .offset(x: 20)),
@@ -24,6 +33,9 @@ struct OnboardingFlowView: View {
             ))
         }
         .animation(.easeInOut(duration: 0.35), value: app.onboardingStep)
+        .onAppear { discovery.analytics = analytics }
+        // Nothing about possible moments outlives onboarding.
+        .onDisappear { discovery.reset() }
     }
 }
 

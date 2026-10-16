@@ -8,15 +8,26 @@ import ReliveCore
 @Observable
 @MainActor
 final class AppModel {
+    /// First Experience V2: Welcome → Partner → Start date (or skip) → How to begin →
+    /// (Discovery: privacy → looking → possible moments) or (Manual: choose photos) →
+    /// Processing → First Discovery. Not persisted: a relaunch resumes from what is known.
     enum OnboardingStep: Int, Comparable {
         case welcome
         case partner
         case startDate
+        case chooseStart
+        case discoveryPrivacy
+        case discovering
         case photos
         case processing
-        case reveal
+        case firstDiscovery
 
         static func < (lhs: OnboardingStep, rhs: OnboardingStep) -> Bool { lhs.rawValue < rhs.rawValue }
+    }
+
+    enum PhotoStartPath: String {
+        case discovery
+        case manual
     }
 
     enum Tab: Hashable {
@@ -58,16 +69,17 @@ final class AppModel {
         let step = AppModel.resumeStep(profile: profile, store: storyStore)
         self.onboardingStep = step ?? .welcome
         self.isOnboarding = step != nil
+        storyStore.relationshipStart = profile.relationship?.start
     }
 
     /// Where to resume onboarding after a relaunch, or nil when the story has been revealed.
     private static func resumeStep(profile: AppProfile, store: StoryStore) -> OnboardingStep? {
         if profile.storyRevealedAt != nil { return nil }
         guard let relationship = profile.relationship, !relationship.partnerName.isEmpty else { return .welcome }
-        if relationship.start == nil { return .startDate }
-        if !store.hasSelection { return .photos }
+        if relationship.start == nil, !profile.relationshipStartSkipped { return .startDate }
+        if !store.hasSelection { return .chooseStart }
         if !store.hasStory { return .processing }
-        return .reveal
+        return .firstDiscovery
     }
 
     var relationship: RelationshipProfile? { profile.relationship }
@@ -107,21 +119,48 @@ final class AppModel {
         guard var relationship = profile.relationship else { return }
         relationship.start = start
         profile.relationship = relationship
+        profile.relationshipStartSkipped = false
         repository.saveProfile(profile)
+        storyStore.relationshipStart = start
     }
+
+    /// "I'm not sure — skip": Relive makes no "together since", days or anniversary claims
+    /// until the couple adds a date (in Us). The earliest memory is never taken as the start.
+    func skipRelationshipStart() {
+        guard var relationship = profile.relationship else { return }
+        relationship.start = nil
+        profile.relationship = relationship
+        profile.relationshipStartSkipped = true
+        repository.saveProfile(profile)
+        storyStore.relationshipStart = nil
+    }
+
+    /// "Let Relive find them" or "Choose memories myself".
+    func chooseStartPath(_ path: PhotoStartPath) {
+        profile.photoStartPath = path.rawValue
+        repository.saveProfile(profile)
+        analytics.track(.photoStartChoice, ["path": path.rawValue])
+        onboardingStep = path == .discovery ? .discoveryPrivacy : .photos
+    }
+
+    var photoStartPath: PhotoStartPath? { profile.photoStartPath.flatMap(PhotoStartPath.init(rawValue:)) }
 
     func advance(to step: OnboardingStep) {
         onboardingStep = step
     }
 
-    /// "See Our Story": onboarding is over.
-    func completeReveal() {
+    /// Onboarding is over: the main app opens on Story ("See Our Story"), or on Story with the
+    /// first discovery opened over it.
+    func completeOnboarding(result: String) {
         profile.storyRevealedAt = Date()
         repository.saveProfile(profile)
-        analytics.track(.onboardingCompleted)
+        analytics.track(.onboardingCompleted, ["result": result, "path": profile.photoStartPath ?? "unknown"])
         selectedTab = .story
         isOnboarding = false
     }
+
+    /// The first discovery's moment, opened in Story once onboarding has finished.
+    var pendingMomentID: MomentID?
 
     // MARK: - Moments
 
@@ -302,6 +341,7 @@ final class AppModel {
 
     func startOver() {
         storyStore.resetAll()
+        storyStore.relationshipStart = nil
         profile = .empty
         foundMemory = nil
         surpriseMemory = nil

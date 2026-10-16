@@ -25,6 +25,26 @@ protocol PhotoLibraryProviding: Sendable {
     func allAccessibleAssets() async -> [MemoryAsset]
     /// The subset of identifiers that still resolve (not deleted, access not revoked).
     func availableIdentifiers(among identifiers: [AssetID]) async -> Set<AssetID>
+    /// "Let Relive find them" (full access only): metadata of the newest `limit` photos and
+    /// videos in the user's own library. No pixels are loaded. Hidden assets, shared-album items
+    /// and screen recordings are left out; bursts come as their one representative (PhotoKit's
+    /// default).
+    func discoveryAssets(limit: Int) async -> DiscoveryLibraryScan
+}
+
+/// What a discovery scan read: metadata only.
+struct DiscoveryLibraryScan: Sendable {
+    var assets: [MemoryAsset]
+    /// Photos and videos in the library (before the limit), for diagnostics only.
+    var libraryCount: Int
+}
+
+extension PhotoLibraryProviding {
+    func discoveryAssets(limit: Int) async -> DiscoveryLibraryScan {
+        let all = await allAccessibleAssets()
+        let newest = all.sorted { ($0.creationDate ?? .distantPast) > ($1.creationDate ?? .distantPast) }
+        return DiscoveryLibraryScan(assets: Array(newest.prefix(limit)), libraryCount: all.count)
+    }
 }
 
 /// PhotoKit-backed implementation. Stateless and thread-safe.
@@ -64,6 +84,42 @@ struct PhotoKitLibraryService: PhotoLibraryProviding {
     }
 
     // MARK: - Mapping
+
+    func discoveryAssets(limit: Int) async -> DiscoveryLibraryScan {
+        let media = NSPredicate(
+            format: "mediaType == %d OR mediaType == %d",
+            PHAssetMediaType.image.rawValue,
+            PHAssetMediaType.video.rawValue
+        )
+        let counting = PHFetchOptions()
+        counting.predicate = media
+        counting.includeAssetSourceTypes = [.typeUserLibrary]
+        let libraryCount = PHAsset.fetchAssets(with: counting).count
+
+        let options = PHFetchOptions()
+        options.predicate = media
+        options.includeAssetSourceTypes = [.typeUserLibrary]
+        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        options.fetchLimit = limit
+        let result = PHAsset.fetchAssets(with: options)
+
+        // Screen recordings aren't memories.
+        var recordings = Set<String>()
+        let albums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenRecordings, options: nil)
+        albums.enumerateObjects { album, _, _ in
+            PHAsset.fetchAssets(in: album, options: nil).enumerateObjects { asset, _, _ in
+                recordings.insert(asset.localIdentifier)
+            }
+        }
+
+        var assets: [MemoryAsset] = []
+        assets.reserveCapacity(result.count)
+        result.enumerateObjects { asset, _, _ in
+            guard !recordings.contains(asset.localIdentifier), let memoryAsset = Self.memoryAsset(from: asset) else { return }
+            assets.append(memoryAsset)
+        }
+        return DiscoveryLibraryScan(assets: assets, libraryCount: libraryCount)
+    }
 
     private static func memoryAssets(from result: PHFetchResult<PHAsset>) -> [MemoryAsset] {
         var assets: [MemoryAsset] = []

@@ -72,12 +72,12 @@ struct UsView: View {
                 } header: {
                     Text("Photo access")
                 } footer: {
-                    Text("Relive only sees the photos you choose. You can change this any time.")
+                    Text("Your story holds only the photos you chose or kept. Relive never identifies people. You can change access any time in Settings.")
                 }
                 .listRowBackground(Palette.surface)
 
                 Section("Privacy") {
-                    Text("Your photos stay on this iPhone and are organized on-device. Nothing is uploaded and there is no account. To name places, Relive asks Apple’s location service about a location — never a photo.")
+                    Text("Your photos are organized on this iPhone and aren’t uploaded; there is no account and no feed. When Relive suggests moments, it reads dates and places and counts faces in a few photos — it never knows who anyone is. To name places, Relive asks Apple’s location service about a location — never a photo. Photos kept only in iCloud may be downloaded from your own iCloud to show them.")
                         .font(Typography.footnote)
                         .foregroundStyle(Palette.textSecondary)
                         .padding(.vertical, Spacing.xxs)
@@ -204,7 +204,7 @@ private struct PhotoAccessRow: View {
     private var statusText: String {
         switch store.accessStatus {
         case .limited: "Relive sees only the \(Counted.text(store.selectionCount, "photo", "photos")) you chose."
-        case .full: "Relive keeps \(Counted.text(store.selectionCount, "photo", "photos")) you chose. Full library access is on, but only chosen photos are used."
+        case .full: "Full access is on, so Relive can suggest moments when you ask it to. Your story holds the \(Counted.text(store.selectionCount, "photo", "photos")) you chose or kept."
         case .denied, .restricted: "Relive can’t see any photos right now."
         case .notDetermined: "Relive hasn’t asked to see any photos yet."
         }

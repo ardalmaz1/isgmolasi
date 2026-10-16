@@ -8,6 +8,9 @@ struct AssetImageView: View {
     var contentMode: ContentMode = .fill
     /// Extra resolution factor, e.g. for zoomable full-screen images.
     var quality: CGFloat = 1
+    /// Possible moments during discovery: only what is on this iPhone (never downloaded from
+    /// iCloud), and not kept in the image cache.
+    var localOnly = false
 
     @Environment(\.photoImageLoader) private var loader
     @Environment(\.displayScale) private var displayScale
@@ -65,7 +68,9 @@ struct AssetImageView: View {
         let result = await loader.image(
             for: assetID,
             pixelSize: pixelSize,
-            contentMode: contentMode == .fill ? .aspectFill : .aspectFit
+            contentMode: contentMode == .fill ? .aspectFill : .aspectFit,
+            caches: !localOnly,
+            allowsNetwork: !localOnly
         )
         guard !Task.isCancelled else { return }
         if let result {

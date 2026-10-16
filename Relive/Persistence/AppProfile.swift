@@ -19,6 +19,10 @@ struct AppProfile: Equatable, Sendable {
     var lastViewedMomentID: MomentID?
     var foundForYou: FoundForYouRecord?
     var surprise: SurpriseRecord?
+    /// "I'm not sure — skip": no start date, so no "together since", days or anniversaries.
+    var relationshipStartSkipped = false
+    /// How the couple began: "discovery" (Relive suggested moments) or "manual".
+    var photoStartPath: String?
 
     static let empty = AppProfile()
 }
