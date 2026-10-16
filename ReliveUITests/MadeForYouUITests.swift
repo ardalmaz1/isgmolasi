@@ -178,9 +178,16 @@ final class MadeForYouUITests: XCTestCase {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let alert = springboard.alerts.firstMatch
         guard alert.waitForExistence(timeout: 3) else { return }
-        for label in ["Allow Full Access", "Allow Access to All Photos", "Allow"] where alert.buttons[label].exists {
-            alert.buttons[label].tap()
-            return
+        // Photos access: "Allow Full Access" (iOS may ask to confirm in a second alert).
+        let allow = NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS[c] %@ OR label == %@", "Full Access", "All Photos", "Allow")
+        print("SCREEN system-alert: \(alert.label) [\(alert.buttons.allElementsBoundByIndex.map(\.label).joined(separator: " | "))]")
+        let button = alert.buttons.matching(allow).firstMatch
+        guard button.exists else { return }
+        button.tap()
+        let confirmation = springboard.alerts.firstMatch
+        if confirmation.waitForExistence(timeout: 2) {
+            let again = confirmation.buttons.matching(allow).firstMatch
+            if again.exists { again.tap() }
         }
     }
 

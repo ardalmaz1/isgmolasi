@@ -56,8 +56,14 @@ final class FirstExperienceUITests: XCTestCase {
         capture("\(prefix)05-discovery-progress")
 
         // Possible moments
+        // On a slow simulator the system may still ask for Photos access after a few seconds.
         let keeps = app.buttons.matching(identifier: "candidateKeep")
-        XCTAssertTrue(keeps.firstMatch.waitForExistence(timeout: 180), "No possible moments were suggested")
+        var waited = 0
+        while !keeps.firstMatch.waitForExistence(timeout: 20), waited < 240 {
+            waited += 20
+            allowSystemAlertIfShown(timeout: 1)
+        }
+        XCTAssertTrue(keeps.firstMatch.exists, "No possible moments were suggested")
         XCTAssertTrue(app.staticTexts["We found some moments that might belong in your story."].exists)
         sleep(2)
         capture("\(prefix)06-possible-moments")
@@ -193,9 +199,16 @@ final class FirstExperienceUITests: XCTestCase {
         let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
         let alert = springboard.alerts.firstMatch
         guard alert.waitForExistence(timeout: timeout) else { return }
-        for label in ["Allow Full Access", "Allow Access to All Photos", "Allow"] where alert.buttons[label].exists {
-            alert.buttons[label].tap()
-            return
+        // Photos access: "Allow Full Access" (iOS may ask to confirm in a second alert).
+        let allow = NSPredicate(format: "label CONTAINS[c] %@ OR label CONTAINS[c] %@ OR label == %@", "Full Access", "All Photos", "Allow")
+        print("SCREEN system-alert: \(alert.label) [\(alert.buttons.allElementsBoundByIndex.map(\.label).joined(separator: " | "))]")
+        let button = alert.buttons.matching(allow).firstMatch
+        guard button.exists else { return }
+        button.tap()
+        let confirmation = springboard.alerts.firstMatch
+        if confirmation.waitForExistence(timeout: 2) {
+            let again = confirmation.buttons.matching(allow).firstMatch
+            if again.exists { again.tap() }
         }
     }
 
