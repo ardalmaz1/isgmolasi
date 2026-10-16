@@ -74,7 +74,7 @@ What actually happens:
 
 | | |
 |---|---|
-| **Seen** | PhotoKit metadata: creation date, location, media type and subtypes, pixel size, favorite, duration. User library only: hidden assets, shared-album items and screen recordings are left out. Bursts come as their one representative (PhotoKit's default). |
+| **Seen** | PhotoKit metadata: creation date, location, media type and subtypes, pixel size, favorite, duration. User library only: hidden assets and shared-album items are left out (screenshots are dropped by subtype; screen recordings are not specifically detected — the couple can mark such a moment Not ours). Bursts come as their one representative (PhotoKit's default). |
 | **Analyzed** | At most 48 shortlisted moments × 3 representative thumbnails = **144** small local thumbnails (512 px), with the existing Vision analyzer. Discovery keeps only a **face count bucket** (0 / 1 / 2+), the utility flag and an aesthetic score. |
 | **Originals** | Never loaded. |
 | **iCloud** | Discovery requests images with `isNetworkAccessAllowed = false`, for both analysis and the possible-moment covers. Nothing is downloaded during discovery. If no local version exists, the moment is ranked from metadata alone and its cover is left as a placeholder. |

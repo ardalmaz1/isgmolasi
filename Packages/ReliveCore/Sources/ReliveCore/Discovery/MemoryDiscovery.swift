@@ -263,8 +263,8 @@ public struct MemoryDiscovery: Sendable {
         return DiscoveryShortlist(candidates: shortlisted, diagnostics: diagnostics)
     }
 
-    /// Screenshots and tiny images aren't memories. (Screen recordings, hidden assets and shared
-    /// library items are left out by the photo library adapter.)
+    /// Screenshots and tiny images aren't memories. (Hidden assets and shared-album items are left
+    /// out by the photo library adapter.)
     func isNoise(_ asset: MemoryAsset) -> Bool {
         if asset.isScreenshot { return true }
         let longSide = max(asset.pixelWidth, asset.pixelHeight)

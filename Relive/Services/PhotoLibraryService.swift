@@ -26,9 +26,9 @@ protocol PhotoLibraryProviding: Sendable {
     /// The subset of identifiers that still resolve (not deleted, access not revoked).
     func availableIdentifiers(among identifiers: [AssetID]) async -> Set<AssetID>
     /// "Let Relive find them" (full access only): metadata of the newest `limit` photos and
-    /// videos in the user's own library. No pixels are loaded. Hidden assets, shared-album items
-    /// and screen recordings are left out; bursts come as their one representative (PhotoKit's
-    /// default).
+    /// videos in the user's own library. No pixels are loaded. Hidden assets and shared-album
+    /// items are left out; bursts come as their one representative (PhotoKit's default).
+    /// Screenshots are recognised later by their subtype.
     func discoveryAssets(limit: Int) async -> DiscoveryLibraryScan
 }
 
@@ -103,19 +103,10 @@ struct PhotoKitLibraryService: PhotoLibraryProviding {
         options.fetchLimit = limit
         let result = PHAsset.fetchAssets(with: options)
 
-        // Screen recordings aren't memories.
-        var recordings = Set<String>()
-        let albums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenRecordings, options: nil)
-        albums.enumerateObjects { album, _, _ in
-            PHAsset.fetchAssets(in: album, options: nil).enumerateObjects { asset, _, _ in
-                recordings.insert(asset.localIdentifier)
-            }
-        }
-
         var assets: [MemoryAsset] = []
         assets.reserveCapacity(result.count)
         result.enumerateObjects { asset, _, _ in
-            guard !recordings.contains(asset.localIdentifier), let memoryAsset = Self.memoryAsset(from: asset) else { return }
+            guard let memoryAsset = Self.memoryAsset(from: asset) else { return }
             assets.append(memoryAsset)
         }
         return DiscoveryLibraryScan(assets: assets, libraryCount: libraryCount)
