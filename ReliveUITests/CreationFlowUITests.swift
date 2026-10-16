@@ -158,7 +158,8 @@ final class CreationFlowUITests: XCTestCase {
         nameField.typeText("Emma\n")
 
         XCTAssertTrue(app.staticTexts["When did your story begin?"].waitForExistence(timeout: 5))
-        app.buttons["Continue"].tap()
+        // No date is chosen for the couple; these flows don't need one.
+        app.buttons["startDateSkip"].tap()
         // First Experience V2: begin by choosing memories (the picker is replaced by an import
         // of the simulator's library in UI tests).
         let manual = app.buttons["startManual"]

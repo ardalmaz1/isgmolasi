@@ -53,7 +53,7 @@ struct EditProfileView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save", action: save)
                         .fontWeight(.semibold)
-                        .disabled(partnerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                        .disabled(partnerName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || (hasDate && !date.isComplete))
                 }
             }
         }
@@ -77,7 +77,8 @@ struct EditProfileView: View {
         app.setPartnerName(partnerName)
         app.setUserName(userName)
         if hasDate {
-            app.setRelationshipStart(date.start)
+            guard let start = date.start else { return }
+            app.setRelationshipStart(start)
         } else {
             app.skipRelationshipStart()
         }

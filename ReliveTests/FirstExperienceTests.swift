@@ -288,13 +288,120 @@ final class FirstExperienceRoutingTests: XCTestCase {
 
     func testExistingCouplesNeverSeeOnboardingAgain() async {
         let repository = InMemoryStoryRepository(assets: Array(K.library().prefix(8)))
-        repository.profile.relationship = RelationshipProfile(partnerName: "Emma", start: RelationshipStart(date: K.date(2018, 3, 1), precision: .month))
+        let saved = RelationshipStart(date: K.date(2018, 3, 1), precision: .month)
+        repository.profile.relationship = RelationshipProfile(partnerName: "Emma", start: saved)
         repository.profile.storyRevealedAt = K.date(2025, 1, 1)
         let store = K.store(library: FakePhotoLibrary(assets: K.library()), repository: repository)
         let app = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
         XCTAssertFalse(app.isOnboarding)
-        XCTAssertEqual(store.relationshipStart?.precision, .month, "the story knows the couple's start")
+        XCTAssertEqual(app.relationship?.start, saved, "an existing couple's real date is unchanged")
+        XCTAssertEqual(repository.profile.relationship?.start, saved)
+        XCTAssertFalse(repository.profile.relationshipStartSkipped)
+        XCTAssertEqual(store.relationshipStart, saved, "the story knows the couple's start")
     }
+
+    func testTappingThroughOnboardingNeverCreatesAStartDate() {
+        let repository = InMemoryStoryRepository()
+        let store = K.store(library: FakePhotoLibrary(assets: []), repository: repository)
+        let app = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
+        app.beginOnboarding()
+        app.setPartnerName("Emma")
+        // The date screen's untouched draft has nothing to save.
+        let untouched = RelationshipDateDraft()
+        XCTAssertNil(untouched.start)
+        XCTAssertFalse(untouched.isComplete, "Continue stays disabled")
+        XCTAssertNil(app.relationship?.start)
+        XCTAssertNil(repository.profile.relationship?.start, "no date is pre-saved")
+        XCTAssertFalse(repository.profile.relationshipStartSkipped)
+        XCTAssertNil(store.relationshipStart)
+        // A relaunch asks again rather than assuming one.
+        let relaunched = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
+        XCTAssertEqual(relaunched.onboardingStep, .startDate)
+    }
+
+    func testAnExplicitlyChosenDateIsTheOneKept() throws {
+        let repository = InMemoryStoryRepository()
+        let store = K.store(library: FakePhotoLibrary(assets: []), repository: repository)
+        let app = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
+        app.beginOnboarding()
+        app.setPartnerName("Emma")
+        var draft = RelationshipDateDraft()
+        draft.month = 3
+        draft.year = 2021
+        let chosen = try XCTUnwrap(draft.start)
+        app.setRelationshipStart(chosen)
+        XCTAssertEqual(chosen.precision, .month)
+        XCTAssertEqual(Calendar.current.dateComponents([.year, .month, .day], from: chosen.date), DateComponents(year: 2021, month: 3, day: 1))
+        XCTAssertEqual(repository.profile.relationship?.start, chosen)
+        XCTAssertFalse(repository.profile.relationshipStartSkipped)
+        let relaunched = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
+        XCTAssertEqual(relaunched.relationship?.start, chosen)
+        XCTAssertEqual(relaunched.onboardingStep, .chooseStart)
+    }
+
+    func testSkipKeepsTheStartUnknownAndMakesNoDurationClaims() async {
+        let assets = K.library().filter { $0.id.hasPrefix("before-") || $0.id.hasPrefix("home-") }
+        let repository = InMemoryStoryRepository()
+        let store = K.store(library: FakePhotoLibrary(assets: assets), repository: repository)
+        let app = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
+        app.beginOnboarding()
+        app.setPartnerName("Emma")
+        app.skipRelationshipStart()
+        await store.importSelection(identifiers: assets.map(\.id))
+        await store.process()
+
+        let relaunched = AppModel(storyStore: store, repository: repository, analytics: InMemoryAnalyticsTracker())
+        XCTAssertNil(relaunched.relationship?.start, "skip persists the unknown state")
+        XCTAssertTrue(repository.profile.relationshipStartSkipped)
+        XCTAssertNil(store.relationshipStart)
+        // No invented boundary: nothing is set apart as "before", nothing counts days together.
+        XCTAssertFalse(store.sections.contains { $0.id == TimelineBuilder.beforeStartID })
+        XCTAssertNotNil(store.firstMemoryDate, "the timeline is organised by its first memory only")
+    }
+}
+
+@MainActor
+final class RelationshipDateDraftTests: XCTestCase {
+    func testNothingIsSelectedUntilChosen() {
+        var draft = RelationshipDateDraft()
+        XCTAssertNil(draft.month)
+        XCTAssertNil(draft.year)
+        XCTAssertNil(draft.start)
+        draft.month = 8
+        XCTAssertNil(draft.start, "a month alone is not a date")
+        draft.year = 2024
+        XCTAssertEqual(draft.start?.precision, .month)
+    }
+
+    func testAnExactDayCountsOnlyOnceTapped() {
+        var draft = RelationshipDateDraft()
+        draft.knowsExactDay = true
+        XCTAssertNil(draft.start, "the calendar's displayed day is not a choice")
+        draft.exactDate = Date(timeIntervalSince1970: 1_600_000_000)
+        draft.exactDayChosen = true
+        XCTAssertEqual(draft.start?.precision, .day)
+        XCTAssertEqual(draft.start?.date, Date(timeIntervalSince1970: 1_600_000_000))
+    }
+
+    func testASavedDateReopensAsChosen() {
+        let saved = RelationshipStart(date: Date(timeIntervalSince1970: 1_600_000_000), precision: .day)
+        XCTAssertEqual(RelationshipDateDraft(start: saved).start, saved)
+        let month = RelationshipStart(date: Date(timeIntervalSince1970: 1_600_000_000), precision: .month)
+        XCTAssertEqual(RelationshipDateDraft(start: month).start?.precision, .month)
+    }
+
+    func testAFutureChoiceIsNeverInTheFuture() {
+        var draft = RelationshipDateDraft()
+        let now = Date(timeIntervalSince1970: 1_700_000_000)
+        draft.month = 12
+        draft.year = 2099
+        XCTAssertLessThanOrEqual(draft.makeStart(now: now)?.date ?? .distantFuture, now)
+    }
+}
+
+@MainActor
+final class FirstExperienceCompletionTests: XCTestCase {
+    typealias K = FirstExperienceKit
 
     func testFinishingOnboardingOpensStoryAndTheChosenMoment() {
         let repository = InMemoryStoryRepository()

@@ -36,6 +36,7 @@ final class FirstExperienceUITests: XCTestCase {
         // Start date: skipped — no "together since" claims will be made.
         let skip = app.buttons["startDateSkip"]
         XCTAssertTrue(skip.waitForExistence(timeout: 5))
+        XCTAssertFalse(app.buttons["startDateContinue"].isEnabled, "no relationship date is preselected")
         capture("\(prefix)02-start-date")
         skip.tap()
 
@@ -112,6 +113,11 @@ final class FirstExperienceUITests: XCTestCase {
         XCTAssertTrue(header.waitForExistence(timeout: 5), "no 'together since' claim without a date")
         XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Together since")).firstMatch.exists)
         capture("\(prefix)11-story")
+        // Us makes no relationship-duration claims without a date.
+        app.tabBars.buttons["Us"].tap()
+        sleep(1)
+        XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Together since")).firstMatch.exists)
+        XCTAssertFalse(app.descendants(matching: .any).matching(NSPredicate(format: "label MATCHES %@", ".*[0-9] days.*")).firstMatch.exists, "no days-together count")
         app.terminate()
 
         // Review: the first screens in dark mode and at the largest text size, plus the manual path.
@@ -131,6 +137,7 @@ final class FirstExperienceUITests: XCTestCase {
             field.typeText("Emma\n")
             let date = review.buttons["startDateSkip"]
             XCTAssertTrue(date.waitForExistence(timeout: 5))
+            XCTAssertFalse(review.buttons["startDateContinue"].isEnabled, "no date preselected (\(name))")
             capture("\(prefix)\(digit)1-\(name)-start-date")
             reveal(review, date)
             date.tap()

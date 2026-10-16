@@ -206,6 +206,10 @@ No paywall appears during onboarding, and the Memory Movie preview is free.
 
 - **Optional.** "I'm not sure — skip" stores `relationshipStartSkipped` and no date. The earliest
   photo is **never** taken as the start.
+- **Nothing preselected.** The month and year wheels start on "Month" and "Year", and the exact-day
+  calendar counts only a day the couple taps. Continue stays disabled until a month and a year
+  (or a tapped day) are chosen, so tapping through can never save an invented date such as "one
+  year ago". Leaving the screen without choosing saves nothing; a relaunch asks again.
 - **Without a date:**
   - no "Together since", no days-together count, no relationship anniversaries;
   - Story's header reads "Since your first memory · June 2019" (the earliest kept memory, used

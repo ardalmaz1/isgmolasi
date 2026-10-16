@@ -34,8 +34,15 @@ final class OnboardingToStoryUITests: XCTestCase {
 
         // Start date (keep the default estimate)
         XCTAssertTrue(app.staticTexts["When did your story begin?"].waitForExistence(timeout: 5))
+        // Nothing is chosen for the couple: Continue waits for an explicit month and year.
+        let dateContinue = app.buttons["startDateContinue"]
+        XCTAssertFalse(dateContinue.isEnabled, "no relationship date is preselected")
+        app.pickerWheels.element(boundBy: 0).adjust(toPickerWheelValue: "March")
+        XCTAssertFalse(dateContinue.isEnabled, "a month alone is not a date")
+        app.pickerWheels.element(boundBy: 1).adjust(toPickerWheelValue: "2021")
+        XCTAssertTrue(dateContinue.isEnabled, "an explicit month and year can be saved")
         snapshot("03-start-date")
-        app.buttons["Continue"].tap()
+        dateContinue.tap()
         // First Experience V2: begin by choosing memories (the picker is replaced by an import
         // of the simulator's library in UI tests).
         let manual = app.buttons["startManual"]
@@ -137,6 +144,8 @@ final class OnboardingToStoryUITests: XCTestCase {
         sleep(1)
         snapshot("17-us")
         describe(app, "us")
+        XCTAssertTrue(app.descendants(matching: .any).matching(NSPredicate(format: "label CONTAINS %@", "Together since March 2021")).firstMatch.exists,
+                      "the explicitly chosen date is the one kept")
     }
 
     /// Photo access is normally granted before the run with `simctl privacy`; if the system
