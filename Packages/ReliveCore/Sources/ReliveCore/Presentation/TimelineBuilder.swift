@@ -32,12 +32,18 @@ public struct TimelineSection: Identifiable, Hashable, Sendable {
 /// beginning. Trips with a single visible moment are shown as that moment.
 public struct TimelineBuilder: Sendable {
     public var calendar: Calendar
+    /// The section of memories from before the relationship's start.
+    public static let beforeStartID = "before-start"
 
     public init(calendar: Calendar) {
         self.calendar = calendar
     }
 
-    public func sections(for story: Story, isVisible: (Moment) -> Bool) -> [TimelineSection] {
+    /// - Parameters:
+    ///   - storyStart: the relationship's start, when the couple gave one. Moments from before
+    ///     it are not part of "Together since…": they are gathered first, in their own section
+    ///     titled `beforeStartTitle` ("Before March 2021"), never mixed into the years after.
+    public func sections(for story: Story, isVisible: (Moment) -> Bool, storyStart: Date? = nil, beforeStartTitle: String = "Before") -> [TimelineSection] {
         let visible = story.moments.filter(isVisible)
         var items: [(date: Date?, item: TimelineItem)] = []
         var emittedChapters = Set<UUID>()
@@ -57,6 +63,13 @@ public struct TimelineBuilder: Sendable {
         }
 
         var sections: [TimelineSection] = []
+        if let startDay = storyStart.map({ calendar.startOfDay(for: $0) }) {
+            let before = items.filter { entry in entry.date.map { $0 < startDay } ?? false }
+            if !before.isEmpty {
+                sections.append(TimelineSection(id: Self.beforeStartID, title: beforeStartTitle, year: nil, items: before.map(\.item)))
+                items.removeAll { entry in entry.date.map { $0 < startDay } ?? false }
+            }
+        }
         for entry in items {
             let year = entry.date.map { calendar.component(.year, from: $0) }
             let id = year.map(String.init) ?? "undated"

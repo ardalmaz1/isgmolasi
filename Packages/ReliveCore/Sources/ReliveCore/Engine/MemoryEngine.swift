@@ -74,11 +74,14 @@ public struct MemoryEngine: Sendable {
         diagnostics.similarCount = grouping.drafts.reduce(0) { $0 + $1.similar.count } - grouping.duplicateCount
 
         // 7. Places
-        let places = try await resolvePlaces(for: grouping, progress: progress)
+        let found = MemoryEngineFacts(moments: grouping.drafts.count, trips: grouping.chapters.count)
+        let places = try await resolvePlaces(for: grouping, facts: found, progress: progress)
         diagnostics.namedPlaceCount = Set(places.values.map(\.comparisonKey)).count
 
         // 8–9. Heroes and names
-        progress(MemoryEngineProgress(stage: .choosingFavorites))
+        var placesFound = found
+        placesFound.places = diagnostics.namedPlaceCount
+        progress(MemoryEngineProgress(stage: .choosingFavorites, facts: placesFound))
         try Task.checkCancellation()
         let story = await assembleStory(grouping: grouping, places: places, now: now)
         diagnostics.momentCount = story.moments.count
@@ -332,6 +335,7 @@ public struct MemoryEngine: Sendable {
 
     private func resolvePlaces(
         for grouping: Grouping,
+        facts: MemoryEngineFacts = MemoryEngineFacts(),
         progress: @Sendable (MemoryEngineProgress) -> Void
     ) async throws -> [String: PlaceName] {
         var unique: [String: GeoCoordinate] = [:]
@@ -344,14 +348,16 @@ public struct MemoryEngine: Sendable {
             }
         }
 
-        progress(MemoryEngineProgress(stage: .findingPlaces, completedUnits: 0, totalUnits: order.count))
+        progress(MemoryEngineProgress(stage: .findingPlaces, completedUnits: 0, totalUnits: order.count, facts: facts))
         var names: [String: PlaceName] = [:]
         for (index, key) in order.enumerated() {
             try Task.checkCancellation()
             if let coordinate = unique[key], let name = await placeResolver.placeName(for: coordinate) {
                 names[key] = name
             }
-            progress(MemoryEngineProgress(stage: .findingPlaces, completedUnits: index + 1, totalUnits: order.count))
+            var known = facts
+            known.places = Set(names.values.map(\.comparisonKey)).count
+            progress(MemoryEngineProgress(stage: .findingPlaces, completedUnits: index + 1, totalUnits: order.count, facts: known))
         }
         return names
     }

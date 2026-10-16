@@ -19,11 +19,14 @@ public struct MemoryEngineProgress: Equatable, Sendable {
     public var stage: MemoryEngineStage
     public var completedUnits: Int
     public var totalUnits: Int
+    /// What the run has actually found so far (only set once known — never estimated).
+    public var facts: MemoryEngineFacts
 
-    public init(stage: MemoryEngineStage, completedUnits: Int = 0, totalUnits: Int = 0) {
+    public init(stage: MemoryEngineStage, completedUnits: Int = 0, totalUnits: Int = 0, facts: MemoryEngineFacts = MemoryEngineFacts()) {
         self.stage = stage
         self.completedUnits = completedUnits
         self.totalUnits = totalUnits
+        self.facts = facts
     }
 
     /// Progress within the current stage, 0...1 (1 when the stage has no measurable units).
@@ -74,4 +77,17 @@ public struct MemoryEngineResult: Sendable {
     public var diagnostics: MemoryEngineDiagnostics
     /// Which copies were attached to which originals — for tuning the similarity thresholds.
     public var duplicateGroups: [DuplicateDetector.DuplicateGroup]
+}
+
+/// Facts a run has established, shown while it continues ("12 moments found"). Counts only.
+public struct MemoryEngineFacts: Equatable, Sendable {
+    public var moments: Int?
+    public var trips: Int?
+    public var places: Int?
+
+    public init(moments: Int? = nil, trips: Int? = nil, places: Int? = nil) {
+        self.moments = moments
+        self.trips = trips
+        self.places = places
+    }
 }
