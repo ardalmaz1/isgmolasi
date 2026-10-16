@@ -31,8 +31,18 @@ final class PhotoImageLoader: @unchecked Sendable {
         for id: AssetID,
         pixelSize: CGSize,
         contentMode: PHImageContentMode = .aspectFill,
-        caches: Bool = true,
-        allowsNetwork: Bool = true
+        caches: Bool = true
+    ) async -> UIImage? {
+        await image(for: id, pixelSize: pixelSize, contentMode: contentMode, caches: caches, allowsNetwork: true)
+    }
+
+    /// The same, optionally only from what is on this iPhone (discovery's possible moments).
+    func image(
+        for id: AssetID,
+        pixelSize: CGSize,
+        contentMode: PHImageContentMode,
+        caches: Bool,
+        allowsNetwork: Bool
     ) async -> UIImage? {
         let key = "\(id)|\(Int(pixelSize.width))x\(Int(pixelSize.height))|\(contentMode.rawValue)" as NSString
         if let cached = cache.object(forKey: key) {
