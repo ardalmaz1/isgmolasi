@@ -52,6 +52,7 @@ final class FirstExperienceUITests: XCTestCase {
         XCTAssertTrue(app.staticTexts["It may count faces in a few photos, but it doesn’t know who anyone is."].exists)
         capture("\(prefix)04-discovery-privacy")
         proceed.tap()
+        let discoveryStarted = Date()
         allowSystemAlertIfShown()
         capture("\(prefix)05-discovery-progress")
 
@@ -64,6 +65,7 @@ final class FirstExperienceUITests: XCTestCase {
             allowSystemAlertIfShown(timeout: 1)
         }
         XCTAssertTrue(keeps.firstMatch.exists, "No possible moments were suggested")
+        print("SCREEN discovery-timing: possible moments after \(Int(Date().timeIntervalSince(discoveryStarted)))s (simulator, as seen by the test)")
         XCTAssertTrue(app.staticTexts["We found some moments that might belong in your story."].exists)
         sleep(2)
         capture("\(prefix)06-possible-moments")
@@ -78,12 +80,14 @@ final class FirstExperienceUITests: XCTestCase {
         XCTAssertTrue(continueButton.isEnabled)
         print("SCREEN discovery-continue: \(continueButton.label)")
         continueButton.tap()
+        let processingStarted = Date()
 
         // Processing, then the first discovery
         sleep(3)
         capture("\(prefix)08-processing")
         let open = app.buttons["firstDiscoveryOpen"]
         XCTAssertTrue(open.waitForExistence(timeout: 300), "The first discovery did not appear")
+        print("SCREEN processing-timing: first discovery after \(Int(Date().timeIntervalSince(processingStarted)))s (simulator, as seen by the test)")
         sleep(2)
         let headline = app.staticTexts["firstDiscoveryHeadline"].label
         let result = app.descendants(matching: .any)["firstDiscoveryResult"]

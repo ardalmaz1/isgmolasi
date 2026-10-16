@@ -208,7 +208,7 @@ jobs:
         run: |
           xcrun simctl spawn "$UDID" log show --last 15m --info --style compact --predicate 'subsystem == "app.relive"' | tail -60 || true
           echo "--- recap plans (last 60 minutes) ---"
-          xcrun simctl spawn "$UDID" log show --last 60m --info --style compact --predicate 'subsystem == "app.relive"' | grep -E "recap_plan|recap_opened|movie_plan|movie_export|discovery_|Story built" | tail -60 || true
+          xcrun simctl spawn "$UDID" log show --last 150m --info --style compact --predicate 'subsystem == "app.relive"' | grep -E "recap_plan|recap_opened|movie_plan|movie_export|discovery_|Story built" | tail -80 || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
