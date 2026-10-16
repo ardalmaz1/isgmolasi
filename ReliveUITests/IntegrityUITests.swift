@@ -97,19 +97,31 @@ final class IntegrityUITests: XCTestCase {
 
     // MARK: - Steps
 
-    /// Taps a control on Create once it is clear of the tab bar (a tap under it switches tabs).
+    /// Taps a control on Create once part of it is in the band clear of the tab bar and the status
+    /// bar (a tap under the tab bar switches tabs). Fast swipes while it is far, slow when close:
+    /// a fast swipe can carry a tile right past the band.
     @MainActor
     private func tapClearOfTabBar(_ app: XCUIApplication, _ element: XCUIElement) {
+        XCTAssertTrue(element.waitForExistence(timeout: 10), "\(element.identifier) is missing")
         let screen = app.windows.firstMatch.frame
-        func isClear() -> Bool {
-            element.isHittable && element.frame.minY > screen.minY + 80 && element.frame.maxY < screen.maxY - 90
+        let top = screen.minY + 100, bottom = screen.maxY - 110
+        func visible() -> ClosedRange<CGFloat>? {
+            guard element.exists else { return nil }
+            let low = max(element.frame.minY, top), high = min(element.frame.maxY, bottom)
+            return high - low >= 30 ? low...high : nil
         }
-        for _ in 0..<8 where !isClear() {
-            if element.frame.minY <= screen.minY + 80 { app.swipeDown() } else { app.swipeUp() }
+        for _ in 0..<20 where visible() == nil {
+            let far = element.frame.minY > bottom + screen.height * 0.4 || element.frame.maxY < top - screen.height * 0.4
+            let velocity: XCUIGestureVelocity = far ? .fast : .slow
+            if element.frame.midY > (top + bottom) / 2 { app.swipeUp(velocity: velocity) } else { app.swipeDown(velocity: velocity) }
             sleep(1)
         }
-        XCTAssertTrue(isClear(), "\(element.identifier) is not reachable")
-        element.tap()
+        guard let band = visible() else {
+            return XCTFail("\(element.identifier) is not reachable")
+        }
+        app.windows.firstMatch.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: element.frame.midX, dy: (band.lowerBound + band.upperBound) / 2))
+            .tap()
     }
 
     /// Scrolls an editor control clear of the save bar and the navigation bar, taps it, and

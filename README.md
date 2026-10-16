@@ -55,6 +55,22 @@ Details: [docs/MEMORY_INTELLIGENCE.md](docs/MEMORY_INTELLIGENCE.md).
   silent: no music is shipped.
 - Details: [docs/MEMORY_MOVIE.md](docs/MEMORY_MOVIE.md).
 
+## First Experience V2 — finding your story
+
+New couples no longer hand-pick 50–500 photos.
+
+- **Start date:** optional ("I'm not sure — skip").
+- **How to begin**, two paths:
+  - **Let Relive find them.** With full Photos access, explained first, Relive suggests possible
+    moments from dates and places. It counts faces in a few photos only to rank them and never
+    knows who anyone is. The couple keeps the moments that are theirs, and only those are saved.
+  - **Choose memories myself.** About 20 photos is plenty; 5 is enough to begin.
+- **First result:** "We found something for you." — a trip's Memory Movie, a recap or a moment
+  from their own photos — then their story.
+- **Honest dates:** memories from before the relationship's start are shown apart ("Before
+  March 2021"), never as part of "Together since".
+- Details: [docs/FIRST_EXPERIENCE_V2.md](docs/FIRST_EXPERIENCE_V2.md).
+
 ## Intelligence v1 (phase 5) — Editorial Intelligence
 
 **Relive may improve how a fact is said. It never invents what happened.**
@@ -269,6 +285,9 @@ Us. Screenshots of each step are uploaded as a build artifact.
 
 ## Documentation
 
+- [docs/FIRST_EXPERIENCE_V2.md](docs/FIRST_EXPERIENCE_V2.md) — First Experience V2: the flow,
+  discovery privacy, the candidate algorithm and bounds, temporary data, First Discovery, the
+  first-session Premium protection, the start date, tests and device validation still needed.
 - [docs/EDITORIAL_INTELLIGENCE.md](docs/EDITORIAL_INTELLIGENCE.md) — Editorial Intelligence:
   facts and fact classes, the validator, Relive's own words, variants and the user's choice, the
   Apple on-device model, surfaces, caching, privacy, analytics, Premium, tests.

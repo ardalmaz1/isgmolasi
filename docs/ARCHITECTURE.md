@@ -243,6 +243,32 @@ the live preview and the `AVAssetWriter` exporter (`MovieRenderer`). The two the
 Drafts are `MovieState` in `SavedCreation`, through `CreationKeeper`. Saving and sharing go
 through `PremiumGate` (`.memoryMovie`). See [MEMORY_MOVIE.md](MEMORY_MOVIE.md).
 
+### First Experience V2
+
+Onboarding is driven by `AppModel.OnboardingStep`. It is not persisted; on launch it is derived
+from the profile and the store.
+
+**Discovery.** `DiscoveryModel`, owned by the onboarding view and in memory only:
+
+```
+PhotoLibraryProviding.discoveryAssets(limit:)   (PhotoKit metadata, newest first)
+  → MemoryDiscovery.shortlist      (MomentClusterer + ChapterBuilder, metadata ranking)
+  → the existing analyser, on ≤ 144 local thumbnails
+  → MemoryDiscovery.refine
+  → the couple keeps moments
+  → StoryStore.importSelection     (kept moments only)
+  → the normal Memory Engine
+```
+
+**First Discovery.** `FirstDiscoveryResolver` picks from Made for You's suggestions (or the
+strongest moment). Opening it routes through `MadeForYouOpener` and `AppModel` into the existing
+editors, recap and moment views.
+
+**Relationship start.** `StoryStore.relationshipStart` feeds `TimelineBuilder`'s "Before …"
+section.
+
+See [FIRST_EXPERIENCE_V2.md](FIRST_EXPERIENCE_V2.md).
+
 ### Editorial Intelligence
 
 `ReliveCore/Intelligence/Editorial` is the one editorial layer. It works on structured facts

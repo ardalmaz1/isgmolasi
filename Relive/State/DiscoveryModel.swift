@@ -104,13 +104,13 @@ final class DiscoveryModel {
         let scanStart = timing.now
         let library = store.photoLibrary
         let limit = configuration.maximumLibraryAssets
-        let scan = await Task.detached(priority: .userInitiated) { await library.discoveryAssets(limit: limit) }.value
+        let scan = await Task.detached(priority: .utility) { await library.discoveryAssets(limit: limit) }.value
         guard !Task.isCancelled else { return }
         let scanned = timing.now - scanStart
 
         let discovery = MemoryDiscovery(configuration: configuration, calendar: store.calendar)
         let shortlistStart = timing.now
-        let shortlist = await Task.detached(priority: .userInitiated) {
+        let shortlist = await Task.detached(priority: .utility) {
             discovery.shortlist(from: scan.assets, relationshipStart: relationshipStart, now: Date())
         }.value
         guard !Task.isCancelled else { return }
@@ -125,24 +125,13 @@ final class DiscoveryModel {
         let analyzer = store.thumbnailAnalyzer
         phase = .lookingAtPhotos(done: 0, total: representatives.count)
         let thumbnailsStart = timing.now
-        var analyses: [AssetID: RepresentativeAnalysis] = [:]
-        var done = 0
-        for chunk in stride(from: 0, to: representatives.count, by: 3).map({ Array(representatives[$0..<min($0 + 3, representatives.count)]) }) {
-            guard !Task.isCancelled else { return }
-            let results = await withTaskGroup(of: (AssetID, RepresentativeAnalysis).self) { group in
-                for id in chunk {
-                    guard let asset = byID[id] else { continue }
-                    group.addTask(priority: .userInitiated) {
-                        (id, Self.signals(from: await analyzer.analyze(asset)))
-                    }
-                }
-                var collected: [(AssetID, RepresentativeAnalysis)] = []
-                for await result in group { collected.append(result) }
-                return collected
+        let assets = representatives.compactMap { byID[$0] }
+        let total = representatives.count
+        let analyses = await Self.analyse(assets, with: analyzer) { [weak self] done in
+            await MainActor.run {
+                guard let self, !Task.isCancelled, case .lookingAtPhotos = self.phase else { return }
+                self.phase = .lookingAtPhotos(done: done, total: total)
             }
-            for (id, analysis) in results { analyses[id] = analysis }
-            done += chunk.count
-            phase = .lookingAtPhotos(done: done, total: representatives.count)
         }
         guard !Task.isCancelled else { return }
         let analysed = timing.now - thumbnailsStart
@@ -221,6 +210,34 @@ final class DiscoveryModel {
     }
 
     // MARK: - Helpers
+
+    /// Analyses the representatives off the main actor, two at a time at utility priority (like
+    /// the story pipeline), so the interface stays responsive. Stops early when cancelled.
+    nonisolated static func analyse(
+        _ assets: [MemoryAsset],
+        with analyzer: any AssetAnalyzing,
+        progress: @escaping @Sendable (Int) async -> Void
+    ) async -> [AssetID: RepresentativeAnalysis] {
+        var analyses: [AssetID: RepresentativeAnalysis] = [:]
+        var done = 0
+        for start in stride(from: 0, to: assets.count, by: 2) {
+            if Task.isCancelled { break }
+            let chunk = Array(assets[start..<min(start + 2, assets.count)])
+            await withTaskGroup(of: (AssetID, RepresentativeAnalysis).self) { group in
+                for asset in chunk {
+                    group.addTask(priority: .utility) {
+                        (asset.id, signals(from: await analyzer.analyze(asset)))
+                    }
+                }
+                for await (id, analysis) in group {
+                    analyses[id] = analysis
+                }
+            }
+            done += chunk.count
+            await progress(done)
+        }
+        return analyses
+    }
 
     /// Only what discovery ranks with: a face count (never who), utility and aesthetics.
     nonisolated static func signals(from analysis: AssetAnalysis) -> RepresentativeAnalysis {

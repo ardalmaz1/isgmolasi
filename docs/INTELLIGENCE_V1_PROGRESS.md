@@ -246,7 +246,45 @@ README.
   factual titles.
 - The on-device model has not been run on a physical Apple Intelligence device.
 
+## First Experience V2 (activation): implemented
+
+Not an intelligence phase: onboarding rebuilt on the existing engines. See
+`docs/FIRST_EXPERIENCE_V2.md`.
+
+**Core:**
+
+- `Discovery/MemoryDiscovery.swift`: bounded, metadata-first possible moments; face count used
+  only for ranking; kept-only import.
+- `Discovery/FirstDiscovery.swift`: the First Discovery hierarchy (movie, recap, Made for You,
+  moment, small story).
+- `TimelineBuilder`: a "Before …" section for moments before the relationship start.
+- `MemoryEngineProgress.facts`: moments, trips and places, reported once known.
+- New `AnalyticsBucket` helper and First Experience analytics events.
+- Tests: `DiscoveryTests.swift`. Core total: 415.
+
+**App:**
+
+- New onboarding steps: choose how to begin, discovery privacy, discovering and possible
+  moments, a new manual path, and First Discovery (replaces the statistics reveal).
+- `DiscoveryModel`, and `PhotoLibraryProviding.discoveryAssets(limit:)`.
+- Start-date skip, `Together since` / `Since your first memory`, editing the date in Us.
+- First-session recap protection.
+- Privacy wording in onboarding and Us.
+
+**Tests:**
+
+- Hosted: `ReliveTests/FirstExperienceTests.swift`.
+- UI: `ReliveUITests/FirstExperienceUITests.swift` (N*, and Q* on iPhone SE).
+- Every other UI test's onboarding helper now takes the manual path.
+
 ## Next step
+
+- Validate First Experience V2 on a real iPhone and library. Measure:
+  - discovery timings (`discovery_timing`);
+  - how often possible moments are right;
+  - how often the first discovery is a Movie;
+  - iCloud-only representatives;
+  - the real permission and picker experience.
 
 - Run the Memory Movie title on an iPhone with Apple Intelligence. Check the
   `editorial_provider` status, then compare the `editorial_validation` accept and reject codes.
