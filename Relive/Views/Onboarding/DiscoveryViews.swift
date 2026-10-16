@@ -86,6 +86,7 @@ struct DiscoveryPrivacyView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
     @Environment(DiscoveryModel.self) private var discovery
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         OnboardingScaffold(onBack: { app.advance(to: .chooseStart) }) {
@@ -108,6 +109,11 @@ struct DiscoveryPrivacyView: View {
                 .foregroundStyle(Palette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, Spacing.s)
+            // At the largest text sizes the footer keeps only the main action.
+            if typeSize.isAccessibilitySize {
+                manualInstead
+                    .padding(.top, Spacing.m)
+            }
         } footer: {
             Button("Continue") {
                 app.advance(to: .discovering)
@@ -115,12 +121,18 @@ struct DiscoveryPrivacyView: View {
             }
             .buttonStyle(.relivePrimary)
             .accessibilityIdentifier("discoveryContinue")
-            Button("Choose memories myself instead") {
-                app.chooseStartPath(.manual)
+            if !typeSize.isAccessibilitySize {
+                manualInstead
             }
-            .buttonStyle(.reliveQuiet)
-            .accessibilityIdentifier("discoveryManualInstead")
         }
+    }
+
+    private var manualInstead: some View {
+        Button("Choose memories myself instead") {
+            app.chooseStartPath(.manual)
+        }
+        .buttonStyle(.reliveQuiet)
+        .accessibilityIdentifier("discoveryManualInstead")
     }
 }
 

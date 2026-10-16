@@ -137,7 +137,9 @@ final class FirstExperienceUITests: XCTestCase {
             XCTAssertTrue(next.waitForExistence(timeout: 5))
             capture("\(prefix)\(digit)3-\(name)-discovery-privacy")
             XCTAssertTrue(next.isHittable, "Continue stays reachable (\(name))")
-            review.buttons["discoveryManualInstead"].tap()
+            let manual = review.buttons["discoveryManualInstead"]
+            reveal(review, manual)
+            manual.tap()
             XCTAssertTrue(review.buttons["manualChoosePhotos"].waitForExistence(timeout: 5))
             capture("\(prefix)\(digit)4-\(name)-manual")
             XCTAssertTrue(review.buttons["manualChoosePhotos"].isHittable, "the manual path stays reachable (\(name))")

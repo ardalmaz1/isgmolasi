@@ -95,8 +95,9 @@ struct FirstDiscoveryView: View {
     @ViewBuilder
     private func result(_ discovery: FirstDiscovery) -> some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
-            FramedAssetImage(assetID: discovery.coverAssetID, aspectRatio: 4 / 5)
-                .frame(maxHeight: 460)
+            // Short enough that the title stays above the buttons on every iPhone.
+            FramedAssetImage(assetID: discovery.coverAssetID, aspectRatio: 4 / 3)
+                .frame(maxHeight: 300)
                 .accessibilityHidden(true)
             if let eyebrow = eyebrow(discovery) {
                 Text(eyebrow).eyebrowStyle()

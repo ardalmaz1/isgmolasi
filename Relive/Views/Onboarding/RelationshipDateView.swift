@@ -4,6 +4,7 @@ import SwiftUI
 struct RelationshipDateView: View {
     @Environment(AppModel.self) private var app
     @State private var draft = RelationshipDateDraft()
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
         OnboardingScaffold(onBack: { app.advance(to: .partner) }) {
@@ -18,6 +19,11 @@ struct RelationshipDateView: View {
             Text("An estimate is perfectly fine. You can change it later in Us.")
                 .font(Typography.footnote)
                 .foregroundStyle(Palette.textSecondary)
+            // At the largest text sizes the footer keeps only the main action.
+            if typeSize.isAccessibilitySize {
+                skipButton
+                    .padding(.top, Spacing.s)
+            }
         } footer: {
             Button("Continue") {
                 app.setRelationshipStart(draft.start)
@@ -25,19 +31,25 @@ struct RelationshipDateView: View {
             }
             .buttonStyle(.relivePrimary)
             .accessibilityIdentifier("startDateContinue")
-            Button("I’m not sure — skip") {
-                app.skipRelationshipStart()
-                app.advance(to: .chooseStart)
+            if !typeSize.isAccessibilitySize {
+                skipButton
             }
-            .buttonStyle(.reliveQuiet)
-            .accessibilityHint("Relive won’t count days together until you add a date in Us")
-            .accessibilityIdentifier("startDateSkip")
         }
         .onAppear {
             if let start = app.relationship?.start {
                 draft = RelationshipDateDraft(start: start)
             }
         }
+    }
+
+    private var skipButton: some View {
+        Button("I’m not sure — skip") {
+            app.skipRelationshipStart()
+            app.advance(to: .chooseStart)
+        }
+        .buttonStyle(.reliveQuiet)
+        .accessibilityHint("Relive won’t count days together until you add a date in Us")
+        .accessibilityIdentifier("startDateSkip")
     }
 }
 

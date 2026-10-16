@@ -104,8 +104,13 @@ final class DiscoveryModel {
         let scanStart = timing.now
         let library = store.photoLibrary
         let limit = configuration.maximumLibraryAssets
-        let scan = await Task.detached(priority: .utility) { await library.discoveryAssets(limit: limit) }.value
+        var scan = await Task.detached(priority: .utility) { await library.discoveryAssets(limit: limit) }.value
         guard !Task.isCancelled else { return }
+        // Collages, story cards and movies Relive saved to Photos are not memories.
+        let madeByRelive = store.createdAssetIDs
+        if !madeByRelive.isEmpty {
+            scan.assets.removeAll { madeByRelive.contains($0.id) }
+        }
         let scanned = timing.now - scanStart
 
         let discovery = MemoryDiscovery(configuration: configuration, calendar: store.calendar)
