@@ -498,6 +498,7 @@ struct CandidateDetailView: View {
 }
 
 /// Factual words for a possible moment: when, and how many — nothing else.
+@MainActor
 enum CandidateText {
     static func when(_ candidate: DiscoveryCandidate) -> String {
         DateText.range(start: candidate.start, end: candidate.end, includeYear: true) ?? DateText.monthYear(candidate.start)
