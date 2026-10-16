@@ -135,10 +135,18 @@ What actually happens:
   considered the newest 25,000. That made 4,998 moments, shortlisted 48, with 144
   representatives, in **0.29 s**. This is *not* a device measurement and doesn't include
   PhotoKit enumeration or Vision.
-- **Simulator.** The DEBUG lines `discovery_plan …` and `discovery_timing scan=…ms shortlist=…ms
-  thumbnails=…ms analysed=… unavailable=… candidates=…` are captured from the UI test run on the
-  CI simulator (see the progress doc for the figures). Processing of the kept content logs
-  `Story built: … in Ns`.
+- **CI simulator, iPhone 16, the 112-asset sample library** (CI run 38953983519; *not* a device
+  measurement):
+  - `discovery_plan library=112 considered=112 eligible=112 moments=21 trips=1 shortlisted=9
+    representatives=27`;
+  - `discovery_timing scan=189ms shortlist=4ms thumbnails=15317ms analysed=27 unavailable=0
+    candidates=9`;
+  - as seen by the UI test, possible moments appeared about **15 s** after Continue (20 s on
+    iPhone SE);
+  - the couple kept 8 moments, and `discovery_import kept=8 imported=97`;
+  - the First Discovery appeared about **37 s** after "Continue with 8 moments" (44 s on iPhone SE).
+  - Thumbnail analysis dominates discovery. It is bounded at 144 thumbnails whatever the library
+    size.
 - **Not measured:** PhotoKit enumeration of a real 20k–50k library, Vision speed on a device,
   battery and heat.
 
@@ -287,6 +295,10 @@ names, captions or faces:
   - the manual path in every other UI test's onboarding helper.
 
 ## Known limitations
+
+- Place names come from Apple's geocoder, and their granularity varies. The same simulator trip
+  was named "Kas" on one run and "Türkiye" on another, so a trip title can be broader than the
+  town.
 
 - Possible moments come from time and place. A trip with friends or family looks the same as one
   with the partner; the couple decides.

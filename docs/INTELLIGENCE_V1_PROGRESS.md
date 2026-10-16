@@ -277,6 +277,28 @@ Not an intelligence phase: onboarding rebuilt on the existing engines. See
 - UI: `ReliveUITests/FirstExperienceUITests.swift` (N*, and Q* on iPhone SE).
 - Every other UI test's onboarding helper now takes the manual path.
 
+### Results
+
+- **CI run 38953983519 on 3cb9bc1, all four jobs green:**
+  - 415 core tests;
+  - Xcode 16.4 and Xcode 26 builds;
+  - 143 hosted tests;
+  - 13 UI tests on iPhone 16, plus Recap, Movie and First Experience again on iPhone SE.
+- **Discovery on the CI simulator** (112 assets): 21 moments, 9 possible moments.
+  - Metadata scan 189 ms; 27 thumbnails analyzed in 15.3 s.
+  - Kept 8 moments, which imported 97 photos.
+  - First Discovery about 37 s later: the trip movie "Four days in Kas." (iPhone SE: 7 kept,
+    44 s).
+  - These are simulator figures, not a device.
+- **Fixes from screenshot review and CI:**
+  - discovery no longer suggests images Relive saved itself;
+  - First Discovery's title stays above the buttons;
+  - at accessibility sizes the secondary actions scroll with the content;
+  - Welcome scrolls on iPhone SE at the largest size;
+  - thumbnail analysis moved off the main actor (the UI stopped answering while it ran);
+  - UI tests answer the Photos permission alert robustly;
+  - the Integrity UI test uses the adaptive reach helper.
+
 ## Next step
 
 - Validate First Experience V2 on a real iPhone and library. Measure:
