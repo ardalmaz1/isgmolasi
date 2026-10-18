@@ -54,8 +54,8 @@ claims.
 ### Story — year navigation
 
 A compact "2025 ▾" control floats at the top right when the story has two or more sections.
-It shows the year on screen (the earliest year with a visible row, tracked with
-`onScrollVisibilityChange`), lists every year of the story (from `TimelineSection`s, so
+It shows the year on screen (the year of the top row, from SwiftUI's `scrollPosition(id:)`,
+which also performs the jump — so it reaches years the lazy timeline hasn't drawn yet), lists every year of the story (from `TimelineSection`s, so
 "Before March 2021" and "Undated" too) and "Latest Memories". Jumps respect Reduce Motion.
 VoiceOver: "Jump to a year, Showing 2025", plus a **Years** rotor over the year headings.
 Normal vertical browsing is unchanged.
