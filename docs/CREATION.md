@@ -209,8 +209,8 @@ Full-resolution originals are never requested. JPEG encoding runs off the main t
   v0.4: the same path is used for creations made from favorites, reopened creations and drafts,
   and saving or completing a share also finishes the draft (`onSaved` / `onShared`). The saver
   is injectable (`CreationSaving`) so hosted tests can prove it without PhotoKit.
-- A subtle "Made with Relive" appears on exported images (one flag per canvas, ready for a
-  future option; there is no monetization logic).
+- Exported images carry no Relive branding (Real Device Polish V1 removed the "Made with
+  Relive" mark): a couple's memories are theirs, not an advertisement.
 
 ## Privacy
 

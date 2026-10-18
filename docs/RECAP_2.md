@@ -128,7 +128,7 @@ facts never include photos, coordinates, notes, captions or identifiers. An
   - Nothing is saved until the user saves.
   - Two full-screen covers can't stack, so `AppModel` opens the creation from the recap cover's
     `onDismiss`.
-- **Sharing:** the closing card uses the existing `SummaryCardExport` (with "Made with Relive")
+- **Sharing:** the closing card uses the existing `SummaryCardExport` (no Relive branding since Real Device Polish V1)
   and `ExportController.share`.
   - A successful share records the period's Made for You recap suggestion as made, so it steps
     away.

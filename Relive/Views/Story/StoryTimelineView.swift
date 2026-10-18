@@ -16,88 +16,25 @@ struct StoryTimelineView: View {
     var body: some View {
         NavigationStack(path: $path) {
             ScrollViewReader { proxy in
-                ScrollView {
-                    LazyVStack(alignment: .leading, spacing: 0) {
-                        StoryHeader()
-                            // Room for the year control floating over the top of the story.
-                            .padding(.top, store.sections.count > 1 ? Spacing.l : 0)
-                            .padding(.bottom, Spacing.l)
-
-                        if store.accessStatus == .denied || store.accessStatus == .restricted {
-                            AccessBanner(
-                                message: "Relive can’t see your photos right now, so your story is hidden. Your notes are safe.",
-                                actionTitle: "Open Settings",
-                                action: { SystemPresenter.openSettings() }
-                            )
-                            .padding(.bottom, Spacing.l)
-                        } else if !store.unavailableAssetIDs.isEmpty {
-                            AccessBanner(
-                                message: "Some photos are no longer available — they may have been deleted or removed from Relive’s access.",
-                                actionTitle: "Choose Photos",
-                                action: { isAddingMemories = true }
-                            )
-                            .padding(.bottom, Spacing.l)
-                        }
-
-                        if store.sections.isEmpty {
-                            QuietMessageView(
-                                title: "Nothing here yet",
-                                message: "Add photos of the two of you and Relive will arrange them into your story.",
-                                actionTitle: "Add Memories",
-                                action: { isAddingMemories = true }
-                            )
-                        }
-
-                        ForEach(store.sections) { section in
-                            YearHeader(title: section.title)
-                                .id(Self.anchor(section))
-                                .accessibilityRotorEntry(id: Self.anchor(section), in: yearRotor)
-                                .tracksVisibility(of: section.id, in: $visibleRows)
-                            ForEach(section.items) { item in
-                                timelineItem(item)
-                                    .tracksVisibility(of: section.id, in: $visibleRows)
+                timeline(proxy: proxy)
+                    .statusBarBackdrop()
+                    // "Open This Memory" from the first discovery.
+                    .onChange(of: app.pendingMomentID, initial: true) { _, id in
+                        guard let id else { return }
+                        app.pendingMomentID = nil
+                        path.append(MomentRoute(momentID: id, source: "first_discovery"))
+                    }
+                    .onChange(of: app.storyScrollTarget, initial: true) { _, target in
+                        guard let target else { return }
+                        path = []
+                        Task {
+                            try? await Task.sleep(for: .milliseconds(150))
+                            withAnimation(.easeInOut(duration: 0.5)) {
+                                proxy.scrollTo(target, anchor: .top)
                             }
+                            app.storyScrollTarget = nil
                         }
-
-                        TimelineFooter(isAddingMemories: $isAddingMemories)
                     }
-                    .padding(.horizontal, Spacing.screenMargin)
-                    .padding(.bottom, Spacing.xxl)
-                }
-                .scrollIndicators(.hidden)
-                .reliveBackground()
-                .overlay(alignment: .topTrailing) {
-                    if store.sections.count > 1 {
-                        YearNavigator(sections: store.sections, current: currentSection) { target in
-                            jump(to: target, proxy: proxy)
-                        }
-                        .padding(.trailing, Spacing.screenMargin)
-                        .padding(.top, Spacing.xs)
-                    }
-                }
-                .accessibilityRotor("Years") {
-                    ForEach(store.sections) { section in
-                        AccessibilityRotorEntry(section.title, id: Self.anchor(section), in: yearRotor)
-                    }
-                }
-                .statusBarBackdrop()
-                // "Open This Memory" from the first discovery.
-                .onChange(of: app.pendingMomentID, initial: true) { _, id in
-                    guard let id else { return }
-                    app.pendingMomentID = nil
-                    path.append(MomentRoute(momentID: id, source: "first_discovery"))
-                }
-                .onChange(of: app.storyScrollTarget, initial: true) { _, target in
-                    guard let target else { return }
-                    path = []
-                    Task {
-                        try? await Task.sleep(for: .milliseconds(150))
-                        withAnimation(.easeInOut(duration: 0.5)) {
-                            proxy.scrollTo(target, anchor: .top)
-                        }
-                        app.storyScrollTarget = nil
-                    }
-                }
             }
             .toolbar(.hidden, for: .navigationBar)
             .momentDestination()
@@ -105,6 +42,84 @@ struct StoryTimelineView: View {
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)
         .onAppear { analytics.track(.timelineOpened) }
+    }
+
+    /// The scrolling story, with the year control over it.
+    private func timeline(proxy: ScrollViewProxy) -> some View {
+        ScrollView {
+            LazyVStack(alignment: .leading, spacing: 0) {
+                StoryHeader()
+                    // Room for the year control floating over the top of the story.
+                    .padding(.top, store.sections.count > 1 ? Spacing.l : 0)
+                    .padding(.bottom, Spacing.l)
+                banners
+                years
+                TimelineFooter(isAddingMemories: $isAddingMemories)
+            }
+            .padding(.horizontal, Spacing.screenMargin)
+            .padding(.bottom, Spacing.xxl)
+        }
+        .scrollIndicators(.hidden)
+        .reliveBackground()
+        .overlay(alignment: .topTrailing) { yearControl(proxy: proxy) }
+        .accessibilityRotor("Years") {
+            ForEach(store.sections) { section in
+                AccessibilityRotorEntry(section.title, id: Self.anchor(section), in: yearRotor)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var banners: some View {
+        if store.accessStatus == .denied || store.accessStatus == .restricted {
+            AccessBanner(
+                message: "Relive can’t see your photos right now, so your story is hidden. Your notes are safe.",
+                actionTitle: "Open Settings",
+                action: { SystemPresenter.openSettings() }
+            )
+            .padding(.bottom, Spacing.l)
+        } else if !store.unavailableAssetIDs.isEmpty {
+            AccessBanner(
+                message: "Some photos are no longer available — they may have been deleted or removed from Relive’s access.",
+                actionTitle: "Choose Photos",
+                action: { isAddingMemories = true }
+            )
+            .padding(.bottom, Spacing.l)
+        }
+
+        if store.sections.isEmpty {
+            QuietMessageView(
+                title: "Nothing here yet",
+                message: "Add photos of the two of you and Relive will arrange them into your story.",
+                actionTitle: "Add Memories",
+                action: { isAddingMemories = true }
+            )
+        }
+    }
+
+    /// Year → (Trip →) Moment, each row counted while it is on screen.
+    private var years: some View {
+        ForEach(store.sections) { section in
+            YearHeader(title: section.title)
+                .id(Self.anchor(section))
+                .accessibilityRotorEntry(id: Self.anchor(section), in: yearRotor)
+                .tracksVisibility(of: section.id, in: $visibleRows)
+            ForEach(section.items) { item in
+                timelineItem(item)
+                    .tracksVisibility(of: section.id, in: $visibleRows)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func yearControl(proxy: ScrollViewProxy) -> some View {
+        if store.sections.count > 1 {
+            YearNavigator(sections: store.sections, current: currentSection) { target in
+                jump(to: target, proxy: proxy)
+            }
+            .padding(.trailing, Spacing.screenMargin)
+            .padding(.top, Spacing.xs)
+        }
     }
 
     /// The year on screen: the earliest year with a visible row (the first year before scrolling).

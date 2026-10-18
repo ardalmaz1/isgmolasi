@@ -78,8 +78,16 @@ photos…"). Nothing is padded.
 - Memory Intelligence chooses up to the length's cap: 9 for Short, 15 for Standard, 22 for
   Long. It balances moments, days, shapes, favorites and covers.
 - The lead opens. The rest follow in the order they were taken.
-- Variations ("Make it for me" again) open on another strong photo and use the next style. The
-  photos are the same memories.
+- Coverage (Real Device Polish V1): each day of the source — or each moment of a single day —
+  gets its best photo first (evenly spread when there are more days than photos; at most two
+  thirds of the cut), so a long trip isn't told from one afternoon. Look-alikes (the same scene
+  shot again later that day, not collapsed as a burst) cost more.
+- "Make it for me" again re-chooses the photos from the whole source: the earlier cut's photos
+  cost more until at most half of them repeat, when the source has strong alternatives. A small
+  source may keep the same photos. The opening moves to another strong photo. The user's style,
+  shape, length and title are kept (it used to cycle the style and mostly reorder the same
+  photos). On a cut the user edited, the editor asks first ("Make a New Cut").
+- Hidden memories and memories the couple asked Relive not to suggest are never chosen.
 
 **Hand-picked photos and edited cuts** keep their photos and order exactly. Photos that can't be
 shown are left out and reported (never replaced).
@@ -160,7 +168,7 @@ All text comes from the factual title system:
 - **Section labels:** a few factual labels at new places, months and years ("Kekova",
   "Kaş · August 2025"). They appear only in films with three or more sections, and at most one
   per four photos (four at most).
-- **Closing:** the period over "Made with Relive".
+- **Closing:** the period (no Relive branding).
 
 Nothing claims a feeling. Every word passes `FactualTextPolicy` (tested). The Titles toggle
 removes all of it. Words sit in the lower part of the frame over a soft shade.
