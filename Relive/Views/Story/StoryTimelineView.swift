@@ -64,7 +64,7 @@ struct StoryTimelineView: View {
         .overlay(alignment: .topTrailing) { yearControl(proxy: proxy) }
         .accessibilityRotor("Years") {
             ForEach(store.sections) { section in
-                AccessibilityRotorEntry(section.title, id: Self.anchor(section), in: yearRotor)
+                AccessibilityRotorEntry(Text(section.title), id: Self.anchor(section), in: yearRotor)
             }
         }
     }
