@@ -97,14 +97,33 @@ struct StoryTimelineView: View {
         }
     }
 
+    /// One row of the timeline: a year heading or an item under it. Rows are the lazy stack's
+    /// own identity, so the year control can scroll to a year that hasn't been drawn yet.
+    private enum Row: Identifiable {
+        case heading(TimelineSection)
+        case item(TimelineSection, TimelineItem)
+
+        var id: String {
+            switch self {
+            case .heading(let section): StoryTimelineView.anchor(section)
+            case .item(_, let item): item.id
+            }
+        }
+    }
+
+    private var rows: [Row] {
+        store.sections.flatMap { section in [Row.heading(section)] + section.items.map { Row.item(section, $0) } }
+    }
+
     /// Year → (Trip →) Moment, each row counted while it is on screen.
     private var years: some View {
-        ForEach(store.sections) { section in
-            YearHeader(title: section.title)
-                .id(Self.anchor(section))
-                .accessibilityRotorEntry(id: Self.anchor(section), in: yearRotor)
-                .tracksVisibility(of: section.id, in: $visibleRows)
-            ForEach(section.items) { item in
+        ForEach(rows) { row in
+            switch row {
+            case .heading(let section):
+                YearHeader(title: section.title)
+                    .accessibilityRotorEntry(id: Self.anchor(section), in: yearRotor)
+                    .tracksVisibility(of: section.id, in: $visibleRows)
+            case .item(let section, let item):
                 timelineItem(item)
                     .tracksVisibility(of: section.id, in: $visibleRows)
             }
@@ -130,21 +149,25 @@ struct StoryTimelineView: View {
     static func anchor(_ section: TimelineSection) -> String { "year-\(section.id)" }
 
     private func jump(to target: YearNavigator.Target, proxy: ScrollViewProxy) {
-        func scroll<ID: Hashable>(_ id: ID) {
+        let id: String
+        switch target {
+        case .section(let section):
+            id = Self.anchor(section)
+            analytics.track(.storyYearJumped, ["target": "year", "years": String(store.sections.count)])
+        case .latest:
+            guard let last = rows.last else { return }
+            id = last.id
+            analytics.track(.storyYearJumped, ["target": "latest", "years": String(store.sections.count)])
+        }
+        let reduceMotion = reduceMotion
+        // After the menu has closed: a scroll started while it dismisses can be dropped.
+        Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(300))
             if reduceMotion {
                 proxy.scrollTo(id, anchor: .top)
             } else {
                 withAnimation(.easeInOut(duration: 0.45)) { proxy.scrollTo(id, anchor: .top) }
             }
-        }
-        switch target {
-        case .section(let section):
-            scroll(Self.anchor(section))
-            analytics.track(.storyYearJumped, ["target": "year", "years": String(store.sections.count)])
-        case .latest:
-            guard let last = store.sections.last?.items.last?.moments.last else { return }
-            scroll(last.id)
-            analytics.track(.storyYearJumped, ["target": "latest", "years": String(store.sections.count)])
         }
     }
 
