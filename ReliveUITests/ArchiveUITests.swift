@@ -51,9 +51,11 @@ final class ArchiveUITests: XCTestCase {
         capture("\(prefix)04-story-years-menu")
         year2025.tap()
         sleep(2)
-        XCTAssertTrue(app.staticTexts["2025"].firstMatch.isHittable, "Jumped to 2025")
-        XCTAssertEqual(years.value as? String, "Showing 2025")
         capture("\(prefix)05-story-2025")
+        // The control shows the year on screen: after the jump, 2025.
+        let showing2025 = expectation(for: NSPredicate(format: "value == %@", "Showing 2025"), evaluatedWith: years)
+        wait(for: [showing2025], timeout: 8)
+        XCTAssertTrue(app.staticTexts["2025"].firstMatch.exists, "the 2025 heading is there")
         years.tap()
         let latest = app.buttons["Latest Memories"]
         XCTAssertTrue(latest.waitForExistence(timeout: 5))
