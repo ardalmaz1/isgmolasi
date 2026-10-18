@@ -75,7 +75,8 @@ struct MovieStoryPlannerTests {
         #expect(plan.scenes.count == 5, "five photos, nothing padded")
         #expect(plan.scenes.first?.role == .opening && plan.scenes.last?.role == .closing)
         #expect(plan.scenes.first?.text?.title == "Kaş")
-        #expect(plan.scenes.last?.text?.detail == "Made with Relive")
+        #expect(plan.scenes.last?.text?.detail == nil, "no Relive branding on a personal movie")
+        #expect(!plan.scenes.compactMap(\.text).flatMap(\.all).contains { $0.localizedCaseInsensitiveContains("relive") })
         #expect(plan.duration < MovieLength.short.seconds.upperBound)
         #expect(plan.duration > 10)
     }
@@ -347,7 +348,8 @@ struct MovieTimelineTests {
         let timeline = MovieTimeline(plan: plan)
         #expect(timeline.frame(at: 0.1).captions.isEmpty)
         #expect(timeline.frame(at: 2).captions.first?.text.title == "Lycian Coast")
-        #expect(timeline.frame(at: timeline.duration - 0.5).captions.first?.text.detail == "Made with Relive")
+        #expect(timeline.frame(at: timeline.duration - 0.5).captions.first?.text.title == plan.scenes.last?.text?.title)
+        #expect(timeline.frame(at: timeline.duration - 0.5).captions.first?.text.detail == nil)
     }
 
     @Test func aFilledPhotoAlwaysCoversTheFrame() {

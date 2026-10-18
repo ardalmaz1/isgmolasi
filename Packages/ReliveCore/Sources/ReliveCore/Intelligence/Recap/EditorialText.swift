@@ -136,8 +136,8 @@ public struct DeterministicEditorialTextProvider: EditorialTextProviding {
                 detail: "\(Self.count(memories, "memory", "memories")) · \(Self.count(moments, "moment", "moments"))"
             )
         case .closing(let period, _, let memories, let moments, let places):
+            // No Relive branding: the recap is the couple's.
             return EditorialText(
-                eyebrow: "Made with Relive",
                 title: "That was your \(period).",
                 detail: Self.counts(memories: memories, moments: moments, places: places)
             )

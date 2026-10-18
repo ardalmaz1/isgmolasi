@@ -33,11 +33,17 @@ public struct MovieStoryPlanner: Sendable {
 
     /// "Make it for me": Relive chooses the photos, the opening, the order and the edit.
     /// Hand-picked photos (`.photos`) are kept — Relive only orders the edit around them.
-    public func plan(source: CreationSource, settings: MovieSettings = MovieSettings()) -> MoviePlan {
+    ///
+    /// The choice is a film's: each day of the source (or each moment of a single day) is
+    /// covered first, look-alike shots cost more, hidden memories and memories the couple asked
+    /// Relive not to suggest are never used. `avoiding` is the earlier cut when "Make it for me"
+    /// is asked again: a source with enough strong alternatives gives a meaningfully different
+    /// set (at most half repeated); a small one may give the same photos in a new edit.
+    public func plan(source: CreationSource, settings: MovieSettings = MovieSettings(), avoiding: Set<AssetID> = []) -> MoviePlan {
         if case .photos(let ids) = source {
             return plan(source: source, photos: ids, cover: nil, settings: settings, isUserCut: true)
         }
-        let selection = engine.plan(for: source, target: .general(limit: settings.length.sceneCap))
+        let selection = engine.plan(for: source, target: .general(limit: settings.length.sceneCap), isFilm: true, avoiding: avoiding)
         let ranked = engine.rankedLeads(selection.selected, target: .general(limit: settings.length.sceneCap))
         // A variation opens on another strong photo; the first choice opens on the lead.
         var lead = selection.lead
@@ -208,7 +214,8 @@ public struct MovieStoryPlanner: Sendable {
                         text = MovieText(title: periodLabel)
                     }
                 } else if isLast {
-                    text = MovieText(title: periodLabel ?? title.primary, detail: "Made with Relive")
+                    // The memory is theirs: no Relive branding on the closing card.
+                    text = MovieText(title: periodLabel ?? title.primary)
                 } else if multiSection, info.opensSection, labels < maxLabels, [.newPlace, .newMonth, .newYear].contains(info.change),
                           let label = sectionLabel(info, title: title), label != lastLabel {
                     text = MovieText(title: label)

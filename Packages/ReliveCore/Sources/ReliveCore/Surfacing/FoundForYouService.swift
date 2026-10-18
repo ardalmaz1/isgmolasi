@@ -82,9 +82,12 @@ public struct FoundForYouService: Sendable {
         story: Story,
         assets: [AssetID: MemoryAsset],
         userStates: [MomentID: MomentUserState],
-        isAvailable: (AssetID) -> Bool,
-        now: Date
+        isAvailable available: (AssetID) -> Bool,
+        now: Date,
+        notSuggested: Set<AssetID> = []
     ) -> FoundMemory? {
+        // A memory the couple asked Relive not to suggest is never brought back here.
+        func isAvailable(_ id: AssetID) -> Bool { available(id) && !notSuggested.contains(id) }
         let eligible = story.moments.filter { moment in
             guard moment.kind != .undated, let date = moment.startDate, date <= now else { return false }
             let state = userStates[moment.id]

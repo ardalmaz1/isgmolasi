@@ -53,6 +53,15 @@ public struct RankingWeights: Hashable, Sendable, Codable {
     /// Per photo of the same framing (people/scene) beyond the other's count.
     public var framingImbalance: Double = 0.04
 
+    // Films (Memory Movie) only.
+    /// Per already-chosen photo of the same scene shot again later that day (a look-alike).
+    public var lookAlike: Double = 0.4
+    /// A photo an earlier cut used, when "Make it for me" asks for a new one. Doubled while the
+    /// new cut still repeats more than `maximumRepeatShare` of the earlier one.
+    public var previouslyUsed: Double = 0.15
+    /// How much of an earlier cut a new one may repeat when the source has enough alternatives.
+    public var maximumRepeatShare: Double = 0.5
+
     public init() {}
 
     public static let standard = RankingWeights()
@@ -188,6 +197,123 @@ public struct VisualDiversityEngine: Sendable {
             let pick = remaining.remove(at: bestIndex)
             chosen.append(pick)
             tally.add(pick)
+        }
+        return chosen
+    }
+
+    /// A film's selection: like `select`, plus
+    /// - coverage: when the source spans several days (or, in one day, several moments), the
+    ///   best photo of each is chosen first — evenly spread when there are more days than photos
+    ///   — so a long trip isn't told from one afternoon;
+    /// - look-alikes: each already-chosen photo of the same scene costs `weights.lookAlike`;
+    /// - a new cut: photos in `avoiding` cost `weights.previouslyUsed`, raised until the new cut
+    ///   repeats at most `weights.maximumRepeatShare` of the old one (or nothing changes).
+    /// Deterministic.
+    func selectForFilm(
+        _ candidates: [MemoryCandidate],
+        count: Int,
+        required: [AssetID],
+        target: IntelligenceTarget,
+        avoiding: Set<AssetID>,
+        looksAlike: (MemoryCandidate, MemoryCandidate) -> Bool,
+        coversDays: Bool
+    ) -> [MemoryCandidate] {
+        guard count > 0 else { return [] }
+        if candidates.count <= count {
+            return candidates
+        }
+        var penalty = ranker.weights.previouslyUsed
+        var result = filmPass(candidates, count: count, required: required, target: target, avoiding: avoiding, penalty: penalty, looksAlike: looksAlike, coversDays: coversDays)
+        guard !avoiding.isEmpty else { return result }
+        let allowed = Int((Double(min(count, avoiding.count)) * ranker.weights.maximumRepeatShare).rounded(.down))
+        for _ in 0..<4 {
+            let repeated = result.filter { avoiding.contains($0.assetID) }.count
+            guard repeated > allowed else { break }
+            penalty *= 2
+            let next = filmPass(candidates, count: count, required: required, target: target, avoiding: avoiding, penalty: penalty, looksAlike: looksAlike, coversDays: coversDays)
+            if next.map(\.assetID) == result.map(\.assetID) { break }
+            result = next
+        }
+        return result
+    }
+
+    private func filmPass(
+        _ candidates: [MemoryCandidate],
+        count: Int,
+        required: [AssetID],
+        target: IntelligenceTarget,
+        avoiding: Set<AssetID>,
+        penalty: Double,
+        looksAlike: (MemoryCandidate, MemoryCandidate) -> Bool,
+        coversDays: Bool
+    ) -> [MemoryCandidate] {
+        var remaining = candidates
+        var chosen: [MemoryCandidate] = []
+        var tally = Tally()
+        let weights = ranker.weights
+
+        func score(_ candidate: MemoryCandidate) -> Double {
+            var value = ranker.suitability(candidate, for: target) - tally.cost(of: candidate, weights: weights)
+            if avoiding.contains(candidate.assetID) { value -= penalty }
+            let alike = chosen.reduce(0) { $0 + (looksAlike(candidate, $1) ? 1 : 0) }
+            value -= weights.lookAlike * Double(alike)
+            return value
+        }
+        func take(_ index: Int) {
+            let pick = remaining.remove(at: index)
+            chosen.append(pick)
+            tally.add(pick)
+        }
+        func bestIndex(among indices: [Int]) -> Int? {
+            var best: (index: Int, score: Double)?
+            for index in indices {
+                let candidate = remaining[index]
+                let value = score(candidate)
+                if let current = best {
+                    let other = remaining[current.index]
+                    if value > current.score + 1e-9
+                        || (abs(value - current.score) <= 1e-9 && (candidate.captureIndex, candidate.assetID) < (other.captureIndex, other.assetID)) {
+                        best = (index, value)
+                    }
+                } else {
+                    best = (index, value)
+                }
+            }
+            return best?.index
+        }
+
+        for id in required {
+            guard chosen.count < count, let index = remaining.firstIndex(where: { $0.assetID == id }) else { continue }
+            take(index)
+        }
+
+        // Coverage: one photo from each day (or each moment of a single day).
+        if coversDays {
+            let days = Set(remaining.compactMap(\.day))
+            let groupKey: (MemoryCandidate) -> String? = days.count > 1
+                ? { $0.day.map { "\($0.year)-\($0.month)-\($0.day)" } }
+                : { $0.momentID?.uuidString }
+            var groups: [String] = []
+            var seen = Set<String>()
+            for candidate in remaining.sorted(by: { ($0.captureIndex, $0.assetID) < ($1.captureIndex, $1.assetID) }) {
+                if let key = groupKey(candidate), seen.insert(key).inserted { groups.append(key) }
+            }
+            let covered = Set(chosen.compactMap(groupKey))
+            groups.removeAll { covered.contains($0) }
+            // Leave room for the strongest photos: coverage takes at most two thirds of the cut.
+            let room = max(0, (count * 2) / 3 - chosen.count)
+            if groups.count > 1, room > 0 {
+                let picked = groups.count <= room ? groups : stride(from: 0, to: room, by: 1).map { groups[$0 * groups.count / room] }
+                for key in picked where chosen.count < count {
+                    let indices = remaining.indices.filter { groupKey(remaining[$0]) == key }
+                    if let index = bestIndex(among: indices) { take(index) }
+                }
+            }
+        }
+
+        while chosen.count < count, !remaining.isEmpty {
+            guard let index = bestIndex(among: Array(remaining.indices)) else { break }
+            take(index)
         }
         return chosen
     }

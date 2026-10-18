@@ -60,6 +60,9 @@ public struct MemoryCandidate: Hashable, Sendable, Codable, Identifiable {
     public var isCollapsedSimilar: Bool
     /// Its moment is hidden.
     public var isHidden: Bool
+    /// The couple asked Relive not to suggest it. Like a hidden memory for automatic choices;
+    /// a photo the user picks by hand is still used.
+    public var isExcludedFromSuggestions: Bool = false
     /// Still in the photo library.
     public var isAvailable: Bool
     /// A still photo that can go into a creation (not a video, screenshot or receipt).
@@ -76,7 +79,7 @@ public struct MemoryCandidate: Hashable, Sendable, Codable, Identifiable {
 
     /// Whether it may appear in an automatic creation at all.
     public var isEligible: Bool {
-        isAvailable && isUsable && !isHidden && !isDuplicateCopy
+        isAvailable && isUsable && !isHidden && !isExcludedFromSuggestions && !isDuplicateCopy
     }
 
     /// People in the picture vs. a scene — only when analysis knows.
@@ -140,6 +143,7 @@ extension MemoryCandidate {
                 isDuplicateCopy: moment?.duplicateAssetIDs.contains(id) ?? false,
                 isCollapsedSimilar: moment.map { $0.similarAssetIDs.contains(id) && !$0.featuredAssetIDs.contains(id) } ?? false,
                 isHidden: moment.map { library.userStates[$0.id]?.isHidden == true } ?? false,
+                isExcludedFromSuggestions: library.suggestionExcludedAssetIDs.contains(id),
                 isAvailable: asset != nil && library.isAvailable(id),
                 isUsable: library.isUsable(id),
                 faceCount: facesKnown ? analysis?.faceCount : nil,

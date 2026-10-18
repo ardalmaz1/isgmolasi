@@ -109,6 +109,9 @@ public struct CreationLibrary: Sendable {
     public var favoriteAssetIDs: Set<AssetID> = []
     /// Moments the couple favorited in Relive. Independent of their photos' favorites.
     public var favoriteMomentIDs: Set<MomentID> = []
+    /// Memories the couple asked Relive not to suggest ("Don't Suggest This Memory"). They stay
+    /// in the story and can still be chosen by hand; Relive never picks them on its own.
+    public var suggestionExcludedAssetIDs: Set<AssetID> = []
     /// How much a favorite counts when Relive chooses among similar photos. Small: chronology,
     /// shape and the photo's own quality still decide most choices.
     public static let favoritePreference = 0.2
@@ -191,9 +194,10 @@ public struct CreationLibrary: Sendable {
         moment.featuredAssetIDs.filter(isUsable)
     }
 
-    /// The moment's cover if it is usable, otherwise its best usable photo.
+    /// The moment's cover if it is usable, otherwise its best usable photo. Never a memory the
+    /// couple asked Relive not to suggest.
     public func lead(of moment: Moment) -> AssetID? {
-        let usable = usablePhotos(in: moment)
+        let usable = usablePhotos(in: moment).filter { !suggestionExcludedAssetIDs.contains($0) }
         if let hero = HeroSelector.resolvedHero(for: moment, userState: userStates[moment.id], isAvailable: isAvailable),
            usable.contains(hero) {
             return hero

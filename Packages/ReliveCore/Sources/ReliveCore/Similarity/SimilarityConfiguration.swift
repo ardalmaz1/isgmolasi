@@ -24,6 +24,12 @@ public struct SimilarityConfiguration: Hashable, Sendable {
     /// Near-identical shots must be taken within this interval of the burst's first shot.
     public var similarMaximumTimeGap: TimeInterval
 
+    /// Look-alikes (films only: the same scene shot again later the same day) — embedding
+    /// distance. Looser than near-identical; never used to hide anything, only to vary a cut.
+    public var lookAlikeFeatureDistance: Float = 0.5
+    /// Look-alikes without embeddings — perceptual hash distance.
+    public var lookAlikeHashDistance: Int = 12
+
     /// Below this luminance contrast a perceptual hash is too noisy to trust.
     public var minimumReliableContrast: Double
     /// A hash with fewer set (or unset) bits than this describes a nearly flat image.

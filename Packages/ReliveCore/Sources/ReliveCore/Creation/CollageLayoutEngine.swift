@@ -83,7 +83,8 @@ public struct CollageLayout: Hashable, Sendable {
     public var slots: [CollageSlot]
     public var caption: LayoutRect?
     public var filmStrips: [FilmStrip]
-    /// Where the small "Made with Relive" mark goes, clear of photos and caption.
+    /// The quiet strip in the bottom margin, clear of photos and caption. Nothing is drawn there
+    /// today (exports carry no Relive branding); kept so layouts stay unchanged.
     public var watermark: LayoutRect
     /// The style's outer margin, used to size the caption and watermark type.
     public var margin: Double

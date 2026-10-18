@@ -166,6 +166,20 @@ public struct DuplicateDetector: Sendable {
         return hashDistance <= configuration.similarHashDistance
     }
 
+    /// The same scene shot again (looser than `isSimilar`, and with no time limit — callers
+    /// decide the window). Used only to keep a film's cut varied; never to hide a photo.
+    public func looksAlike(_ lhs: MemoryAsset, _ rhs: MemoryAsset) -> Bool {
+        guard lhs.kind == rhs.kind,
+              let left = lhs.analysis?.fingerprint, let right = rhs.analysis?.fingerprint else { return false }
+        if let featureDistance = left.featureDistance(to: right) {
+            return featureDistance <= configuration.lookAlikeFeatureDistance
+        }
+        guard isHashReliable(left), isHashReliable(right), let hashDistance = left.hashDistance(to: right) else {
+            return false
+        }
+        return hashDistance <= configuration.lookAlikeHashDistance
+    }
+
     /// A perceptual hash only means something if the image has contrast and the hash itself
     /// carries information. Flat images (sky, wall, night) hash to nearly all zeros, and any two
     /// of them would otherwise look like copies of each other.

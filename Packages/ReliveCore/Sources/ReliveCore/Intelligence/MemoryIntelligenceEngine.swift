@@ -24,6 +24,12 @@ public struct IntelligenceRequest: Hashable, Sendable {
     /// Overrides the target's minimum: near-identical photos fill in up to it when there aren't
     /// enough distinct ones (a creation that needs three photos still gets three).
     public var minimum: Int?
+    /// A film's selection (Memory Movie): look-alike photos — the same scene shot again later
+    /// the same day — cost more, and the source's days (or moments) are each covered first.
+    public var isFilm: Bool = false
+    /// Photos an earlier cut used ("Make it for me" again): they cost more, so a large source
+    /// gives a meaningfully different set. A small source may still give the same photos.
+    public var avoiding: Set<AssetID> = []
 
     public init(
         pool: [AssetID],
@@ -154,15 +160,25 @@ public struct MemoryIntelligenceEngine: Sendable {
     /// A plan for a creation source: automatic for moments, trips, months, years and favorites
     /// (the moment's cover is always included); the user's own photos for `.photos`.
     public func plan(for source: CreationSource, target: IntelligenceTarget, limit: Int? = nil, minimum: Int? = nil) -> MemorySelectionPlan {
+        plan(for: source, target: target, limit: limit, minimum: minimum, isFilm: false, avoiding: [])
+    }
+
+    /// The same, for a film (`isFilm`) and/or steering away from an earlier cut (`avoiding`).
+    public func plan(for source: CreationSource, target: IntelligenceTarget, limit: Int? = nil, minimum: Int? = nil, isFilm: Bool, avoiding: Set<AssetID>) -> MemorySelectionPlan {
+        var request: IntelligenceRequest
         switch source {
         case .photos(let ids):
-            return plan(IntelligenceRequest(pool: ids, target: target, mode: .userSelected, limit: limit, minimum: minimum))
+            request = IntelligenceRequest(pool: ids, target: target, mode: .userSelected, limit: limit, minimum: minimum)
         case .moment(let id):
-            let lead = library.story.moment(id: id).flatMap(library.lead(of:))
-            return plan(IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, required: lead.map { [$0] } ?? [], limit: limit, minimum: minimum))
+            // A new cut needn't open on the same cover: the cover is required only the first time.
+            let lead = avoiding.isEmpty ? library.story.moment(id: id).flatMap(library.lead(of:)) : nil
+            request = IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, required: lead.map { [$0] } ?? [], limit: limit, minimum: minimum)
         default:
-            return plan(IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, limit: limit, minimum: minimum))
+            request = IntelligenceRequest(pool: library.availablePhotos(for: source), target: target, limit: limit, minimum: minimum)
         }
+        request.isFilm = isFilm
+        request.avoiding = avoiding
+        return plan(request)
     }
 
     public func plan(_ request: IntelligenceRequest) -> MemorySelectionPlan {
@@ -174,8 +190,10 @@ public struct MemoryIntelligenceEngine: Sendable {
         let available = all.filter(\.isAvailable)
         let notUsable = available.filter { !$0.isUsable }
         let usable = available.filter(\.isUsable)
-        let hidden = request.mode == .automatic ? usable.filter(\.isHidden) : []
-        var shown = request.mode == .automatic ? usable.filter { !$0.isHidden } : usable
+        // Hidden memories, and memories the couple asked Relive not to suggest, are never chosen
+        // automatically (photos the user picked are kept).
+        let hidden = request.mode == .automatic ? usable.filter { $0.isHidden || $0.isExcludedFromSuggestions } : []
+        var shown = request.mode == .automatic ? usable.filter { !$0.isHidden && !$0.isExcludedFromSuggestions } : usable
 
         // 2. Re-saved copies: known from the story, and checked for photos from outside it.
         var duplicates = Set(shown.filter(\.isDuplicateCopy).map(\.assetID))
@@ -221,7 +239,19 @@ public struct MemoryIntelligenceEngine: Sendable {
             }
             collapsed = folded
             let required = request.required.map { folded[$0] ?? $0 }
-            chosen = diversity.select(representatives, count: maximum, required: required, target: request.target)
+            if request.isFilm || !request.avoiding.isEmpty {
+                chosen = diversity.selectForFilm(
+                    representatives,
+                    count: maximum,
+                    required: required,
+                    target: request.target,
+                    avoiding: request.avoiding,
+                    looksAlike: request.isFilm ? lookAlikeTest() : { _, _ in false },
+                    coversDays: request.isFilm
+                )
+            } else {
+                chosen = diversity.select(representatives, count: maximum, required: required, target: request.target)
+            }
 
             // Too few distinct photos: near-identical ones may fill in (said in the limitations).
             if chosen.count < minimum {
@@ -318,6 +348,25 @@ public struct MemoryIntelligenceEngine: Sendable {
         return (best.assetID, reason)
     }
 
+    // MARK: - Look-alikes
+
+    /// Two photos of the same scene taken further apart than a burst (and so not collapsed as
+    /// near-identical): same day, close in look. Results are cached per pair.
+    private func lookAlikeTest() -> (MemoryCandidate, MemoryCandidate) -> Bool {
+        let cache = LookAlikeCache()
+        let library = library
+        let detector = detector
+        return { lhs, rhs in
+            guard lhs.day != nil, lhs.day == rhs.day,
+                  let left = library.assets[lhs.assetID], let right = library.assets[rhs.assetID] else { return false }
+            let key = lhs.assetID < rhs.assetID ? "\(lhs.assetID)|\(rhs.assetID)" : "\(rhs.assetID)|\(lhs.assetID)"
+            if let known = cache.values[key] { return known }
+            let result = detector.looksAlike(left, right)
+            cache.values[key] = result
+            return result
+        }
+    }
+
     // MARK: - Duplicates outside the story
 
     /// Photos picked from the photo library aren't in the story, so the engine never compared
@@ -341,6 +390,11 @@ public struct MemoryIntelligenceEngine: Sendable {
 }
 
 /// DEBUG explainability. The app sets a sink in development builds; nothing is logged otherwise.
+/// Per-plan memo of look-alike comparisons (a plan runs on one thread).
+private final class LookAlikeCache: @unchecked Sendable {
+    var values: [String: Bool] = [:]
+}
+
 public enum IntelligenceDiagnostics {
     private static let lock = NSLock()
     nonisolated(unsafe) private static var sink: (@Sendable (String) -> Void)?
