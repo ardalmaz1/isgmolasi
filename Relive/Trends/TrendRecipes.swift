@@ -202,9 +202,6 @@ struct BWEditorialRecipe: TrendRecipe {
                 .foregroundStyle(Color(white: 0.08))
                 .frame(width: size.width - 2 * Self.border, height: Self.bottomBand - 40, alignment: .leading)
                 .offset(x: Self.border, y: size.height - Self.bottomBand + 20)
-                MadeWithRelive(size: 18, color: Color(white: 0.55))
-                    .frame(width: size.width - 2 * Self.border, alignment: .trailing)
-                    .offset(x: Self.border, y: size.height - 56)
             }
             .frame(width: size.width, height: size.height, alignment: .topLeading)
         )
@@ -247,9 +244,6 @@ struct FilmCoupleRecipe: TrendRecipe {
                         .padding(.trailing, 70)
                         .padding(.bottom, 90)
                 }
-                MadeWithRelive(size: 18, color: .white.opacity(0.75))
-                    .padding(.bottom, 30)
-                    .frame(width: size.width, alignment: .center)
             }
             .frame(width: size.width, height: size.height)
         )
@@ -307,9 +301,6 @@ struct PhotoBoothRecipe: TrendRecipe {
                 .background(Color(white: 0.985))
                 .shadow(color: .black.opacity(0.25), radius: 24, y: 12)
                 .rotationEffect(.degrees(-2.5))
-                MadeWithRelive(size: 20, color: Color(white: 0.35))
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                    .padding(.bottom, 60)
             }
             .frame(width: size.width, height: size.height)
         )
@@ -373,9 +364,6 @@ struct MagazineCoverRecipe: TrendRecipe {
                 }
                 .shadow(color: .black.opacity(0.3), radius: 10)
                 .frame(width: size.width, height: size.height)
-                MadeWithRelive(size: 18, color: .white.opacity(0.8))
-                    .frame(width: size.width - 140, alignment: .trailing)
-                    .offset(x: 70, y: size.height - 60)
             }
             .frame(width: size.width, height: size.height, alignment: .topLeading)
         )
@@ -436,9 +424,6 @@ struct CinematicPosterRecipe: TrendRecipe {
                         }
                     }
                 }
-                MadeWithRelive(size: 18, color: .white.opacity(0.5))
-                    .frame(maxHeight: .infinity, alignment: .bottom)
-                    .padding(.bottom, 60)
             }
             .frame(width: size.width, height: size.height)
         )

@@ -55,11 +55,6 @@ struct ShareCardView: View {
                         .foregroundStyle(ink.opacity(0.75))
                         .padding(.top, 12)
                 }
-                Spacer(minLength: 24)
-                Text("Relive")
-                    .font(.system(size: 24, weight: .medium, design: .serif))
-                    .tracking(2)
-                    .foregroundStyle(ink.opacity(0.45))
             }
             .padding(.horizontal, 64)
             .padding(.vertical, 48)

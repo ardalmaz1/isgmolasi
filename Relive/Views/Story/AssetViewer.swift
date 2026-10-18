@@ -36,6 +36,17 @@ struct AssetViewer: View {
                 if !currentID.isEmpty {
                     FavoriteButton(kind: .memory, identifier: currentID, tint: .white, accessibilityID: "photoFavorite")
                         .background(.black.opacity(0.35), in: Circle())
+                    Menu {
+                        NotSuggestedToggle(assetID: currentID)
+                    } label: {
+                        Image(systemName: "ellipsis")
+                            .font(.body.weight(.semibold))
+                            .foregroundStyle(.white)
+                            .frame(width: 44, height: 44)
+                            .background(.black.opacity(0.35), in: Circle())
+                    }
+                    .accessibilityLabel("More")
+                    .accessibilityIdentifier("photoMore")
                 }
                 Button {
                     dismiss()

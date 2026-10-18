@@ -38,10 +38,15 @@ protocol StoryRepository: AnyObject {
     func saveCreation(_ creation: SavedCreation)
     func deleteCreation(id: UUID)
 
+    /// Memories the couple asked Relive not to suggest (Real Device Polish V1).
+    func loadNotSuggested() -> Set<AssetID>
+    func setNotSuggested(_ id: AssetID, _ isExcluded: Bool)
+
     /// Start Over: removes the relationship story — profile and onboarding, the selection, the
     /// story, notes and hidden moments. Photos in the library are never touched. What the couple
-    /// made or chose is kept: books, collages, stories and drafts, favorites, and the list of
-    /// images Relive created (so they still can't come back as memories).
+    /// made or chose is kept: books, collages, stories and drafts, favorites, memories they asked
+    /// Relive not to suggest, and the list of images Relive created (so they still can't come
+    /// back as memories).
     func deleteAll()
 }
 
@@ -352,6 +357,23 @@ final class SwiftDataStoryRepository: StoryRepository {
         save()
     }
 
+    // MARK: - Not suggested
+
+    func loadNotSuggested() -> Set<AssetID> {
+        Set(fetchAll(StoredSuggestionExclusion.self).map(\.assetID))
+    }
+
+    func setNotSuggested(_ id: AssetID, _ isExcluded: Bool) {
+        let matches = fetchAll(StoredSuggestionExclusion.self).filter { $0.assetID == id }
+        if isExcluded {
+            guard matches.isEmpty else { return }
+            context.insert(StoredSuggestionExclusion(assetID: id, excludedAt: Date()))
+        } else {
+            matches.forEach(context.delete)
+        }
+        save()
+    }
+
     // MARK: - Reset
 
     func deleteAll() {
@@ -376,6 +398,7 @@ final class SwiftDataStoryRepository: StoryRepository {
             try context.delete(model: StoredMemoryBook.self)
             try context.delete(model: StoredFavorite.self)
             try context.delete(model: StoredCreation.self)
+            try context.delete(model: StoredSuggestionExclusion.self)
         } catch {
             Self.logger.error("Erase failed: \(error.localizedDescription, privacy: .public)")
         }

@@ -47,7 +47,6 @@ struct CollageCanvas: View {
     var caption = CaptionContent()
     /// Preview only: outlines the photo selected for swapping.
     var highlightedIndex: Int?
-    var showsWatermark = true
 
     private var theme: CollageTheme { CollageTheme.theme(for: layout.style) }
 
@@ -65,12 +64,6 @@ struct CollageCanvas: View {
 
             if let rect = layout.caption, !caption.isEmpty {
                 captionView(in: rect)
-            }
-
-            if showsWatermark {
-                MadeWithRelive(size: CGFloat(max(13, min(20, layout.margin * 0.42))), color: theme.secondaryInk.opacity(0.6))
-                    .frame(width: layout.watermark.width, height: layout.watermark.height, alignment: .trailing)
-                    .offset(x: layout.watermark.x, y: layout.watermark.y)
             }
         }
         .frame(width: layout.canvas.width, height: layout.canvas.height, alignment: .topLeading)

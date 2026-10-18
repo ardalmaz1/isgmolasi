@@ -8,6 +8,10 @@ struct StoryTimelineView: View {
     @Environment(\.analytics) private var analytics
     @State private var path: [MomentRoute] = []
     @State private var isAddingMemories = false
+    /// How many rows of each year are on screen; the earliest year with any is "current".
+    @State private var visibleRows: [String: Int] = [:]
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Namespace private var yearRotor
 
     var body: some View {
         NavigationStack(path: $path) {
@@ -15,6 +19,8 @@ struct StoryTimelineView: View {
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
                         StoryHeader()
+                            // Room for the year control floating over the top of the story.
+                            .padding(.top, store.sections.count > 1 ? Spacing.l : 0)
                             .padding(.bottom, Spacing.l)
 
                         if store.accessStatus == .denied || store.accessStatus == .restricted {
@@ -44,8 +50,12 @@ struct StoryTimelineView: View {
 
                         ForEach(store.sections) { section in
                             YearHeader(title: section.title)
+                                .id(Self.anchor(section))
+                                .accessibilityRotorEntry(id: Self.anchor(section), in: yearRotor)
+                                .tracksVisibility(of: section.id, in: $visibleRows)
                             ForEach(section.items) { item in
                                 timelineItem(item)
+                                    .tracksVisibility(of: section.id, in: $visibleRows)
                             }
                         }
 
@@ -56,6 +66,20 @@ struct StoryTimelineView: View {
                 }
                 .scrollIndicators(.hidden)
                 .reliveBackground()
+                .overlay(alignment: .topTrailing) {
+                    if store.sections.count > 1 {
+                        YearNavigator(sections: store.sections, current: currentSection) { target in
+                            jump(to: target, proxy: proxy)
+                        }
+                        .padding(.trailing, Spacing.screenMargin)
+                        .padding(.top, Spacing.xs)
+                    }
+                }
+                .accessibilityRotor("Years") {
+                    ForEach(store.sections) { section in
+                        AccessibilityRotorEntry(section.title, id: Self.anchor(section), in: yearRotor)
+                    }
+                }
                 .statusBarBackdrop()
                 // "Open This Memory" from the first discovery.
                 .onChange(of: app.pendingMomentID, initial: true) { _, id in
@@ -81,6 +105,32 @@ struct StoryTimelineView: View {
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)
         .onAppear { analytics.track(.timelineOpened) }
+    }
+
+    /// The year on screen: the earliest year with a visible row (the first year before scrolling).
+    private var currentSection: TimelineSection? {
+        store.sections.first { (visibleRows[$0.id] ?? 0) > 0 } ?? store.sections.first
+    }
+
+    static func anchor(_ section: TimelineSection) -> String { "year-\(section.id)" }
+
+    private func jump(to target: YearNavigator.Target, proxy: ScrollViewProxy) {
+        func scroll<ID: Hashable>(_ id: ID) {
+            if reduceMotion {
+                proxy.scrollTo(id, anchor: .top)
+            } else {
+                withAnimation(.easeInOut(duration: 0.45)) { proxy.scrollTo(id, anchor: .top) }
+            }
+        }
+        switch target {
+        case .section(let section):
+            scroll(Self.anchor(section))
+            analytics.track(.storyYearJumped, ["target": "year", "years": String(store.sections.count)])
+        case .latest:
+            guard let last = store.sections.last?.items.last?.moments.last else { return }
+            scroll(last.id)
+            analytics.track(.storyYearJumped, ["target": "latest", "years": String(store.sections.count)])
+        }
     }
 
     @ViewBuilder
@@ -231,5 +281,70 @@ private struct TimelineFooter: View {
             }
         }
         .padding(.top, Spacing.l)
+    }
+}
+
+/// A compact "2025 ▾" control over the timeline: shows the year on screen and jumps to any
+/// year of the story, or to the latest memories. The years come from the story itself.
+struct YearNavigator: View {
+    enum Target {
+        case section(TimelineSection)
+        case latest
+    }
+
+    let sections: [TimelineSection]
+    let current: TimelineSection?
+    let onJump: (Target) -> Void
+
+    var body: some View {
+        Menu {
+            Section("Jump to") {
+                ForEach(sections) { section in
+                    Button {
+                        onJump(.section(section))
+                    } label: {
+                        if section.id == current?.id {
+                            Label(section.title, systemImage: "checkmark")
+                        } else {
+                            Text(section.title)
+                        }
+                    }
+                }
+            }
+            Button {
+                onJump(.latest)
+            } label: {
+                Label("Latest Memories", systemImage: "arrow.down.to.line")
+            }
+        } label: {
+            HStack(spacing: Spacing.xxs) {
+                Text(current?.title ?? "Years")
+                    .font(Typography.callout.weight(.semibold).monospacedDigit())
+                    .lineLimit(1)
+                Image(systemName: "chevron.down")
+                    .font(.caption.weight(.semibold))
+                    .accessibilityHidden(true)
+            }
+            .foregroundStyle(Palette.textPrimary)
+            .padding(.horizontal, Spacing.m)
+            .frame(minHeight: 44)
+            .background(.regularMaterial, in: Capsule())
+            .overlay(Capsule().strokeBorder(Palette.hairline, lineWidth: 1))
+            .contentShape(Capsule())
+        }
+        .accessibilityLabel("Jump to a year")
+        .accessibilityValue(current.map { "Showing \($0.title)" } ?? "")
+        .accessibilityHint("Lists the years of your story")
+        .accessibilityIdentifier("storyYearNavigator")
+    }
+}
+
+private extension View {
+    /// Counts this row in `rows[key]` while it is on screen.
+    func tracksVisibility(of key: String, in rows: Binding<[String: Int]>) -> some View {
+        onScrollVisibilityChange(threshold: 0.01) { isVisible in
+            rows.wrappedValue[key, default: 0] += isVisible ? 1 : -1
+            if (rows.wrappedValue[key] ?? 0) <= 0 { rows.wrappedValue[key] = nil }
+        }
     }
 }

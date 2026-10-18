@@ -13,6 +13,7 @@ final class InMemoryStoryRepository: StoryRepository {
     var books: [UUID: MemoryBook] = [:]
     var favorites: [String: FavoriteRecord] = [:]
     var creations: [UUID: SavedCreation] = [:]
+    var notSuggested: Set<AssetID> = []
 
     init(assets: [MemoryAsset] = []) {
         self.assets = assets
@@ -39,6 +40,11 @@ final class InMemoryStoryRepository: StoryRepository {
     func loadCreations() -> [SavedCreation] { Array(creations.values) }
     func saveCreation(_ creation: SavedCreation) { creations[creation.id] = creation }
     func deleteCreation(id: UUID) { creations[id] = nil }
+
+    func loadNotSuggested() -> Set<AssetID> { notSuggested }
+    func setNotSuggested(_ id: AssetID, _ isExcluded: Bool) {
+        if isExcluded { notSuggested.insert(id) } else { notSuggested.remove(id) }
+    }
 
     /// Like the real store: the relationship story goes; books, creations, drafts, favorites and
     /// the list of Relive-made images stay.

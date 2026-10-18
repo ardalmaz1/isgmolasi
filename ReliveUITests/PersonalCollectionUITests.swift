@@ -149,8 +149,10 @@ final class PersonalCollectionUITests: XCTestCase {
 
         // 4. Deleting a creation leaves its memories
         app.tabBars.buttons["Us"].tap()
-        let memoriesStat = app.staticTexts["stat-Memories"]
-        let memoriesBefore = memoriesStat.waitForExistence(timeout: 5) ? memoriesStat.label : nil
+        // Memories is a way into the archive now (a button), still carrying the count.
+        let memoriesStat = app.buttons["usMemories"]
+        XCTAssertTrue(memoriesStat.waitForExistence(timeout: 5), "Us shows no Memories row")
+        let memoriesBefore: String? = memoriesStat.label
         print("SCREEN memories-before: \(memoriesBefore ?? "?")")
         app.tabBars.buttons["Create"].tap()
         let seeAll = app.buttons["seeAllCreations"]

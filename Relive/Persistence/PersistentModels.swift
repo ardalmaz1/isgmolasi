@@ -156,6 +156,20 @@ final class StoredCreation {
     }
 }
 
+/// A memory the couple asked Relive not to suggest ("Don't Suggest This Memory", Real Device
+/// Polish V1). It stays in the story; Relive just never picks it on its own. Kept across Start
+/// Over, like favorites — a privacy choice shouldn't need making twice.
+@Model
+final class StoredSuggestionExclusion {
+    var assetID: String = ""
+    var excludedAt: Date = Date()
+
+    init(assetID: String, excludedAt: Date) {
+        self.assetID = assetID
+        self.excludedAt = excludedAt
+    }
+}
+
 enum PersistenceSchema {
     static let models: [any PersistentModel.Type] = [
         StoredProfile.self,
@@ -166,5 +180,6 @@ enum PersistenceSchema {
         StoredMemoryBook.self,
         StoredFavorite.self,
         StoredCreation.self,
+        StoredSuggestionExclusion.self,
     ]
 }

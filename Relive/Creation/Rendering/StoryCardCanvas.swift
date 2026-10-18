@@ -291,7 +291,6 @@ struct StoryCardCanvas: View {
     var aspects: [Double] = []
     /// Position among the cards, for Editorial's numbering.
     var number: Int = 1
-    var showsWatermark = true
 
     private var text: StoryCardText { StoryCardText(card: card) }
     private var theme: StoryTheme { StoryTheme.theme(for: style) }
@@ -308,11 +307,6 @@ struct StoryCardCanvas: View {
             }
             overlays
             words
-            if showsWatermark {
-                MadeWithRelive(size: 22, color: watermarkColor)
-                    .frame(width: width, height: 60)
-                    .offset(y: height - 96)
-            }
         }
         .frame(width: width, height: height, alignment: .topLeading)
         .clipped()
@@ -320,19 +314,6 @@ struct StoryCardCanvas: View {
     }
 
     private var isTextCard: Bool { card.photos.isEmpty }
-
-    private var watermarkColor: Color {
-        switch style {
-        case .travel: isTextCard || !photoUnderFooter ? Color.white.opacity(0.55) : Color.white.opacity(0.75)
-        case .editorial: photoUnderFooter ? Color.white.opacity(0.75) : theme.secondaryInk.opacity(0.7)
-        default: theme.secondaryInk.opacity(0.7)
-        }
-    }
-
-    /// Whether a photo covers the bottom edge (where the watermark sits).
-    private var photoUnderFooter: Bool {
-        slots.contains { $0.frame.maxY >= height - 40 }
-    }
 
     // MARK: Background and decorations
 

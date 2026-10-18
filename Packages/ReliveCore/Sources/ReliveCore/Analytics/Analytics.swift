@@ -12,6 +12,12 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case memoryShared = "memory_shared"
     case noteAdded = "note_added"
     case memoryHidden = "memory_hidden"
+    // Real Device Polish V1. Properties are kinds and counts only — never a place, date or name.
+    case memoryNotSuggested = "memory_not_suggested"
+    case memorySuggestedAgain = "memory_suggested_again"
+    case archiveOpened = "archive_opened"
+    case storyYearJumped = "story_year_jumped"
+    case todayDiscoveryOpened = "today_discovery_opened"
     case foundForYouOpened = "found_for_you_opened"
     case memoriesAdded = "memories_added"
     case validationSmileYes = "validation_smile_yes"

@@ -132,7 +132,7 @@ jobs:
             -resultBundlePath build/UIFlow.xcresult \
             2>&1 | tee build/uitest.log | grep -E "error:|TIMELINE|SCREEN|EDITORIAL|Test Case|\*\* TEST" || true
           grep -q "\*\* TEST SUCCEEDED \*\*" build/uitest.log
-      - name: Recap, Memory Movie and first experience on a small screen (iPhone SE)
+      - name: Recap, Memory Movie, first experience and the archive on a small screen (iPhone SE)
         run: |
           set -o pipefail
           RUNTIME="$(xcrun simctl list runtimes -j | python3 -c 'import json,sys; rs=[r for r in json.load(sys.stdin)["runtimes"] if r["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-18") and r.get("isAvailable")]; print(sorted(rs, key=lambda r: [int(p) for p in r["version"].split(".")])[-1]["identifier"])')"
@@ -148,6 +148,7 @@ jobs:
             -only-testing:ReliveUITests/RecapUITests \
             -only-testing:ReliveUITests/MovieUITests \
             -only-testing:ReliveUITests/FirstExperienceUITests \
+            -only-testing:ReliveUITests/ArchiveUITests \
             -derivedDataPath build/DerivedData \
             -resultBundlePath build/UIFlowSE.xcresult \
             2>&1 | tee build/uitest-se.log | grep -E "error:|SCREEN|Test Case|\*\* TEST" || true
@@ -188,7 +189,8 @@ jobs:
                     "M01-", "M02-", "M03-", "M04-", "M05-", "M06-", "M07-", "M08-", "M09-",
                     "F01-", "F02-", "F03-", "F04-", "F05-", "F06-", "F07-",
                     "R0", "R1", "R4", "R5", "R8", "E0", "E1", "E8", "M00", "B00",
-                    "V0", "V1", "V8", "W0", "W1", "W8", "N0", "N1", "N8", "N9", "Q0", "Q1", "Q8", "Q9")
+                    "V0", "V1", "V8", "W0", "W1", "W8", "N0", "N1", "N8", "N9", "Q0", "Q1", "Q8", "Q9",
+                    "U0", "U1", "U8", "U9", "X0", "X1", "X8", "X9")
           for name, file in sorted(found):
               if not name.startswith(wanted) or file.suffix != ".png":
                   continue

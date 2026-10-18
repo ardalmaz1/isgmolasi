@@ -231,8 +231,6 @@ struct BookPageCanvas: View {
                     .foregroundStyle(theme.secondaryInk)
                     .multilineTextAlignment(.center)
             }
-            MadeWithRelive(size: 22, color: theme.secondaryInk.opacity(0.8))
-                .padding(.top, 40)
         }
         .frame(width: width - 240, height: height)
         .offset(x: 120)

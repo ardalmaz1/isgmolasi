@@ -4,10 +4,15 @@ import SwiftUI
 /// My Creations: the collages, stories and books the couple made, most recent first. Each is
 /// kept as its state and drawn again from their photos; deleting one never touches a photo.
 struct MyCreationsView: View {
+    @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
+    @Environment(\.dynamicTypeSize) private var typeSize
+    @Environment(\.dismiss) private var dismiss
     @State private var filter: KeptKind?
 
-    private let columns = [GridItem(.adaptive(minimum: 150), spacing: Spacing.m, alignment: .top)]
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: typeSize.isAccessibilitySize ? 280 : 150), spacing: Spacing.m, alignment: .top)]
+    }
 
     var body: some View {
         let all = store.keptItems
@@ -19,10 +24,20 @@ struct MyCreationsView: View {
                 if all.isEmpty {
                     QuietMessageView(
                         title: "Nothing here yet",
-                        message: "Things you make with Relive will appear here."
+                        message: "Movies, collages, stories and books you keep will be here, ready to watch, open or share again.",
+                        actionTitle: "Make Something",
+                        action: {
+                            app.selectedTab = .create
+                            dismiss()
+                        }
                     )
                     .accessibilityIdentifier("creationsEmpty")
                 } else {
+                    Text(Self.summary(all))
+                        .font(Typography.callout)
+                        .foregroundStyle(Palette.textSecondary)
+                        .padding(.horizontal, Spacing.screenMargin)
+                        .accessibilityIdentifier("creationsSummary")
                     if kinds.count > 1 {
                         Picker("Show", selection: $filter) {
                             Text("All").tag(KeptKind?.none)
@@ -51,6 +66,19 @@ struct MyCreationsView: View {
         .onChange(of: kinds) { _, kinds in
             if let filter, !kinds.contains(filter) { self.filter = nil }
         }
+    }
+
+    /// "4 creations · 2 movies · 1 collage · 1 book" — counts only.
+    static func summary(_ items: [KeptItem]) -> String {
+        var parts = [Counted.text(items.count, "creation", "creations")]
+        let kinds = KeptKind.allCases.filter { kind in items.contains { $0.kind == kind } }
+        if kinds.count > 1 {
+            for kind in kinds {
+                let count = items.filter { $0.kind == kind }.count
+                parts.append(Counted.text(count, kind.name.lowercased(), kind.pluralName.lowercased()))
+            }
+        }
+        return parts.joined(separator: " · ")
     }
 }
 

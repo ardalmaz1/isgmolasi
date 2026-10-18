@@ -25,22 +25,33 @@ struct MovieEditorView: View {
     @State private var confirmsDelete = false
     @State private var editsTitle = false
     @State private var draftTitle = ""
+    @State private var confirmsRemake = false
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Spacing.l) {
                 previewSection
                 Button {
-                    isPlaying = false
-                    position = 0
-                    withAnimation(animation) { model.makeItForMe() }
+                    // Explicit permission to replace the user's own cut — asked for, not assumed.
+                    if model.remakeReplacesUserEdits {
+                        confirmsRemake = true
+                    } else {
+                        remake()
+                    }
                 } label: {
                     Label("Make it for me", systemImage: "wand.and.stars")
                 }
                 .buttonStyle(.reliveOutline)
                 .frame(maxWidth: .infinity)
-                .accessibilityHint("Relive makes a new cut of this movie")
+                .accessibilityHint("Relive chooses photos again and makes a new cut. Your style, shape and length stay.")
                 .accessibilityIdentifier("movieMakeItForMe")
+                .confirmationDialog("Make a new cut?", isPresented: $confirmsRemake, titleVisibility: .visible) {
+                    Button("Make a New Cut") { remake() }
+                        .accessibilityIdentifier("movieRemakeConfirm")
+                    Button("Keep My Changes", role: .cancel) {}
+                } message: {
+                    Text("Relive will choose the photos again. The photos and order you changed will be replaced; your style, shape, length and title stay.")
+                }
 
                 if let note = noteText {
                     Text(note)
@@ -367,7 +378,18 @@ struct MovieEditorView: View {
             actionButton("Remove", systemImage: "trash", identifier: "movieSceneRemove", disabled: count <= MovieEligibility.minimumPhotos) {
                 model.remove(id)
             }
+            // A photo that shouldn't be in an automatic movie: out of this one, and never
+            // suggested again (it stays in the story).
+            actionButton("Don’t Suggest", systemImage: "eye.slash", identifier: "movieSceneDontSuggest", disabled: count <= MovieEligibility.minimumPhotos) {
+                model.removeAndDontSuggest(id, store: store)
+            }
         }
+    }
+
+    private func remake() {
+        isPlaying = false
+        position = 0
+        withAnimation(animation) { model.makeItForMe() }
     }
 
     private func actionButton(_ title: String, systemImage: String, identifier: String, disabled: Bool, action: @escaping () -> Void) -> some View {

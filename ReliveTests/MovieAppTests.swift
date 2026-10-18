@@ -89,7 +89,9 @@ final class MovieEditorModelTests: XCTestCase {
 
         model.makeItForMe()
         XCTAssertFalse(model.state.isUserCut)
-        XCTAssertNotEqual(model.plan.settings.style, .classic)
+        // Changed in Real Device Polish V1: "Make it for me" re-chooses the photos and keeps the
+        // style the user picked (it used to cycle the style and mostly reorder the same photos).
+        XCTAssertEqual(model.plan.settings.style, .warm, "the user's style is kept")
         XCTAssertEqual(Set(model.plan.photoIDs).count, model.plan.photoIDs.count)
         XCTAssertTrue(model.plan.photoIDs.allSatisfy { MonthKey(date: store.assets[$0]!.creationDate!, calendar: CreationTestLibrary.calendar) == month }, "the same period")
     }

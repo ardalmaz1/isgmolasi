@@ -174,12 +174,45 @@ final class MovieUITests: XCTestCase {
             XCTAssertTrue(row.waitForExistence(timeout: 10))
             row.tap()
             XCTAssertTrue(review.descendants(matching: .any)["moviePreview"].waitForExistence(timeout: 20))
+            if name != "dark" {
+                // The dark pass left a draft of this trip's movie: opening it again continues
+                // that draft instead of starting a duplicate, and says so.
+                let notice = review.descendants(matching: .any)["continuedDraftNotice"]
+                XCTAssertTrue(notice.waitForExistence(timeout: 5), "the trip's draft was not continued")
+                capture("\(prefix)84-continued-draft")
+                XCTAssertTrue(notice.waitForNonExistence(timeout: 12), "the notice stays out of the way")
+            }
             sleep(3)
             capture("\(prefix)8\(name == "dark" ? "0" : "2")-\(name)-editor")
             review.swipeUp()
             sleep(1)
             capture("\(prefix)8\(name == "dark" ? "1" : "3")-\(name)-controls")
             XCTAssertTrue(review.buttons["movieSave"].isHittable, "Save Video stays reachable (\(name))")
+            if name == "dark" {
+                // Make it for me: Relive's own cut is remade at once…
+                let make = review.buttons["movieMakeItForMe"]
+                reveal(review, make)
+                make.tap()
+                sleep(2)
+                XCTAssertTrue(review.descendants(matching: .any)["moviePreview"].exists)
+                capture("\(prefix)85-make-it-for-me")
+                // …but once the user changed the cut, Relive asks before replacing it.
+                let scenes = review.buttons.matching(identifier: "movieScene")
+                reveal(review, scenes.element(boundBy: 2))
+                scenes.element(boundBy: 2).tap()
+                let remove = review.buttons["movieSceneRemove"]
+                reveal(review, remove)
+                remove.tap()
+                sleep(1)
+                reveal(review, make)
+                make.tap()
+                let confirm = review.buttons["Make a New Cut"]
+                XCTAssertTrue(confirm.waitForExistence(timeout: 5), "Make it for me asks before replacing the user's cut")
+                capture("\(prefix)86-remake-confirm")
+                confirm.tap()
+                sleep(2)
+                XCTAssertFalse(paywall(review).exists, "remaking a movie never asks for Premium")
+            }
             review.terminate()
         }
     }

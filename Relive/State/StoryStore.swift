@@ -51,6 +51,11 @@ final class StoryStore {
     private(set) var sections: [TimelineSection] = []
     /// Derived: what the reveal and Us screens count.
     private(set) var statistics: StoryStatistics = .zero
+    /// Derived: the archive to browse (Us → Memories, Moments, Places), counted like
+    /// `statistics`. Rebuilt only when the story or what is visible changes.
+    private(set) var archive: ArchiveIndex = .empty
+    /// Memories the couple asked Relive not to suggest. They stay in the story.
+    private(set) var notSuggested: Set<AssetID>
     /// Images Relive saved to the library itself; never imported as memories.
     private(set) var createdAssetIDs: Set<AssetID>
     /// Saved Memory Books, most recently changed first.
@@ -114,6 +119,7 @@ final class StoryStore {
         self.books = repository.loadBooks().sorted { $0.updatedAt > $1.updatedAt }
         self.favorites = FavoriteCollection(repository.loadFavorites())
         self.creations = repository.loadCreations().sorted { $0.updatedAt > $1.updatedAt }
+        self.notSuggested = repository.loadNotSuggested()
         self.accessStatus = photoLibrary.accessStatus()
         recomputeDerived()
     }
@@ -211,7 +217,8 @@ final class StoryStore {
             assets: assets,
             userStates: userStates,
             isAvailable: isAvailable,
-            now: now
+            now: now,
+            notSuggested: notSuggested
         )
     }
 
@@ -219,7 +226,8 @@ final class StoryStore {
     func foundMemory(from record: FoundForYouRecord, now: Date) -> FoundMemory? {
         guard let moment = story.moment(id: record.momentID), isVisible(moment),
               !userState(for: moment.id).isExcludedFromSurfacing,
-              moment.assetIDs.contains(record.assetID), isAvailable(record.assetID) else { return nil }
+              moment.assetIDs.contains(record.assetID), isAvailable(record.assetID),
+              !notSuggested.contains(record.assetID) else { return nil }
         let date = assets[record.assetID]?.creationDate
         return FoundMemory(
             momentID: moment.id,
@@ -321,6 +329,7 @@ final class StoryStore {
         )
         library.favoriteAssetIDs = favorites.memoryIDs
         library.favoriteMomentIDs = favorites.momentIDs
+        library.suggestionExcludedAssetIDs = notSuggested
         return library
     }
 
@@ -403,6 +412,29 @@ final class StoryStore {
         var library = creation.creationLibrary(base: creationLibrary)
         library.unavailableAssetIDs.formUnion(unavailableSnapshotIDs.subtracting(assets.keys))
         return library
+    }
+
+    /// The unfinished draft of this kind made from this source, most recently edited — so
+    /// opening the same trip's movie again continues it instead of starting a duplicate.
+    /// Chosen photos (`.photos`) are always a new creation.
+    func latestDraft(kind: SavedCreationKind, source: CreationSource) -> SavedCreation? {
+        if case .photos = source { return nil }
+        return drafts.filter { $0.kind == kind && $0.source == source }.max { $0.updatedAt < $1.updatedAt }
+    }
+
+    // MARK: - Not suggested
+
+    func isNotSuggested(_ id: AssetID) -> Bool {
+        notSuggested.contains(id)
+    }
+
+    /// "Don't Suggest This Memory": Relive never chooses it on its own again (movies, Today,
+    /// Found for You, covers it picks). It stays in the story and can still be picked by hand.
+    func setNotSuggested(_ id: AssetID, _ isExcluded: Bool) {
+        guard notSuggested.contains(id) != isExcluded else { return }
+        if isExcluded { notSuggested.insert(id) } else { notSuggested.remove(id) }
+        repository.setNotSuggested(id, isExcluded)
+        analytics.track(isExcluded ? .memoryNotSuggested : .memorySuggestedAgain, [:])
     }
 
     // MARK: - Favorites
@@ -737,5 +769,6 @@ final class StoryStore {
             beforeStartTitle: relationshipStart.map { "Before \(DateText.relationshipStart($0))" } ?? "Before"
         )
         statistics = StoryStatistics.compute(story: story, assets: assets, userStates: userStates, isAvailable: isAvailable)
+        archive = ArchiveIndex.build(story: story, assets: assets, userStates: userStates, isAvailable: isAvailable, calendar: calendar)
     }
 }

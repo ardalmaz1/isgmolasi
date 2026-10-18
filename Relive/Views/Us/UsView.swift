@@ -19,10 +19,20 @@ struct UsView: View {
                         .listRowBackground(Color.clear)
                 }
 
+                // The archive: every memory, moment and place — always free to browse.
                 Section {
-                    StatRow(title: "Memories", value: store.statistics.memoryCount)
-                    StatRow(title: "Moments", value: store.statistics.momentCount)
-                    StatRow(title: "Places", value: store.statistics.placeCount)
+                    NavigationLink(value: ArchiveRoute.memories) {
+                        StatRow(title: "Memories", value: store.statistics.memoryCount)
+                    }
+                    .accessibilityIdentifier("usMemories")
+                    NavigationLink(value: ArchiveRoute.moments) {
+                        StatRow(title: "Moments", value: store.statistics.momentCount)
+                    }
+                    .accessibilityIdentifier("usMoments")
+                    NavigationLink(value: ArchiveRoute.places) {
+                        StatRow(title: "Places", value: store.statistics.placeCount)
+                    }
+                    .accessibilityIdentifier("usPlaces")
                 }
                 .listRowBackground(Palette.surface)
 
@@ -100,6 +110,7 @@ struct UsView: View {
             .toolbar(.hidden, for: .navigationBar)
             .momentDestination()
             .collectionDestinations()
+            .archiveDestinations()
             .sheet(isPresented: $isEditingProfile) { EditProfileView() }
             .confirmationDialog(
                 "Start over?",
@@ -109,7 +120,7 @@ struct UsView: View {
                 Button("Delete Relive’s Data", role: .destructive) { app.startOver() }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This removes your story, notes and settings from Relive, and you’ll set it up again. Your books, collages, stories, drafts and favorites stay. Your photos in the Photos app are not touched.")
+                Text("This removes your story, notes and settings from Relive, and you’ll set it up again. Your books, collages, stories, movies, drafts and favorites stay, and so do memories you asked Relive not to suggest. Your photos in the Photos app are not touched.")
             }
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)

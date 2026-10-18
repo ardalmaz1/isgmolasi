@@ -14,7 +14,6 @@ struct SummaryCardCanvas: View {
     let photoIDs: [AssetID]
     let images: CanvasImages
     var missing: Set<AssetID> = []
-    var showsWatermark = true
 
     /// The mosaic, laid out with the Grid style inside `mosaicFrame`.
     static func makeMosaic(aspects: [Double]) -> CollageLayout {
@@ -54,12 +53,6 @@ struct SummaryCardCanvas: View {
                 let id = photoIDs.indices.contains(slot.photoIndex) ? photoIDs[slot.photoIndex] : nil
                 CanvasPhoto(image: id.flatMap { images[$0] }, size: slot.photoFrame.cgSize, isMissing: id.map { missing.contains($0) } ?? true)
                     .placed(at: slot.photoFrame.offsetBy(dx: Self.mosaicFrame.x, dy: Self.mosaicFrame.y))
-            }
-
-            if showsWatermark {
-                MadeWithRelive(size: 20, color: Self.ink.opacity(0.4))
-                    .frame(width: 940, height: 40, alignment: .trailing)
-                    .offset(x: 70, y: Self.size.height - 66)
             }
         }
         .frame(width: Self.size.width, height: Self.size.height, alignment: .topLeading)

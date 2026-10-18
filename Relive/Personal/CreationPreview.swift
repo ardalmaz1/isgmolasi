@@ -67,7 +67,7 @@ private struct SavedCreationPreview: View {
                 if let design = creation.story?.design, let card = design.cards.first {
                     let aspects = card.photos.map { library.assets[$0]?.aspectRatio ?? 0.75 }
                     ScaledCanvas(designSize: StoryCardCanvas.size) {
-                        StoryCardCanvas(card: card, style: design.style, images: images, missing: missing, aspects: aspects, number: 1, showsWatermark: false)
+                        StoryCardCanvas(card: card, style: design.style, images: images, missing: missing, aspects: aspects, number: 1)
                     }
                 }
             }
@@ -83,7 +83,7 @@ private struct SavedCreationPreview: View {
         let aspects = state.photoIDs.map { library.assets[$0]?.aspectRatio ?? 1 }
         let layout = CollageLayoutEngine().layout(photoAspects: aspects, style: state.style, canvas: state.aspectRatio.designSize, caption: CollageEditorModel.captionSpec(caption))
         return ScaledCanvas(designSize: layout.canvas) {
-            CollageCanvas(layout: layout, photoIDs: state.photoIDs, images: images, missing: missing, caption: caption, showsWatermark: false)
+            CollageCanvas(layout: layout, photoIDs: state.photoIDs, images: images, missing: missing, caption: caption)
         }
     }
 
@@ -156,6 +156,10 @@ struct CreationCard: View {
                 .font(.caption2)
                 .foregroundStyle(Palette.textSecondary)
                 .lineLimit(2)
+            Text(EditedText.kept(item.updatedAt))
+                .font(.caption2)
+                .foregroundStyle(Palette.textTertiary)
+                .lineLimit(1)
         }
         .frame(width: width, alignment: .leading)
         .accessibilityElement(children: .ignore)
@@ -206,6 +210,13 @@ struct KeptSummary {
 }
 
 enum EditedText {
+    /// "Kept 3 days ago" — when a finished creation was last saved.
+    static func kept(_ date: Date, now: Date = Date()) -> String {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return date.timeIntervalSince(now) > -60 ? "Kept just now" : "Kept \(formatter.localizedString(for: date, relativeTo: now))"
+    }
+
     /// "Edited 12 minutes ago".
     static func edited(_ date: Date, now: Date = Date()) -> String {
         let formatter = RelativeDateTimeFormatter()

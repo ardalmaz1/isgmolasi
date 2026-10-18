@@ -71,20 +71,6 @@ struct ScaledCanvas<Content: View>: View {
     }
 }
 
-/// The quiet mark on exported images.
-struct MadeWithRelive: View {
-    var size: CGFloat = 20
-    var color: Color
-
-    var body: some View {
-        Text("Made with Relive")
-            .font(.system(size: size, weight: .medium, design: .serif))
-            .tracking(size * 0.08)
-            .foregroundStyle(color)
-            .lineLimit(1)
-    }
-}
-
 /// Sprocket holes along both long edges of a film strip.
 struct SprocketHoles: Shape {
     var isVertical: Bool

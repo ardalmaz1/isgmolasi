@@ -18,6 +18,9 @@ struct CreationFlowView: View {
     /// Photos picked from the photo library for this creation (metadata only, never imported).
     @State private var photoLibraryAssets: [MemoryAsset] = []
     @State private var isPickingFromLibrary = false
+    /// Opened an unfinished draft of the same kind from the same source instead of starting a
+    /// duplicate; the source, so "Start New" can make another version on purpose.
+    @State private var continuedDraftSource: CreationSource?
 
     private enum Stage {
         case chooseSource
@@ -115,6 +118,7 @@ struct CreationFlowView: View {
                 }
             }
         }
+        .overlay(alignment: .bottom) { continuedDraftNotice }
         .tint(Palette.accent)
         .photoLibraryPicker(isPresented: $isPickingFromLibrary, maximum: request.kind.photoRange.upperBound) { identifiers in
             Task { await usePhotoLibraryPicks(identifiers) }
@@ -210,8 +214,44 @@ struct CreationFlowView: View {
         begin(with: .photos(picks.ids))
     }
 
+    /// "Continuing your draft · Start New", for a few seconds after a draft was continued.
+    @ViewBuilder
+    private var continuedDraftNotice: some View {
+        if let source = continuedDraftSource {
+            ToastView(message: "Continuing your draft", actionTitle: "Start New") {
+                startNewVersion(from: source)
+            }
+            .accessibilityAction(named: "Start New") { startNewVersion(from: source) }
+            .accessibilityIdentifier("continuedDraftNotice")
+            .padding(.bottom, Spacing.xxl + Spacing.xl)
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+            .task(id: source) {
+                try? await Task.sleep(for: .seconds(6))
+                withAnimation { continuedDraftSource = nil }
+            }
+        }
+    }
+
+    /// The user asked for another version: the draft stays in Drafts, a new one begins.
+    private func startNewVersion(from source: CreationSource) {
+        flush()
+        withAnimation { continuedDraftSource = nil }
+        begin(with: source, continuingDrafts: false)
+    }
+
     /// Opens the editor for `source`, or explains gently when there isn't enough to work with.
+    /// The same kind from the same source (a trip, a moment, a month…) continues its unfinished
+    /// draft rather than starting a duplicate — unless the user asks for a new version.
     private func begin(with source: CreationSource) {
+        begin(with: source, continuingDrafts: true)
+    }
+
+    private func begin(with source: CreationSource, continuingDrafts: Bool) {
+        if continuingDrafts, let kind = request.kind.savedKind, let draft = store.latestDraft(kind: kind, source: source) {
+            resume(draft.id)
+            withAnimation { continuedDraftSource = source }
+            return
+        }
         let library = self.library
         startedFrom = source
         switch request.kind {
@@ -266,6 +306,18 @@ struct CreationFlowView: View {
             library.initialPhotos(for: source, limit: ids.count)
         default:
             library.initialPhotos(for: source, limit: CreationLimits.collagePreselection)
+        }
+    }
+}
+
+private extension CreationKind {
+    /// How a creation of this kind is kept (books keep their own model).
+    var savedKind: SavedCreationKind? {
+        switch self {
+        case .collage: .collage
+        case .story: .story
+        case .movie: .movie
+        case .book: nil
         }
     }
 }

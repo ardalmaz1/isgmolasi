@@ -160,18 +160,32 @@ final class MovieEditorModel {
         applyCut(plan.photoIDs, cover: id)
     }
 
-    /// "Make it for me": Relive makes a fresh cut — a different but still reasonable one each
-    /// time (another opening photo, another style). The only action that replaces a user's cut.
+    /// "Make it for me": Relive makes a fresh cut from the whole source — new photos where the
+    /// source has strong alternatives (at most half of the current cut repeats), a new opening,
+    /// the same chronological edit. The user's style, shape, length and words are kept. The only
+    /// action that replaces a user's cut (the editor asks first when it would).
     func makeItForMe() {
+        let previous = Set(plan.photoIDs)
         settings.variation += 1
-        let styles = MovieStyle.allCases
-        settings.style = styles[settings.variation % styles.count]
         isUserCut = false
         missing = []
-        plan = MovieStoryPlanner(library: library).plan(source: source, settings: settings)
+        plan = MovieStoryPlanner(library: library).plan(source: source, settings: settings, avoiding: previous)
         logPlan()
         changed()
-        analytics.track(.movieRegenerated, analyticsProperties)
+        var properties = analyticsProperties
+        properties["kept"] = String(previous.intersection(plan.photoIDs).count)
+        properties["photos"] = String(plan.photoIDs.count)
+        analytics.track(.movieRegenerated, properties)
+    }
+
+    /// "Make it for me" would replace photos the user chose or arranged.
+    var remakeReplacesUserEdits: Bool { isUserCut }
+
+    /// Never suggest this photo again; it leaves the movie (the user's cut keeps the rest).
+    func removeAndDontSuggest(_ id: AssetID, store: StoryStore?) {
+        store?.setNotSuggested(id, true)
+        library.suggestionExcludedAssetIDs.insert(id)
+        remove(id)
     }
 
     // MARK: - The opening title (Relive's words; the user's words win)
