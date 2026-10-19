@@ -223,6 +223,8 @@ struct CreationFlowView: View {
             }
             .accessibilityAction(named: "Start New") { startNewVersion(from: source) }
             .accessibilityIdentifier("continuedDraftNotice")
+            // A passing notice: kept to a readable size so it never covers the editor's controls.
+            .dynamicTypeSize(...DynamicTypeSize.xxLarge)
             .padding(.bottom, Spacing.xxl + Spacing.xl)
             .transition(.move(edge: .bottom).combined(with: .opacity))
             .task(id: source) {

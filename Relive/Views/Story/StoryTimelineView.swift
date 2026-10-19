@@ -12,6 +12,8 @@ struct StoryTimelineView: View {
     /// scrolls there.
     @State private var topRowID: String?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Height of the year control at the current text size (the room the header leaves for it).
+    @ScaledMetric(relativeTo: .callout) private var yearControlRoom: CGFloat = 28
     @Namespace private var yearRotor
 
     var body: some View {
@@ -51,7 +53,7 @@ struct StoryTimelineView: View {
             LazyVStack(alignment: .leading, spacing: 0) {
                 StoryHeader()
                     // Room for the year control floating over the top of the story.
-                    .padding(.top, store.sections.count > 1 ? Spacing.l : 0)
+                    .padding(.top, store.sections.count > 1 ? yearControlRoom : 0)
                     .padding(.bottom, Spacing.l)
                 banners
                 years

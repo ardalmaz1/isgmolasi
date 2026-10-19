@@ -202,6 +202,24 @@ on iPhone 16 and iPhone SE (simulator).
 - Changed on purpose: `MovieEditorModelTests.testOnlyMakeItForMeReplacesTheCut` now expects the
   user's style to be kept (it expected the style to change).
 
+## Screenshot review (CI, simulator)
+
+Reviewed on iPhone 16 and iPhone SE (3rd generation), light, dark and the largest accessibility
+text size: Today, Story, the year menu, a jump to 2025, Latest, Us, Memories, a memory open,
+Moments, a moment, Places, a place, the movie editor, Make it for me, the "Make a New Cut"
+confirmation and the continued-draft notice.
+
+- Today on the sample library: hero ("15 years ago · Inverness"), Made for You ("Four days in
+  Kas", a Memory Movie), Continue your story, one discovery ("A place you returned to · Kadikoy ·
+  6 moments in 6 different months"). Tapping it opens Kadikoy's moments — no paywall.
+- The year menu lists the library's real years (2009, 2011, 2012, 2018, 2024, 2025).
+- Us: Memories 84, Moments 16, Places 5 — each opens the same number of items.
+- Found and fixed during review: a jump to a year not yet drawn did nothing, and the control
+  could show the wrong year after a long jump (both fixed by `scrollPosition(id:)`); at the
+  largest text size the year control overlapped the Story eyebrow (the header now leaves room
+  scaled with text size) and the continued-draft notice wrapped over Save Video (capped at a
+  readable size; it disappears after six seconds).
+
 ## Known limitations
 
 - Private/intimate photos are not detected (see above); the user decides with Hide and Don't
