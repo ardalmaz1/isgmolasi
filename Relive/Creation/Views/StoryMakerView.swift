@@ -148,14 +148,18 @@ struct StoryMakerView: View {
             .accessibilityHint("Designs the story again: a style, an order and layouts for these photos")
             .accessibilityIdentifier("storyMakeItForMe")
 
-            FlowLayout {
-                ForEach(StoryStyle.allCases, id: \.self) { style in
-                    StyleChoice(title: style.displayName, isSelected: model.style == style) {
-                        withAnimation(animation) { model.setStyle(style) }
+            // One line that scrolls sideways, so no style wraps alone onto a second line.
+            ScrollView(.horizontal) {
+                HStack(spacing: Spacing.m) {
+                    ForEach(StoryStyle.allCases, id: \.self) { style in
+                        StyleChoice(title: style.displayName, isSelected: model.style == style) {
+                            withAnimation(animation) { model.setStyle(style) }
+                        }
                     }
                 }
             }
-            .padding(.horizontal, Spacing.screenMargin)
+            .scrollIndicators(.hidden)
+            .contentMargins(.horizontal, Spacing.screenMargin, for: .scrollContent)
             .accessibilityElement(children: .contain)
             .accessibilityIdentifier("storyStyles")
 

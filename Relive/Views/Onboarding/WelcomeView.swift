@@ -2,27 +2,48 @@ import SwiftUI
 
 struct WelcomeView: View {
     @Environment(AppModel.self) private var app
+    @Environment(\.dynamicTypeSize) private var typeSize
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.m) {
-            // Calm and spacious when it fits; scrolls at the largest text sizes so the button
-            // below is always on screen.
-            ViewThatFits(in: .vertical) {
-                intro
+        Group {
+            if typeSize.isAccessibilitySize {
+                // At the largest sizes everything scrolls together, button included, so no line
+                // is ever hidden behind it. Text keeps its full size.
                 ScrollView {
-                    intro
+                    VStack(alignment: .leading, spacing: Spacing.m) {
+                        intro
+                        findStoryButton
+                            .padding(.top, Spacing.s)
+                    }
+                    .padding(.bottom, Spacing.m)
                 }
                 .scrollBounceBehavior(.basedOnSize)
+            } else {
+                VStack(alignment: .leading, spacing: Spacing.m) {
+                    // Calm and spacious when it fits; scrolls if it doesn't, with the button
+                    // always on screen.
+                    ViewThatFits(in: .vertical) {
+                        intro
+                        ScrollView {
+                            intro
+                        }
+                        .scrollBounceBehavior(.basedOnSize)
+                    }
+                    findStoryButton
+                }
+                .padding(.bottom, Spacing.m)
             }
-            Button("Find Our Story") {
-                app.beginOnboarding()
-            }
-            .buttonStyle(.relivePrimary)
-            .accessibilityIdentifier("onboardingFindStory")
         }
         .padding(.horizontal, Spacing.screenMargin)
-        .padding(.bottom, Spacing.m)
         .reliveBackground()
+    }
+
+    private var findStoryButton: some View {
+        Button("Find Our Story") {
+            app.beginOnboarding()
+        }
+        .buttonStyle(.relivePrimary)
+        .accessibilityIdentifier("onboardingFindStory")
     }
 
     private var intro: some View {

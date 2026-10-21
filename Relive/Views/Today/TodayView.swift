@@ -250,7 +250,7 @@ struct TodayDiscoveryCard: View {
 }
 
 
-/// "Found for you ❤️" — the photo carries the emotion; the words stay out of the way.
+/// "Found for you ♥" — the photo carries the emotion; the words stay out of the way.
 struct FoundForYouCard: View {
     let memory: FoundMemory
     let onOpen: () -> Void
@@ -261,8 +261,10 @@ struct FoundForYouCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
             HStack {
-                Text("Found for you ❤️")
+                // The quiet typographic heart of the couple name, not the red emoji.
+                Text("Found for you \(Text(CoupleName.heart).foregroundStyle(Palette.textSecondary))")
                     .eyebrowStyle()
+                    .accessibilityLabel("Found for you")
                 Spacer()
                 Menu {
                     Button {

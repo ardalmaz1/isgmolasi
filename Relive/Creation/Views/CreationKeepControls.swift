@@ -1,7 +1,7 @@
 import ReliveCore
 import SwiftUI
 
-/// The editor's keep control: "Save" while the collage or story is a draft (or not kept yet);
+/// The editor's keep control: "Keep" while the collage or story is a draft (or not kept yet);
 /// once it is in My Creations, the heart that favorites it.
 struct CreationKeepButton: View {
     let keeper: CreationKeeper
@@ -21,9 +21,10 @@ struct CreationKeepButton: View {
             Button {
                 onSave()
                 savedCount += 1
-                AccessibilityNotification.Announcement("Saved to My Creations").post()
+                AccessibilityNotification.Announcement("Kept in My Creations").post()
             } label: {
-                Text("Save")
+                // "Keep", not "Save": the screen's one Save is the export to Photos.
+                Text("Keep")
                     .font(Typography.callout.weight(.semibold))
                     .frame(minWidth: 44, minHeight: 44)
                     .contentShape(Rectangle())
