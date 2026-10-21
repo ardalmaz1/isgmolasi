@@ -132,7 +132,7 @@ struct UsView: View {
     }
 }
 
-/// "You + Emma · Together since March 2021 · 1,568 days"
+/// "You ♥ Emma · Together since March 2021 · 1,568 days"
 private struct UsHeader: View {
     @Environment(AppModel.self) private var app
 
@@ -140,7 +140,7 @@ private struct UsHeader: View {
         VStack(alignment: .leading, spacing: Spacing.xs) {
             Text("Us")
                 .eyebrowStyle()
-            Text(app.coupleName)
+            CoupleTitle()
                 .font(Typography.display)
                 .foregroundStyle(Palette.textPrimary)
             if let start = app.relationship?.start {

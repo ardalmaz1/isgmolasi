@@ -30,6 +30,14 @@ enum Spacing {
     static let screenMargin: CGFloat = 20
 }
 
+/// 4:5 photo thumbnails, in three sizes (UI audit C1): pickers and inline lists, list rows,
+/// and feature cards. Editors and export canvases keep their own sizes.
+enum Thumb {
+    static let small = CGSize(width: 56, height: 70)
+    static let row = CGSize(width: 72, height: 90)
+    static let feature = CGSize(width: 96, height: 120)
+}
+
 enum Radius {
     /// Photos get a small radius — closer to a printed photo than to an app tile.
     static let photo: CGFloat = 6

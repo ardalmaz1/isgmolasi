@@ -47,7 +47,7 @@ struct PeriodPickerView: View {
                     } label: {
                         HStack(spacing: Spacing.m) {
                             Color.clear
-                                .frame(width: 60, height: 75)
+                                .frame(width: Thumb.small.width, height: Thumb.small.height)
                                 .overlay { AssetImageView(assetID: row.coverID) }
                                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                                 .accessibilityHidden(true)

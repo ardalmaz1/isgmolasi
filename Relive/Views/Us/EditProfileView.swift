@@ -27,6 +27,7 @@ struct EditProfileView: View {
                     Text("You")
                 } footer: {
                     Text("Used for “\(previewName)”.")
+                        .accessibilityLabel("Used for \(previewCouple.spoken()).")
                 }
                 Section {
                     Toggle("I know when it began", isOn: $hasDate)
@@ -69,8 +70,12 @@ struct EditProfileView: View {
         }
     }
 
+    private var previewCouple: CoupleName {
+        RelationshipProfile(partnerName: partnerName, userName: userName).coupleName
+    }
+
     private var previewName: String {
-        RelationshipProfile(partnerName: partnerName, userName: userName).coupleDisplayName
+        previewCouple.display()
     }
 
     private func save() {

@@ -216,7 +216,7 @@ struct StoryTimelineView: View {
     }
 }
 
-/// "Our Story · You + Emma · Together since March 2021 · 24 moments"
+/// "Our Story · You ♥ Emma · Together since March 2021 · 24 moments"
 private struct StoryHeader: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
@@ -225,7 +225,7 @@ private struct StoryHeader: View {
         VStack(alignment: .leading, spacing: Spacing.xs) {
             Text("Our Story")
                 .eyebrowStyle()
-            Text(app.coupleName)
+            CoupleTitle()
                 .font(Typography.display)
                 .foregroundStyle(Palette.textPrimary)
             if let subtitle {

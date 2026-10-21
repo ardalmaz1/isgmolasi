@@ -226,7 +226,7 @@ struct ArchiveMomentRow: View {
         let layout = typeSize.isAccessibilitySize ? AnyLayout(VStackLayout(alignment: .leading, spacing: Spacing.s)) : AnyLayout(HStackLayout(spacing: Spacing.m))
         layout {
             Color.clear
-                .frame(width: typeSize.isAccessibilitySize ? 120 : 72, height: typeSize.isAccessibilitySize ? 150 : 90)
+                .frame(width: typeSize.isAccessibilitySize ? 120 : Thumb.row.width, height: typeSize.isAccessibilitySize ? 150 : Thumb.row.height)
                 .overlay { AssetImageView(assetID: store.heroAssetID(for: moment)) }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)

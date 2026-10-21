@@ -83,7 +83,7 @@ struct MemoryBookEditorView: View {
             Section("Cover") {
                 HStack(spacing: Spacing.m) {
                     Color.clear
-                        .frame(width: 60, height: 75)
+                        .frame(width: Thumb.small.width, height: Thumb.small.height)
                         .overlay { AssetImageView(assetID: layout.pages.first?.slots.first?.assetID) }
                         .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                         .accessibilityHidden(true)
@@ -170,7 +170,7 @@ struct MemoryBookEditorView: View {
 
     private func thumbnail(id: AssetID, index: Int, book: MemoryBook, missing: Bool) -> some View {
         Color.clear
-            .frame(width: 56, height: 70)
+            .frame(width: Thumb.small.width, height: Thumb.small.height)
             .overlay { AssetImageView(assetID: id) }
             .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
             .overlay(alignment: .bottomTrailing) {

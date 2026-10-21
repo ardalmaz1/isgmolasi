@@ -60,6 +60,8 @@ struct ToastView: View {
         .padding(.vertical, Spacing.s)
         .background(Palette.textPrimary, in: Capsule())
         .shadow(color: .black.opacity(0.15), radius: 12, y: 4)
+        // A passing message: kept to a readable size so it never covers the screen's controls.
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
         .accessibilityElement(children: .combine)
     }
 }

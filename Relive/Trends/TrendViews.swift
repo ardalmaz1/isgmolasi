@@ -125,11 +125,10 @@ enum TrendSamples {
         return []
     }
 
+    /// "Jake & Emma" for film-style credits — only when both names are known (`CoupleName.plain`).
     static func coupleNames(_ relationship: RelationshipProfile?) -> String? {
-        guard let relationship,
-              let user = relationship.userName?.trimmingCharacters(in: .whitespacesAndNewlines), !user.isEmpty else { return nil }
-        let partner = relationship.partnerName.trimmingCharacters(in: .whitespacesAndNewlines)
-        return partner.isEmpty ? nil : "\(user) & \(partner)"
+        guard let couple = relationship?.coupleName, couple.hasBothNames else { return nil }
+        return couple.plain()
     }
 }
 

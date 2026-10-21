@@ -108,14 +108,15 @@ private struct SourceRow: View {
     let detail: String
     let systemImage: String
     let action: () -> Void
+    @ScaledMetric(relativeTo: .title3) private var iconWidth: CGFloat = 32
 
     var body: some View {
         Button(action: action) {
-            HStack(alignment: .top, spacing: Spacing.m) {
+            HStack(alignment: .firstTextBaseline, spacing: Spacing.m) {
                 Image(systemName: systemImage)
                     .font(.title3)
                     .foregroundStyle(Palette.accent)
-                    .frame(width: 32)
+                    .frame(width: iconWidth)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: Spacing.xxs) {
                     Text(title)

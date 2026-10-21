@@ -155,3 +155,16 @@ rest.
 ## 6. Not audited
 
 Landscape (the app is portrait-only on iPhone), iPad (not a target), widgets (none yet).
+
+## 7. Phase A status (implemented)
+
+| Item | Status |
+|---|---|
+| §2 Couple name | Done — `CoupleName` (ReliveCore) + `CoupleNameText`/`CoupleTitle` (app). Us and Story headers, Our Year eyebrow (VoiceOver: "Arda and Kübra"), Edit Names preview, trend credits (`plain`, "&"). No "+" left. Tests updated on purpose: "Jake + Emma" → "Jake ♥ Emma". |
+| C1 Thumbnails | Done — `Thumb.small / row / feature`; 16 call sites. Editor strips (collage, movie) and the paywall keep their own sizes. |
+| C3 Icon rows | Done — discovery privacy points and photo-source rows: first-baseline alignment, scaled icon column. |
+| C4 Recap closing buttons | Done — labels fill the button (equal widths) and each row shares one height. Before: outer `.frame` couldn't stretch the outline style, so widths varied. |
+| C6 Toasts | Done — capped at `.xxLarge` in `ToastView`. |
+| T1 Today thumbnails | Done — Continue uses `Thumb.feature` like the discoveries. |
+| E3 Movie title under Save bar | No change — the editor already insets its scroll content (`safeAreaInset`); the title continues under the bar only while scrolling. |
+| C2, C5, E1, E2, E4, O1, O2, O4, U2 | Waiting for a product decision or a later pass (listed above). |

@@ -230,7 +230,7 @@ struct StoryPresentationTests {
         let start = RelationshipStart(date: date(2022, 5, 1), precision: .month)
         #expect(start.daysTogether(until: date(2026, 9, 28), calendar: testCalendar) == 1611)
         #expect(start.isApproximate)
-        #expect(RelationshipProfile(partnerName: "Emma").coupleDisplayName == "You + Emma")
-        #expect(RelationshipProfile(partnerName: "Emma", userName: "Jake").coupleDisplayName == "Jake + Emma")
+        #expect(RelationshipProfile(partnerName: "Emma").coupleDisplayName == "You \u{2665} Emma")
+        #expect(RelationshipProfile(partnerName: "Emma", userName: "Jake").coupleDisplayName == "Jake \u{2665} Emma")
     }
 }

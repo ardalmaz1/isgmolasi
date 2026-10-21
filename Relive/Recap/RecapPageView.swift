@@ -120,7 +120,7 @@ struct RecapPageView: View {
             ForEach(Array(entries.enumerated()), id: \.offset) { index, entry in
                 HStack(spacing: Spacing.m) {
                     Color.clear
-                        .frame(width: 56, height: 70)
+                        .frame(width: Thumb.small.width, height: Thumb.small.height)
                         .overlay { AssetImageView(assetID: entry.photo) }
                         .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                         .accessibilityHidden(true)
@@ -179,26 +179,37 @@ struct RecapPageView: View {
                 .disabled(actions.export.isBusy)
                 .accessibilityIdentifier("recapShareCard")
                 HStack(spacing: Spacing.s) {
-                    Button("Make Collage") { actions.create(.collage) }
-                        .buttonStyle(.reliveOutline)
-                        .frame(maxWidth: .infinity)
-                        .accessibilityIdentifier("recapMakeCollage")
-                    Button("Create Story") { actions.create(.story) }
-                        .buttonStyle(.reliveOutline)
-                        .frame(maxWidth: .infinity)
-                        .accessibilityIdentifier("recapCreateStory")
+                    Button { actions.create(.collage) } label: {
+                        Text("Make Collage").frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(.reliveOutline)
+                    .accessibilityIdentifier("recapMakeCollage")
+                    Button { actions.create(.story) } label: {
+                        Text("Create Story").frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(.reliveOutline)
+                    .accessibilityIdentifier("recapCreateStory")
                 }
+                // Both buttons of a row share its height, even when one label wraps.
+                .fixedSize(horizontal: false, vertical: true)
                 HStack(spacing: Spacing.s) {
-                    Button("Make a Memory Book") { actions.create(.book) }
-                        .buttonStyle(.reliveOutline)
-                        .frame(maxWidth: .infinity)
-                        .accessibilityIdentifier("recapMakeBook")
+                    Button { actions.create(.book) } label: {
+                        Text("Make a Memory Book").frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(.reliveOutline)
+                    .accessibilityIdentifier("recapMakeBook")
                     // The same period, the same Memory Intelligence selection, as a short film.
-                    Button("Make a Movie") { actions.create(.movie) }
-                        .buttonStyle(.reliveOutline)
-                        .frame(maxWidth: .infinity)
-                        .accessibilityIdentifier("recapMakeMovie")
+                    Button { actions.create(.movie) } label: {
+                        Text("Make a Movie").frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(.reliveOutline)
+                    .accessibilityIdentifier("recapMakeMovie")
                 }
+                .fixedSize(horizontal: false, vertical: true)
                 ExportStatusView(controller: actions.export)
             }
         }

@@ -38,7 +38,7 @@ struct DraftRow: View {
         let summary = KeptSummary(item: .creation(draft), store: store)
         HStack(spacing: Spacing.m) {
             Palette.background
-                .frame(width: 72, height: 90)
+                .frame(width: Thumb.row.width, height: Thumb.row.height)
                 .overlay { CreationPreview(item: .creation(draft)).padding(4) }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)

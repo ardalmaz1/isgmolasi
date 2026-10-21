@@ -40,11 +40,8 @@ public struct RelationshipProfile: Codable, Hashable, Sendable {
         self.start = start
     }
 
-    /// "You + Emma", or "Jake + Emma" when the user added their own name.
+    /// "You ♥ Emma", or "Jake ♥ Emma" when the user added their own name (see `CoupleName`).
     public var coupleDisplayName: String {
-        let partner = partnerName.trimmingCharacters(in: .whitespacesAndNewlines)
-        let user = userName?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
-        let lead = user.isEmpty ? "You" : user
-        return partner.isEmpty ? lead : "\(lead) + \(partner)"
+        coupleName.display()
     }
 }

@@ -146,7 +146,7 @@ struct AddFavoritesView: View {
                 } label: {
                     HStack(spacing: Spacing.m) {
                         Color.clear
-                            .frame(width: 56, height: 70)
+                            .frame(width: Thumb.small.width, height: Thumb.small.height)
                             .overlay { AssetImageView(assetID: library.lead(of: moment) ?? store.heroAssetID(for: moment)) }
                             .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                             .accessibilityHidden(true)
@@ -184,7 +184,7 @@ struct AddFavoritesView: View {
                 } label: {
                     HStack(spacing: Spacing.m) {
                         Palette.surface
-                            .frame(width: 56, height: 70)
+                            .frame(width: Thumb.small.width, height: Thumb.small.height)
                             .overlay { CreationPreview(item: KeptPreviewItem(item)).padding(3) }
                             .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                             .accessibilityHidden(true)

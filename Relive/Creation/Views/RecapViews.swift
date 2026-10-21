@@ -218,6 +218,7 @@ struct OurYearView: View {
             VStack(alignment: .leading, spacing: Spacing.xl) {
                 PeriodHeader(
                     eyebrow: app.coupleName,
+                    spokenEyebrow: app.coupleSpokenName,
                     title: review.isSufficient ? "Our \(year)" : String(year),
                     detail: review.statistics.memoryCount > 0 ? CreationText.counts(review.statistics, includeTrips: true) : nil
                 )
@@ -426,12 +427,15 @@ private struct MonthSection: View {
 /// Eyebrow, large title and an honest count line.
 private struct PeriodHeader: View {
     let eyebrow: String
+    /// What VoiceOver reads for the eyebrow, when it differs ("Arda and Kübra" for "ARDA ♥ KÜBRA").
+    var spokenEyebrow: String? = nil
     let title: String
     let detail: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.xs) {
             Text(eyebrow).eyebrowStyle()
+                .accessibilityLabel(spokenEyebrow ?? eyebrow)
             Text(title)
                 .font(Typography.display)
                 .foregroundStyle(Palette.textPrimary)
@@ -456,7 +460,7 @@ private struct PeriodRow: View {
     var body: some View {
         HStack(spacing: Spacing.m) {
             Color.clear
-                .frame(width: 60, height: 75)
+                .frame(width: Thumb.small.width, height: Thumb.small.height)
                 .overlay { AssetImageView(assetID: coverID) }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)
@@ -503,7 +507,7 @@ private struct TripHeader: View {
     var body: some View {
         HStack(spacing: Spacing.m) {
             Color.clear
-                .frame(width: 72, height: 90)
+                .frame(width: Thumb.row.width, height: Thumb.row.height)
                 .overlay { AssetImageView(assetID: coverID) }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)

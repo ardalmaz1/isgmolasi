@@ -172,7 +172,7 @@ struct TodayDiscoveryCard: View {
     private func card(_ content: Content) -> some View {
         HStack(spacing: Spacing.m) {
             Color.clear
-                .frame(width: 96, height: 120)
+                .frame(width: Thumb.feature.width, height: Thumb.feature.height)
                 .overlay { AssetImageView(assetID: content.cover) }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)
@@ -315,7 +315,7 @@ struct ContinueStoryCard: View {
         Button(action: onContinue) {
             HStack(spacing: Spacing.m) {
                 Color.clear
-                    .frame(width: 72, height: 90)
+                    .frame(width: Thumb.feature.width, height: Thumb.feature.height)
                     .overlay { AssetImageView(assetID: store.heroAssetID(for: moment)) }
                     .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
 

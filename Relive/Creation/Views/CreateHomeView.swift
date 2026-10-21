@@ -423,7 +423,7 @@ private struct FeatureRow: View {
     var body: some View {
         HStack(spacing: Spacing.m) {
             Color.clear
-                .frame(width: 72, height: 90)
+                .frame(width: Thumb.row.width, height: Thumb.row.height)
                 .overlay { AssetImageView(assetID: coverID) }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)
@@ -502,7 +502,7 @@ private struct ContinueEditingCard: View {
         let summary = KeptSummary(item: .creation(draft), store: store)
         HStack(alignment: .top, spacing: Spacing.m) {
             Palette.surface
-                .frame(width: 96, height: 120)
+                .frame(width: Thumb.feature.width, height: Thumb.feature.height)
                 .overlay { CreationPreview(item: .creation(draft)).padding(4) }
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)

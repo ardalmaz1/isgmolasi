@@ -202,7 +202,7 @@ struct MomentPickerView: View {
                     } label: {
                         HStack(spacing: Spacing.m) {
                             Color.clear
-                                .frame(width: 60, height: 75)
+                                .frame(width: Thumb.small.width, height: Thumb.small.height)
                                 .overlay { AssetImageView(assetID: library.lead(of: moment) ?? store.heroAssetID(for: moment)) }
                                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                             VStack(alignment: .leading, spacing: 2) {

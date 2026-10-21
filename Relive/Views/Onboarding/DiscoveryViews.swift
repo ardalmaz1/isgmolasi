@@ -139,13 +139,16 @@ struct DiscoveryPrivacyView: View {
 private struct PrivacyPoint: View {
     let icon: String
     let text: String
+    /// The icon column grows with the text so the glyph never runs into the words.
+    @ScaledMetric(relativeTo: .callout) private var iconWidth: CGFloat = 24
 
     var body: some View {
-        HStack(alignment: .top, spacing: Spacing.s) {
+        // First-baseline alignment sits the icon on the first line of text at every size.
+        HStack(alignment: .firstTextBaseline, spacing: Spacing.s) {
             Image(systemName: icon)
-                .font(.body)
+                .font(Typography.callout)
                 .foregroundStyle(Palette.textSecondary)
-                .frame(width: 24)
+                .frame(width: iconWidth)
                 .accessibilityHidden(true)
             Text(text)
                 .font(Typography.callout)

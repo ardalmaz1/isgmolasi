@@ -87,7 +87,7 @@ struct MadeForYouRow: View {
         Button(action: onOpen) {
             HStack(spacing: Spacing.m) {
                 Color.clear
-                    .frame(width: 64, height: 80)
+                    .frame(width: Thumb.row.width, height: Thumb.row.height)
                     .overlay { AssetImageView(assetID: suggestion.coverAssetID) }
                     .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                     .accessibilityHidden(true)
