@@ -1,5 +1,6 @@
 import CloudKit
 import ReliveCore
+import SwiftData
 import XCTest
 @testable import Relive
 
@@ -344,6 +345,18 @@ final class PartnerConnectionAppTests: XCTestCase {
         // The connection memory has no name of anyone.
         let labels = Mirror(reflecting: cache.record!).children.compactMap(\.label)
         XCTAssertEqual(Set(labels), ["relationshipID", "role", "zoneName", "zoneOwnerName", "status", "createdAt", "lastConfirmedAt"])
+    }
+
+    /// The app has an iCloud entitlement now; the local story store must still never be mirrored
+    /// to iCloud (SwiftData's default with that entitlement).
+    func testTheStoryStoreNeverSyncsToICloud() {
+        let schema = Schema(PersistenceSchema.models)
+        for inMemory in [true, false] {
+            let configuration = SwiftDataStoryRepository.storeConfiguration(schema: schema, inMemory: inMemory)
+            XCTAssertNil(configuration.cloudKitContainerIdentifier, "the story store is local only")
+        }
+        let container = SwiftDataStoryRepository.makeContainer(inMemory: true)
+        XCTAssertTrue(container.configurations.allSatisfy { $0.cloudKitContainerIdentifier == nil })
     }
 
     func testOnlyTheAllowlistReachesICloud() {

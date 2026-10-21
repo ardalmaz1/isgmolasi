@@ -415,6 +415,22 @@ the other phone, account sign-out. See the device test plan.
 - Never reset the Production environment. Resetting Development is safe and deletes test data.
 - App Store distribution signing sets `aps-environment` to production; no manual change needed.
 
+### Found and fixed: the story store was set to mirror to iCloud ⚠️
+
+Adding the iCloud/CloudKit capability (commit `af9ba35`) silently changed SwiftData's default:
+a `ModelConfiguration` without `cloudKitDatabase` uses `.automatic`, which mirrors the whole local
+store (photo identifiers, analysis, hidden memories, notes) to the first iCloud container in the
+entitlements. CI logs showed `NSCloudKitMirroringDelegate` starting (it failed only because the
+simulator has no iCloud account). Phase B sets `cloudKitDatabase: .none`
+(`SwiftDataStoryRepository.storeConfiguration`) and a hosted test checks it.
+
+**Product-owner action:** if any build from `af9ba35` up to this fix ran on an iPhone signed in to
+iCloud, open CloudKit Console → `iCloud.com.ardaalmaz.reliveapp` → **Development** → Private
+Database (signed in as that Apple ID) and look for the zone `com.apple.coredata.cloudkit.zone`
+and `CD_…` record types. If present, delete that zone (or reset the Development environment,
+which deletes only development data) **before** deploying any schema to Production — otherwise
+`CD_…` record types would be deployed permanently.
+
 ### Known limitations
 
 - Account change: if a different Apple ID signs in, the owner's relationship is not visible and

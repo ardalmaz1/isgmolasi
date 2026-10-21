@@ -70,17 +70,24 @@ final class SwiftDataStoryRepository: StoryRepository {
     static func makeContainer(inMemory: Bool = false) -> ModelContainer {
         let schema = Schema(PersistenceSchema.models)
         do {
-            let configuration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory)
+            let configuration = storeConfiguration(schema: schema, inMemory: inMemory)
             return try ModelContainer(for: schema, configurations: [configuration])
         } catch {
             logger.fault("Persistent store unavailable, using memory: \(error.localizedDescription, privacy: .public)")
-            let memory = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
+            let memory = storeConfiguration(schema: schema, inMemory: true)
             do {
                 return try ModelContainer(for: schema, configurations: [memory])
             } catch {
                 fatalError("Could not create even an in-memory store: \(error)")
             }
         }
+    }
+
+    /// The story store is local only. The app has an iCloud entitlement (for the partner
+    /// connection), and SwiftData's default would then mirror this whole store — photo
+    /// identifiers, analysis, hidden memories — to the user's iCloud. `.none` turns that off.
+    static func storeConfiguration(schema: Schema, inMemory: Bool) -> ModelConfiguration {
+        ModelConfiguration(schema: schema, isStoredInMemoryOnly: inMemory, cloudKitDatabase: .none)
     }
 
     // MARK: - Profile

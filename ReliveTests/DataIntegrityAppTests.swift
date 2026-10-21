@@ -68,7 +68,7 @@ final class DiskStore {
     /// A fresh container and repository over the same file (a new launch).
     func open() throws -> SwiftDataStoryRepository {
         let schema = Schema(PersistenceSchema.models)
-        let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema, url: url)])
+        let container = try ModelContainer(for: schema, configurations: [ModelConfiguration(schema: schema, url: url, cloudKitDatabase: .none)])
         containers.append(container)
         return SwiftDataStoryRepository(container: container)
     }

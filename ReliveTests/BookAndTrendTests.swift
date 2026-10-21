@@ -83,7 +83,7 @@ final class PersistenceMigrationTests: XCTestCase {
         let v02 = Schema([StoredProfile.self, StoredAsset.self, StoredStorySnapshot.self, StoredMomentState.self, StoredCreatedAsset.self])
         let momentID = UUID()
         do {
-            let container = try ModelContainer(for: v02, configurations: [ModelConfiguration(schema: v02, url: url)])
+            let container = try ModelContainer(for: v02, configurations: [ModelConfiguration(schema: v02, url: url, cloudKitDatabase: .none)])
             let repository = SwiftDataStoryRepository(container: container)
             var profile = AppProfile()
             profile.relationship = RelationshipProfile(partnerName: "Emma", userName: "Jake")
@@ -97,7 +97,7 @@ final class PersistenceMigrationTests: XCTestCase {
 
         // v0.3 opens the same file.
         let v03 = Schema(PersistenceSchema.models)
-        let container = try ModelContainer(for: v03, configurations: [ModelConfiguration(schema: v03, url: url)])
+        let container = try ModelContainer(for: v03, configurations: [ModelConfiguration(schema: v03, url: url, cloudKitDatabase: .none)])
         let repository = SwiftDataStoryRepository(container: container)
         let profile = repository.loadProfile()
         XCTAssertEqual(profile.relationship?.coupleDisplayName, "Jake \u{2665} Emma", "the couple is shown with a heart, never +")
@@ -136,7 +136,7 @@ final class PersistenceMigrationTests: XCTestCase {
         let library = MemoryAsset(localIdentifier: "library-1", creationDate: Date(timeIntervalSince1970: 1_690_000_000), pixelWidth: 30, pixelHeight: 40)
         let book = MemoryBook(createdAt: Date(timeIntervalSince1970: 1_700_000_000), source: .moment(momentID), style: .film, photoIDs: ["a", "b", "c", "d", "e", "library-1"], photoLibraryAssets: [library])
         do {
-            let container = try ModelContainer(for: v031, configurations: [ModelConfiguration(schema: v031, url: url)])
+            let container = try ModelContainer(for: v031, configurations: [ModelConfiguration(schema: v031, url: url, cloudKitDatabase: .none)])
             let repository = SwiftDataStoryRepository(container: container)
             var profile = AppProfile()
             profile.relationship = RelationshipProfile(partnerName: "Emma", userName: "Jake")
@@ -149,7 +149,7 @@ final class PersistenceMigrationTests: XCTestCase {
 
         // v0.4 opens the same file: nothing is lost, nothing needs reinstalling.
         let v04 = Schema(PersistenceSchema.models)
-        let container = try ModelContainer(for: v04, configurations: [ModelConfiguration(schema: v04, url: url)])
+        let container = try ModelContainer(for: v04, configurations: [ModelConfiguration(schema: v04, url: url, cloudKitDatabase: .none)])
         let repository = SwiftDataStoryRepository(container: container)
         XCTAssertEqual(repository.loadProfile().relationship?.coupleDisplayName, "Jake \u{2665} Emma", "the couple is shown with a heart, never +")
         XCTAssertEqual(repository.loadAssets().map(\.id), ["a"])

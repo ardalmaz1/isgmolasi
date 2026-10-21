@@ -3,11 +3,13 @@ import SwiftUI
 
 /// "Your partner" in Us: connect, the connection's state, and a way into its settings. Free —
 /// connecting is never behind Premium.
+///
+/// The explanation sheet is attached by `partnerConnectSheet` outside the List: a sheet attached
+/// to a section inside a List doesn't present reliably.
 struct PartnerSection: View {
     @Environment(PartnerConnectionModel.self) private var partner
     @Environment(AppModel.self) private var app
-    @State private var showsExplanation = false
-    @State private var continueAfterExplanation = false
+    @Binding var showsExplanation: Bool
 
     var body: some View {
         Section {
@@ -20,17 +22,6 @@ struct PartnerSection: View {
             }
         }
         .listRowBackground(Palette.surface)
-        .sheet(isPresented: $showsExplanation, onDismiss: {
-            // Apple's invitation screen appears only once this sheet is gone.
-            guard continueAfterExplanation else { return }
-            continueAfterExplanation = false
-            Task { await partner.connect() }
-        }) {
-            ConnectPartnerView {
-                continueAfterExplanation = true
-                showsExplanation = false
-            }
-        }
     }
 
     private var partnerName: String { app.couple?.partnerName ?? "your partner" }
@@ -309,10 +300,35 @@ struct PartnerSettingsView: View {
 }
 
 extension View {
+    /// The "Connect your partner" explanation; Continue starts connecting once it has closed.
+    func partnerConnectSheet(isPresented: Binding<Bool>) -> some View {
+        modifier(PartnerConnectSheetModifier(isPresented: isPresented))
+    }
+
     /// Shows the partner connection's one-off messages (an invitation accepted, refused or
     /// failed) over whatever is on screen.
     func partnerNotice() -> some View {
         modifier(PartnerNoticeModifier())
+    }
+}
+
+private struct PartnerConnectSheetModifier: ViewModifier {
+    @Environment(PartnerConnectionModel.self) private var partner
+    @Binding var isPresented: Bool
+    @State private var continueAfterExplanation = false
+
+    func body(content: Content) -> some View {
+        content.sheet(isPresented: $isPresented, onDismiss: {
+            // Apple's invitation screen appears only once this sheet is gone.
+            guard continueAfterExplanation else { return }
+            continueAfterExplanation = false
+            Task { await partner.connect() }
+        }) {
+            ConnectPartnerView {
+                continueAfterExplanation = true
+                isPresented = false
+            }
+        }
     }
 }
 

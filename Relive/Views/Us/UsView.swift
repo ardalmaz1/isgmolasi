@@ -9,6 +9,7 @@ struct UsView: View {
     @State private var isEditingProfile = false
     @State private var isAddingMemories = false
     @State private var confirmsStartOver = false
+    @State private var showsPartnerExplanation = false
 
     var body: some View {
         NavigationStack {
@@ -53,7 +54,7 @@ struct UsView: View {
                 }
                 .listRowBackground(Palette.surface)
 
-                PartnerSection()
+                PartnerSection(showsExplanation: $showsPartnerExplanation)
 
                 Section("Relive Premium") {
                     NavigationLink {
@@ -114,6 +115,7 @@ struct UsView: View {
             .collectionDestinations()
             .archiveDestinations()
             .sheet(isPresented: $isEditingProfile) { EditProfileView() }
+            .partnerConnectSheet(isPresented: $showsPartnerExplanation)
             .confirmationDialog(
                 "Start over?",
                 isPresented: $confirmsStartOver,

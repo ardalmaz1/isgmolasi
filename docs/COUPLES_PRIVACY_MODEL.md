@@ -142,6 +142,11 @@ a fingerprint, a face count, hidden/don't-suggest state or analysis.
 fingerprints, face counts, hidden memories, Don't Suggest status, Memory Intelligence data, any
 location (Relive asks for no location permission), AI/editorial metadata, the couple's names.
 
+**The story store itself stays local:** with an iCloud entitlement, SwiftData would by default
+mirror its whole store to iCloud. Relive's store is configured with `cloudKitDatabase: .none`
+(tested). See `COUPLES_ARCHITECTURE.md` §19 for the check to run if an earlier build was used on an
+iPhone signed in to iCloud.
+
 **On this iPhone:** `PartnerConnection.json` holds the relationship ID, role, zone name, the zone
 owner's opaque CloudKit name, status and two dates. No names, no photos. It is excluded from
 backups (a restored copy would claim a connection iCloud no longer has).
