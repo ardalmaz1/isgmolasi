@@ -106,7 +106,7 @@ jobs:
           xcrun simctl boot "$UDID"
           xcrun simctl bootstatus "$UDID" -b
           xcrun simctl addmedia "$UDID" build/SampleLibrary/*.jpg
-          xcrun simctl privacy "$UDID" grant photos app.relive.prototype
+          xcrun simctl privacy "$UDID" grant photos com.ardaalmaz.reliveapp
           echo "UDID=$UDID" >> "$GITHUB_ENV"
       - name: App unit tests (hosted)
         run: |
@@ -140,7 +140,7 @@ jobs:
           xcrun simctl boot "$SE"
           xcrun simctl bootstatus "$SE" -b
           xcrun simctl addmedia "$SE" build/SampleLibrary/*.jpg
-          xcrun simctl privacy "$SE" grant photos app.relive.prototype
+          xcrun simctl privacy "$SE" grant photos com.ardaalmaz.reliveapp
           xcodebuild test \
             -project Relive.xcodeproj \
             -scheme Relive \
