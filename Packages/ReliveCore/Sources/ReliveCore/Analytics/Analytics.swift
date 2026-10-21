@@ -88,6 +88,13 @@ public enum AnalyticsEventName: String, CaseIterable, Sendable {
     case manualSelectionCompleted = "manual_selection_completed"
     case firstDiscoveryShown = "first_discovery_shown"
     case firstDiscoveryOpened = "first_discovery_opened"
+    // Phase B — partner connection. Properties: role and outcome codes only.
+    case partnerConnectStarted = "partner_connect_started"
+    case partnerInvitationCreated = "partner_invitation_created"
+    case partnerJoined = "partner_joined"
+    case partnerConnectFailed = "partner_connect_failed"
+    case partnerDisconnected = "partner_disconnected"
+    case partnerConnectionEnded = "partner_connection_ended"
 }
 
 /// Coarse buckets, so analytics never carry exact library sizes or timings.

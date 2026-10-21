@@ -76,7 +76,7 @@ struct PartnerConnectionTests {
     @Test func noMessageMentionsCloudKitOrErrorCodes() {
         let failures: [CloudFailure] = [.networkUnavailable, .serviceUnavailable, .notSignedIn, .accountChanged, .quotaExceeded, .notFound, .relationshipFull, .alreadyConnected, .permissionDenied, .unknown]
         var messages = failures.map(PartnerMessage.forFailure)
-        messages += [.iCloudRestricted, .iCloudUnknown, .connectionEnded(byPartner: true), .connectionEnded(byPartner: false)]
+        messages += [.iCloudRestricted, .iCloudUnknown, .connectionEnded(byPartner: true), .connectionEnded(byPartner: false), .joined]
         for message in messages {
             for word in ["CloudKit", "CKShare", "zone", "record", "container", "subscription", "error", "code"] {
                 #expect(!message.text.localizedCaseInsensitiveContains(word), "\(message.text)")

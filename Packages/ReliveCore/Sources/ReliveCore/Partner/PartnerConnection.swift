@@ -68,6 +68,8 @@ public enum PartnerMessage: Equatable, Sendable {
     case connectionEnded(byPartner: Bool)
     case accountChanged
     case somethingWentWrong
+    /// Shown once after accepting an invitation.
+    case joined
 
     public var text: String {
         switch self {
@@ -97,6 +99,8 @@ public enum PartnerMessage: Equatable, Sendable {
             "The iCloud account on this iPhone changed, so the partner connection was paused."
         case .somethingWentWrong:
             "Something went wrong. Try again."
+        case .joined:
+            "You’re connected. Each of you keeps your own memories on your own iPhone; only what you choose to share later is shared."
         }
     }
 

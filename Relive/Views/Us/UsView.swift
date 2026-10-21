@@ -53,6 +53,8 @@ struct UsView: View {
                 }
                 .listRowBackground(Palette.surface)
 
+                PartnerSection()
+
                 Section("Relive Premium") {
                     NavigationLink {
                         PremiumSettingsView()

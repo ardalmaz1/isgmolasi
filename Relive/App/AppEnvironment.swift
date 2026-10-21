@@ -1,6 +1,7 @@
 import Foundation
 import ReliveCore
 import SwiftData
+import UIKit
 
 /// Builds the object graph once at launch. Everything is injected, so a test or preview can
 /// assemble the same models with fakes.
@@ -14,13 +15,15 @@ final class AppEnvironment {
     let analytics: any AnalyticsTracking
     let premium: PremiumStore
     let madeForYou: MadeForYouStore
+    let partner: PartnerConnectionModel
 
     init(
         container: ModelContainer,
         photoLibrary: any PhotoLibraryProviding,
         imageLoader: PhotoImageLoader,
         analytics: any AnalyticsTracking,
-        storeKit: any StoreKitClient = LiveStoreKitClient()
+        storeKit: any StoreKitClient = LiveStoreKitClient(),
+        partner: PartnerConnectionModel? = nil
     ) {
         self.container = container
         self.imageLoader = imageLoader
@@ -38,6 +41,8 @@ final class AppEnvironment {
         self.appModel = AppModel(storyStore: storyStore, repository: repository, analytics: analytics)
         self.premium = PremiumStore(client: storeKit, analytics: analytics)
         self.madeForYou = MadeForYouStore()
+        self.partner = partner ?? PartnerConnectionModel(cache: InMemoryPartnerConnectionCache(), analytics: analytics) { CloudKitPartnerService() }
+        PartnerInbox.shared.attach(self.partner)
         EditorialService.connect(analytics: analytics)
     }
 
@@ -72,18 +77,37 @@ final class AppEnvironment {
             SwiftDataStoryRepository(container: container).eraseEverything()
             PremiumStore.eraseLocalState()
             MadeForYouStore.eraseLocalState()
+            FilePartnerConnectionCache().save(nil)
         }
         let storeKit: any StoreKitClient = storeKitForUITests() ?? LiveStoreKitClient()
         #else
         let storeKit: any StoreKitClient = LiveStoreKitClient()
         #endif
         EditorialService.shared.logProvider()
+        let analytics = LoggingAnalyticsTracker()
+        #if DEBUG
+        let partner = partnerForUITests(analytics: analytics) ?? livePartner(analytics: analytics)
+        #else
+        let partner = livePartner(analytics: analytics)
+        #endif
         return AppEnvironment(
             container: container,
             photoLibrary: PhotoKitLibraryService(),
             imageLoader: .shared,
-            analytics: LoggingAnalyticsTracker(),
-            storeKit: storeKit
+            analytics: analytics,
+            storeKit: storeKit,
+            partner: partner
+        )
+    }
+
+    /// The real partner connection: remembered in a small file, iCloud only on first use.
+    private static func livePartner(analytics: any AnalyticsTracking) -> PartnerConnectionModel {
+        PartnerConnectionModel(
+            cache: FilePartnerConnectionCache(),
+            analytics: analytics,
+            // Silent updates only; registering needs no permission and shows nothing.
+            onRelationship: { UIApplication.shared.registerForRemoteNotifications() },
+            makeService: { CloudKitPartnerService() }
         )
     }
 }
