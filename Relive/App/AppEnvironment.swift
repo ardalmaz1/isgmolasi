@@ -106,7 +106,8 @@ final class AppEnvironment {
             cache: FilePartnerConnectionCache(),
             analytics: analytics,
             // Silent updates only; registering needs no permission and shows nothing.
-            onRelationship: { UIApplication.shared.registerForRemoteNotifications() },
+            // Deferred to the next turn of the main loop: this also runs while the app is launching.
+            onRelationship: { Task { @MainActor in UIApplication.shared.registerForRemoteNotifications() } },
             makeService: { CloudKitPartnerService() }
         )
     }

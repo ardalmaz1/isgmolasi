@@ -255,10 +255,8 @@ struct PartnerSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .confirmationDialog(endTitle + "?", isPresented: $confirmsDisconnect, titleVisibility: .visible) {
             Button(endTitle, role: .destructive) {
-                Task {
-                    await partner.disconnect()
-                    if partner.record == nil { dismiss() }
-                }
+                // Back to Us once the connection is gone (see onChange below).
+                Task { await partner.disconnect() }
             }
             .accessibilityIdentifier("partnerDisconnectConfirm")
             Button("Cancel", role: .cancel) {}
