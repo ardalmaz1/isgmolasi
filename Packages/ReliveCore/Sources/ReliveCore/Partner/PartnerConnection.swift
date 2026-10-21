@@ -84,7 +84,7 @@ public enum PartnerMessage: Equatable, Sendable {
         case .temporarilyUnavailable:
             "Your partner connection is temporarily unavailable. Relive will try again."
         case .relationshipFull:
-            "This Relive is already shared by two people."
+            "This Relive relationship already has two people."
         case .alreadyConnected:
             "You’re already connected with a partner. Disconnect first to accept another invitation."
         case .iCloudFull:

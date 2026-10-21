@@ -190,7 +190,7 @@ jobs:
                     "F01-", "F02-", "F03-", "F04-", "F05-", "F06-", "F07-",
                     "R0", "R1", "R4", "R5", "R8", "E0", "E1", "E8", "M00", "B00",
                     "V0", "V1", "V8", "W0", "W1", "W8", "N0", "N1", "N8", "N9", "Q0", "Q1", "Q8", "Q9",
-                    "U0", "U1", "U8", "U9", "X0", "X1", "X8", "X9")
+                    "U0", "U1", "U8", "U9", "X0", "X1", "X8", "X9", "K0", "K8")
           for name, file in sorted(found):
               if not name.startswith(wanted) or file.suffix != ".png":
                   continue

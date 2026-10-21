@@ -317,3 +317,116 @@ be added but **not removed or renamed** — the Phase B schema must be reviewed 
 - [WWDC16 CloudKit best practices (notes)](https://mackuba.eu/notes/wwdc16/cloudkit-best-practices/)
 - [Forum: zone deleted after zone-wide share acceptance](https://developer.apple.com/forums/thread/822913)
 - [Forum: CKShare storage ownership and quota](https://developer.apple.com/forums/thread/851999)
+
+## 19. Phase B status — partner connection (implemented)
+
+Simulator and unit tests only. **Nothing below is validated on physical devices yet**; the
+two-iPhone procedure is in `COUPLES_DEVICE_TEST_PLAN.md` § Phase B.
+
+### What is implemented
+
+| Layer | Where | What |
+|---|---|---|
+| Rules and states | `ReliveCore/Partner/PartnerConnection.swift` | `PartnerConnectionState`, `CloudFailure`, `PartnerMessage` (calm words), `TwoPersonRule`, `PartnerConnectionRecord` (local memory), `RelationshipCloudFields` (the iCloud allowlist). Foundation only, tested on Linux. |
+| Service boundary | `Relive/Partner/PartnerCloudService.swift` | Protocol; every method throws `CloudFailure`, never a CloudKit error. Views never import CloudKit. |
+| CloudKit | `Relive/Partner/CloudKitPartnerService.swift` | The only file that talks to CloudKit (plus the delegates that receive invitations). |
+| Model | `Relive/Partner/PartnerConnectionModel.swift` | `@Observable` state for Us; `PartnerInbox` buffers invitations that arrive before the model. |
+| Local memory | `Relive/Partner/PartnerConnectionCache.swift` | `Application Support/Relive/PartnerConnection.json`, file protection until first unlock, excluded from backup. |
+| Acceptance | `Relive/App/ReliveAppDelegate.swift` | App delegate (`UIApplicationDelegateAdaptor`) installs a scene delegate: `scene(_:willConnectTo:options:)` reads `connectionOptions.cloudKitShareMetadata` (cold launch); `windowScene(_:userDidAcceptCloudKitShareWith:)` (running or returning to foreground). Silent pushes: `application(_:didReceiveRemoteNotification:)`. |
+| UI | `Relive/Partner/PartnerViews.swift` | Us → "Your partner" section, the explanation sheet, partner settings with the disconnect confirmation, one-off alerts. |
+| Info.plist | `Config/Info.plist` | `CKSharingSupported = YES` (required for iOS to hand invitations to Relive). Entitlements unchanged. |
+
+**Design choices (and where they differ from §5–§7 of this document):**
+
+- **Direct CloudKit calls, not `CKSyncEngine`.** Phase B reads one share and writes one record; a
+  sync engine adds state to persist for no benefit yet. Phase C (shared memories) should adopt
+  `CKSyncEngine` for the shared database.
+- **No names in iCloud, no `Member` records.** §5 proposed `ownerDisplayName` /
+  `participantDisplayName`. Phase B keeps names local: each iPhone shows the couple name its user
+  typed ("Arda ♥ Kübra"), and nothing about a person is written to iCloud. CloudKit identity
+  (the share's participants) is used only for the two-person rule. If Phase C needs the partner's
+  own spelling of the names, add it then, with its own allowlist entry.
+- **No `ownerUserRecordID` field.** The share already knows its owner; the partner's iPhone keeps
+  the zone's owner name locally (`zoneOwnerName`) to find the relationship again.
+- **One zone per relationship** named `Relationship-<UUID>` in the owner's private database, shared
+  as a **zone-wide share** (`CKShare(recordZoneID:)`, record name `CKRecordNameZoneWideShare`), so
+  Phase C records added to the zone are shared automatically.
+
+### CloudKit schema (Development environment)
+
+| Record type | Fields | Indexes |
+|---|---|---|
+| `Relationship` | `relationshipID` (String), `createdAt` (Date/Time), `schemaVersion` (Int64, = 1) | none needed: fetched by record ID, never queried |
+| `cloudkit.share` | system type | — |
+
+Record name of `Relationship` = the relationship ID. In the Development environment CloudKit
+creates the record type on the first save from a development-signed build ("just-in-time"
+schema). Production never does this.
+
+### Subscriptions
+
+One `CKDatabaseSubscription`, ID `relive-relationship-changes`, `shouldSendContentAvailable = true`
+and no alert, badge or sound — **silent only**:
+
+- owner: on the private database; partner: on the shared database;
+- saved when a relationship is created or joined (and harmlessly re-saved);
+- the app registers for remote notifications only when a relationship exists. Silent pushes need
+  no permission prompt, and Relive never asks for notification permission in Phase B;
+- on a push Relive refreshes the connection (`PartnerConnectionModel.cloudDidChange`). It also
+  refreshes whenever it becomes active, so a missed push only delays an update. Silent pushes are
+  best-effort and throttled by iOS.
+- `UIBackgroundModes = remote-notification` was already set by the product owner. Background
+  Fetch is **not** needed and was not added.
+
+### Lifecycle in CloudKit terms
+
+| Action | Owner's iPhone | Partner's iPhone |
+|---|---|---|
+| Connect | zone + `Relationship` record + share saved atomically; Apple's `UICloudSharingController` sends the invitation | — |
+| Accept | — | `CKContainer.accept(_:)` with the system's `CKShare.Metadata`; refused before calling if another person already accepted (`TwoPersonRule.mayAccept`) |
+| Refresh | fetches the share: owner + 1 accepted → connected; partner removed or left → the relationship ends and its zone is deleted | fetches the share from the shared database; missing → ended |
+| Owner disconnects | deletes the zone (and with it the share and the record) | access ends; on next refresh: "Your partner ended the connection." |
+| Partner leaves | — | deletes the share record from its shared database (CloudKit removes the participant); nothing in the owner's zone is deleted by the partner |
+| Owner stops sharing in Apple's screen | share deleted, zone left → Relive deletes the zone on the next refresh | as owner disconnect |
+
+### Mocked in tests
+
+`FakePartnerCloudService` (DEBUG only) replaces CloudKit in hosted tests and UI tests
+(`-RelivePartnerFake noAccount|available|waiting|connected|partner`). Apple's sharing screen,
+`CKContainer.accept`, subscriptions, pushes and real CloudKit errors are **not** exercised by CI —
+only the CKError → `CloudFailure` mapping is.
+
+### Needs physical devices and two Apple IDs
+
+Everything that crosses iCloud: sending and accepting the invitation, cold/warm acceptance,
+silent pushes, the two-person rule against a forwarded link, owner/partner disconnect as seen from
+the other phone, account sign-out. See the device test plan.
+
+### Development vs Production — release checklist
+
+- Builds run from Xcode (development signing, `aps-environment = development`) use the CloudKit
+  **Development** environment. **TestFlight and App Store builds use Production.**
+- Before the first TestFlight build that uses partner connection: in CloudKit Console, open
+  `iCloud.com.ardaalmaz.reliveapp` → *Deploy Schema Changes* to Production, after the
+  Development schema contains `Relationship` (create it by connecting once from a development
+  build). Without this, saving a `Relationship` record fails in TestFlight.
+- Production record types and fields **can't be deleted or renamed** later — only added. Review
+  the schema (three fields) before deploying.
+- Never reset the Production environment. Resetting Development is safe and deletes test data.
+- App Store distribution signing sets `aps-environment` to production; no manual change needed.
+
+### Known limitations
+
+- Account change: if a different Apple ID signs in, the owner's relationship is not visible and
+  Relive reports the connection ended and forgets it locally; signing back in to the original
+  account does not restore it automatically (the zone still exists in that account's iCloud).
+  Signed-out (no account) keeps the connection remembered.
+- The partner's name is the one each user typed; Relive doesn't learn it from iCloud.
+- If the partner leaves while the owner's iPhone is offline for a long time, the owner sees
+  "connected" until the next successful refresh.
+- Dismissing Apple's sharing screen without changes is not reported by iOS; the state refreshes
+  the next time Relive becomes active.
+- Start Over keeps the partner connection (it erases the story, not the relationship).
+- The bundle identifier changed to `com.ardaalmaz.reliveapp`: it is a new app to iOS, so data in
+  earlier TestFlight installs (`app.relive.prototype`) does not carry over.
+- Shared data counts against the **owner's** iCloud storage (Phase B writes one tiny record).

@@ -292,7 +292,7 @@ struct PartnerSettingsView: View {
         guard let record = partner.record else { return "Disconnect" }
         switch (record.role, record.status) {
         case (.owner, .waitingForPartner): return "Cancel Invitation"
-        case (.owner, .connected): return "Disconnect"
+        case (.owner, .connected): return "Disconnect Partner"
         case (.partner, _): return "Leave Connection"
         }
     }
@@ -303,9 +303,9 @@ struct PartnerSettingsView: View {
         case (.owner, .waitingForPartner):
             return "The invitation stops working. Nothing else changes."
         case (.owner, .connected):
-            return "This ends the connection for both of you; \(partnerName) will see that it ended. Your memories on this iPhone don’t change. Nothing from your library was shared, so there is nothing of yours on their iPhone to remove."
+            return "Sharing in Relive stops for both of you, and \(partnerName) no longer has access to your connection. Your photos and memories on this iPhone don’t change, and Relive goes back to just you. Nothing from your library was shared, so there is nothing of yours on their iPhone to remove."
         case (.partner, _):
-            return "You’ll leave the connection. It was started from \(possessiveName) iCloud, and Relive on their iPhone closes it the next time it opens. Your memories on this iPhone don’t change."
+            return "Sharing in Relive stops and you leave the connection. It was started from \(possessiveName) iCloud, so it stays theirs; Relive on their iPhone closes it the next time it opens. Your photos and memories on this iPhone don’t change, and Relive goes back to just you."
         }
     }
 }

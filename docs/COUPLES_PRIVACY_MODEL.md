@@ -123,3 +123,40 @@ Cannot: your library, your other memories, your hidden or Don't-Suggest items, y
 you didn't send, when you open the app (no presence, no "online"), your location.
 
 Read state ("Seen") is **optional** and off by default (owner decision) — it can create pressure.
+
+## 8. Phase B status — what reaches iCloud today
+
+Phase B connects two people and shares **nothing else**.
+
+| Written to iCloud | Where | Contents |
+|---|---|---|
+| One `Relationship` record | the owner's private database, in a zone shared with the partner | `relationshipID` (random UUID), `createdAt`, `schemaVersion` |
+| The share | same zone | Apple's own record: the two participants' iCloud identities, managed by iOS |
+| A silent change subscription | each person's database | an ID; no content |
+
+The allowlist is `RelationshipCloudFields.allowedKeys`; Linux and hosted tests fail if a field is
+added without updating it, and they check no key looks like a name, a photo identifier, a place,
+a fingerprint, a face count, hidden/don't-suggest state or analysis.
+
+**Never written in Phase B:** the photo library, `PHAsset` identifiers, Vision analysis, image
+fingerprints, face counts, hidden memories, Don't Suggest status, Memory Intelligence data, any
+location (Relive asks for no location permission), AI/editorial metadata, the couple's names.
+
+**On this iPhone:** `PartnerConnection.json` holds the relationship ID, role, zone name, the zone
+owner's opaque CloudKit name, status and two dates. No names, no photos. It is excluded from
+backups (a restored copy would claim a connection iCloud no longer has).
+
+**Disconnect, honestly (Phase B):**
+
+- *Owner* ("Disconnect Partner"): deletes the relationship's space in their iCloud; the partner's
+  access ends. The confirmation says nothing from the library was shared — true in Phase B. When
+  Phase C adds shared memories, this text must change to say what happens to items already on the
+  other iPhone (copies saved to Photos stay theirs).
+- *Partner* ("Leave Connection"): leaves the share. The space belongs to the owner's iCloud, so the
+  partner cannot delete it; Relive on the owner's iPhone closes it on its next refresh. The
+  confirmation says so.
+- Both: the photo library and the local story are untouched; Relive returns to solo mode.
+
+**Analytics:** `partner_connect_started`, `partner_invitation_created`, `partner_joined`,
+`partner_connect_failed` (reason code), `partner_disconnected` (role), `partner_connection_ended`
+(role) — no identifiers, no names.
