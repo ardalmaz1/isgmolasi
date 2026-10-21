@@ -86,9 +86,13 @@ final class PartnerUITests: XCTestCase {
         scrollTo(largeStatus, in: large)
         capture("K80-us-connected-large")
         largeStatus.tap()
-        XCTAssertTrue(large.buttons["partnerDisconnect"].waitForExistence(timeout: 5))
-        XCTAssertEqual(large.buttons["partnerDisconnect"].label, "Disconnect Partner")
+        XCTAssertTrue(large.staticTexts["Your Partner"].waitForExistence(timeout: 5), "partner settings did not open")
         capture("K81-partner-settings-large")
+        // At this size the button is below the explanation, outside the lazily built list.
+        let largeDisconnect = large.buttons["partnerDisconnect"]
+        scrollTo(largeDisconnect, in: large)
+        XCTAssertEqual(largeDisconnect.label, "Disconnect Partner")
+        capture("K82-partner-disconnect-large")
     }
 
     /// Relaunches without starting fresh: the story from step 1 is still there.
