@@ -123,7 +123,7 @@ final class PartnerUITests: XCTestCase {
         let button: XCUIElement
         if sheet.waitForExistence(timeout: 3) {
             print("SCREEN confirm: \(sheet.staticTexts.allElementsBoundByIndex.map(\.label).joined(separator: " | "))")
-            button = sheet.buttons[title]
+            button = sheet.buttons[title].firstMatch
         } else {
             button = app.buttons.matching(identifier: "partnerDisconnectConfirm").firstMatch
         }

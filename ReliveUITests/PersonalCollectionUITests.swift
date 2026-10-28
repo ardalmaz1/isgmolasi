@@ -202,7 +202,12 @@ final class PersonalCollectionUITests: XCTestCase {
 
         tapTool(app, "createBook")
         XCTAssertTrue(app.buttons["A Moment"].waitForExistence(timeout: 5), "Memory Book did not open")
-        app.buttons["Cancel"].firstMatch.tap()
+        // iOS 26+ shows this dialog as a popover without a Cancel button; tapping outside closes it
+        if app.buttons["Cancel"].exists {
+            app.buttons["Cancel"].firstMatch.tap()
+        } else {
+            app.otherElements["PopoverDismissRegion"].firstMatch.tap()
+        }
 
         tapTool(app, "createMonthlyRecap")
         XCTAssertTrue(app.descendants(matching: .any).matching(identifier: "recapMonthRow").firstMatch.waitForExistence(timeout: 10), "Monthly Recap did not open")

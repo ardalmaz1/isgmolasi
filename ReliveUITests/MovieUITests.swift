@@ -206,7 +206,7 @@ final class MovieUITests: XCTestCase {
                 sleep(1)
                 reveal(review, make)
                 make.tap()
-                let confirm = review.buttons["Make a New Cut"]
+                let confirm = review.buttons["Make a New Cut"].firstMatch
                 XCTAssertTrue(confirm.waitForExistence(timeout: 5), "Make it for me asks before replacing the user's cut")
                 capture("\(prefix)86-remake-confirm")
                 confirm.tap()

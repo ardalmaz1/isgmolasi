@@ -62,11 +62,13 @@ final class BookAndTrendsUITests: XCTestCase {
         // The AI trend: honest about not being available, and about what it would need
         let aiCard = app.buttons["trendCard-golden-hour-portrait"]
         let row = app.scrollViews["trendingRow"]
-        for _ in 0..<6 where !(aiCard.exists && aiCard.isHittable) {
+        // Frame-based: on iOS 26+ isHittable throws for a card scrolled out of view
+        func cardInView() -> Bool { aiCard.exists && row.frame.contains(aiCard.frame) }
+        for _ in 0..<12 where !cardInView() {
             row.swipeLeft()
             sleep(1)
         }
-        XCTAssertTrue(aiCard.isHittable, "The AI trend card is not reachable")
+        XCTAssertTrue(cardInView(), "The AI trend card is not reachable")
         XCTAssertTrue(aiCard.label.contains("Coming soon"), "The AI trend is not marked as coming soon")
         aiCard.tap()
         XCTAssertTrue(app.descendants(matching: .any)["aiDisclosure"].waitForExistence(timeout: 10), "AI disclosure missing")
