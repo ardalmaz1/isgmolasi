@@ -171,6 +171,8 @@ final class RecapUITests: XCTestCase {
                 XCTAssertTrue(close.waitForNonExistence(timeout: 10))
             }
             app.navigationBars.buttons.firstMatch.tap()
+            // Back on the month list before trying the next month (slower at the largest text).
+            XCTAssertTrue(rows.firstMatch.waitForExistence(timeout: 10), "The month list did not come back")
             sleep(1)
         }
         printScreen(app, "no-month-to-play")
