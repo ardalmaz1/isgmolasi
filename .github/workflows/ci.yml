@@ -238,8 +238,9 @@ jobs:
           RUNTIME="$(python3 -c 'import json; rs=[r for r in json.load(open("build/runtimes.json"))["runtimes"] if r["identifier"].startswith("com.apple.CoreSimulator.SimRuntime.iOS-") and r.get("isAvailable") and int(r["version"].split(".")[0]) >= 27]; print(sorted(rs, key=lambda r: [int(p) for p in r["version"].split(".")])[-1]["identifier"] if rs else "")')"
           if [ -z "$RUNTIME" ]; then echo "::error::No iOS 27+ simulator runtime on this runner"; xcrun simctl list runtimes; exit 1; fi
           echo "Runtime: $RUNTIME"
-          # iPhone 17 (the phones in use and the local runs); otherwise the first iPhone this runtime supports
-          DEVICE="$(python3 -c 'import json,sys; r=[r for r in json.load(open("build/runtimes.json"))["runtimes"] if r["identifier"]==sys.argv[1]][0]; ts=[t["identifier"] for t in r.get("supportedDeviceTypes",[]) if ".iPhone-" in t["identifier"]]; p="com.apple.CoreSimulator.SimDeviceType.iPhone-17"; print(p if p in ts else ts[0])' "$RUNTIME")"
+          # A standard-size iPhone (the phones in use); never a foldable, whose wide layout has no tab bar
+          DEVICE="$(python3 -c 'import json,sys; r=[r for r in json.load(open("build/runtimes.json"))["runtimes"] if r["identifier"]==sys.argv[1]][0]; ts=[t["identifier"].rsplit(".",1)[1] for t in r.get("supportedDeviceTypes",[]) if ".iPhone-" in t["identifier"]]; print("Supported:", ts, file=sys.stderr); pick=[n for n in ["iPhone-17","iPhone-18","iPhone-16","iPhone-17-Pro","iPhone-18-Pro","iPhone-16-Pro"] if n in ts]; print("com.apple.CoreSimulator.SimDeviceType."+pick[0] if pick else "")' "$RUNTIME")"
+          if [ -z "$DEVICE" ]; then echo "::error::No standard-size iPhone for $RUNTIME"; exit 1; fi
           echo "Device: $DEVICE"
           UDID="$(xcrun simctl create ReliveCI27 "$DEVICE" "$RUNTIME" || { sleep 30; xcrun simctl create ReliveCI27 "$DEVICE" "$RUNTIME"; })"
           xcrun simctl boot "$UDID"
