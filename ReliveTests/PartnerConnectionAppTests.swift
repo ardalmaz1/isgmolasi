@@ -325,6 +325,30 @@ final class PartnerConnectionAppTests: XCTestCase {
         XCTAssertEqual(CloudKitPartnerService.failure(from: URLError(.notConnectedToInternet)), .networkUnavailable)
     }
 
+    /// An all-or-nothing save reports the real cause on one item and "batch failed" on the rest
+    /// (seen when TestFlight saved a record type missing from the Production schema). The real
+    /// cause must win, whatever order the dictionary returns.
+    func testTheRealCauseWinsOverBatchFailed() {
+        let real = CKError(.quotaExceeded)
+        let batch = CKError(.batchRequestFailed)
+        XCTAssertEqual((CloudKitPartnerService.mostInformative([batch, real]) as? CKError)?.code, .quotaExceeded)
+        XCTAssertEqual((CloudKitPartnerService.mostInformative([real, batch]) as? CKError)?.code, .quotaExceeded)
+        XCTAssertEqual((CloudKitPartnerService.mostInformative([batch]) as? CKError)?.code, .batchRequestFailed)
+        XCTAssertNil(CloudKitPartnerService.mostInformative([]))
+        let partial = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: ["share": batch, "relationship": real]])
+        XCTAssertEqual(CloudKitPartnerService.failure(from: partial), .quotaExceeded)
+        // A record type missing from the schema is not something the user can fix: calm, generic.
+        XCTAssertEqual(CloudKitPartnerService.failure(from: CKError(.serverRejectedRequest)), .unknown)
+    }
+
+    /// Diagnostics carry error codes only — never record names, zones or anything personal.
+    func testDiagnosticsAreCodesOnly() {
+        let partial = CKError(.partialFailure, userInfo: [CKPartialErrorsByItemIDKey: ["Relationship-ABC": CKError(.serverRejectedRequest), "share": CKError(.batchRequestFailed)]])
+        XCTAssertEqual(CloudKitPartnerService.diagnosticCodes(partial), "CKError 2 (partial: 15, 22)")
+        XCTAssertEqual(CloudKitPartnerService.diagnosticCodes(CKError(.notAuthenticated)), "CKError 9")
+        XCTAssertFalse(CloudKitPartnerService.diagnosticCodes(partial).contains("Relationship"))
+    }
+
     func testNoMessageShowsTechnicalWords() {
         let messages: [PartnerMessage] = [.signInToICloud, .iCloudRestricted, .iCloudUnknown, .couldNotReachICloud, .temporarilyUnavailable, .relationshipFull, .alreadyConnected, .iCloudFull, .invitationEnded, .connectionEnded(byPartner: true), .connectionEnded(byPartner: false), .accountChanged, .somethingWentWrong, .joined]
         for message in messages {

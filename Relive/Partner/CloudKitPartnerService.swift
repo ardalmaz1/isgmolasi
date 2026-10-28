@@ -13,7 +13,7 @@ import UIKit
 final class CloudKitPartnerService: PartnerCloudService {
     static let containerIdentifier = "iCloud.com.ardaalmaz.reliveapp"
     private static let subscriptionID = "relive-relationship-changes"
-    private static let logger = Logger(subsystem: "app.relive", category: "partner")
+    nonisolated private static let logger = Logger(subsystem: "app.relive", category: "partner")
 
     private var _container: CKContainer?
     private var container: CKContainer {
@@ -39,6 +39,7 @@ final class CloudKitPartnerService: PartnerCloudService {
             @unknown default: return .couldNotDetermine
             }
         } catch {
+            Self.logDiagnostics(error, step: "accountStatus")
             return .couldNotDetermine
         }
     }
@@ -67,10 +68,9 @@ final class CloudKitPartnerService: PartnerCloudService {
             share.publicPermission = .none
 
             let result = try await database.modifyRecords(saving: [record, share], deleting: [], savePolicy: .ifServerRecordUnchanged, atomically: true)
-            for saved in result.saveResults.values {
-                if case .failure(let error) = saved { throw error }
-            }
+            if let error = Self.mostInformative(result.saveResults.values.compactMap(\.failureValue)) { throw error }
         } catch {
+            Self.logDiagnostics(error, step: "createRelationship")
             // Don't leave a half-made space behind.
             _ = try? await database.modifyRecordZones(saving: [], deleting: [zone.zoneID])
             throw Self.failure(from: error)
@@ -113,6 +113,7 @@ final class CloudKitPartnerService: PartnerCloudService {
         do {
             share = try await container.accept(metadata)
         } catch {
+            Self.logDiagnostics(error, step: "accept")
             throw Self.failure(from: error)
         }
         let zoneID = share.recordID.zoneID
@@ -137,19 +138,16 @@ final class CloudKitPartnerService: PartnerCloudService {
             case .owner:
                 // Deleting the zone deletes its share too: the partner loses access.
                 let result = try await container.privateCloudDatabase.modifyRecordZones(saving: [], deleting: [Self.zoneID(for: record)])
-                for deleted in result.deleteResults.values {
-                    if case .failure(let error) = deleted { throw error }
-                }
+                if let error = Self.mostInformative(result.deleteResults.values.compactMap(\.failureValue)) { throw error }
             case .partner:
                 // A participant leaves by deleting the share from their shared database; the
                 // owner's zone and record stay in the owner's iCloud.
                 let shareID = CKRecord.ID(recordName: CKRecordNameZoneWideShare, zoneID: Self.zoneID(for: record))
                 let result = try await container.sharedCloudDatabase.modifyRecords(saving: [], deleting: [shareID])
-                for deleted in result.deleteResults.values {
-                    if case .failure(let error) = deleted { throw error }
-                }
+                if let error = Self.mostInformative(result.deleteResults.values.compactMap(\.failureValue)) { throw error }
             }
         } catch {
+            Self.logDiagnostics(error, step: "endRelationship")
             let failure = Self.failure(from: error)
             // Already gone is what we wanted.
             if failure != .notFound { throw failure }
@@ -169,7 +167,7 @@ final class CloudKitPartnerService: PartnerCloudService {
             _ = try await database.modifySubscriptions(saving: [subscription], deleting: [])
         } catch {
             // Not fatal: Relive also refreshes whenever it comes to the foreground.
-            Self.logger.info("Partner change subscription not saved")
+            Self.logDiagnostics(error, step: "subscription")
         }
     }
 
@@ -184,6 +182,7 @@ final class CloudKitPartnerService: PartnerCloudService {
         } catch let failure as CloudFailure {
             throw failure
         } catch {
+            Self.logDiagnostics(error, step: "fetchShare")
             throw Self.failure(from: error)
         }
     }
@@ -220,6 +219,34 @@ final class CloudKitPartnerService: PartnerCloudService {
         )
     }
 
+    /// In an all-or-nothing batch, one item carries the real error and the others only say
+    /// "the batch failed". Returns the real one.
+    nonisolated static func mostInformative(_ errors: [Error]) -> Error? {
+        errors.first { ($0 as? CKError)?.code != .batchRequestFailed } ?? errors.first
+    }
+
+    /// The step and CloudKit's error codes, for Console on a Mac connected to the iPhone
+    /// (subsystem `app.relive`, category `partner`). Codes only are public; CloudKit's own
+    /// description (which can name records and zones) stays private. Users only ever see the
+    /// calm `PartnerMessage`.
+    nonisolated static func logDiagnostics(_ error: Error, step: String) {
+        logger.error("Partner iCloud step \(step, privacy: .public) failed: \(diagnosticCodes(error), privacy: .public) — \(String(describing: error), privacy: .private)")
+    }
+
+    /// "CKError 2 (partial: 15, 22)" — numbers only, so they can be logged publicly.
+    nonisolated static func diagnosticCodes(_ error: Error) -> String {
+        guard let ckError = error as? CKError else {
+            let nsError = error as NSError
+            return "\(nsError.domain) \(nsError.code)"
+        }
+        var text = "CKError \(ckError.code.rawValue)"
+        if let partial = ckError.partialErrorsByItemID?.values, !partial.isEmpty {
+            let codes = partial.compactMap { ($0 as? CKError)?.code.rawValue }.sorted().map(String.init)
+            text += " (partial: \(codes.joined(separator: ", ")))"
+        }
+        return text
+    }
+
     /// CloudKit's errors in Relive's terms. Views only ever see the calm `PartnerMessage`.
     nonisolated static func failure(from error: Error) -> CloudFailure {
         if let failure = error as? CloudFailure { return failure }
@@ -242,8 +269,8 @@ final class CloudKitPartnerService: PartnerCloudService {
         case .permissionFailure:
             return .permissionDenied
         case .partialFailure:
-            if let first = ckError.partialErrorsByItemID?.values.first {
-                return failure(from: first)
+            if let cause = mostInformative(ckError.partialErrorsByItemID.map { Array($0.values) } ?? []) {
+                return failure(from: cause)
             }
             return .unknown
         default:
@@ -303,5 +330,12 @@ private final class CloudSharingPresentation: NSObject, PartnerSharingPresentati
         onChange?()
         onChange = nil
         onFinish()
+    }
+}
+
+private extension Result {
+    var failureValue: Failure? {
+        if case .failure(let error) = self { return error }
+        return nil
     }
 }

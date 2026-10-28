@@ -410,6 +410,15 @@ the other phone, account sign-out. See the device test plan.
   `iCloud.com.ardaalmaz.reliveapp` → *Deploy Schema Changes* to Production, after the
   Development schema contains `Relationship` (create it by connecting once from a development
   build). Without this, saving a `Relationship` record fails in TestFlight.
+- Development must contain **both** `Relationship` and the system type `cloudkit.share` before
+  deploying. Neither can be created by a TestFlight build (Production never creates types), and
+  `cloudkit.share` can't be added by hand in the Console: it appears when a development build saves
+  its first share. One Connect from an Xcode-installed build creates both (and the custom zone,
+  which is data, not schema — zones are never deployed).
+- Symptom when this is skipped: TestFlight shows "Something went wrong. Try again." after
+  Continue. Console (Mac, device selected, subsystem `app.relive`, category `partner`) shows
+  `Partner iCloud step createRelationship failed: CKError 2 (partial: 15, 22)` — 15 is
+  "server rejected request" (the type is missing from the Production schema).
 - Production record types and fields **can't be deleted or renamed** later — only added. Review
   the schema (three fields) before deploying.
 - Never reset the Production environment. Resetting Development is safe and deletes test data.
