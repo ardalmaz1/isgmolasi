@@ -43,16 +43,16 @@ public struct LocalMomentNamingService: MomentNamingService {
 
     public func makeTitle(for context: MomentNamingContext) -> MomentTitle {
         guard let start = context.start else {
-            return MomentTitle(primary: "Without a date")
+            return MomentTitle(primary: words.undated)
         }
         let end = context.end ?? start
         let middle = start.addingTimeInterval(end.timeIntervalSince(start) / 2)
 
         switch context.kind {
         case .undated:
-            return MomentTitle(primary: "Without a date")
+            return MomentTitle(primary: words.undated)
         case .collection:
-            return MomentTitle(primary: "Moments from \(monthName(start))", secondary: yearString(start))
+            return MomentTitle(primary: words.momentsFrom(monthName(start)), secondary: yearString(start))
         case .event:
             break
         }
@@ -76,17 +76,17 @@ public struct LocalMomentNamingService: MomentNamingService {
         let days = calendar.logicalDayCount([start, end], startHour: logicalDayStartHour)
         if days > 1 {
             let touchesWeekend = coversWeekend(start: start, end: end)
-            let primary = touchesWeekend ? "\(monthName(start)) Weekend" : "A Few Days in \(monthName(start))"
+            let primary = touchesWeekend ? words.weekend(monthName(start)) : words.fewDays(in: monthName(start))
             return MomentTitle(primary: primary, secondary: monthYear(start))
         }
 
         if end.timeIntervalSince(start) >= wholeDayThreshold {
-            let weekday = calendar.isDateInWeekend(middle) ? "A \(weekdayName(middle))" : "A Day"
-            return MomentTitle(primary: "\(weekday) in \(monthName(start))", secondary: monthYear(start))
+            let weekday = calendar.isDateInWeekend(middle) ? weekdayName(middle) : nil
+            return MomentTitle(primary: words.day(weekday, in: monthName(start)), secondary: monthYear(start))
         }
 
         let part = PartOfDay(hour: calendar.component(.hour, from: middle))
-        return MomentTitle(primary: "\(monthName(start)) \(part.displayName)", secondary: monthYear(start))
+        return MomentTitle(primary: words.part(part, of: monthName(start)), secondary: monthYear(start))
     }
 
     public func makeChapterTitle(for context: ChapterNamingContext) -> MomentTitle {
@@ -94,7 +94,7 @@ public struct LocalMomentNamingService: MomentNamingService {
         if let place = context.place {
             return MomentTitle(primary: place.name, secondary: secondary)
         }
-        return MomentTitle(primary: "A Few Days Away", secondary: secondary)
+        return MomentTitle(primary: words.fewDaysAway, secondary: secondary)
     }
 
     // MARK: - Pieces
@@ -104,7 +104,7 @@ public struct LocalMomentNamingService: MomentNamingService {
         if end.timeIntervalSince(start) >= wholeDayThreshold {
             return weekday
         }
-        return "\(weekday) \(PartOfDay(hour: calendar.component(.hour, from: middle)).displayName)"
+        return words.part(PartOfDay(hour: calendar.component(.hour, from: middle)), of: weekday)
     }
 
     private func holidayName(start: Date, end: Date) -> String? {
@@ -113,7 +113,7 @@ public struct LocalMomentNamingService: MomentNamingService {
         let hour = calendar.component(.hour, from: end)
         let endsLate = hour >= 18 || hour < logicalDayStartHour
         if components.month == 12, components.day == 31, endsLate {
-            return "New Year's Eve"
+            return words.newYearsEve
         }
         return nil
     }
@@ -128,6 +128,8 @@ public struct LocalMomentNamingService: MomentNamingService {
         }
         return false
     }
+
+    private var words: NamingWords { NamingWords(language: EditorialLanguage(locale: locale)) }
 
     private func formatter(_ template: String) -> DateFormatter {
         let formatter = DateFormatter()
@@ -154,5 +156,49 @@ public struct LocalMomentNamingService: MomentNamingService {
             return "\(monthName(start)) – \(monthYear(end))"
         }
         return "\(monthYear(start)) – \(monthYear(end))"
+    }
+}
+
+/// The words of moment names in one language. Turkish builds compounds ("Ağustos Akşamı",
+/// "Cuma Gecesi") and suffixes proper names ("Ağustos'ta"); English keeps its title case.
+struct NamingWords {
+    let language: EditorialLanguage
+
+    private var turkish: Bool { language == .turkish }
+
+    var undated: String { turkish ? "Tarihsiz" : "Without a date" }
+    var fewDaysAway: String { turkish ? "Birkaç Gün Uzakta" : "A Few Days Away" }
+    var newYearsEve: String { turkish ? "Yılbaşı Gecesi" : "New Year's Eve" }
+
+    func momentsFrom(_ month: String) -> String {
+        turkish ? "\(month) Anları" : "Moments from \(month)"
+    }
+
+    func weekend(_ month: String) -> String {
+        turkish ? "\(month) Hafta Sonu" : "\(month) Weekend"
+    }
+
+    func fewDays(in month: String) -> String {
+        turkish ? "\(month)\(TurkishSuffix.locative(month)) Birkaç Gün" : "A Few Days in \(month)"
+    }
+
+    /// "A Saturday in August" / "Ağustos'ta Bir Cumartesi"; "A Day in August" without a weekday.
+    func day(_ weekday: String?, in month: String) -> String {
+        if turkish {
+            return "\(month)\(TurkishSuffix.locative(month)) Bir \(weekday ?? "Gün")"
+        }
+        return "\(weekday.map { "A \($0)" } ?? "A Day") in \(month)"
+    }
+
+    /// "August Evening", "Friday Night" / "Ağustos Akşamı", "Cuma Gecesi".
+    func part(_ part: PartOfDay, of name: String) -> String {
+        guard turkish else { return "\(name) \(part.displayName)" }
+        let compound = switch part {
+        case .morning: "Sabahı"
+        case .afternoon: "Öğleden Sonrası"
+        case .evening: "Akşamı"
+        case .night: "Gecesi"
+        }
+        return "\(name) \(compound)"
     }
 }

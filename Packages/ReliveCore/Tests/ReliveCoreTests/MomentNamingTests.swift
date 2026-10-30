@@ -43,6 +43,16 @@ struct MomentNamingTests {
         #expect(title.primary == "August Weekend")
     }
 
+    @Test("Turkish names build compounds and suffix the month")
+    func turkish() {
+        let tr = LocalMomentNamingService(calendar: testCalendar, locale: Locale(identifier: "tr_TR"))
+        #expect(tr.makeTitle(for: event(date(2024, 12, 12, 19), date(2024, 12, 12, 21))).primary == "Aralık Akşamı")
+        #expect(tr.makeTitle(for: event(date(2025, 8, 9, 10), date(2025, 8, 9, 18))).primary == "Ağustos'ta Bir Cumartesi")
+        #expect(tr.makeTitle(for: event(date(2025, 8, 9, 10), date(2025, 8, 10, 12))).primary == "Ağustos Hafta Sonu")
+        #expect(tr.makeTitle(for: event(date(2025, 12, 31, 21), date(2026, 1, 1, 0, 45))).primary == "Yılbaşı Gecesi")
+        #expect(tr.makeTitle(for: event(date(2025, 8, 6, 18), date(2025, 8, 6, 21), place: "Kaş")) == MomentTitle(primary: "Kaş", secondary: "Ağustos 2025"))
+    }
+
     @Test("New Year's Eve is recognised")
     func newYearsEve() {
         let title = naming.makeTitle(for: event(date(2025, 12, 31, 21), date(2026, 1, 1, 0, 45)))
