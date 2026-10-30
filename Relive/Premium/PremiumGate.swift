@@ -93,7 +93,7 @@ struct PremiumBadge: View {
 enum CommercialLinks {
     static let termsOfUse = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
     /// The published privacy policy (GitHub Pages, source `docs/privacy/index.html`).
-    static let privacyPolicy: URL? = URL(string: "https://ardalmaz1.github.io/isgmolasi/privacy/")
+    static let privacyPolicy: URL? = URL(string: "https://ardalmaz1.github.io/yuvi/privacy/")
 }
 
 /// Where a free preview ends: says what the full version holds, calmly, with one way in.

@@ -14,7 +14,7 @@ and the partner connection (Phase B). Shared memories (Phase C onward) come afte
 |---|---|---|---|
 | ☑ | App name "Yuvi: Our Story Together" accepted | Arda | App Store Connect → App Information |
 | ☑ | Contact e-mail for privacy and support pages | Arda | helloyuviapp@gmail.com |
-| ☑ | Privacy and support pages published (GitHub Pages), then `CommercialLinks.privacyPolicy` set | Claude | `https://ardalmaz1.github.io/isgmolasi/privacy/`, `/support/` |
+| ☑ | Privacy and support pages published (GitHub Pages), then `CommercialLinks.privacyPolicy` set | Claude | `https://ardalmaz1.github.io/yuvi/privacy/`, `/support/` |
 | ☐ | CloudKit schema deployed to Production | Arda + Claude | `COUPLES_ARCHITECTURE.md` §19, release checklist |
 | ☐ | Paid Applications agreement, banking, tax | Arda | App Store Connect → Business |
 | ☐ | Subscription group and both products | Arda | `COMMERCIAL.md` → App Store Connect setup |
@@ -33,8 +33,8 @@ and the partner connection (Phase B). Shared memories (Phase C onward) come afte
 | Secondary category | Photo & Video |
 | Content rights | Does not contain third-party content |
 | Age rating | 4+ — answer "None" / "No" to every question (no user-generated content is published; photos stay on the device; no web access, no chat) |
-| Privacy Policy URL | https://ardalmaz1.github.io/isgmolasi/privacy/ |
-| Support URL | https://ardalmaz1.github.io/isgmolasi/support/ |
+| Privacy Policy URL | https://ardalmaz1.github.io/yuvi/privacy/ |
+| Support URL | https://ardalmaz1.github.io/yuvi/support/ |
 | Copyright | 2026 Arda Almaz |
 
 ## Version text
@@ -81,7 +81,7 @@ and the partner connection (Phase B). Shared memories (Phase C onward) come afte
 > current period; manage or cancel it in your Apple Account settings.
 >
 > Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
-> Privacy Policy: https://ardalmaz1.github.io/isgmolasi/privacy/
+> Privacy Policy: https://ardalmaz1.github.io/yuvi/privacy/
 
 **Keywords (100, no spaces after commas)**
 
