@@ -139,9 +139,9 @@ struct PaywallView: View {
             .frame(maxWidth: .infinity, minHeight: 120)
             .accessibilityElement(children: .combine)
             .accessibilityIdentifier("paywallLoading")
-        case .failed(let message):
+        case .unavailable, .failed:
             VStack(spacing: Spacing.s) {
-                Text(message)
+                Text(productsMessage)
                     .font(Typography.callout)
                     .foregroundStyle(Palette.textSecondary)
                     .multilineTextAlignment(.center)
@@ -164,6 +164,11 @@ struct PaywallView: View {
                 if premium.annual == nil, premium.monthly != nil { selected = .monthly }
             }
         }
+    }
+
+    private var productsMessage: String {
+        if case .failed(let message) = premium.productsState { return message }
+        return PremiumStore.ProductsState.unavailableMessage
     }
 
     private var selectedProduct: PremiumProduct? {

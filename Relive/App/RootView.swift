@@ -7,12 +7,23 @@ struct RootView: View {
     @Environment(PremiumStore.self) private var premium
     @Environment(PartnerConnectionModel.self) private var partner
     @Environment(\.scenePhase) private var scenePhase
+    @State private var showsSplash = Self.splash
 
     /// UI tests that exercise the in-app Premium gates turn the wall off
     /// (`-ReliveUITestNoHardPaywall`).
     static var hardPaywall: Bool {
         #if DEBUG
         !ProcessInfo.processInfo.arguments.contains("-ReliveUITestNoHardPaywall")
+        #else
+        true
+        #endif
+    }
+
+    /// UI tests skip the opening (any `-ReliveStoreKit` launch), unless `-ReliveUITestSplash`.
+    static var splash: Bool {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        return !arguments.contains("-ReliveStoreKit") || arguments.contains("-ReliveUITestSplash")
         #else
         true
         #endif
@@ -30,6 +41,10 @@ struct RootView: View {
                 // The hard paywall: the story is built and revealed, Premium opens it.
                 PaywallView(entry: .welcome) {}
                     .transition(.opacity)
+            }
+            if showsSplash {
+                SplashView(isReady: app.isOnboarding || premium.isAccessDecided) { showsSplash = false }
+                    .zIndex(1)
             }
         }
         .animation(.easeInOut(duration: 0.45), value: app.isOnboarding)

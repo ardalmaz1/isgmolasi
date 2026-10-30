@@ -134,6 +134,27 @@ final class EntitlementStoreTests: XCTestCase {
         XCTAssertEqual(premium.productsState, .loaded)
     }
 
+    func testAStoreWithNothingToSellOpensTheAppButANetworkFailureDoesNot() async {
+        // Before the Paid Apps agreement is active, the App Store answers with no products.
+        let client = FakeStoreKitClient()
+        client.products = []
+        let premium = PremiumTestKit.store(client)
+        XCTAssertFalse(premium.isAccessDecided, "launch waits for the answer")
+        await premium.loadProducts()
+        XCTAssertEqual(premium.productsState, .unavailable)
+        XCTAssertTrue(premium.hasAppAccess, "the wall is no dead end when nothing can be bought")
+        XCTAssertTrue(premium.isAccessDecided)
+        XCTAssertFalse(premium.isPremium, "but nothing becomes Premium")
+
+        // Offline: the wall stays, with Try Again.
+        let offline = FakeStoreKitClient()
+        offline.productFailure = .network
+        let walled = PremiumTestKit.store(offline)
+        await walled.loadProducts()
+        XCTAssertFalse(walled.hasAppAccess)
+        XCTAssertTrue(walled.isAccessDecided)
+    }
+
     func testRestoreFindsAPurchaseOrSaysThereIsNone() async {
         let analytics = InMemoryAnalyticsTracker()
         let client = FakeStoreKitClient()

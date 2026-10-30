@@ -50,7 +50,7 @@ final class AppEnvironment {
     /// UI tests pass this to start from onboarding regardless of earlier runs.
     static let startFreshArgument = "-ReliveUITestStartFresh"
 
-    /// UI tests: `-ReliveStoreKit free|premium|trial|unavailable` replaces the App Store with
+    /// UI tests: `-ReliveStoreKit free|premium|trial|unavailable|empty` replaces the App Store with
     /// `FakeStoreKitClient`, so no test depends on a live purchase. Without it, Debug builds use
     /// StoreKit (and `StoreKit/Relive.storekit` when run from Xcode).
     static func storeKitForUITests() -> (any StoreKitClient)? {
@@ -62,6 +62,9 @@ final class AppEnvironment {
         case "unavailable":
             fake.productFailure = .network
             fake.syncFailure = .network
+        case "empty":
+            // The App Store before the Paid Apps agreement: it answers, with nothing to sell.
+            fake.products = []
         default:
             break
         }

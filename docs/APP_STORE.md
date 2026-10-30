@@ -21,7 +21,7 @@ and the partner connection (Phase B). Shared memories (Phase C onward) come afte
 | ☐ | Sandbox purchase, restore, cancel on a device | Arda | `COMMERCIAL.md` → Sandbox testing |
 | ☐ | Partner connection on two iPhones | Arda + Kübra | `COUPLES_DEVICE_TEST_PLAN.md` § Phase B |
 | ☑ | Screenshots (6.9-inch) | Claude | see Screenshots below |
-| ☑ | Version set to 1.0 (build 8) | Claude | `MARKETING_VERSION` |
+| ☑ | Version set to 1.0 (build 9) | Claude | `MARKETING_VERSION` |
 
 ## App Information
 

@@ -3,7 +3,8 @@ import XCTest
 /// The hard paywall with a fake App Store (`-ReliveStoreKit free|premium`), never a live purchase:
 /// 1. onboarding builds and reveals the story, then the wall opens, with no way to close it;
 /// 2. subscribing opens the app, and a relaunch goes straight in;
-/// 3. a partner who joined through an invitation is covered and never sees the wall.
+/// 3. a partner who joined through an invitation is covered and never sees the wall;
+/// 4. the opening plays, and with nothing for sale (agreement not active) the wall stays away.
 ///
 /// Screenshots start with "H".
 final class HardPaywallUITests: XCTestCase {
@@ -53,6 +54,18 @@ final class HardPaywallUITests: XCTestCase {
         XCTAssertTrue(app.tabBars.buttons["Create"].waitForExistence(timeout: 15), "The invited partner goes straight in")
         XCTAssertFalse(app.buttons["paywallPurchase"].exists, "No wall for the invited partner")
         capture("H03-partner-in")
+    }
+
+    @MainActor
+    func testSplashThenNoWallWhenNothingIsForSale() throws {
+        let app = XCUIApplication()
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "empty", "-ReliveUITestHideMadeForYou", "-ReliveUITestSplash"]
+        app.launch()
+        XCTAssertTrue(app.descendants(matching: .any)["splash"].waitForExistence(timeout: 5), "The opening plays")
+        capture("H04-splash")
+        try completeOnboarding(app)
+        XCTAssertTrue(app.tabBars.buttons["Create"].waitForExistence(timeout: 15), "Nothing to buy: the app opens")
+        XCTAssertFalse(app.buttons["paywallPurchase"].exists)
     }
 
     // MARK: - Steps

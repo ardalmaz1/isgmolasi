@@ -15,7 +15,12 @@ final class PremiumStore {
         case idle
         case loading
         case loaded
+        /// The App Store answered but has nothing to sell: the products aren't live yet (before
+        /// the Paid Apps agreement is active, TestFlight included). Not a network failure.
+        case unavailable
         case failed(String)
+
+        static let unavailableMessage = "Premium isn’t available right now. Please try again later."
     }
 
     enum PurchaseState: Equatable {
@@ -78,8 +83,18 @@ final class PremiumStore {
     }
 
     /// Whether the main app may open. Yuvi has a hard paywall after onboarding: the story is
-    /// built and revealed first, then Premium (or the partner's) is needed to go in.
-    var hasAppAccess: Bool { showsPremium }
+    /// built and revealed first, then Premium (or the partner's) is needed to go in. When the
+    /// App Store has nothing to sell, the wall would be a dead end, so the app opens.
+    var hasAppAccess: Bool { showsPremium || productsState == .unavailable }
+
+    /// Whether launch knows enough to choose between the app and the wall, so the wall never
+    /// flashes while prices load.
+    var isAccessDecided: Bool {
+        switch productsState {
+        case .idle, .loading: hasAppAccess
+        case .loaded, .unavailable, .failed: true
+        }
+    }
 
     /// May the user see this in full?
     func hasAccess(to capability: PremiumCapability) -> Bool {
@@ -133,7 +148,7 @@ final class PremiumStore {
         do {
             let loaded = try await client.loadProducts(ids: PremiumProductRole.productIDs)
             products = loaded.sorted { $0.role == .annual && $1.role != .annual }
-            productsState = loaded.isEmpty ? .failed("Premium isn’t available right now. Please try again later.") : .loaded
+            productsState = loaded.isEmpty ? .unavailable : .loaded
         } catch {
             productsState = .failed(Self.failure(error).message)
         }
