@@ -148,7 +148,7 @@ final class MovieExportController {
 
         let work = Task { @MainActor [weak self] in
             do {
-                let url = try MovieRenderer.temporaryURL(name: "Relive Movie")
+                let url = try MovieRenderer.temporaryURL(name: "Yuvi Movie")
                 let renderer = MovieRenderer(plan: plan, loader: loader)
                 let result = try await Task.detached(priority: .userInitiated) {
                     try await renderer.render(to: url) { value in

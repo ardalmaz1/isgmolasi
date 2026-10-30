@@ -261,7 +261,7 @@ struct CollageEditorView: View {
                 Text("Photos").eyebrowStyle()
                 Spacer()
                 Menu {
-                    Button { picker = .edit } label: { Label("From Relive", systemImage: "book.closed") }
+                    Button { picker = .edit } label: { Label("From Yuvi", systemImage: "book.closed") }
                     Button { libraryPurpose = .edit } label: { Label("From Photo Library", systemImage: "photo.on.rectangle") }
                 } label: {
                     Text("Edit Photos")
@@ -398,7 +398,7 @@ struct CollageEditorView: View {
     private func share() async {
         await gate.export(.collageExport, entry: .collageExport, premium: premium, heroAssetID: model.photoIDs.first) { succeeded in
             let images = CreationImageSource(loader: loader)
-            await model.export.share(name: "Relive Collage", analytics: analytics, properties: model.analyticsProperties, onShared: {
+            await model.export.share(name: "Yuvi Collage", analytics: analytics, properties: model.analyticsProperties, onShared: {
                 model.markExported()
                 succeeded()
             }) {

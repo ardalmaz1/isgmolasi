@@ -40,7 +40,7 @@ struct ShareMomentView: View {
                 .buttonStyle(.relivePrimary)
                 .disabled(card == nil)
 
-                Text("Your partner doesn’t need Relive to see it.")
+                Text("Your partner doesn’t need Yuvi to see it.")
                     .font(Typography.footnote)
                     .foregroundStyle(Palette.textSecondary)
             }

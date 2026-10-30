@@ -78,14 +78,14 @@ struct StoryTimelineView: View {
     private var banners: some View {
         if store.accessStatus == .denied || store.accessStatus == .restricted {
             AccessBanner(
-                message: "Relive can’t see your photos right now, so your story is hidden. Your notes are safe.",
+                message: "Yuvi can’t see your photos right now, so your story is hidden. Your notes are safe.",
                 actionTitle: "Open Settings",
                 action: { SystemPresenter.openSettings() }
             )
             .padding(.bottom, Spacing.l)
         } else if !store.unavailableAssetIDs.isEmpty {
             AccessBanner(
-                message: "Some photos are no longer available — they may have been deleted or removed from Relive’s access.",
+                message: "Some photos are no longer available — they may have been deleted or removed from Yuvi’s access.",
                 actionTitle: "Choose Photos",
                 action: { isAddingMemories = true }
             )
@@ -95,7 +95,7 @@ struct StoryTimelineView: View {
         if store.sections.isEmpty {
             QuietMessageView(
                 title: "Nothing here yet",
-                message: "Add photos of the two of you and Relive will arrange them into your story.",
+                message: "Add photos of the two of you and Yuvi will arrange them into your story.",
                 actionTitle: "Add Memories",
                 action: { isAddingMemories = true }
             )

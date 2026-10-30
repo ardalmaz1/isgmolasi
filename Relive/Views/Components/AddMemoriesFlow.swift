@@ -53,11 +53,11 @@ private struct AddMemoriesFlow: ViewModifier {
                 }
                 .interactiveDismissDisabled()
             }
-            .alert("Relive can’t see your photos", isPresented: $showsDeniedAlert) {
+            .alert("Yuvi can’t see your photos", isPresented: $showsDeniedAlert) {
                 Button("Open Settings", action: { SystemPresenter.openSettings() })
                 Button("Not Now", role: .cancel) {}
             } message: {
-                Text("You can choose which photos Relive may see in Settings.")
+                Text("You can choose which photos Yuvi may see in Settings.")
             }
     }
 }

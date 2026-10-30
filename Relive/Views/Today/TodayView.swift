@@ -48,7 +48,7 @@ struct TodayView: View {
                     } else if store.hasStory {
                         QuietMessageView(
                             title: "Nothing to resurface yet",
-                            message: "As your story grows older, Relive will bring back memories here."
+                            message: "As your story grows older, Yuvi will bring back memories here."
                         )
                     }
 
@@ -357,7 +357,7 @@ struct AddMemoriesCard: View {
                 .font(Typography.title3)
                 .foregroundStyle(Palette.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("Add them and Relive will place them in your story.")
+            Text("Add them and Yuvi will place them in your story.")
                 .font(Typography.callout)
                 .foregroundStyle(Palette.textSecondary)
             Button("Add Memories", action: onAdd)

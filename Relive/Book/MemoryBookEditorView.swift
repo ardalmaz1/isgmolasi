@@ -139,7 +139,7 @@ struct MemoryBookEditorView: View {
             } header: {
                 Text("Your words")
             } footer: {
-                Text("Relive never writes words for you. Only notes you wrote appear in the book.")
+                Text("Yuvi never writes words for you. Only notes you wrote appear in the book.")
             }
 
             Section {

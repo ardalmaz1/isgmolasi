@@ -187,7 +187,7 @@ enum Lexicon {
         "first", "last", "here", "there", "this", "that", "these", "it", "its", "just", "few", "some", "all", "more",
         "made", "began", "begins", "ended", "ends", "shape", "counted", "numbers", "kept", "close", "ones", "once",
         "home", "away", "another", "time", "times", "little", "long", "short", "between", "across", "through",
-        "until", "after", "before", "during", "since", "every", "each", "relive", "start", "end", "chapter",
+        "until", "after", "before", "during", "since", "every", "each", "relive", "yuvi", "start", "end", "chapter",
         "story", "book", "movie", "film", "collage", "recap", "marked", "as", "favorites", "beginning", "chronology",
         "was", "were", "is", "are", "one", "where", "when", "what", "seen", "remember", "so", "far", "way", "up",
         "out", "over", "late", "early", "mid", "new", "same", "again", "two", "both", "then", "now",

@@ -26,9 +26,9 @@ enum MovieExportError: LocalizedError, Equatable {
         case .notEnoughSpace:
             "There isn’t enough free space on this iPhone to make the movie."
         case .interrupted:
-            "Making the movie stopped when Relive left the screen. Please try again."
+            "Making the movie stopped when Yuvi left the screen. Please try again."
         case .photosAccessDenied:
-            "Relive isn’t allowed to save to Photos. You can allow it in Settings."
+            "Yuvi isn’t allowed to save to Photos. You can allow it in Settings."
         case .saveFailed:
             "Couldn’t save the movie to Photos. Please try again."
         }

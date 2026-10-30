@@ -227,8 +227,8 @@ struct RecapPageView: View {
             }
             PremiumTeaser(
                 title: "The rest of \(actions.periodName)",
-                message: "\(remaining == 1 ? "One more chapter" : "\(remaining) more chapters") — and a card to share — are part of Relive Premium.",
-                actionTitle: isYear ? "Relive Your Full Year" : "See the Full Recap",
+                message: "\(remaining == 1 ? "One more chapter" : "\(remaining) more chapters") — and a card to share — are part of Yuvi Premium.",
+                actionTitle: isYear ? "See Your Full Year" : "See the Full Recap",
                 identifier: "recapSeeAll",
                 action: actions.seeAll
             )

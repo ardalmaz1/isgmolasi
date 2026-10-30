@@ -25,7 +25,7 @@ protocol PhotoLibraryProviding: Sendable {
     func allAccessibleAssets() async -> [MemoryAsset]
     /// The subset of identifiers that still resolve (not deleted, access not revoked).
     func availableIdentifiers(among identifiers: [AssetID]) async -> Set<AssetID>
-    /// "Let Relive find them" (full access only): metadata of the newest `limit` photos and
+    /// "Let Yuvi find them" (full access only): metadata of the newest `limit` photos and
     /// videos in the user's own library. No pixels are loaded. Hidden assets and shared-album
     /// items are left out; bursts come as their one representative (PhotoKit's default).
     /// Screenshots are recognised later by their subtype.

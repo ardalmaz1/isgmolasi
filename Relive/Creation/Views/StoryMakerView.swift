@@ -191,7 +191,7 @@ struct StoryMakerView: View {
             ForEach(Array(card.photos.indices), id: \.self) { slot in
                 let name = card.photos.count == 1 ? "Photo" : "Photo \(slot + 1)"
                 Menu {
-                    Button { replacing = Replacement(cardID: card.id, slot: slot) } label: { Label("From Relive", systemImage: "book.closed") }
+                    Button { replacing = Replacement(cardID: card.id, slot: slot) } label: { Label("From Yuvi", systemImage: "book.closed") }
                     Button { libraryReplacement = Replacement(cardID: card.id, slot: slot) } label: { Label("From Photo Library", systemImage: "photo.on.rectangle") }
                 } label: {
                     Label("Replace \(name)", systemImage: "photo.on.rectangle.angled")
@@ -277,7 +277,7 @@ struct StoryMakerView: View {
         let ids = targetIDs(all: all)
         await gate.export(.storyExport, entry: .storyExport, premium: premium, heroAssetID: model.design?.photoIDs.first) { succeeded in
             let images = CreationImageSource(loader: loader)
-            await model.export.share(name: "Relive Story", analytics: analytics, properties: model.analyticsProperties, onShared: {
+            await model.export.share(name: "Yuvi Story", analytics: analytics, properties: model.analyticsProperties, onShared: {
                 model.markExported()
                 succeeded()
             }) {

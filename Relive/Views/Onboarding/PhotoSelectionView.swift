@@ -62,7 +62,7 @@ struct PhotoSelectionView: View {
             }
         case .denied:
             AccessBanner(
-                message: "Relive can’t see any photos right now. You can choose which ones it may see in Settings.",
+                message: "Yuvi can’t see any photos right now. You can choose which ones it may see in Settings.",
                 actionTitle: "Open Settings",
                 action: { SystemPresenter.openSettings() }
             )
@@ -90,7 +90,7 @@ struct PhotoSelectionView: View {
         if store.selectionCount == 0 {
             return "No photos chosen yet. Pick a few that feel like the two of you."
         }
-        return "Relive needs at least \(PhotoSelectionModel.minimumToBegin) photos to begin — you chose \(store.selectionCount). Choose a few more."
+        return "Yuvi needs at least \(PhotoSelectionModel.minimumToBegin) photos to begin — you chose \(store.selectionCount). Choose a few more."
     }
 
     private func choose() {
@@ -98,7 +98,7 @@ struct PhotoSelectionView: View {
     }
 }
 
-/// "You control what Relive can see."
+/// "You control what Yuvi can see."
 struct PrivacyNote: View {
     var body: some View {
         HStack(alignment: .top, spacing: Spacing.s) {
@@ -108,7 +108,7 @@ struct PrivacyNote: View {
                 .frame(width: 24)
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Spacing.xxs) {
-                Text("You control what Relive can see.")
+                Text("You control what Yuvi can see.")
                     .font(Typography.callout.weight(.semibold))
                     .foregroundStyle(Palette.textPrimary)
                 Text("Only the photos you choose. They’re organized on this iPhone — your photos aren’t uploaded, and there’s no account.")

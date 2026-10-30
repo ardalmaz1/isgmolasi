@@ -37,7 +37,7 @@ struct UsView: View {
                 }
                 .listRowBackground(Palette.surface)
 
-                Section("Kept in Relive") {
+                Section("Kept in Yuvi") {
                     NavigationLink(value: CollectionRoute.favorites) {
                         CountRow(title: "Favorites", count: store.visibleFavoritesCount)
                     }
@@ -56,7 +56,7 @@ struct UsView: View {
 
                 PartnerSection(showsExplanation: $showsPartnerExplanation)
 
-                Section("Relive Premium") {
+                Section("Yuvi Premium") {
                     NavigationLink {
                         PremiumSettingsView()
                     } label: {
@@ -85,12 +85,12 @@ struct UsView: View {
                 } header: {
                     Text("Photo access")
                 } footer: {
-                    Text("Your story holds only the photos you chose or kept. Relive never identifies people. You can change access any time in Settings.")
+                    Text("Your story holds only the photos you chose or kept. Yuvi never identifies people. You can change access any time in Settings.")
                 }
                 .listRowBackground(Palette.surface)
 
                 Section("Privacy") {
-                    Text("Your photos are organized on this iPhone and aren’t uploaded; there is no account and no feed. When Relive suggests moments, it reads dates and places and counts faces in a few photos — it never knows who anyone is. To name places, Relive asks Apple’s location service about a location — never a photo. Photos kept only in iCloud may be downloaded from your own iCloud to show them.")
+                    Text("Your photos are organized on this iPhone and aren’t uploaded; there is no account and no feed. When Yuvi suggests moments, it reads dates and places and counts faces in a few photos — it never knows who anyone is. To name places, Yuvi asks Apple’s location service about a location — never a photo. Photos kept only in iCloud may be downloaded from your own iCloud to show them.")
                         .font(Typography.footnote)
                         .foregroundStyle(Palette.textSecondary)
                         .padding(.vertical, Spacing.xxs)
@@ -100,7 +100,7 @@ struct UsView: View {
                 Section {
                     Button("Start Over", role: .destructive) { confirmsStartOver = true }
                 } footer: {
-                    Text("Relive \(Self.versionText)")
+                    Text("Yuvi \(Self.versionText)")
                         .frame(maxWidth: .infinity)
                         .padding(.top, Spacing.l)
                 }
@@ -121,10 +121,10 @@ struct UsView: View {
                 isPresented: $confirmsStartOver,
                 titleVisibility: .visible
             ) {
-                Button("Delete Relive’s Data", role: .destructive) { app.startOver() }
+                Button("Delete Yuvi’s Data", role: .destructive) { app.startOver() }
                 Button("Cancel", role: .cancel) {}
             } message: {
-                Text("This removes your story, notes and settings from Relive, and you’ll set it up again. Your books, collages, stories, movies, drafts and favorites stay, and so do memories you asked Relive not to suggest. Your photos in the Photos app are not touched.")
+                Text("This removes your story, notes and settings from Yuvi, and you’ll set it up again. Your books, collages, stories, movies, drafts and favorites stay, and so do memories you asked Yuvi not to suggest. Your photos in the Photos app are not touched.")
             }
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)
@@ -218,10 +218,10 @@ private struct PhotoAccessRow: View {
 
     private var statusText: String {
         switch store.accessStatus {
-        case .limited: "Relive sees only the \(Counted.text(store.selectionCount, "photo", "photos")) you chose."
-        case .full: "Full access is on, so Relive can suggest moments when you ask it to. Your story holds the \(Counted.text(store.selectionCount, "photo", "photos")) you chose or kept."
-        case .denied, .restricted: "Relive can’t see any photos right now."
-        case .notDetermined: "Relive hasn’t asked to see any photos yet."
+        case .limited: "Yuvi sees only the \(Counted.text(store.selectionCount, "photo", "photos")) you chose."
+        case .full: "Full access is on, so Yuvi can suggest moments when you ask it to. Your story holds the \(Counted.text(store.selectionCount, "photo", "photos")) you chose or kept."
+        case .denied, .restricted: "Yuvi can’t see any photos right now."
+        case .notDetermined: "Yuvi hasn’t asked to see any photos yet."
         }
     }
 

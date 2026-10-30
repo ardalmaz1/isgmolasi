@@ -130,7 +130,7 @@ public struct MemorySelectionPlan: Hashable, Sendable, Codable {
     }
 }
 
-/// "Given a group of Relive memories, produce a factual, reusable creation plan."
+/// "Given a group of Yuvi memories, produce a factual, reusable creation plan."
 ///
 /// Deterministic, on-device and pixel-free: it reads only the story and the analysis Relive
 /// already has (`AssetScorer` signals, similarity fingerprints, moments, covers, favorites).

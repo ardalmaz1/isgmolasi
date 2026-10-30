@@ -18,7 +18,7 @@ struct PartnerSection: View {
             Text("Your partner")
         } footer: {
             if partner.state == .notConnected {
-                Text("Free. Relive works just the same on your own.")
+                Text("Free. Yuvi works just the same on your own.")
             }
         }
         .listRowBackground(Palette.surface)
@@ -133,19 +133,19 @@ struct ConnectPartnerView: View {
                     VStack(alignment: .leading, spacing: Spacing.xs) {
                         Text("Connect your partner")
                             .eyebrowStyle()
-                        Text("Relive, for the two of you")
+                        Text("Yuvi, for the two of you")
                             .font(Typography.title)
                             .foregroundStyle(Palette.textPrimary)
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     VStack(alignment: .leading, spacing: Spacing.m) {
-                        ConnectPoint(icon: "person", text: "Relive works fully on your own. Connecting is optional and free.")
+                        ConnectPoint(icon: "person", text: "Yuvi works fully on your own. Connecting is optional and free.")
                         ConnectPoint(icon: "photo.on.rectangle", text: "Connecting doesn’t upload your photo library.")
-                        ConnectPoint(icon: "iphone", text: "What Relive learns from your photos stays private on this iPhone.")
+                        ConnectPoint(icon: "iphone", text: "What Yuvi learns from your photos stays private on this iPhone.")
                         ConnectPoint(icon: "hand.raised", text: "Only what you choose to share, later and one by one, is shared.")
-                        ConnectPoint(icon: "location.slash", text: "No live location. Relive never shows where either of you is.")
+                        ConnectPoint(icon: "location.slash", text: "No live location. Yuvi never shows where either of you is.")
                     }
-                    Text("You’ll send an invitation from your iCloud. Your partner opens it on their iPhone with Relive installed.")
+                    Text("You’ll send an invitation from your iCloud. Your partner opens it on their iPhone with Yuvi installed.")
                         .font(Typography.footnote)
                         .foregroundStyle(Palette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -212,13 +212,13 @@ struct PartnerSettingsView: View {
                 }
             } footer: {
                 if isOffline {
-                    Text("Relive can’t reach iCloud right now. You’re still connected; it will check again when it can.")
+                    Text("Yuvi can’t reach iCloud right now. You’re still connected; it will check again when it can.")
                 }
             }
             .listRowBackground(Palette.surface)
 
             Section("What’s shared") {
-                Text("Right now, only the connection itself. Your photo library, what Relive learns from it, your hidden memories and your places stay on this iPhone. Sharing a photo or a note will always be something you choose, one at a time.")
+                Text("Right now, only the connection itself. Your photo library, what Yuvi learns from it, your hidden memories and your places stay on this iPhone. Sharing a photo or a note will always be something you choose, one at a time.")
                     .font(Typography.footnote)
                     .foregroundStyle(Palette.textSecondary)
                     .padding(.vertical, Spacing.xxs)
@@ -292,9 +292,9 @@ struct PartnerSettingsView: View {
         case (.owner, .waitingForPartner):
             return "The invitation stops working. Nothing else changes."
         case (.owner, .connected):
-            return "Sharing in Relive stops for both of you, and \(partnerName) no longer has access to your connection. Your photos and memories on this iPhone don’t change, and Relive goes back to just you. Nothing from your library was shared, so there is nothing of yours on their iPhone to remove."
+            return "Sharing in Yuvi stops for both of you, and \(partnerName) no longer has access to your connection. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you. Nothing from your library was shared, so there is nothing of yours on their iPhone to remove."
         case (.partner, _):
-            return "Sharing in Relive stops and you leave the connection. It was started from \(possessiveName) iCloud, so it stays theirs; Relive on their iPhone closes it the next time it opens. Your photos and memories on this iPhone don’t change, and Relive goes back to just you."
+            return "Sharing in Yuvi stops and you leave the connection. It was started from \(possessiveName) iCloud, so it stays theirs; Yuvi on their iPhone closes it the next time it opens. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you."
         }
     }
 }

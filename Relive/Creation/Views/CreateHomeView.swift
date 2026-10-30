@@ -39,7 +39,7 @@ struct CreateHomeView: View {
                             .font(Typography.display)
                             .foregroundStyle(Palette.textPrimary)
                             .accessibilityAddTraits(.isHeader)
-                        Text("Choose memories. Relive makes something beautiful from them.")
+                        Text("Choose memories. Yuvi makes something beautiful from them.")
                             .font(Typography.callout)
                             .foregroundStyle(Palette.textSecondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -144,7 +144,7 @@ struct CreateHomeView: View {
         return VStack(alignment: .leading, spacing: Spacing.m) {
             SectionHeader(title: "Your Creations", route: items.isEmpty ? nil : .creations, linkTitle: "See All", linkIdentifier: "seeAllCreations")
             if items.isEmpty {
-                Text("Things you make with Relive will appear here.")
+                Text("Things you make with Yuvi will appear here.")
                     .font(Typography.callout)
                     .foregroundStyle(Palette.textSecondary)
                     .accessibilityIdentifier("creationsEmpty")
@@ -288,7 +288,7 @@ struct CreateHomeView: View {
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Spacing.s) {
-                FeatureText(title: "Memory Movie", subtitle: "A short film, edited by Relive from your memories.")
+                FeatureText(title: "Memory Movie", subtitle: "A short film, edited by Yuvi from your memories.")
                 Button("Make a Movie") { app.startCreation(.movie, from: .choosePhotos, origin: "create") }
                     .buttonStyle(.reliveOutline)
                     .accessibilityIdentifier("createMovie")
@@ -540,7 +540,7 @@ private struct ContinueEditingCard: View {
             Button("Delete Draft", role: .destructive) { store.deleteCreation(id: draft.id) }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Its photos stay in Relive and in the Photos app.")
+            Text("Its photos stay in Yuvi and in the Photos app.")
         }
     }
 }

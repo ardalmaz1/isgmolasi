@@ -82,8 +82,8 @@ struct PartnerConnectionTests {
                 #expect(!message.text.localizedCaseInsensitiveContains(word), "\(message.text)")
             }
         }
-        #expect(PartnerMessage.forFailure(.relationshipFull).text == "This Relive relationship already has two people.")
-        #expect(PartnerMessage.forFailure(.networkUnavailable).text == "Relive couldn’t reach iCloud. Try again.")
+        #expect(PartnerMessage.forFailure(.relationshipFull).text == "This Yuvi relationship already has two people.")
+        #expect(PartnerMessage.forFailure(.networkUnavailable).text == "Yuvi couldn’t reach iCloud. Try again.")
         #expect(CloudFailure.networkUnavailable.isTemporary && CloudFailure.serviceUnavailable.isTemporary)
         #expect(!CloudFailure.notFound.isTemporary)
     }

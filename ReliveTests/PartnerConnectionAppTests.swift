@@ -92,7 +92,7 @@ final class PartnerConnectionAppTests: XCTestCase {
         let partner = model()
         await partner.connect()
         XCTAssertEqual(partner.state, .failed(.couldNotReachICloud))
-        XCTAssertEqual(PartnerMessage.couldNotReachICloud.text, "Relive couldn’t reach iCloud. Try again.")
+        XCTAssertEqual(PartnerMessage.couldNotReachICloud.text, "Yuvi couldn’t reach iCloud. Try again.")
         XCTAssertNil(cache.record)
         XCTAssertEqual(analytics.events.last?.name, .partnerConnectFailed)
         XCTAssertEqual(analytics.events.last?.properties["reason"], "network")
@@ -252,7 +252,7 @@ final class PartnerConnectionAppTests: XCTestCase {
         await partner.accept(full)
         XCTAssertFalse(fake.calls.contains("accept"), "a full relationship is never joined")
         XCTAssertEqual(partner.notice, .relationshipFull)
-        XCTAssertEqual(PartnerMessage.relationshipFull.text, "This Relive relationship already has two people.")
+        XCTAssertEqual(PartnerMessage.relationshipFull.text, "This Yuvi relationship already has two people.")
         XCTAssertEqual(partner.state, .notConnected)
     }
 

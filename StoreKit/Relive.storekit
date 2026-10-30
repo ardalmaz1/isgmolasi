@@ -20,7 +20,7 @@
       "localizations" : [
 
       ],
-      "name" : "Relive Premium",
+      "name" : "Yuvi Premium",
       "subscriptions" : [
         {
           "adHocOffers" : [
@@ -41,14 +41,14 @@
           },
           "localizations" : [
             {
-              "description" : "Everything Relive creates from your memories, every year.",
-              "displayName" : "Relive Premium Annual",
+              "description" : "Everything Yuvi creates from your memories, every year.",
+              "displayName" : "Yuvi Premium Annual",
               "locale" : "en_US"
             }
           ],
           "productID" : "relive.premium.annual",
           "recurringSubscriptionPeriod" : "P1Y",
-          "referenceName" : "Relive Premium Annual",
+          "referenceName" : "Yuvi Premium Annual",
           "subscriptionGroupID" : "5E1A7C10",
           "type" : "RecurringSubscription"
         },
@@ -65,14 +65,14 @@
           "internalID" : "5E1A7C12",
           "localizations" : [
             {
-              "description" : "Everything Relive creates from your memories, month by month.",
-              "displayName" : "Relive Premium Monthly",
+              "description" : "Everything Yuvi creates from your memories, month by month.",
+              "displayName" : "Yuvi Premium Monthly",
               "locale" : "en_US"
             }
           ],
           "productID" : "relive.premium.monthly",
           "recurringSubscriptionPeriod" : "P1M",
-          "referenceName" : "Relive Premium Monthly",
+          "referenceName" : "Yuvi Premium Monthly",
           "subscriptionGroupID" : "5E1A7C10",
           "type" : "RecurringSubscription"
         }

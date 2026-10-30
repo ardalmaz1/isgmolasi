@@ -43,14 +43,14 @@ struct MovieEditorView: View {
                 }
                 .buttonStyle(.reliveOutline)
                 .frame(maxWidth: .infinity)
-                .accessibilityHint("Relive chooses photos again and makes a new cut. Your style, shape and length stay.")
+                .accessibilityHint("Yuvi chooses photos again and makes a new cut. Your style, shape and length stay.")
                 .accessibilityIdentifier("movieMakeItForMe")
                 .confirmationDialog("Make a new cut?", isPresented: $confirmsRemake, titleVisibility: .visible) {
                     Button("Make a New Cut") { remake() }
                         .accessibilityIdentifier("movieRemakeConfirm")
                     Button("Keep My Changes", role: .cancel) {}
                 } message: {
-                    Text("Relive will choose the photos again. The photos and order you changed will be replaced; your style, shape, length and title stay.")
+                    Text("Yuvi will choose the photos again. The photos and order you changed will be replaced; your style, shape, length and title stay.")
                 }
 
                 if let note = noteText {
@@ -232,7 +232,7 @@ struct MovieEditorView: View {
                         withAnimation(animation) { model.resetTitle() }
                     }
                     .accessibilityLabel("Reset title")
-                    .accessibilityHint("Goes back to Relive's title")
+                    .accessibilityHint("Goes back to Yuvi's title")
                     .accessibilityIdentifier("movieTitleReset")
                 }
             }

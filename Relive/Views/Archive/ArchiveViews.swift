@@ -190,7 +190,7 @@ struct MomentsLibraryView: View {
         let ids = store.archive.momentIDs
         ScrollView {
             if ids.isEmpty {
-                QuietMessageView(title: "No moments yet", message: "Relive gathers your photos into moments as your story grows.")
+                QuietMessageView(title: "No moments yet", message: "Yuvi gathers your photos into moments as your story grows.")
                     .padding(.top, Spacing.xl)
             } else {
                 LazyVStack(alignment: .leading, spacing: Spacing.s) {
@@ -356,7 +356,7 @@ struct PlaceDetailView: View {
             MomentListView(
                 title: place.displayName,
                 summary: "\(Counted.text(place.momentIDs.count, "moment", "moments")) · \(Counted.text(place.memoryCount, "memory", "memories"))",
-                note: place.name == nil ? "Relive couldn’t find a name for this location." : nil,
+                note: place.name == nil ? "Yuvi couldn’t find a name for this location." : nil,
                 momentIDs: place.momentIDs,
                 source: "place"
             )

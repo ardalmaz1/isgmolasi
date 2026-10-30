@@ -40,7 +40,7 @@ struct EditProfileView: View {
                 } footer: {
                     Text(hasDate
                          ? "An estimate is perfectly fine. Memories from before it are shown separately."
-                         : "Without a date, Relive doesn’t count days together.")
+                         : "Without a date, Yuvi doesn’t count days together.")
                 }
             }
             .scrollContentBackground(.hidden)

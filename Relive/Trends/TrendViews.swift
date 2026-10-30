@@ -347,7 +347,7 @@ struct AICreationDisclosure: View {
                 .font(Typography.callout.weight(.semibold))
                 .foregroundStyle(Palette.textPrimary)
             Text("This creation requires the photos you select to be processed by an AI provider.")
-            Text("Only the photos selected for this creation will be sent. The rest of your Relive library is not uploaded.")
+            Text("Only the photos selected for this creation will be sent. The rest of your Yuvi library is not uploaded.")
             Text("AI creations aren’t available yet, so nothing is sent today.")
                 .foregroundStyle(Palette.textTertiary)
         }
@@ -389,7 +389,7 @@ struct TrendCreationFlow: View {
                     onCancel: { dismiss() }
                 )
             } else {
-                QuietMessageView(title: "Not available yet", message: "This creation isn’t available in this version of Relive.")
+                QuietMessageView(title: "Not available yet", message: "This creation isn’t available in this version of Yuvi.")
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                     }

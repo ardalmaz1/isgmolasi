@@ -79,7 +79,7 @@ extension View {
             }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("Its photos stay in Relive and in the Photos app.")
+            Text("Its photos stay in Yuvi and in the Photos app.")
         }
     }
 }

@@ -173,7 +173,7 @@ struct AddFavoritesView: View {
     private var creationList: some View {
         let items = store.keptItems
         if items.isEmpty {
-            emptyMessage("Things you make with Relive will appear here.")
+            emptyMessage("Things you make with Yuvi will appear here.")
         } else {
             List(items) { item in
                 let already = store.isFavorite(.creation, item.favoriteID)

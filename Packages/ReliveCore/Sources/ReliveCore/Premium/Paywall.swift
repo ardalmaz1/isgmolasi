@@ -38,7 +38,7 @@ public struct PaywallCopy: Equatable, Sendable {
     public init(entry: PaywallEntryPoint) {
         context = switch entry {
         case .memoryBook: "Keep this book"
-        case .ourYear: "Relive your full year"
+        case .ourYear: "See your full year"
         case .monthlyRecap: "See the whole month"
         case .collageExport, .trendExport: "Create without limits"
         case .storyExport: "Keep every story"
@@ -47,7 +47,7 @@ public struct PaywallCopy: Equatable, Sendable {
         case .settings: nil
         }
         title = "Keep making memories worth keeping"
-        message = "Your memories are always yours.\nPremium gives you everything Relive can create from them."
+        message = "Your memories are always yours.\nPremium gives you everything Yuvi can create from them."
         benefits = [
             "Unlimited Memory Books",
             "Stories, Collages & Memory Movies",

@@ -133,7 +133,7 @@ struct KeptItemLink: View {
             Button("Delete \(item.kind.name)", role: .destructive) { store.deleteKept(item) }
             Button("Cancel", role: .cancel) {}
         } message: {
-            Text("It’s removed from Relive. Its photos stay in Relive and in the Photos app.")
+            Text("It’s removed from Yuvi. Its photos stay in Yuvi and in the Photos app.")
         }
     }
 }

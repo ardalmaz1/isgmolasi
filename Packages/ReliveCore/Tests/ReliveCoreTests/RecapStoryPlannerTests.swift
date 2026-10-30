@@ -146,7 +146,7 @@ struct MonthlyRecapPlanTests {
         #expect(!plan.isRich)
         #expect(plan.chapters.map(\.kind) == [.compactSummary])
         let compact = try #require(plan.chapters.first)
-        #expect(compact.text.title == "September was a quiet one in Relive.")
+        #expect(compact.text.title == "September was a quiet one in Yuvi.")
         #expect(compact.text.detail == "5 memories · 1 moment")
     }
 

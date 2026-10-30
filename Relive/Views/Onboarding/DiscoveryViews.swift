@@ -16,8 +16,8 @@ struct ChooseStartView: View {
 
             VStack(spacing: Spacing.s) {
                 StartChoice(
-                    title: "Let Relive find them",
-                    message: "Relive looks for possible moments on this iPhone. You decide what to keep.",
+                    title: "Let Yuvi find them",
+                    message: "Yuvi looks for possible moments on this iPhone. You decide what to keep.",
                     isRecommended: true,
                     identifier: "startDiscovery"
                 ) {
@@ -81,7 +81,7 @@ private struct StartChoice: View {
     }
 }
 
-/// What "Let Relive find them" does, before Apple's Photos permission is asked for.
+/// What "Let Yuvi find them" does, before Apple's Photos permission is asked for.
 struct DiscoveryPrivacyView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
@@ -90,13 +90,13 @@ struct DiscoveryPrivacyView: View {
 
     var body: some View {
         OnboardingScaffold(onBack: { app.advance(to: .chooseStart) }) {
-            Text("Relive looks. You decide.")
+            Text("Yuvi looks. You decide.")
                 .font(Typography.display)
                 .foregroundStyle(Palette.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: Spacing.m) {
-                PrivacyPoint(icon: "calendar", text: "Dates and places help Relive group photos into possible moments.")
+                PrivacyPoint(icon: "calendar", text: "Dates and places help Yuvi group photos into possible moments.")
                 PrivacyPoint(icon: "person.2", text: "It may count faces in a few photos, but it doesn’t know who anyone is.")
                 PrivacyPoint(icon: "iphone", text: "This happens on your iPhone. Your photos aren’t uploaded.")
                 PrivacyPoint(icon: "checkmark.circle", text: "You choose which moments belong in your story. Only those are kept.")
@@ -104,7 +104,7 @@ struct DiscoveryPrivacyView: View {
             }
             .padding(.top, Spacing.s)
 
-            Text("Next, iOS asks for access to your photos. Allowing full access lets Relive look; you can change this anytime in Settings.")
+            Text("Next, iOS asks for access to your photos. Allowing full access lets Yuvi look; you can change this anytime in Settings.")
                 .font(Typography.footnote)
                 .foregroundStyle(Palette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
@@ -177,12 +177,12 @@ struct DiscoveringView: View {
             case .nothingFound:
                 outcome(
                     title: "No moments yet",
-                    message: "Relive didn’t find groups of photos to suggest. You can choose a few memories yourself instead."
+                    message: "Yuvi didn’t find groups of photos to suggest. You can choose a few memories yourself instead."
                 )
             case .denied:
                 outcome(
-                    title: "Relive can’t see your photos",
-                    message: "Without access, Relive can’t suggest moments. You can allow access in Settings, or choose a few memories yourself.",
+                    title: "Yuvi can’t see your photos",
+                    message: "Without access, Yuvi can’t suggest moments. You can allow access in Settings, or choose a few memories yourself.",
                     settings: true
                 )
             case .cancelled:

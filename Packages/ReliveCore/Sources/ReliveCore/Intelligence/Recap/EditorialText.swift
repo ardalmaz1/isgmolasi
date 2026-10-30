@@ -132,7 +132,7 @@ public struct DeterministicEditorialTextProvider: EditorialTextProviding {
         case .compact(let period, let isYear, let memories, let moments):
             return EditorialText(
                 eyebrow: period,
-                title: isYear ? "Your \(period) is just getting started." : "\(period) was a quiet one in Relive.",
+                title: isYear ? "Your \(period) is just getting started." : "\(period) was a quiet one in Yuvi.",
                 detail: "\(Self.count(memories, "memory", "memories")) · \(Self.count(moments, "moment", "moments"))"
             )
         case .closing(let period, _, let memories, let moments, let places):

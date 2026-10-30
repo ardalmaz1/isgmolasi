@@ -3,7 +3,7 @@ import Observation
 import os
 import ReliveCore
 
-/// "Let Relive find them": with full Photos access, Relive suggests possible moments from the
+/// "Let Yuvi find them": with full Photos access, Relive suggests possible moments from the
 /// library's metadata and a few small local thumbnails, and the couple keeps the ones that are
 /// theirs. Only kept moments are imported into the story.
 ///

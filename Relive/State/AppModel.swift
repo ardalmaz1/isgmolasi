@@ -135,7 +135,7 @@ final class AppModel {
         storyStore.relationshipStart = nil
     }
 
-    /// "Let Relive find them" or "Choose memories myself".
+    /// "Let Yuvi find them" or "Choose memories myself".
     func chooseStartPath(_ path: PhotoStartPath) {
         profile.photoStartPath = path.rawValue
         repository.saveProfile(profile)

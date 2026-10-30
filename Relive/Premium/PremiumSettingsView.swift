@@ -28,11 +28,11 @@ struct PremiumSettingsView: View {
                     Button("Manage Subscription") { managesSubscription = true }
                         .accessibilityIdentifier("premiumManage")
                 } else {
-                    Button("See Relive Premium") { gate.showPaywall(.settings, premium: premium) }
+                    Button("See Yuvi Premium") { gate.showPaywall(.settings, premium: premium) }
                         .accessibilityIdentifier("premiumSee")
                 }
             } footer: {
-                Text("Your memories, moments, places, notes and favorites are always free. Premium is for what Relive creates from them.")
+                Text("Your memories, moments, places, notes and favorites are always free. Premium is for what Yuvi creates from them.")
             }
             .listRowBackground(Palette.surface)
 
@@ -58,7 +58,7 @@ struct PremiumSettingsView: View {
         }
         .scrollContentBackground(.hidden)
         .reliveBackground()
-        .navigationTitle("Relive Premium")
+        .navigationTitle("Yuvi Premium")
         .navigationBarTitleDisplayMode(.inline)
         .manageSubscriptionsSheet(isPresented: $managesSubscription)
         .premiumPaywall(gate)
@@ -70,7 +70,7 @@ struct PremiumSettingsView: View {
         if let grant = premium.status.grant {
             return grant.role == .annual ? "Premium · Annual" : "Premium · Monthly"
         }
-        return premium.status == .unknown ? "Checking…" : "Relive Free"
+        return premium.status == .unknown ? "Checking…" : "Yuvi Free"
     }
 
     private var detail: String {

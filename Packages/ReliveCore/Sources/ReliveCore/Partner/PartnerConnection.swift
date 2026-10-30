@@ -74,17 +74,17 @@ public enum PartnerMessage: Equatable, Sendable {
     public var text: String {
         switch self {
         case .signInToICloud:
-            "Sign in to iCloud in Settings to connect your partner. Relive works as usual without it."
+            "Sign in to iCloud in Settings to connect your partner. Yuvi works as usual without it."
         case .iCloudRestricted:
-            "iCloud isn’t available on this iPhone, so a partner can’t be connected. Relive works as usual without it."
+            "iCloud isn’t available on this iPhone, so a partner can’t be connected. Yuvi works as usual without it."
         case .iCloudUnknown:
-            "Relive couldn’t check iCloud right now. Try again in a moment."
+            "Yuvi couldn’t check iCloud right now. Try again in a moment."
         case .couldNotReachICloud:
-            "Relive couldn’t reach iCloud. Try again."
+            "Yuvi couldn’t reach iCloud. Try again."
         case .temporarilyUnavailable:
-            "Your partner connection is temporarily unavailable. Relive will try again."
+            "Your partner connection is temporarily unavailable. Yuvi will try again."
         case .relationshipFull:
-            "This Relive relationship already has two people."
+            "This Yuvi relationship already has two people."
         case .alreadyConnected:
             "You’re already connected with a partner. Disconnect first to accept another invitation."
         case .iCloudFull:

@@ -69,7 +69,7 @@ struct MonthlyRecapView: View {
                 if !recap.isSufficient {
                     QuietMessageView(
                         title: "Just a few memories this month",
-                        message: "There isn’t enough here for a recap yet. When you add more photos from this month, Relive will include them."
+                        message: "There isn’t enough here for a recap yet. When you add more photos from this month, Yuvi will include them."
                     )
                     if !recap.moments.isEmpty {
                         MomentLinks(moments: recap.moments)
@@ -99,7 +99,7 @@ struct MonthlyRecapView: View {
                     } else {
                         PremiumTeaser(
                             title: "See the whole month",
-                            message: "The full recap — every highlight, the trips, a collage or story made from this month, and a card to share — is part of Relive Premium.",
+                            message: "The full recap — every highlight, the trips, a collage or story made from this month, and a card to share — is part of Yuvi Premium.",
                             actionTitle: "See the Full Recap",
                             identifier: "recapUnlock"
                         ) {
@@ -267,8 +267,8 @@ struct OurYearView: View {
                     } else {
                         PremiumTeaser(
                             title: "Your \(String(year)) is ready",
-                            message: "See all \(Counted.text(review.months.count, "month", "months")) of \(String(year)) with memories, the closing, a story or collage of the year, and a card to share, with Relive Premium.",
-                            actionTitle: "Relive Your Full Year",
+                            message: "See all \(Counted.text(review.months.count, "month", "months")) of \(String(year)) with memories, the closing, a story or collage of the year, and a card to share, with Yuvi Premium.",
+                            actionTitle: "See Your Full Year",
                             identifier: "yearUnlock"
                         ) {
                             gate.showPaywall(.ourYear, premium: premium, heroAssetID: library.best(review.highlights(limit: 12)))

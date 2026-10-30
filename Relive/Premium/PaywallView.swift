@@ -215,7 +215,7 @@ struct PaywallView: View {
 
     private var alreadyPremium: some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
-            Text("You have Relive Premium.")
+            Text("You have Yuvi Premium.")
                 .font(Typography.title3)
                 .foregroundStyle(Palette.textPrimary)
             Button("Done", action: onClose)
@@ -340,9 +340,9 @@ struct PrivacySummaryView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: Spacing.m) {
-                    Text("Your photos stay on this iPhone and are organized on-device. Nothing is uploaded and there is no account. To name places, Relive asks Apple’s location service about a location — never a photo.")
-                    Text("Subscriptions are handled by Apple. Relive never sees your payment details; it only learns from the App Store whether Premium is active.")
-                    Text("Relive logs a few anonymous product events on this iPhone only (for example, that the paywall was opened). They never include photos, names, notes, captions or places.")
+                    Text("Your photos stay on this iPhone and are organized on-device. Nothing is uploaded and there is no account. To name places, Yuvi asks Apple’s location service about a location — never a photo.")
+                    Text("Subscriptions are handled by Apple. Yuvi never sees your payment details; it only learns from the App Store whether Premium is active.")
+                    Text("Yuvi logs a few anonymous product events on this iPhone only (for example, that the paywall was opened). They never include photos, names, notes, captions or places.")
                 }
                 .font(Typography.body)
                 .foregroundStyle(Palette.textPrimary)

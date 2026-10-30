@@ -52,7 +52,7 @@ struct RelationshipDateView: View {
             app.advance(to: .chooseStart)
         }
         .buttonStyle(.reliveQuiet)
-        .accessibilityHint("Relive won’t count days together until you add a date in Us")
+        .accessibilityHint("Yuvi won’t count days together until you add a date in Us")
         .accessibilityIdentifier("startDateSkip")
     }
 }

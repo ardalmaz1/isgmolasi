@@ -192,7 +192,7 @@ struct MomentPickerView: View {
 
         Group {
             if moments.isEmpty {
-                QuietMessageView(title: "No moments yet", message: "Add memories to your story and Relive will find its moments.")
+                QuietMessageView(title: "No moments yet", message: "Add memories to your story and Yuvi will find its moments.")
             } else {
                 List(moments) { moment in
                     let count = library.usablePhotos(in: moment).count

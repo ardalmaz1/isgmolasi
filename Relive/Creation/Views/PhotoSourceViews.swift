@@ -22,7 +22,7 @@ struct PhotoSourceChooserView: View {
 
                 VStack(spacing: Spacing.s) {
                     SourceRow(
-                        title: "From Relive",
+                        title: "From Yuvi",
                         detail: "Memories already in your story.",
                         systemImage: "book.closed",
                         action: onRelive
@@ -69,7 +69,7 @@ struct MovieSourceChooserView: View {
                         .font(Typography.title)
                         .foregroundStyle(Palette.textPrimary)
                         .accessibilityAddTraits(.isHeader)
-                    Text("Relive chooses the photos, the order and the rhythm. You can change anything after.")
+                    Text("Yuvi chooses the photos, the order and the rhythm. You can change anything after.")
                         .font(Typography.callout)
                         .foregroundStyle(Palette.textSecondary)
                         .fixedSize(horizontal: false, vertical: true)
@@ -85,7 +85,7 @@ struct MovieSourceChooserView: View {
                         .accessibilityIdentifier("movieSourceMonth")
                     SourceRow(title: "Choose a Year", detail: "Your year, as a short film.", systemImage: "calendar.badge.clock", action: onYear)
                         .accessibilityIdentifier("movieSourceYear")
-                    SourceRow(title: "Choose Photos", detail: "Pick the photos yourself; Relive keeps them as you chose.", systemImage: "photo.on.rectangle", action: onPhotos)
+                    SourceRow(title: "Choose Photos", detail: "Pick the photos yourself; Yuvi keeps them as you chose.", systemImage: "photo.on.rectangle", action: onPhotos)
                         .accessibilityIdentifier("movieSourcePhotos")
                 }
             }
@@ -235,8 +235,8 @@ struct PhotoLibraryUnavailableView: View {
 
     var body: some View {
         QuietMessageView(
-            title: count == 1 ? "Relive can’t open that photo" : "Relive can’t open those photos",
-            message: "Relive can only use photos you’ve shared with it. You can share more in Us → Photo Access, or choose others.",
+            title: count == 1 ? "Yuvi can’t open that photo" : "Yuvi can’t open those photos",
+            message: "Yuvi can only use photos you’ve shared with it. You can share more in Us → Photo Access, or choose others.",
             actionTitle: "Choose Again",
             action: onChooseAgain
         )

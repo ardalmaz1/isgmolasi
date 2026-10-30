@@ -165,7 +165,7 @@ struct PaywallTextTests {
 
     @Test func startFreeTrialOnlyForARealEligibleTrial() {
         let trial = IntroductoryOffer(paymentMode: .freeTrial, period: week, displayPrice: "$0.00")
-        var annual = PremiumProduct(id: annualID, role: .annual, displayName: "Relive Premium Annual", displayPrice: "$39.99", period: year, introductoryOffer: trial, isEligibleForIntroOffer: true)
+        var annual = PremiumProduct(id: annualID, role: .annual, displayName: "Yuvi Premium Annual", displayPrice: "$39.99", period: year, introductoryOffer: trial, isEligibleForIntroOffer: true)
         #expect(PaywallText.callToAction(annual) == "Start Free Trial")
         #expect(PaywallText.offerBadge(annual) == "1 week free")
         #expect(PaywallText.disclosure(annual).hasPrefix("Annual subscription: Free for 1 week, then $39.99 per year."))
@@ -184,7 +184,7 @@ struct PaywallTextTests {
     }
 
     @Test func monthlyAndPricesComeFromTheStore() {
-        let monthly = PremiumProduct(id: monthlyID, role: .monthly, displayName: "Relive Premium Monthly", displayPrice: "4,99 €", period: SubscriptionPeriod(value: 1, unit: .month))
+        let monthly = PremiumProduct(id: monthlyID, role: .monthly, displayName: "Yuvi Premium Monthly", displayPrice: "4,99 €", period: SubscriptionPeriod(value: 1, unit: .month))
         #expect(PaywallText.callToAction(monthly) == "Continue with Monthly")
         #expect(PaywallText.priceLine(monthly) == "4,99 € / month")
         #expect(PaywallText.callToAction(nil) == "Continue")
@@ -195,7 +195,7 @@ struct PaywallTextTests {
         let year = PaywallCopy(entry: .ourYear)
         let collage = PaywallCopy(entry: .collageExport)
         #expect(book.context == "Keep this book")
-        #expect(year.context == "Relive your full year")
+        #expect(year.context == "See your full year")
         #expect(collage.context == "Create without limits")
         #expect(PaywallCopy(entry: .settings).context == nil)
         #expect(book.title == "Keep making memories worth keeping")
