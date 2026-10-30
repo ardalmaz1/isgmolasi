@@ -204,7 +204,7 @@ struct KeptSummary {
     func accessibilityLabel(isFavorite: Bool) -> String {
         var parts = [title, detail]
         if missingCount > 0 { parts.append(Counted.text(missingCount, "photo missing", "photos missing")) }
-        if isFavorite { parts.append("Favorite") }
+        if isFavorite { parts.append(String(localized: "Favorite")) }
         return parts.joined(separator: ", ")
     }
 }
@@ -214,7 +214,7 @@ enum EditedText {
     static func kept(_ date: Date, now: Date = Date()) -> String {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
-        return date.timeIntervalSince(now) > -60 ? "Kept just now" : "Kept \(formatter.localizedString(for: date, relativeTo: now))"
+        return date.timeIntervalSince(now) > -60 ? String(localized: "Kept just now") : String(localized: "Kept \(formatter.localizedString(for: date, relativeTo: now))")
     }
 
     /// "Edited 12 minutes ago".
@@ -222,6 +222,6 @@ enum EditedText {
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .full
         let interval = date.timeIntervalSince(now)
-        return interval > -60 ? "Edited just now" : "Edited \(formatter.localizedString(for: date, relativeTo: now))"
+        return interval > -60 ? String(localized: "Edited just now") : String(localized: "Edited \(formatter.localizedString(for: date, relativeTo: now))")
     }
 }

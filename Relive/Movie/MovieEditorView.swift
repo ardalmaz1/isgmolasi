@@ -108,7 +108,7 @@ struct MovieEditorView: View {
         .sheet(item: Binding(get: { replacing.map(ReplaceRequest.init) }, set: { replacing = $0?.id })) { request in
             NavigationStack {
                 MemoryPickerView(
-                    title: "Replace Photo",
+                    title: String(localized: "Replace Photo"),
                     range: 1...1,
                     excluded: Set(model.plan.photoIDs),
                     limitedTo: Set(model.replacementCandidates),
@@ -159,7 +159,7 @@ struct MovieEditorView: View {
                     .buttonStyle(.plain)
                     .padding(Spacing.s)
                     .disabled(model.plan.scenes.isEmpty)
-                    .accessibilityLabel(isPlaying ? "Pause" : "Play")
+                    .accessibilityLabel(isPlaying ? String(localized: "Pause") : String(localized: "Play"))
                     .accessibilityIdentifier("moviePlay")
                 }
             VStack(spacing: 2) {
@@ -182,13 +182,13 @@ struct MovieEditorView: View {
     private var noteText: String? {
         if case .insufficient(let available, let required) = model.plan.status {
             return available == 0
-                ? "There are no photos here that can go into a movie."
-                : "A movie needs at least \(required) different photos, and there \(available == 1 ? "is 1" : "are \(available)") here. Choose a few more to make one."
+                ? String(localized: "There are no photos here that can go into a movie.")
+                : String(localized: "A movie needs at least \(required) different photos, and there \(available == 1 ? String(localized: "is 1") : String(localized: "are \(available)")) here. Choose a few more to make one.")
         }
         if !model.missing.isEmpty {
             return model.missing.count == 1
-                ? "One photo is no longer in your library and was left out."
-                : "\(model.missing.count) photos are no longer in your library and were left out."
+                ? String(localized: "One photo is no longer in your library and was left out.")
+                : String(localized: "\(model.missing.count) photos are no longer in your library and were left out.")
         }
         return nil
     }
@@ -200,11 +200,11 @@ struct MovieEditorView: View {
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
             Text("Title").eyebrowStyle()
-            Text(model.openingTitle ?? "No title")
+            Text(model.openingTitle ?? String(localized: "No title"))
                 .font(Typography.title3)
                 .foregroundStyle(model.openingTitle == nil ? Palette.textSecondary : Palette.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel(model.openingTitle.map { "Title: \($0)" } ?? "No title")
+                .accessibilityLabel(model.openingTitle.map { String(localized: "Title: \($0)") } ?? String(localized: "No title"))
                 .accessibilityIdentifier("movieTitleText")
             FlowLayout {
                 Button("Try another") {
@@ -280,7 +280,7 @@ struct MovieEditorView: View {
                 .accessibilityIdentifier("movieLength")
             }
             Toggle(isOn: Binding(get: { model.settings.showsText }, set: { model.setShowsText($0) })) {
-                LabeledText(label: "Titles", value: "The title, places and dates")
+                LabeledText(label: String(localized: "Titles"), value: String(localized: "The title, places and dates"))
             }
             .tint(Palette.accent)
             .accessibilityIdentifier("movieTitles")
@@ -344,7 +344,7 @@ struct MovieEditorView: View {
                         .strokeBorder(isSelected ? Palette.accent : Color.clear, lineWidth: 3)
                 }
                 .overlay(alignment: .bottomLeading) {
-                    Text(index == 0 ? "Opening" : "\(index + 1)")
+                    Text(index == 0 ? String(localized: "Opening") : "\(index + 1)")
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 5)
@@ -355,7 +355,7 @@ struct MovieEditorView: View {
                 .frame(minWidth: 44, minHeight: 44)
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(index == 0 ? "Opening scene" : "Scene \(index + 1) of \(model.plan.scenes.count)")
+        .accessibilityLabel(index == 0 ? String(localized: "Opening scene") : String(localized: "Scene \(index + 1) of \(model.plan.scenes.count)"))
         .accessibilityAddTraits(isSelected ? [.isSelected, .isButton] : .isButton)
         .accessibilityIdentifier("movieScene")
     }
@@ -363,24 +363,24 @@ struct MovieEditorView: View {
     private func sceneActions(id: AssetID, index: Int) -> some View {
         let count = model.plan.scenes.count
         return FlowLayout {
-            actionButton("Earlier", systemImage: "arrow.left", identifier: "movieSceneEarlier", disabled: index == 0) {
+            actionButton(String(localized: "Earlier"), systemImage: "arrow.left", identifier: "movieSceneEarlier", disabled: index == 0) {
                 model.move(id, by: -1)
             }
-            actionButton("Later", systemImage: "arrow.right", identifier: "movieSceneLater", disabled: index >= count - 1) {
+            actionButton(String(localized: "Later"), systemImage: "arrow.right", identifier: "movieSceneLater", disabled: index >= count - 1) {
                 model.move(id, by: 1)
             }
-            actionButton("Make Opening", systemImage: "star", identifier: "movieSceneOpening", disabled: index == 0) {
+            actionButton(String(localized: "Make Opening"), systemImage: "star", identifier: "movieSceneOpening", disabled: index == 0) {
                 model.makeOpening(id)
             }
-            actionButton("Replace", systemImage: "arrow.triangle.2.circlepath", identifier: "movieSceneReplace", disabled: model.replacementCandidates.isEmpty) {
+            actionButton(String(localized: "Replace"), systemImage: "arrow.triangle.2.circlepath", identifier: "movieSceneReplace", disabled: model.replacementCandidates.isEmpty) {
                 replacing = id
             }
-            actionButton("Remove", systemImage: "trash", identifier: "movieSceneRemove", disabled: count <= MovieEligibility.minimumPhotos) {
+            actionButton(String(localized: "Remove"), systemImage: "trash", identifier: "movieSceneRemove", disabled: count <= MovieEligibility.minimumPhotos) {
                 model.remove(id)
             }
             // A photo that shouldn't be in an automatic movie: out of this one, and never
             // suggested again (it stays in the story).
-            actionButton("Don’t Suggest", systemImage: "eye.slash", identifier: "movieSceneDontSuggest", disabled: count <= MovieEligibility.minimumPhotos) {
+            actionButton(String(localized: "Don’t Suggest"), systemImage: "eye.slash", identifier: "movieSceneDontSuggest", disabled: count <= MovieEligibility.minimumPhotos) {
                 model.removeAndDontSuggest(id, store: store)
             }
         }
@@ -448,9 +448,9 @@ struct MovieEditorView: View {
     private var exportOverlay: some View {
         switch model.export.phase {
         case .rendering(let progress):
-            progressCard(title: "Creating your movie…", progress: progress, cancellable: true)
+            progressCard(title: String(localized: "Creating your movie…"), progress: progress, cancellable: true)
         case .saving:
-            progressCard(title: "Saving to Photos…", progress: nil, cancellable: false)
+            progressCard(title: String(localized: "Saving to Photos…"), progress: nil, cancellable: false)
         default:
             EmptyView()
         }

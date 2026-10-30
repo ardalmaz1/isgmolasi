@@ -31,9 +31,9 @@ enum CreationText {
             return trimmed.isEmpty ? nil : trimmed
         case .month(let month):
             guard let name = monthName(month) else { return nil }
-            return use == .headline ? "\(name) Together" : name
+            return use == .headline ? String(localized: "\(name) Together") : name
         case .year(let year):
-            return use == .headline ? "Our \(year)" : String(year)
+            return use == .headline ? String(localized: "Our \(year)") : String(year)
         }
     }
 
@@ -97,8 +97,8 @@ enum CreationText {
     /// "36.20° N · 29.64° E"
     static func coordinate(_ coordinate: GeoCoordinate?) -> String? {
         guard let coordinate, coordinate.isValid else { return nil }
-        let latitude = String(format: "%.2f° %@", abs(coordinate.latitude), coordinate.latitude >= 0 ? "N" : "S")
-        let longitude = String(format: "%.2f° %@", abs(coordinate.longitude), coordinate.longitude >= 0 ? "E" : "W")
+        let latitude = String(format: "%.2f° %@", abs(coordinate.latitude), coordinate.latitude >= 0 ? String(localized: "N", comment: "North abbreviation in geographic coordinates") : String(localized: "S", comment: "South abbreviation in geographic coordinates"))
+        let longitude = String(format: "%.2f° %@", abs(coordinate.longitude), coordinate.longitude >= 0 ? String(localized: "E", comment: "East abbreviation in geographic coordinates") : String(localized: "W", comment: "West abbreviation in geographic coordinates"))
         return "\(latitude) · \(longitude)"
     }
 

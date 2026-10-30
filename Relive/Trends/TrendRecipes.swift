@@ -145,7 +145,7 @@ enum TrendText {
 
 struct BWEditorialRecipe: TrendRecipe {
     let reference = TrendRecipeReference(id: "bw-editorial", version: 1)
-    let variations = ["Noir", "Soft"]
+    let variations = [String(localized: "Noir"), String(localized: "Soft")]
     let aspectRatio = CreationAspectRatio.portrait
 
     static let border: CGFloat = 64
@@ -212,7 +212,7 @@ struct BWEditorialRecipe: TrendRecipe {
 
 struct FilmCoupleRecipe: TrendRecipe {
     let reference = TrendRecipeReference(id: "film-couple", version: 1)
-    let variations = ["Warm", "Faded", "Cool"]
+    let variations = [String(localized: "Warm"), String(localized: "Faded"), String(localized: "Cool")]
     let aspectRatio = CreationAspectRatio.portrait
 
     func photoFrames(count: Int) -> [CanvasSize] { [designSize] }
@@ -254,7 +254,7 @@ struct FilmCoupleRecipe: TrendRecipe {
 
 struct PhotoBoothRecipe: TrendRecipe {
     let reference = TrendRecipeReference(id: "photo-booth", version: 1)
-    let variations = ["Black & White", "Colour"]
+    let variations = [String(localized: "Black & White"), String(localized: "Colour")]
     let aspectRatio = CreationAspectRatio.story
 
     static let stripWidth: CGFloat = 560
@@ -311,7 +311,7 @@ struct PhotoBoothRecipe: TrendRecipe {
 
 struct MagazineCoverRecipe: TrendRecipe {
     let reference = TrendRecipeReference(id: "magazine-cover", version: 1)
-    let variations = ["White", "Black", "Red"]
+    let variations = [String(localized: "White"), String(localized: "Black"), String(localized: "Red")]
     let aspectRatio = CreationAspectRatio.portrait
 
     func photoFrames(count: Int) -> [CanvasSize] { [designSize] }
@@ -374,7 +374,7 @@ struct MagazineCoverRecipe: TrendRecipe {
 
 struct CinematicPosterRecipe: TrendRecipe {
     let reference = TrendRecipeReference(id: "cinematic-poster", version: 1)
-    let variations = ["Colour", "Mono"]
+    let variations = [String(localized: "Colour"), String(localized: "Mono")]
     let aspectRatio = CreationAspectRatio.story
 
     /// A 2.39 : 1 widescreen frame across the poster.
@@ -399,8 +399,8 @@ struct CinematicPosterRecipe: TrendRecipe {
         let frame = photoFrames(count: 1)[0]
         let title = TrendText.place(context)
         var credits: [String] = []
-        if let names = context.coupleNames { credits.append("starring \(names)") }
-        if let day = TrendText.day(context) { credits.append("filmed \(day)") }
+        if let names = context.coupleNames { credits.append(String(localized: "starring \(names)")) }
+        if let day = TrendText.day(context) { credits.append(String(localized: "filmed \(day)")) }
         return AnyView(
             ZStack {
                 Color.black

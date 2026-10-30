@@ -137,9 +137,9 @@ enum TrendFlowPolicy {
             // the disclosure first (see `needsDisclosure`).
             return .choosePhotos
         case .comingSoon:
-            return .unavailable("Not available yet")
+            return .unavailable(String(localized: "Not available yet"))
         case .hidden:
-            return .unavailable("Not available")
+            return .unavailable(String(localized: "Not available"))
         }
     }
 
@@ -150,7 +150,7 @@ enum TrendFlowPolicy {
 
     static func privacyLine(for trend: TrendDefinition) -> String {
         needsDisclosure(trend)
-            ? "This creation needs the photos you choose to be processed by an AI provider. Only those photos would be sent — never the rest of your library."
-            : "Made on this iPhone. Your photos aren’t uploaded."
+            ? String(localized: "This creation needs the photos you choose to be processed by an AI provider. Only those photos would be sent — never the rest of your library.")
+            : String(localized: "Made on this iPhone. Your photos aren’t uploaded.")
     }
 }

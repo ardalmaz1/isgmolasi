@@ -226,9 +226,9 @@ struct RecapPageView: View {
                     .accessibilityHidden(true)
             }
             PremiumTeaser(
-                title: "The rest of \(actions.periodName)",
-                message: "\(remaining == 1 ? "One more chapter" : "\(remaining) more chapters") — and a card to share — are part of Yuvi Premium.",
-                actionTitle: isYear ? "See Your Full Year" : "See the Full Recap",
+                title: String(localized: "The rest of \(actions.periodName)"),
+                message: String(localized: "\(remaining == 1 ? String(localized: "One more chapter") : String(localized: "\(remaining) more chapters")) — and a card to share — are part of Yuvi Premium."),
+                actionTitle: isYear ? String(localized: "See Your Full Year") : String(localized: "See the Full Recap"),
                 identifier: "recapSeeAll",
                 action: actions.seeAll
             )

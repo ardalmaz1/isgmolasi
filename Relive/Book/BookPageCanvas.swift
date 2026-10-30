@@ -58,12 +58,12 @@ struct BookPageText {
             // neutral "Our Memories" (several years, or no dates) — never a borrowed title.
             let period = CreationText.periodLine(page.dateSpan)
             let singleDay = page.dateSpan.map { Calendar.current.isDate($0.start, inSameDayAs: $0.end) } ?? false
-            let headline = title ?? (singleDay ? CreationText.dateLine(page.dateSpan) : "Our Memories")
+            let headline = title ?? (singleDay ? CreationText.dateLine(page.dateSpan) : String(localized: "Our Memories"))
             self.title = headline
             subtitle = [headline == title ? period : (singleDay ? nil : period), place == headline ? nil : place]
                 .compactMap { $0 }.joined(separator: " · ").nilIfEmpty
         case .tripTitle:
-            eyebrow = "A trip"
+            eyebrow = String(localized: "A trip")
             self.title = title
             subtitle = [CreationText.dateLine(page.dateSpan), place == title ? nil : place].compactMap { $0 }.joined(separator: " · ").nilIfEmpty
         case .opener:
@@ -74,7 +74,7 @@ struct BookPageText {
         case .bookNote:
             body = page.text
         case .momentNote:
-            eyebrow = "Your note"
+            eyebrow = String(localized: "Your note")
             self.title = CreationText.title(page.title, use: .label)
             body = page.text
         case .photos:
@@ -93,9 +93,9 @@ struct BookPageText {
         let text = BookPageText(page: page)
         var parts: [String] = []
         switch page.kind {
-        case .cover: parts.append("Cover")
-        case .closing: parts.append("Last page")
-        default: parts.append("Page \(page.id + 1) of \(total)")
+        case .cover: parts.append(String(localized: "Cover"))
+        case .closing: parts.append(String(localized: "Last page"))
+        default: parts.append(String(localized: "Page \(page.id + 1) of \(total)"))
         }
         parts += [text.eyebrow, text.title, text.subtitle, text.body].compactMap { $0 }
         if !page.slots.isEmpty {

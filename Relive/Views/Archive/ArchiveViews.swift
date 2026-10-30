@@ -43,7 +43,7 @@ struct MemoriesLibraryView: View {
         let archive = store.archive
         ScrollView {
             if archive.memoryCount == 0 {
-                QuietMessageView(title: "No memories yet", message: "Add photos of the two of you and they’ll all be here.")
+                QuietMessageView(title: String(localized: "No memories yet"), message: String(localized: "Add photos of the two of you and they’ll all be here."))
                     .padding(.top, Spacing.xl)
             } else {
                 LazyVGrid(columns: columns, spacing: 2, pinnedViews: [.sectionHeaders]) {
@@ -88,7 +88,7 @@ struct MemoriesLibraryView: View {
 
     private func title(_ group: ArchiveIndex.MonthGroup) -> String {
         guard let month = group.month,
-              let date = store.calendar.date(from: DateComponents(year: month.year, month: month.month, day: 1)) else { return "Undated" }
+              let date = store.calendar.date(from: DateComponents(year: month.year, month: month.month, day: 1)) else { return String(localized: "Undated") }
         return DateText.monthYear(date)
     }
 }
@@ -142,7 +142,7 @@ private struct MemoryCell: View {
         .buttonStyle(.plain)
         .contextMenu {
             Button { store.toggleFavorite(.memory, asset.id) } label: {
-                Label(isFavorite ? "Remove from Favorites" : "Favorite", systemImage: isFavorite ? "heart.slash" : "heart")
+                Label(isFavorite ? String(localized: "Remove from Favorites") : String(localized: "Favorite"), systemImage: isFavorite ? "heart.slash" : "heart")
             }
             if let moment = store.archiveMoment(containing: asset.id) {
                 Button { onOpenMoment(moment.id) } label: {
@@ -153,8 +153,8 @@ private struct MemoryCell: View {
             NotSuggestedToggle(assetID: asset.id)
         }
         .accessibilityActions {
-            Button(isFavorite ? "Remove from Favorites" : "Favorite") { store.toggleFavorite(.memory, asset.id) }
-            Button(notSuggested ? "Suggest This Memory Again" : "Don’t Suggest This Memory") { store.setNotSuggested(asset.id, !notSuggested) }
+            Button(isFavorite ? String(localized: "Remove from Favorites") : String(localized: "Favorite")) { store.toggleFavorite(.memory, asset.id) }
+            Button(notSuggested ? String(localized: "Suggest This Memory Again") : String(localized: "Don’t Suggest This Memory")) { store.setNotSuggested(asset.id, !notSuggested) }
         }
         .accessibilityIdentifier("archiveMemory")
     }
@@ -190,7 +190,7 @@ struct MomentsLibraryView: View {
         let ids = store.archive.momentIDs
         ScrollView {
             if ids.isEmpty {
-                QuietMessageView(title: "No moments yet", message: "Yuvi gathers your photos into moments as your story grows.")
+                QuietMessageView(title: String(localized: "No moments yet"), message: String(localized: "Yuvi gathers your photos into moments as your story grows."))
                     .padding(.top, Spacing.xl)
             } else {
                 LazyVStack(alignment: .leading, spacing: Spacing.s) {
@@ -231,7 +231,7 @@ struct ArchiveMomentRow: View {
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Spacing.xxs) {
-                Text(moment.title.primary.isEmpty ? "A moment" : moment.title.primary)
+                Text(moment.title.primary.isEmpty ? String(localized: "A moment") : moment.title.primary)
                     .font(Typography.title3)
                     .foregroundStyle(Palette.textPrimary)
                     .multilineTextAlignment(.leading)
@@ -272,7 +272,7 @@ struct PlacesView: View {
         let places = store.archive.places
         ScrollView {
             if places.isEmpty {
-                QuietMessageView(title: "No places yet", message: "Photos with a location appear here by place.")
+                QuietMessageView(title: String(localized: "No places yet"), message: String(localized: "Photos with a location appear here by place."))
                     .padding(.top, Spacing.xl)
             } else {
                 LazyVStack(alignment: .leading, spacing: Spacing.s) {
@@ -297,7 +297,7 @@ struct PlacesView: View {
 
 extension ArchiveIndex.Place {
     /// "Kaş", or "A place without a name" — Relive never invents one.
-    var displayName: String { name?.name ?? "A place without a name" }
+    var displayName: String { name?.name ?? String(localized: "A place without a name") }
 }
 
 private struct PlaceRow: View {
@@ -356,12 +356,12 @@ struct PlaceDetailView: View {
             MomentListView(
                 title: place.displayName,
                 summary: "\(Counted.text(place.momentIDs.count, "moment", "moments")) · \(Counted.text(place.memoryCount, "memory", "memories"))",
-                note: place.name == nil ? "Yuvi couldn’t find a name for this location." : nil,
+                note: place.name == nil ? String(localized: "Yuvi couldn’t find a name for this location.") : nil,
                 momentIDs: place.momentIDs,
                 source: "place"
             )
         } else {
-            GoneView(message: "Its moments may have been hidden.")
+            GoneView(message: String(localized: "Its moments may have been hidden."))
         }
     }
 }
@@ -377,14 +377,14 @@ struct TripDetailView: View {
         if let chapter = store.story.chapter(id: tripID), !moments.isEmpty {
             let memories = moments.compactMap(store.moment(id:)).reduce(0) { $0 + store.archiveMemoryCount(of: $1) }
             MomentListView(
-                title: chapter.title.primary.isEmpty ? "A trip" : chapter.title.primary,
+                title: chapter.title.primary.isEmpty ? String(localized: "A trip") : chapter.title.primary,
                 summary: [DateText.range(start: chapter.startDate, end: chapter.endDate, includeYear: true), "\(Counted.text(moments.count, "moment", "moments")) · \(Counted.text(memories, "memory", "memories"))"].compactMap { $0 }.joined(separator: " · "),
                 note: nil,
                 momentIDs: moments,
                 source: "trip"
             )
         } else {
-            GoneView(message: "Its moments may have been hidden.")
+            GoneView(message: String(localized: "Its moments may have been hidden."))
         }
     }
 }
@@ -393,7 +393,7 @@ private struct GoneView: View {
     let message: String
 
     var body: some View {
-        QuietMessageView(title: "This isn’t in your story anymore", message: message)
+        QuietMessageView(title: String(localized: "This isn’t in your story anymore"), message: message)
             .frame(maxHeight: .infinity)
             .reliveBackground()
     }

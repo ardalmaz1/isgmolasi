@@ -62,8 +62,8 @@ struct PhotoSelectionView: View {
             }
         case .denied:
             AccessBanner(
-                message: "Yuvi can’t see any photos right now. You can choose which ones it may see in Settings.",
-                actionTitle: "Open Settings",
+                message: String(localized: "Yuvi can’t see any photos right now. You can choose which ones it may see in Settings."),
+                actionTitle: String(localized: "Open Settings"),
                 action: { SystemPresenter.openSettings() }
             )
         case .finished where store.selectionCount < PhotoSelectionModel.minimumToBegin:
@@ -80,7 +80,7 @@ struct PhotoSelectionView: View {
 
     @ViewBuilder
     private var footer: some View {
-        Button(store.selectionCount > 0 ? "Choose More Photos" : "Choose Our Photos", action: choose)
+        Button(store.selectionCount > 0 ? String(localized: "Choose More Photos") : String(localized: "Choose Our Photos"), action: choose)
             .buttonStyle(.relivePrimary)
             .disabled(selection.phase == .importing || selection.phase == .requestingAccess)
             .accessibilityIdentifier("manualChoosePhotos")
@@ -88,9 +88,9 @@ struct PhotoSelectionView: View {
 
     private var fewPhotosMessage: String {
         if store.selectionCount == 0 {
-            return "No photos chosen yet. Pick a few that feel like the two of you."
+            return String(localized: "No photos chosen yet. Pick a few that feel like the two of you.")
         }
-        return "Yuvi needs at least \(PhotoSelectionModel.minimumToBegin) photos to begin — you chose \(store.selectionCount). Choose a few more."
+        return String(localized: "Yuvi needs at least \(PhotoSelectionModel.minimumToBegin) photos to begin — you chose \(store.selectionCount). Choose a few more.")
     }
 
     private func choose() {

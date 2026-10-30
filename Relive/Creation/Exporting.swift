@@ -15,14 +15,14 @@ enum CreationExportError: LocalizedError, Equatable {
         switch self {
         case .missingPhotos(let count):
             count == 1
-                ? "One photo is no longer in your library. Replace or remove it, then try again."
-                : "\(count) photos are no longer in your library. Replace or remove them, then try again."
+                ? String(localized: "One photo is no longer in your library. Replace or remove it, then try again.")
+                : String(localized: "\(count) photos are no longer in your library. Replace or remove them, then try again.")
         case .renderFailed:
-            "Something went wrong while making the image. Please try again."
+            String(localized: "Something went wrong while making the image. Please try again.")
         case .photosAccessDenied:
-            "Yuvi isn’t allowed to save to Photos. You can allow it in Settings."
+            String(localized: "Yuvi isn’t allowed to save to Photos. You can allow it in Settings.")
         case .saveFailed:
-            "Couldn’t save to Photos. Please try again."
+            String(localized: "Couldn’t save to Photos. Please try again.")
         }
     }
 }
@@ -165,7 +165,7 @@ final class ExportController {
         render: @escaping @MainActor () async throws -> [UIImage]
     ) async {
         let saver = self.saver
-        await run(message: "Saving…") {
+        await run(message: String(localized: "Saving…")) {
             let images = try await render()
             let jpegs = await Self.encode(images)
             guard jpegs.count == images.count, !jpegs.isEmpty else { throw CreationExportError.renderFailed }
@@ -173,7 +173,7 @@ final class ExportController {
             store.recordCreatedAssets(ids)
             analytics.track(.creationExported, properties.merging(["destination": "photos", "images": String(jpegs.count)]) { $1 })
             onSaved()
-            return jpegs.count == 1 ? "Saved to Photos" : "\(jpegs.count) images saved to Photos"
+            return jpegs.count == 1 ? String(localized: "Saved to Photos") : String(localized: "\(jpegs.count) images saved to Photos")
         }
     }
 
@@ -183,7 +183,7 @@ final class ExportController {
         store: StoryStore,
         analytics: any AnalyticsTracking,
         properties: [String: String],
-        message: String = "Saving…",
+        message: String = String(localized: "Saving…"),
         onSaved: @escaping @MainActor () -> Void = {},
         render: @escaping @MainActor () async throws -> [Data]
     ) async {
@@ -195,7 +195,7 @@ final class ExportController {
             store.recordCreatedAssets(ids)
             analytics.track(.creationExported, properties.merging(["destination": "photos", "images": String(jpegs.count)]) { $1 })
             onSaved()
-            return jpegs.count == 1 ? "Saved to Photos" : "\(jpegs.count) images saved to Photos"
+            return jpegs.count == 1 ? String(localized: "Saved to Photos") : String(localized: "\(jpegs.count) images saved to Photos")
         }
     }
 
@@ -208,7 +208,7 @@ final class ExportController {
         onShared: @escaping @MainActor () -> Void = {},
         render: @escaping @MainActor () async throws -> [UIImage]
     ) async {
-        await run(message: "Preparing…") {
+        await run(message: String(localized: "Preparing…")) {
             let images = try await render()
             let jpegs = await Self.encode(images)
             guard jpegs.count == images.count, !jpegs.isEmpty else { throw CreationExportError.renderFailed }
@@ -243,9 +243,9 @@ final class ExportController {
             phase = .idle
         } catch let error as CreationExportError {
             offersSettings = error == .photosAccessDenied
-            phase = .failed(error.errorDescription ?? "Something went wrong.")
+            phase = .failed(error.errorDescription ?? String(localized: "Something went wrong."))
         } catch {
-            phase = .failed(CreationExportError.renderFailed.errorDescription ?? "Something went wrong.")
+            phase = .failed(CreationExportError.renderFailed.errorDescription ?? String(localized: "Something went wrong."))
         }
     }
 

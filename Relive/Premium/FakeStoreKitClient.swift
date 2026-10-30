@@ -126,7 +126,7 @@ final class FakeStoreKitClient: StoreKitClient, @unchecked Sendable {
             PremiumProduct(
                 id: PremiumProductRole.annual.productID,
                 role: .annual,
-                displayName: "Yuvi Premium Annual",
+                displayName: String(localized: "Yuvi Premium Annual"),
                 displayPrice: "$39.99",
                 period: SubscriptionPeriod(value: 1, unit: .year),
                 introductoryOffer: withTrial ? IntroductoryOffer(paymentMode: .freeTrial, period: SubscriptionPeriod(value: 1, unit: .week), displayPrice: "$0.00") : nil,
@@ -135,7 +135,7 @@ final class FakeStoreKitClient: StoreKitClient, @unchecked Sendable {
             PremiumProduct(
                 id: PremiumProductRole.monthly.productID,
                 role: .monthly,
-                displayName: "Yuvi Premium Monthly",
+                displayName: String(localized: "Yuvi Premium Monthly"),
                 displayPrice: "$9.99",
                 period: SubscriptionPeriod(value: 1, unit: .month)
             ),

@@ -33,7 +33,7 @@ struct RelationshipDateView: View {
             }
             .buttonStyle(.relivePrimary)
             .disabled(!draft.isComplete)
-            .accessibilityHint(draft.isComplete ? "" : "Choose a month and a year, or skip")
+            .accessibilityHint(draft.isComplete ? "" : String(localized: "Choose a month and a year, or skip"))
             .accessibilityIdentifier("startDateContinue")
             if !typeSize.isAccessibilitySize {
                 skipButton
@@ -147,7 +147,7 @@ struct RelationshipDatePicker: View {
                 }
             }
 
-            Button(draft.knowsExactDay ? "I only remember the month" : "I know the exact day") {
+            Button(draft.knowsExactDay ? String(localized: "I only remember the month") : String(localized: "I know the exact day")) {
                 withAnimation(.easeInOut(duration: 0.25)) {
                     if draft.knowsExactDay {
                         // Back to month and year: keep only what was actually chosen.

@@ -23,15 +23,15 @@ struct UsView: View {
                 // The archive: every memory, moment and place — always free to browse.
                 Section {
                     NavigationLink(value: ArchiveRoute.memories) {
-                        StatRow(title: "Memories", value: store.statistics.memoryCount)
+                        StatRow(title: String(localized: "Memories"), value: store.statistics.memoryCount)
                     }
                     .accessibilityIdentifier("usMemories")
                     NavigationLink(value: ArchiveRoute.moments) {
-                        StatRow(title: "Moments", value: store.statistics.momentCount)
+                        StatRow(title: String(localized: "Moments"), value: store.statistics.momentCount)
                     }
                     .accessibilityIdentifier("usMoments")
                     NavigationLink(value: ArchiveRoute.places) {
-                        StatRow(title: "Places", value: store.statistics.placeCount)
+                        StatRow(title: String(localized: "Places"), value: store.statistics.placeCount)
                     }
                     .accessibilityIdentifier("usPlaces")
                 }
@@ -39,16 +39,16 @@ struct UsView: View {
 
                 Section("Kept in Yuvi") {
                     NavigationLink(value: CollectionRoute.favorites) {
-                        CountRow(title: "Favorites", count: store.visibleFavoritesCount)
+                        CountRow(title: String(localized: "Favorites"), count: store.visibleFavoritesCount)
                     }
                     .accessibilityIdentifier("usFavorites")
                     NavigationLink(value: CollectionRoute.creations) {
-                        CountRow(title: "My Creations", count: store.keptItems.count)
+                        CountRow(title: String(localized: "My Creations"), count: store.keptItems.count)
                     }
                     .accessibilityIdentifier("usCreations")
                     if !store.drafts.isEmpty {
                         NavigationLink(value: CollectionRoute.drafts) {
-                            CountRow(title: "Drafts", count: store.drafts.count)
+                            CountRow(title: String(localized: "Drafts"), count: store.drafts.count)
                         }
                     }
                 }
@@ -159,7 +159,7 @@ private struct UsHeader: View {
                     .font(Typography.callout)
                     .foregroundStyle(Palette.textSecondary)
                 let days = start.daysTogether(until: Date(), calendar: .current)
-                Text(start.isApproximate ? "About \(Counted.text(days, "day", "days"))" : Counted.text(days, "day", "days"))
+                Text(start.isApproximate ? String(localized: "About \(Counted.text(days, "day", "days"))") : Counted.text(days, "day", "days"))
                     .font(Typography.title2)
                     .foregroundStyle(Palette.textPrimary)
                     .padding(.top, Spacing.xs)
@@ -225,14 +225,14 @@ private struct PhotoAccessRow: View {
 
     private var statusText: String {
         switch store.accessStatus {
-        case .limited: "Yuvi sees only the \(Counted.text(store.selectionCount, "photo", "photos")) you chose."
-        case .full: "Full access is on, so Yuvi can suggest moments when you ask it to. Your story holds the \(Counted.text(store.selectionCount, "photo", "photos")) you chose or kept."
-        case .denied, .restricted: "Yuvi can’t see any photos right now."
-        case .notDetermined: "Yuvi hasn’t asked to see any photos yet."
+        case .limited: String(localized: "Yuvi sees only the \(Counted.text(store.selectionCount, "photo", "photos")) you chose.")
+        case .full: String(localized: "Full access is on, so Yuvi can suggest moments when you ask it to. Your story holds the \(Counted.text(store.selectionCount, "photo", "photos")) you chose or kept.")
+        case .denied, .restricted: String(localized: "Yuvi can’t see any photos right now.")
+        case .notDetermined: String(localized: "Yuvi hasn’t asked to see any photos yet.")
         }
     }
 
     private var actionTitle: String {
-        store.accessStatus == .limited ? "Change Selection" : "Open Settings"
+        store.accessStatus == .limited ? String(localized: "Change Selection") : String(localized: "Open Settings")
     }
 }

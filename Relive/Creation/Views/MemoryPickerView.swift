@@ -51,8 +51,8 @@ struct MemoryPickerView: View {
         Group {
             if groups.isEmpty {
                 QuietMessageView(
-                    title: "No photos to choose from",
-                    message: "Add memories to your story and they’ll appear here."
+                    title: String(localized: "No photos to choose from"),
+                    message: String(localized: "Add memories to your story and they’ll appear here.")
                 )
             } else {
                 ScrollView {
@@ -103,7 +103,7 @@ struct MemoryPickerView: View {
                 Button("Cancel", action: onCancel)
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button(isSingle ? "Use Photo" : "Done") { onDone(selection) }
+                Button(isSingle ? String(localized: "Use Photo") : String(localized: "Done")) { onDone(selection) }
                     .disabled(!range.contains(selection.count))
                     .accessibilityIdentifier("pickerDone")
             }
@@ -111,13 +111,13 @@ struct MemoryPickerView: View {
     }
 
     private var statusText: String {
-        if showsLimit { return "You can choose up to \(range.upperBound) photos." }
-        if isSingle { return "Choose a photo" }
-        if selection.isEmpty { return "Choose \(range.lowerBound)–\(range.upperBound) photos" }
+        if showsLimit { return String(localized: "You can choose up to \(range.upperBound) photos.") }
+        if isSingle { return String(localized: "Choose a photo") }
+        if selection.isEmpty { return String(localized: "Choose \(range.lowerBound)–\(range.upperBound) photos") }
         if selection.count < range.lowerBound {
-            return "\(selection.count) chosen · choose at least \(range.lowerBound)"
+            return String(localized: "\(selection.count) chosen · choose at least \(range.lowerBound)")
         }
-        return "\(selection.count) of up to \(range.upperBound) chosen"
+        return String(localized: "\(selection.count) of up to \(range.upperBound) chosen")
     }
 
     private func cell(for id: AssetID) -> some View {
@@ -147,14 +147,14 @@ struct MemoryPickerView: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(accessibilityLabel(for: id))
-        .accessibilityValue(order.map { isSingle ? "Selected" : "Selected, number \($0 + 1)" } ?? "")
+        .accessibilityValue(order.map { isSingle ? String(localized: "Selected") : String(localized: "Selected, number \($0 + 1)") } ?? "")
         .accessibilityAddTraits(order != nil ? .isSelected : [])
         .accessibilityIdentifier("pickerPhoto")
     }
 
     private func accessibilityLabel(for id: AssetID) -> String {
-        guard let date = store.assets[id]?.creationDate else { return "Photo" }
-        return "Photo, \(date.formatted(date: .abbreviated, time: .shortened))"
+        guard let date = store.assets[id]?.creationDate else { return String(localized: "Photo") }
+        return String(localized: "Photo, \(date.formatted(date: .abbreviated, time: .shortened))")
     }
 
     private func toggle(_ id: AssetID) {
@@ -192,7 +192,7 @@ struct MomentPickerView: View {
 
         Group {
             if moments.isEmpty {
-                QuietMessageView(title: "No moments yet", message: "Add memories to your story and Yuvi will find its moments.")
+                QuietMessageView(title: String(localized: "No moments yet"), message: String(localized: "Add memories to your story and Yuvi will find its moments."))
             } else {
                 List(moments) { moment in
                     let count = library.usablePhotos(in: moment).count
@@ -214,7 +214,7 @@ struct MomentPickerView: View {
                                         .font(Typography.footnote)
                                         .foregroundStyle(Palette.textSecondary)
                                 }
-                                Text(enough ? Counted.text(count, "photo", "photos") : "Needs at least \(kind.photoRange.lowerBound) photos")
+                                Text(enough ? Counted.text(count, "photo", "photos") : String(localized: "Needs at least \(kind.photoRange.lowerBound) photos"))
                                     .font(Typography.footnote)
                                     .foregroundStyle(Palette.textTertiary)
                             }

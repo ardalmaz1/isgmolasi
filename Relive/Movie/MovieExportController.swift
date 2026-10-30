@@ -88,7 +88,7 @@ final class MovieExportController {
             if let id { store?.recordCreatedAssets([id]) }
             MovieRenderer.removeTemporaryFiles()
             onSaved()
-            return "Saved to Photos"
+            return String(localized: "Saved to Photos")
         }
     }
 
@@ -176,7 +176,7 @@ final class MovieExportController {
                 }
                 if let failure {
                     self.offersSettings = failure == .photosAccessDenied
-                    self.phase = .failed(failure.errorDescription ?? "Something went wrong.")
+                    self.phase = .failed(failure.errorDescription ?? String(localized: "Something went wrong."))
                     analytics.track(.movieExportFailed, properties.merging(["result": failure.code]) { $1 })
                 } else {
                     self.phase = .idle

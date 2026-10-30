@@ -49,29 +49,29 @@ enum KeptKind: String, CaseIterable, Hashable, Identifiable {
     /// "Collage", for "Collage · Edited 12 minutes ago".
     var name: String {
         switch self {
-        case .collage: "Collage"
-        case .story: "Story"
-        case .book: "Book"
-        case .movie: "Movie"
+        case .collage: String(localized: "Collage")
+        case .story: String(localized: "Story")
+        case .book: String(localized: "Book")
+        case .movie: String(localized: "Movie")
         }
     }
 
     var pluralName: String {
         switch self {
-        case .collage: "Collages"
-        case .story: "Stories"
-        case .book: "Books"
-        case .movie: "Movies"
+        case .collage: String(localized: "Collages")
+        case .story: String(localized: "Stories")
+        case .book: String(localized: "Books")
+        case .movie: String(localized: "Movies")
         }
     }
 
     /// The neutral title used when the photos don't support a factual one.
     var neutralTitle: String {
         switch self {
-        case .collage: "Memory Collage"
-        case .story: "Memory Story"
-        case .book: "Memory Book"
-        case .movie: "Memory Movie"
+        case .collage: String(localized: "Memory Collage")
+        case .story: String(localized: "Memory Story")
+        case .book: String(localized: "Memory Book")
+        case .movie: String(localized: "Memory Movie")
         }
     }
 }

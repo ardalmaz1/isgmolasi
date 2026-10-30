@@ -64,7 +64,7 @@ struct StoryMakerView: View {
         .sheet(item: $replacing) { replacement in
             NavigationStack {
                 MemoryPickerView(
-                    title: "Replace Photo",
+                    title: String(localized: "Replace Photo"),
                     range: 1...1,
                     excluded: Set(model.design?.photoIDs ?? []),
                     onDone: { ids in
@@ -94,9 +94,9 @@ struct StoryMakerView: View {
             if !model.missingInStory.isEmpty {
                 AccessBanner(
                     message: model.missingInStory.count == 1
-                        ? "One photo is no longer in your library. Replace it from Edit Card, or remove it."
-                        : "\(model.missingInStory.count) photos are no longer in your library. Replace them from Edit Card, or remove them.",
-                    actionTitle: "Remove Missing",
+                        ? String(localized: "One photo is no longer in your library. Replace it from Edit Card, or remove it.")
+                        : String(localized: "\(model.missingInStory.count) photos are no longer in your library. Replace them from Edit Card, or remove them."),
+                    actionTitle: String(localized: "Remove Missing"),
                     action: { withAnimation(animation) { model.removeMissingPhotos() } }
                 )
                 .padding(.horizontal, Spacing.screenMargin)
@@ -189,7 +189,7 @@ struct StoryMakerView: View {
                 }
             }
             ForEach(Array(card.photos.indices), id: \.self) { slot in
-                let name = card.photos.count == 1 ? "Photo" : "Photo \(slot + 1)"
+                let name = card.photos.count == 1 ? String(localized: "Photo") : String(localized: "Photo \(slot + 1)")
                 Menu {
                     Button { replacing = Replacement(cardID: card.id, slot: slot) } label: { Label("From Yuvi", systemImage: "book.closed") }
                     Button { libraryReplacement = Replacement(cardID: card.id, slot: slot) } label: { Label("From Photo Library", systemImage: "photo.on.rectangle") }
@@ -199,17 +199,17 @@ struct StoryMakerView: View {
             }
             if card.hasDate {
                 Button { model.toggleDate(of: card.id) } label: {
-                    Label(card.showsDate ? "Hide Date" : "Show Date", systemImage: "calendar")
+                    Label(card.showsDate ? String(localized: "Hide Date") : String(localized: "Show Date"), systemImage: "calendar")
                 }
             }
             if card.hasPlace {
                 Button { model.togglePlace(of: card.id) } label: {
-                    Label(card.showsPlace ? "Hide Place" : "Show Place", systemImage: "mappin")
+                    Label(card.showsPlace ? String(localized: "Hide Place") : String(localized: "Show Place"), systemImage: "mappin")
                 }
             }
             if card.hasCoordinates {
                 Button { model.toggleCoordinates(of: card.id) } label: {
-                    Label(card.showsCoordinates ? "Hide Coordinates" : "Show Coordinates", systemImage: "location")
+                    Label(card.showsCoordinates ? String(localized: "Hide Coordinates") : String(localized: "Show Coordinates"), systemImage: "location")
                 }
             }
             if card.role != .opening, model.cards.count > 2 {
@@ -237,18 +237,18 @@ struct StoryMakerView: View {
         case .notEnoughPhotos(let available, let required):
             if isFromFavorites {
                 message = available == 0
-                    ? "Favorite a few memories to make a story from them. A story needs at least \(required) photos."
-                    : "Add a few more favorites to make a story. A story needs at least \(required) photos, and you have \(available == 1 ? "1 favorite" : "\(available) favorites") that can be used."
+                    ? String(localized: "Favorite a few memories to make a story from them. A story needs at least \(required) photos.")
+                    : String(localized: "Add a few more favorites to make a story. A story needs at least \(required) photos, and you have \(available == 1 ? String(localized: "1 favorite") : String(localized: "\(available) favorites")) that can be used.")
             } else {
                 message = available == 0
-                    ? "A story needs at least \(required) photos, and there are none here that can be used."
-                    : "A story needs at least \(required) photos, and there \(available == 1 ? "is only 1" : "are only \(available)") here."
+                    ? String(localized: "A story needs at least \(required) photos, and there are none here that can be used.")
+                    : String(localized: "A story needs at least \(required) photos, and there \(available == 1 ? String(localized: "is only 1") : String(localized: "are only \(available)")) here.")
             }
         }
         return QuietMessageView(
-            title: isFromFavorites ? "Not enough favorites for a story" : "Not enough photos for a story",
+            title: isFromFavorites ? String(localized: "Not enough favorites for a story") : String(localized: "Not enough photos for a story"),
             message: message,
-            actionTitle: "Choose Photos",
+            actionTitle: String(localized: "Choose Photos"),
             action: onChoosePhotos
         )
         .frame(maxHeight: .infinity)

@@ -60,8 +60,8 @@ struct TodayView: View {
                         }
                     } else if store.hasStory {
                         QuietMessageView(
-                            title: "Nothing to resurface yet",
-                            message: "As your story grows older, Yuvi will bring back memories here."
+                            title: String(localized: "Nothing to resurface yet"),
+                            message: String(localized: "As your story grows older, Yuvi will bring back memories here.")
                         )
                     }
 
@@ -233,7 +233,7 @@ struct TodayDiscoveryCard: View {
         switch discovery {
         case .onThisDay(let id, let years):
             guard let moment = store.moment(id: id) else { return nil }
-            let age = years == 1 ? "A year ago" : "\(years) years ago"
+            let age = years == 1 ? String(localized: "A year ago") : String(localized: "\(years) years ago")
             let eyebrow = [age, moment.place?.name].compactMap { $0 }.joined(separator: " · ")
             return Content(kind: "on_this_day", eyebrow: eyebrow, title: title(moment), detail: dates(moment.startDate, moment.endDate), cover: store.heroAssetID(for: moment), route: .moment(MomentRoute(momentID: id, source: "today_on_this_day")))
         case .trip(let id):
@@ -242,20 +242,20 @@ struct TodayDiscoveryCard: View {
             guard let first = moments.first else { return nil }
             let memories = moments.reduce(0) { $0 + store.archiveMemoryCount(of: $1) }
             let detail = [dates(chapter.startDate, chapter.endDate), "\(Counted.text(moments.count, "moment", "moments")) · \(Counted.text(memories, "memory", "memories"))"].compactMap { $0 }.joined(separator: "\n")
-            return Content(kind: "trip", eyebrow: "A trip to look back on", title: chapter.title.primary.isEmpty ? "A trip" : chapter.title.primary, detail: detail, cover: store.heroAssetID(for: first), route: .archive(.trip(id)))
+            return Content(kind: "trip", eyebrow: String(localized: "A trip to look back on"), title: chapter.title.primary.isEmpty ? String(localized: "A trip") : chapter.title.primary, detail: detail, cover: store.heroAssetID(for: first), route: .archive(.trip(id)))
         case .returnedPlace(let placeID):
             guard let place = store.archive.place(id: placeID), let name = place.name?.name else { return nil }
             let cover = place.momentIDs.last.flatMap(store.moment(id:)).flatMap(store.heroAssetID(for:))
-            let detail = "\(Counted.text(place.momentIDs.count, "moment", "moments")) in \(Counted.text(place.monthCount, "different month", "different months"))"
-            return Content(kind: "returned_place", eyebrow: "A place you returned to", title: name, detail: detail, cover: cover, route: .archive(.place(placeID)))
+            let detail = String(localized: "\(Counted.text(place.momentIDs.count, "moment", "moments")) in \(Counted.text(place.monthCount, "different month", "different months"))")
+            return Content(kind: "returned_place", eyebrow: String(localized: "A place you returned to"), title: name, detail: detail, cover: cover, route: .archive(.place(placeID)))
         case .recentMoment(let id):
             guard let moment = store.moment(id: id) else { return nil }
-            return Content(kind: "recent", eyebrow: "Recently", title: title(moment), detail: dates(moment.startDate, moment.endDate), cover: store.heroAssetID(for: moment), route: .moment(MomentRoute(momentID: id, source: "today_recent")))
+            return Content(kind: "recent", eyebrow: String(localized: "Recently"), title: title(moment), detail: dates(moment.startDate, moment.endDate), cover: store.heroAssetID(for: moment), route: .moment(MomentRoute(momentID: id, source: "today_recent")))
         }
     }
 
     private func title(_ moment: Moment) -> String {
-        moment.title.primary.isEmpty ? "A moment" : moment.title.primary
+        moment.title.primary.isEmpty ? String(localized: "A moment") : moment.title.primary
     }
 
     private func dates(_ start: Date?, _ end: Date?) -> String? {
@@ -368,7 +368,7 @@ struct InvitePartnerCard: View {
     let onInvite: () -> Void
     let onNotNow: () -> Void
 
-    private var name: String { partnerName ?? "your partner" }
+    private var name: String { partnerName ?? String(localized: "your partner") }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.s) {
@@ -380,12 +380,12 @@ struct InvitePartnerCard: View {
                 .font(Typography.title3)
                 .foregroundStyle(Palette.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
-            Text("Connect your two iPhones. \(partnerName ?? "Your partner") joins Premium free with your invitation, and your photos stay on this iPhone.")
+            Text("Connect your two iPhones. \(partnerName ?? String(localized: "Your partner")) joins Premium free with your invitation, and your photos stay on this iPhone.")
                 .font(Typography.callout)
                 .foregroundStyle(Palette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
             HStack(spacing: Spacing.s) {
-                Button("Invite \(partnerName ?? "Partner")", action: onInvite)
+                Button("Invite \(partnerName ?? String(localized: "Partner"))", action: onInvite)
                     .buttonStyle(.relivePrimary)
                     .accessibilityIdentifier("todayInvitePartner")
                 Button("Not Now", action: onNotNow)
@@ -433,7 +433,7 @@ struct SmileQuestionCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.m) {
             if let answered {
-                Text(answered == .yes ? "That’s what it’s for. Thank you." : "Thank you. There’s more to find as your story grows.")
+                Text(answered == .yes ? String(localized: "That’s what it’s for. Thank you.") : String(localized: "Thank you. There’s more to find as your story grows."))
                     .font(Typography.bodySerif)
                     .foregroundStyle(Palette.textPrimary)
             } else {

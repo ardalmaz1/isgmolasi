@@ -16,16 +16,16 @@ struct ChooseStartView: View {
 
             VStack(spacing: Spacing.s) {
                 StartChoice(
-                    title: "Let Yuvi find them",
-                    message: "Yuvi looks for possible moments on this iPhone. You decide what to keep.",
+                    title: String(localized: "Let Yuvi find them"),
+                    message: String(localized: "Yuvi looks for possible moments on this iPhone. You decide what to keep."),
                     isRecommended: true,
                     identifier: "startDiscovery"
                 ) {
                     app.chooseStartPath(.discovery)
                 }
                 StartChoice(
-                    title: "Choose memories myself",
-                    message: "Start with a few photos. You can always add more.",
+                    title: String(localized: "Choose memories myself"),
+                    message: String(localized: "Start with a few photos. You can always add more."),
                     isRecommended: false,
                     identifier: "startManual"
                 ) {
@@ -96,11 +96,11 @@ struct DiscoveryPrivacyView: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             VStack(alignment: .leading, spacing: Spacing.m) {
-                PrivacyPoint(icon: "calendar", text: "Dates and places help Yuvi group photos into possible moments.")
-                PrivacyPoint(icon: "person.2", text: "It may count faces in a few photos, but it doesn’t know who anyone is.")
-                PrivacyPoint(icon: "iphone", text: "This happens on your iPhone. Your photos aren’t uploaded.")
-                PrivacyPoint(icon: "checkmark.circle", text: "You choose which moments belong in your story. Only those are kept.")
-                PrivacyPoint(icon: "lock", text: "No feed, no account, nothing posted anywhere.")
+                PrivacyPoint(icon: "calendar", text: String(localized: "Dates and places help Yuvi group photos into possible moments."))
+                PrivacyPoint(icon: "person.2", text: String(localized: "It may count faces in a few photos, but it doesn’t know who anyone is."))
+                PrivacyPoint(icon: "iphone", text: String(localized: "This happens on your iPhone. Your photos aren’t uploaded."))
+                PrivacyPoint(icon: "checkmark.circle", text: String(localized: "You choose which moments belong in your story. Only those are kept."))
+                PrivacyPoint(icon: "lock", text: String(localized: "No feed, no account, nothing posted anywhere."))
             }
             .padding(.top, Spacing.s)
 
@@ -176,19 +176,19 @@ struct DiscoveringView: View {
                 progress
             case .nothingFound:
                 outcome(
-                    title: "No moments yet",
-                    message: "Yuvi didn’t find groups of photos to suggest. You can choose a few memories yourself instead."
+                    title: String(localized: "No moments yet"),
+                    message: String(localized: "Yuvi didn’t find groups of photos to suggest. You can choose a few memories yourself instead.")
                 )
             case .denied:
                 outcome(
-                    title: "Yuvi can’t see your photos",
-                    message: "Without access, Yuvi can’t suggest moments. You can allow access in Settings, or choose a few memories yourself.",
+                    title: String(localized: "Yuvi can’t see your photos"),
+                    message: String(localized: "Without access, Yuvi can’t suggest moments. You can allow access in Settings, or choose a few memories yourself."),
                     settings: true
                 )
             case .cancelled:
                 outcome(
-                    title: "Stopped",
-                    message: "Nothing was kept. You can look again, or choose a few memories yourself."
+                    title: String(localized: "Stopped"),
+                    message: String(localized: "Nothing was kept. You can look again, or choose a few memories yourself.")
                 )
             case .limitedAccess:
                 limitedAccess
@@ -244,9 +244,9 @@ struct DiscoveringView: View {
 
     private var progressMessage: String {
         switch discovery.phase {
-        case .requestingAccess: "Waiting for access to your photos…"
-        case .lookingAtPhotos(let done, let total): "Looking at a few photos from each moment — \(done) of \(total)"
-        default: "Reading dates and places…"
+        case .requestingAccess: String(localized: "Waiting for access to your photos…")
+        case .lookingAtPhotos(let done, let total): String(localized: "Looking at a few photos from each moment — \(done) of \(total)")
+        default: String(localized: "Reading dates and places…")
         }
     }
 
@@ -308,7 +308,7 @@ struct DiscoveringView: View {
 
     private var continueTitle: String {
         let kept = discovery.keptCount
-        return kept == 0 ? "Keep a moment to continue" : "Continue with \(Counted.text(kept, "moment", "moments"))"
+        return kept == 0 ? String(localized: "Keep a moment to continue") : String(localized: "Continue with \(Counted.text(kept, "moment", "moments"))")
     }
 
     private func keep() async {
@@ -409,9 +409,9 @@ struct CandidateMomentCard: View {
             .accessibilityElement(children: .combine)
 
             HStack(spacing: Spacing.s) {
-                DecisionButton(title: "Keep", isSelected: decision == .keep, identifier: "candidateKeep") { onDecide(.keep) }
+                DecisionButton(title: String(localized: "Keep", comment: "Keep a moment in your story"), isSelected: decision == .keep, identifier: "candidateKeep") { onDecide(.keep) }
                     .accessibilityLabel("Keep, \(CandidateText.spoken(candidate))")
-                DecisionButton(title: "Not ours", isSelected: decision == .notOurs, identifier: "candidateNotOurs") { onDecide(.notOurs) }
+                DecisionButton(title: String(localized: "Not ours"), isSelected: decision == .notOurs, identifier: "candidateNotOurs") { onDecide(.notOurs) }
                     .accessibilityLabel("Not ours, \(CandidateText.spoken(candidate))")
             }
         }

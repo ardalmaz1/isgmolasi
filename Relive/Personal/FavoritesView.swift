@@ -16,6 +16,14 @@ struct FavoritesView: View {
         case creations = "Creations"
 
         var id: String { rawValue }
+
+        var title: String {
+            switch self {
+            case .memories: String(localized: "Memories")
+            case .moments: String(localized: "Moments")
+            case .creations: String(localized: "Creations")
+            }
+        }
     }
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 3)
@@ -32,9 +40,9 @@ struct FavoritesView: View {
             VStack(alignment: .leading, spacing: Spacing.l) {
                 if isEmpty {
                     QuietMessageView(
-                        title: "No favorites yet",
-                        message: "Favorite memories to keep them close and create from them later.",
-                        actionTitle: "Add Favorites",
+                        title: String(localized: "No favorites yet"),
+                        message: String(localized: "Favorite memories to keep them close and create from them later."),
+                        actionTitle: String(localized: "Add Favorites"),
                         action: { isAdding = true }
                     )
                     .accessibilityIdentifier("favoritesEmpty")
@@ -46,7 +54,7 @@ struct FavoritesView: View {
 
                     Picker("Show", selection: $segment) {
                         ForEach(Segment.allCases) { segment in
-                            Text(segment.rawValue).tag(segment)
+                            Text(segment.title).tag(segment)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -103,7 +111,7 @@ struct FavoritesView: View {
     @ViewBuilder
     private func memoryGrid(_ memories: [MemoryAsset]) -> some View {
         if memories.isEmpty {
-            segmentMessage("Tap the heart on a photo to keep it here.")
+            segmentMessage(String(localized: "Tap the heart on a photo to keep it here."))
         } else {
             LazyVGrid(columns: columns, spacing: 2) {
                 ForEach(memories) { asset in
@@ -132,7 +140,7 @@ struct FavoritesView: View {
     @ViewBuilder
     private func momentList(_ moments: [Moment]) -> some View {
         if moments.isEmpty {
-            segmentMessage("Tap the heart on a moment to keep it here.")
+            segmentMessage(String(localized: "Tap the heart on a moment to keep it here."))
         } else {
             LazyVStack(alignment: .leading, spacing: Spacing.xl) {
                 ForEach(moments.reversed()) { moment in
@@ -156,7 +164,7 @@ struct FavoritesView: View {
     @ViewBuilder
     private func creationGrid(_ items: [KeptItem]) -> some View {
         if items.isEmpty {
-            segmentMessage("Tap the heart on something you made to keep it here.")
+            segmentMessage(String(localized: "Tap the heart on something you made to keep it here."))
         } else {
             LazyVGrid(columns: creationColumns, spacing: Spacing.l) {
                 ForEach(items) { item in

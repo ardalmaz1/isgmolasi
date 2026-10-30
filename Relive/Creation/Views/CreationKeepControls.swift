@@ -14,14 +14,14 @@ struct CreationKeepButton: View {
             FavoriteButton(
                 kind: .creation,
                 identifier: keeper.id.uuidString,
-                label: "Favorite \(keeper.kind.rawValue)",
+                label: String(localized: "Favorite \(keeper.kind.rawValue)"),
                 accessibilityID: "creationFavorite"
             )
         } else {
             Button {
                 onSave()
                 savedCount += 1
-                AccessibilityNotification.Announcement("Kept in My Creations").post()
+                AccessibilityNotification.Announcement(String(localized: "Kept in My Creations")).post()
             } label: {
                 // "Keep", not "Save": the screen's one Save is the export to Photos.
                 Text("Keep")
@@ -46,7 +46,7 @@ struct CreationMoreMenu: View {
         if keeper.exists {
             Menu {
                 Button(role: .destructive, action: onDelete) {
-                    Label(keeper.isSaved ? "Delete \(noun)" : "Delete Draft", systemImage: "trash")
+                    Label(keeper.isSaved ? String(localized: "Delete \(noun)") : String(localized: "Delete Draft"), systemImage: "trash")
                 }
             } label: {
                 Label("More", systemImage: "ellipsis.circle")
@@ -65,13 +65,13 @@ extension View {
     /// The photos it used stay, in Relive and in the Photos app.
     func confirmsCreationDelete(isPresented: Binding<Bool>, keeper: CreationKeeper, store: StoryStore, onDeleted: @escaping @MainActor () -> Void) -> some View {
         let noun = switch keeper.kind {
-        case .collage: "collage"
-        case .story: "story"
-        case .movie: "movie"
+        case .collage: String(localized: "collage")
+        case .story: String(localized: "story")
+        case .movie: String(localized: "movie")
         }
-        let title = keeper.isSaved ? "Delete this \(noun)?" : "Delete this draft?"
+        let title = keeper.isSaved ? String(localized: "Delete this \(noun)?") : String(localized: "Delete this draft?")
         return confirmationDialog(title, isPresented: isPresented, titleVisibility: .visible) {
-            Button(keeper.isSaved ? "Delete \(noun.capitalized)" : "Delete Draft", role: .destructive) {
+            Button(keeper.isSaved ? String(localized: "Delete \(noun.capitalized)") : String(localized: "Delete Draft"), role: .destructive) {
                 let id = keeper.id
                 keeper.forget()
                 store.deleteCreation(id: id)

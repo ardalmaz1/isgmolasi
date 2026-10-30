@@ -10,7 +10,7 @@ struct DraftsView: View {
         let drafts = store.drafts
         List {
             if drafts.isEmpty {
-                QuietMessageView(title: "No drafts", message: "Collages and stories you’re still making will wait here.")
+                QuietMessageView(title: String(localized: "No drafts"), message: String(localized: "Collages and stories you’re still making will wait here."))
                     .listRowBackground(Color.clear)
             } else {
                 ForEach(drafts) { draft in

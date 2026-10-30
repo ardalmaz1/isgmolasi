@@ -152,12 +152,12 @@ struct CreationLabel: View {
 
     static func name(_ creation: ReliveCore.CreationKind) -> String {
         switch creation {
-        case .collage: "Collage"
-        case .story: "Story"
-        case .book: "Memory Book"
-        case .monthlyRecap: "Monthly Recap"
-        case .yearInReview: "Our Year"
-        case .movie: "Memory Movie"
+        case .collage: String(localized: "Collage")
+        case .story: String(localized: "Story")
+        case .book: String(localized: "Memory Book")
+        case .monthlyRecap: String(localized: "Monthly Recap")
+        case .yearInReview: String(localized: "Our Year")
+        case .movie: String(localized: "Memory Movie")
         }
     }
 

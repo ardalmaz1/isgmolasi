@@ -20,10 +20,10 @@ enum CreationKind: String, Hashable, Sendable {
 
     var title: String {
         switch self {
-        case .collage: "Memory Collage"
-        case .story: "Story Maker"
-        case .book: "Memory Book"
-        case .movie: "Memory Movie"
+        case .collage: String(localized: "Memory Collage")
+        case .story: String(localized: "Story Maker")
+        case .book: String(localized: "Memory Book")
+        case .movie: String(localized: "Memory Movie")
         }
     }
 }

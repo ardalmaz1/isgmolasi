@@ -34,7 +34,7 @@ struct MemoryBookEditorView: View {
                 if let book = store.book(id: bookID) {
                     form(book)
                 } else {
-                    QuietMessageView(title: "This book isn’t here anymore", message: "It may have been deleted.")
+                    QuietMessageView(title: String(localized: "This book isn’t here anymore"), message: String(localized: "It may have been deleted."))
                 }
             }
             .navigationTitle("Edit Book")
@@ -55,8 +55,8 @@ struct MemoryBookEditorView: View {
         .sheet(isPresented: $isEditingNote) {
             NoteEditorView(
                 initialText: store.book(id: bookID)?.note ?? "",
-                prompt: "A few words for the first page",
-                privacyLine: "Printed after the cover. It stays on this iPhone unless you share a page."
+                prompt: String(localized: "A few words for the first page"),
+                privacyLine: String(localized: "Printed after the cover. It stays on this iPhone unless you share a page.")
             ) { text in
                 update { $0.setNote(text) }
             }
@@ -129,7 +129,7 @@ struct MemoryBookEditorView: View {
             }
 
             Section {
-                Button(book.trimmedNote == nil ? "Add a Note" : "Edit Note") { isEditingNote = true }
+                Button(book.trimmedNote == nil ? String(localized: "Add a Note") : String(localized: "Edit Note")) { isEditingNote = true }
                     .accessibilityIdentifier("bookEditNote")
                 Toggle("Include notes from moments", isOn: Binding(
                     get: { book.includesMomentNotes },
@@ -192,7 +192,7 @@ struct MemoryBookEditorView: View {
                 Button(role: .destructive) { remove(id) } label: { Label("Remove", systemImage: "minus.circle") }
             }
             .accessibilityElement()
-            .accessibilityLabel("Photo \(index + 1) of \(book.photoIDs.count)\(missing ? ", no longer in your library" : "")")
+            .accessibilityLabel("Photo \(index + 1) of \(book.photoIDs.count)\(missing ? String(localized: ", no longer in your library") : "")")
             .accessibilityActions {
                 Button("Replace") { picker = .replace(id) }
                 Button("Use as Cover") { updateIfAllowed { $0.setCover(id) } }
@@ -209,7 +209,7 @@ struct MemoryBookEditorView: View {
             switch purpose {
             case .cover:
                 MemoryPickerView(
-                    title: "Choose a Cover",
+                    title: String(localized: "Choose a Cover"),
                     range: 1...1,
                     limitedTo: Set(book?.photoIDs ?? []),
                     onDone: { ids in
@@ -220,7 +220,7 @@ struct MemoryBookEditorView: View {
                 )
             case .photos:
                 MemoryPickerView(
-                    title: "Photos in This Book",
+                    title: String(localized: "Photos in This Book"),
                     range: BookLimits.minimumPhotos...BookLimits.maximumPhotos,
                     initialSelection: book?.photoIDs ?? [],
                     onDone: { ids in
@@ -231,7 +231,7 @@ struct MemoryBookEditorView: View {
                 )
             case .replace(let oldID):
                 MemoryPickerView(
-                    title: "Replace Photo",
+                    title: String(localized: "Replace Photo"),
                     range: 1...1,
                     excluded: Set(book?.photoIDs ?? []),
                     onDone: { ids in
@@ -277,18 +277,18 @@ struct MemoryBookEditorView: View {
             limitMessage = nil
             store.saveBook(book)
         } else {
-            limitMessage = "A book keeps at least \(BookLimits.minimumPhotos) photos."
+            limitMessage = String(localized: "A book keeps at least \(BookLimits.minimumPhotos) photos.")
         }
     }
 
     private func sourceName(_ source: CreationSource) -> String {
         switch source {
-        case .moment: "the Moment"
-        case .trip: "the Trip"
+        case .moment: String(localized: "the Moment")
+        case .trip: String(localized: "the Trip")
         case .month(let month): CreationText.monthTitle(month)
         case .year(let year): String(year)
-        case .photos: "Your Photos"
-        case .favorites: "Favorites"
+        case .photos: String(localized: "Your Photos")
+        case .favorites: String(localized: "Favorites")
         }
     }
 }

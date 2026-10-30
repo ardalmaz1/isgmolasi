@@ -66,13 +66,13 @@ struct CreateHomeView: View {
                     yourCreations
                     if library.visibleMoments.isEmpty {
                         QuietMessageView(
-                            title: "Nothing to make from yet",
-                            message: "Once your story has memories, you can turn them into collages, stories and recaps here."
+                            title: String(localized: "Nothing to make from yet"),
+                            message: String(localized: "Once your story has memories, you can turn them into collages, stories and recaps here.")
                         )
                     } else {
                         let photos = library.assets.count
                         favoritesSection(library: library)
-                        Text(photos < CreateUnlocks.story ? "Make Your First" : "Create Something")
+                        Text(photos < CreateUnlocks.story ? String(localized: "Make Your First") : String(localized: "Create Something"))
                             .font(Typography.title2)
                             .foregroundStyle(Palette.textPrimary)
                             .accessibilityAddTraits(.isHeader)
@@ -144,7 +144,7 @@ struct CreateHomeView: View {
 
     private func continueEditing(_ draft: SavedCreation, count: Int) -> some View {
         VStack(alignment: .leading, spacing: Spacing.m) {
-            SectionHeader(title: "Continue Editing", route: .drafts, linkTitle: count > 1 ? "See All Drafts (\(count))" : "See All Drafts", linkIdentifier: "seeAllDrafts")
+            SectionHeader(title: String(localized: "Continue Editing"), route: .drafts, linkTitle: count > 1 ? String(localized: "See All Drafts (\(count))") : String(localized: "See All Drafts"), linkIdentifier: "seeAllDrafts")
             ContinueEditingCard(draft: draft)
         }
     }
@@ -154,7 +154,7 @@ struct CreateHomeView: View {
     private var yourCreations: some View {
         let items = store.keptItems
         return VStack(alignment: .leading, spacing: Spacing.m) {
-            SectionHeader(title: "Your Creations", route: items.isEmpty ? nil : .creations, linkTitle: "See All", linkIdentifier: "seeAllCreations")
+            SectionHeader(title: String(localized: "Your Creations"), route: items.isEmpty ? nil : .creations, linkTitle: String(localized: "See All"), linkIdentifier: "seeAllCreations")
             if items.isEmpty {
                 Text("Things you make with Yuvi will appear here.")
                     .font(Typography.callout)
@@ -185,7 +185,7 @@ struct CreateHomeView: View {
         let photos = library.favoritePhotos
         let total = store.visibleFavoritesCount
         return VStack(alignment: .leading, spacing: Spacing.m) {
-            SectionHeader(title: "Favorites", route: total > 0 ? .favorites : nil, linkTitle: "See All", linkIdentifier: "seeAllFavorites")
+            SectionHeader(title: String(localized: "Favorites"), route: total > 0 ? .favorites : nil, linkTitle: String(localized: "See All"), linkIdentifier: "seeAllFavorites")
             if total == 0 {
                 Text("Favorite memories to keep them close and create from them later.")
                     .font(Typography.callout)
@@ -256,7 +256,7 @@ struct CreateHomeView: View {
                     .frame(width: 96)
                     .accessibilityHidden(true)
                 VStack(alignment: .leading, spacing: Spacing.s) {
-                    FeatureText(title: "Memory Book", subtitle: "Your memories, made into a book.")
+                    FeatureText(title: String(localized: "Memory Book"), subtitle: String(localized: "Your memories, made into a book."))
                     Button("Start a Book") { choosesBookSource = true }
                         .buttonStyle(.reliveOutline)
                         .accessibilityIdentifier("createBook")
@@ -300,7 +300,7 @@ struct CreateHomeView: View {
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Spacing.s) {
-                FeatureText(title: "Memory Movie", subtitle: "A short film, edited by Yuvi from your memories.")
+                FeatureText(title: String(localized: "Memory Movie"), subtitle: String(localized: "A short film, edited by Yuvi from your memories."))
                 Button("Make a Movie") { app.startCreation(.movie, from: .choosePhotos, origin: "create") }
                     .buttonStyle(.reliveOutline)
                     .accessibilityIdentifier("createMovie")
@@ -324,7 +324,7 @@ struct CreateHomeView: View {
             .frame(maxHeight: 240)
             .accessibilityHidden(true)
 
-            FeatureText(title: "Memory Collage", subtitle: "Make something from your favorite photos.")
+            FeatureText(title: String(localized: "Memory Collage"), subtitle: String(localized: "Make something from your favorite photos."))
 
             HStack(spacing: Spacing.s) {
                 Button("Choose Photos") { app.startCreation(.collage, from: .choosePhotos, origin: "create") }
@@ -348,7 +348,7 @@ struct CreateHomeView: View {
                 .clipShape(RoundedRectangle(cornerRadius: Radius.photo, style: .continuous))
                 .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: Spacing.s) {
-                FeatureText(title: "Story Maker", subtitle: "Turn a moment into a story.")
+                FeatureText(title: String(localized: "Story Maker"), subtitle: String(localized: "Turn a moment into a story."))
                 Button("Choose a Moment") { app.startCreation(.story, from: .chooseMoment, origin: "create") }
                     .buttonStyle(.reliveOutline)
                     .accessibilityIdentifier("createStoryMoment")
@@ -366,9 +366,9 @@ struct CreateHomeView: View {
         let cover = latest.flatMap { MonthlyRecapBuilder(library: library).recap(for: $0).highlights(limit: 1).first }
         return NavigationLink(value: CreateRoute.months) {
             FeatureRow(
-                title: "Monthly Recap",
-                subtitle: "Look back at your month together.",
-                detail: latest.map { "Latest: \(CreationText.monthTitle($0))" },
+                title: String(localized: "Monthly Recap"),
+                subtitle: String(localized: "Look back at your month together."),
+                detail: latest.map { String(localized: "Latest: \(CreationText.monthTitle($0))") },
                 coverID: cover
             )
         }
@@ -383,8 +383,8 @@ struct CreateHomeView: View {
         let cover = latest.flatMap { YearInReviewBuilder(library: library).review(for: $0).highlights(limit: 1).first }
         return NavigationLink(value: years.count == 1 ? CreateRoute.year(years[0]) : CreateRoute.years) {
             FeatureRow(
-                title: "Our Year",
-                subtitle: "Your year together, remembered.",
+                title: String(localized: "Our Year"),
+                subtitle: String(localized: "Your year together, remembered."),
                 detail: years.isEmpty ? nil : years.prefix(3).map(String.init).joined(separator: " · "),
                 coverID: cover
             )
@@ -571,9 +571,9 @@ enum CreateUnlocks {
 
     /// What opens next, and at how many photos; nil once everything is open.
     static func next(after photos: Int) -> Next? {
-        if photos < story { return Next(photos: story, names: "Stories and Trending") }
-        if photos < movieAndBook { return Next(photos: movieAndBook, names: "Memory Book and Memory Movie") }
-        if photos < recaps { return Next(photos: recaps, names: "Monthly Recap and Our Year") }
+        if photos < story { return Next(photos: story, names: String(localized: "Stories and Trending")) }
+        if photos < movieAndBook { return Next(photos: movieAndBook, names: String(localized: "Memory Book and Memory Movie")) }
+        if photos < recaps { return Next(photos: recaps, names: String(localized: "Monthly Recap and Our Year")) }
         return nil
     }
 }

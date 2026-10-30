@@ -80,7 +80,7 @@ struct MomentCard: View {
     private func accessibilityText(note: String?) -> String {
         var parts = [moment.title.primary, detailLine]
         if let note, !note.isEmpty {
-            parts.append("Your note: \(note)")
+            parts.append(String(localized: "Your note: \(note)"))
         }
         return parts.joined(separator: ", ")
     }

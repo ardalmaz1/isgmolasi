@@ -20,7 +20,7 @@ struct AddFavoritesView: View {
         VStack(spacing: 0) {
             Picker("Add", selection: $segment) {
                 ForEach(FavoritesView.Segment.allCases) { segment in
-                    Text(segment.rawValue).tag(segment)
+                    Text(segment.title).tag(segment)
                 }
             }
             .pickerStyle(.segmented)
@@ -42,7 +42,7 @@ struct AddFavoritesView: View {
                 Button("Cancel", action: onDone)
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button(selectedCount > 0 ? "Add (\(selectedCount))" : "Add", action: add)
+                Button(selectedCount > 0 ? String(localized: "Add (\(selectedCount))") : String(localized: "Add"), action: add)
                     .disabled(selectedCount == 0)
                     .accessibilityIdentifier("addFavoritesConfirm")
             }
@@ -68,7 +68,7 @@ struct AddFavoritesView: View {
             return shown.isEmpty ? nil : MomentGroup(moment: moment, ids: shown)
         }
         if groups.isEmpty {
-            emptyMessage("Add memories to your story and they’ll appear here.")
+            emptyMessage(String(localized: "Add memories to your story and they’ll appear here."))
         } else {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: Spacing.l) {
@@ -119,15 +119,15 @@ struct AddFavoritesView: View {
         .buttonStyle(.plain)
         .disabled(already)
         .accessibilityLabel(cellLabel(id))
-        .accessibilityValue(already ? "Already a favorite" : (selected ? "Selected" : "Not selected"))
+        .accessibilityValue(already ? String(localized: "Already a favorite") : (selected ? String(localized: "Selected") : String(localized: "Not selected")))
         .accessibilityAddTraits(selected ? .isSelected : [])
         .accessibilityIdentifier("addFavoritePhoto")
     }
 
     private func cellLabel(_ id: AssetID) -> String {
-        let kind = store.assets[id]?.kind == .video ? "Video" : "Photo"
+        let kind = store.assets[id]?.kind == .video ? String(localized: "Video") : String(localized: "Photo")
         guard let date = store.assets[id]?.creationDate else { return kind }
-        return "\(kind), \(date.formatted(date: .abbreviated, time: .shortened))"
+        return String(localized: "\(kind), \(date.formatted(date: .abbreviated, time: .shortened))")
     }
 
     // MARK: - Moments
@@ -136,7 +136,7 @@ struct AddFavoritesView: View {
     private func momentList(_ library: CreationLibrary) -> some View {
         let all = Array(library.visibleMoments.reversed())
         if all.isEmpty {
-            emptyMessage("Moments appear here once your story has memories.")
+            emptyMessage(String(localized: "Moments appear here once your story has memories."))
         } else {
             List(all) { moment in
                 let already = store.isFavorite(.moment, moment.id.uuidString)
@@ -159,7 +159,7 @@ struct AddFavoritesView: View {
                 .buttonStyle(.plain)
                 .disabled(already)
                 .listRowBackground(Palette.background)
-                .accessibilityValue(already ? "Already a favorite" : (selected ? "Selected" : "Not selected"))
+                .accessibilityValue(already ? String(localized: "Already a favorite") : (selected ? String(localized: "Selected") : String(localized: "Not selected")))
                 .accessibilityIdentifier("addFavoriteMoment")
             }
             .listStyle(.plain)
@@ -173,7 +173,7 @@ struct AddFavoritesView: View {
     private var creationList: some View {
         let items = store.keptItems
         if items.isEmpty {
-            emptyMessage("Things you make with Yuvi will appear here.")
+            emptyMessage(String(localized: "Things you make with Yuvi will appear here."))
         } else {
             List(items) { item in
                 let already = store.isFavorite(.creation, item.favoriteID)
@@ -204,7 +204,7 @@ struct AddFavoritesView: View {
                 .buttonStyle(.plain)
                 .disabled(already)
                 .listRowBackground(Palette.background)
-                .accessibilityValue(already ? "Already a favorite" : (selected ? "Selected" : "Not selected"))
+                .accessibilityValue(already ? String(localized: "Already a favorite") : (selected ? String(localized: "Selected") : String(localized: "Not selected")))
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)

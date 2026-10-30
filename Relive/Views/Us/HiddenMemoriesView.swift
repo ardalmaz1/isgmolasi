@@ -9,8 +9,8 @@ struct HiddenMemoriesView: View {
         Group {
             if store.hiddenMoments.isEmpty {
                 QuietMessageView(
-                    title: "No hidden memories",
-                    message: "Memories you hide won’t appear in your story or be resurfaced."
+                    title: String(localized: "No hidden memories"),
+                    message: String(localized: "Memories you hide won’t appear in your story or be resurfaced.")
                 )
                 .frame(maxHeight: .infinity)
             } else {

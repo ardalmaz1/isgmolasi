@@ -61,7 +61,7 @@ struct SurpriseMemoryCard: View {
     }
 
     private var accessibilityText: String {
-        ["Remember this?", memory.ageDescription, memory.place?.name].compactMap { $0 }.joined(separator: ", ")
+        [String(localized: "Remember this?"), memory.ageDescription, memory.place?.name].compactMap { $0 }.joined(separator: ", ")
     }
 }
 
@@ -120,7 +120,7 @@ struct SurpriseMemoryView: View {
                         }
                     }
                 } else {
-                    QuietMessageView(title: "This memory isn’t here anymore", message: "Its photos may have been removed or hidden.")
+                    QuietMessageView(title: String(localized: "This memory isn’t here anymore"), message: String(localized: "Its photos may have been removed or hidden."))
                 }
             }
             .padding(.horizontal, Spacing.screenMargin)

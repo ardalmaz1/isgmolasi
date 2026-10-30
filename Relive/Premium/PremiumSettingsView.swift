@@ -68,33 +68,33 @@ struct PremiumSettingsView: View {
 
     private var title: String {
         if let grant = premium.status.grant {
-            return grant.role == .annual ? "Premium · Annual" : "Premium · Monthly"
+            return grant.role == .annual ? String(localized: "Premium · Annual") : String(localized: "Premium · Monthly")
         }
-        return premium.status == .unknown ? "Checking…" : "Yuvi Free"
+        return premium.status == .unknown ? String(localized: "Checking…") : String(localized: "Yuvi Free")
     }
 
     private var detail: String {
         switch premium.status {
         case .unknown:
-            return "Checking your subscription with the App Store."
+            return String(localized: "Checking your subscription with the App Store.")
         case .premium(let grant):
             if grant.isInGracePeriod {
-                return "Apple couldn’t renew your subscription. Premium stays on while you update your payment method in Settings."
+                return String(localized: "Apple couldn’t renew your subscription. Premium stays on while you update your payment method in Settings.")
             }
-            guard let date = grant.expirationDate else { return "Premium is active." }
+            guard let date = grant.expirationDate else { return String(localized: "Premium is active.") }
             let day = date.formatted(date: .long, time: .omitted)
-            return grant.willAutoRenew ? "Renews on \(day)." : "Premium ends on \(day). It won’t renew."
+            return grant.willAutoRenew ? String(localized: "Renews on \(day).") : String(localized: "Premium ends on \(day). It won’t renew.")
         case .free(let notice):
             let allowance = premium.allowance.isAvailable
-                ? "Your first creation to save or share is free."
-                : "You’ve used your free creation. Previews and editing stay free."
+                ? String(localized: "Your first creation to save or share is free.")
+                : String(localized: "You’ve used your free creation. Previews and editing stay free.")
             switch notice {
             case .billingRetry?:
-                return "Apple couldn’t renew your subscription. Update your payment method in Settings to turn Premium back on. " + allowance
+                return String(localized: "Apple couldn’t renew your subscription. Update your payment method in Settings to turn Premium back on. ") + allowance
             case .expired?:
-                return "Your Premium subscription has ended. " + allowance
+                return String(localized: "Your Premium subscription has ended. ") + allowance
             case .revoked?:
-                return "Your Premium subscription was refunded or revoked. " + allowance
+                return String(localized: "Your Premium subscription was refunded or revoked. ") + allowance
             case .verificationFailed?, nil:
                 return allowance
             }

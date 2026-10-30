@@ -24,7 +24,7 @@ struct PartnerSection: View {
         .listRowBackground(Palette.surface)
     }
 
-    private var partnerName: String { app.couple?.partnerName ?? "your partner" }
+    private var partnerName: String { app.couple?.partnerName ?? String(localized: "your partner") }
 
     @ViewBuilder private var content: some View {
         switch partner.state {
@@ -32,13 +32,13 @@ struct PartnerSection: View {
             Button("Connect Your Partner") { showsExplanation = true }
                 .accessibilityIdentifier("usConnectPartner")
         case .checkingICloud:
-            PartnerProgressRow(text: "Checking iCloud…")
+            PartnerProgressRow(text: String(localized: "Checking iCloud…"))
         case .creatingRelationship:
-            PartnerProgressRow(text: "Getting your invitation ready…")
+            PartnerProgressRow(text: String(localized: "Getting your invitation ready…"))
         case .joining:
-            PartnerProgressRow(text: "Joining…")
+            PartnerProgressRow(text: String(localized: "Joining…"))
         case .disconnecting:
-            PartnerProgressRow(text: "Disconnecting…")
+            PartnerProgressRow(text: String(localized: "Disconnecting…"))
         case .iCloudUnavailable(let message):
             PartnerMessageRow(message: message, showsSettings: true)
         case .ended(let message), .failed(let message):
@@ -47,7 +47,7 @@ struct PartnerSection: View {
             NavigationLink {
                 PartnerSettingsView()
             } label: {
-                PartnerStatusLabel(title: "Invitation sent", detail: isOffline ? "Offline for now" : "Waiting for \(partnerName) to accept")
+                PartnerStatusLabel(title: String(localized: "Invitation sent"), detail: isOffline ? String(localized: "Offline for now") : String(localized: "Waiting for \(partnerName) to accept"))
             }
             .accessibilityIdentifier("usPartnerStatus")
             Button("Send Invitation") { Task { await partner.presentInvitation() } }
@@ -57,7 +57,7 @@ struct PartnerSection: View {
             NavigationLink {
                 PartnerSettingsView()
             } label: {
-                PartnerStatusLabel(title: "Connected with \(partnerName)", detail: isOffline ? "Still connected · offline for now" : nil)
+                PartnerStatusLabel(title: String(localized: "Connected with \(partnerName)"), detail: isOffline ? String(localized: "Still connected · offline for now") : nil)
             }
             .accessibilityIdentifier("usPartnerStatus")
         }
@@ -139,11 +139,11 @@ struct ConnectPartnerView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     VStack(alignment: .leading, spacing: Spacing.m) {
-                        ConnectPoint(icon: "person", text: "Yuvi works fully on your own. Connecting is optional and free.")
-                        ConnectPoint(icon: "photo.on.rectangle", text: "Connecting doesn’t upload your photo library.")
-                        ConnectPoint(icon: "iphone", text: "What Yuvi learns from your photos stays private on this iPhone.")
-                        ConnectPoint(icon: "hand.raised", text: "Only what you choose to share, later and one by one, is shared.")
-                        ConnectPoint(icon: "location.slash", text: "No live location. Yuvi never shows where either of you is.")
+                        ConnectPoint(icon: "person", text: String(localized: "Yuvi works fully on your own. Connecting is optional and free."))
+                        ConnectPoint(icon: "photo.on.rectangle", text: String(localized: "Connecting doesn’t upload your photo library."))
+                        ConnectPoint(icon: "iphone", text: String(localized: "What Yuvi learns from your photos stays private on this iPhone."))
+                        ConnectPoint(icon: "hand.raised", text: String(localized: "Only what you choose to share, later and one by one, is shared."))
+                        ConnectPoint(icon: "location.slash", text: String(localized: "No live location. Yuvi never shows where either of you is."))
                     }
                     Text("You’ll send an invitation from your iCloud. Your partner opens it on their iPhone with Yuvi installed.")
                         .font(Typography.footnote)
@@ -259,8 +259,8 @@ struct PartnerSettingsView: View {
         }
     }
 
-    private var partnerName: String { app.couple?.partnerName ?? "your partner" }
-    private var possessiveName: String { app.couple.map { "\($0.partnerName)’s" } ?? "your partner’s" }
+    private var partnerName: String { app.couple?.partnerName ?? String(localized: "your partner") }
+    private var possessiveName: String { app.couple.map { String(localized: "\($0.partnerName)’s") } ?? String(localized: "your partner’s") }
 
     private var isOffline: Bool {
         switch partner.state {
@@ -270,19 +270,19 @@ struct PartnerSettingsView: View {
     }
 
     private var statusText: String {
-        guard let record = partner.record else { return "Not connected" }
+        guard let record = partner.record else { return String(localized: "Not connected") }
         switch record.status {
-        case .waitingForPartner: return "Invitation sent"
-        case .connected: return "Connected"
+        case .waitingForPartner: return String(localized: "Invitation sent")
+        case .connected: return String(localized: "Connected")
         }
     }
 
     private var endTitle: String {
-        guard let record = partner.record else { return "Disconnect" }
+        guard let record = partner.record else { return String(localized: "Disconnect") }
         switch (record.role, record.status) {
-        case (.owner, .waitingForPartner): return "Cancel Invitation"
-        case (.owner, .connected): return "Disconnect Partner"
-        case (.partner, _): return "Leave Connection"
+        case (.owner, .waitingForPartner): return String(localized: "Cancel Invitation")
+        case (.owner, .connected): return String(localized: "Disconnect Partner")
+        case (.partner, _): return String(localized: "Leave Connection")
         }
     }
 
@@ -290,11 +290,11 @@ struct PartnerSettingsView: View {
         guard let record = partner.record else { return "" }
         switch (record.role, record.status) {
         case (.owner, .waitingForPartner):
-            return "The invitation stops working. Nothing else changes."
+            return String(localized: "The invitation stops working. Nothing else changes.")
         case (.owner, .connected):
-            return "Sharing in Yuvi stops for both of you, and \(partnerName) no longer has access to your connection. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you. Nothing from your library was shared, so there is nothing of yours on their iPhone to remove."
+            return String(localized: "Sharing in Yuvi stops for both of you, and \(partnerName) no longer has access to your connection. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you. Nothing from your library was shared, so there is nothing of yours on their iPhone to remove.")
         case (.partner, _):
-            return "Sharing in Yuvi stops and you leave the connection. It was started from \(possessiveName) iCloud, so it stays theirs; Yuvi on their iPhone closes it the next time it opens. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you."
+            return String(localized: "Sharing in Yuvi stops and you leave the connection. It was started from \(possessiveName) iCloud, so it stays theirs; Yuvi on their iPhone closes it the next time it opens. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you.")
         }
     }
 }
@@ -337,7 +337,7 @@ private struct PartnerNoticeModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.alert(
-            partner.notice == .joined ? "Connected" : "Your partner connection",
+            partner.notice == .joined ? String(localized: "Connected") : String(localized: "Your partner connection"),
             isPresented: Binding(get: { partner.notice != nil }, set: { if !$0 { partner.notice = nil } })
         ) {
             Button("OK") { partner.notice = nil }

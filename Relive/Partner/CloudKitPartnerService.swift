@@ -64,7 +64,7 @@ final class CloudKitPartnerService: PartnerCloudService {
             }
 
             let share = CKShare(recordZoneID: zone.zoneID)
-            share[CKShare.SystemFieldKey.title] = "Yuvi" as NSString
+            share[CKShare.SystemFieldKey.title] = String(localized: "Yuvi") as NSString
             share.publicPermission = .none
 
             let result = try await database.modifyRecords(saving: [record, share], deleting: [], savePolicy: .ifServerRecordUnchanged, atomically: true)
@@ -311,7 +311,7 @@ private final class CloudSharingPresentation: NSObject, PartnerSharingPresentati
     }
 
     nonisolated func itemTitle(for csc: UICloudSharingController) -> String? {
-        "Yuvi"
+        String(localized: "Yuvi")
     }
 
     nonisolated func cloudSharingController(_ csc: UICloudSharingController, failedToSaveShareWithError error: Error) {

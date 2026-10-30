@@ -20,7 +20,7 @@ final class PremiumStore {
         case unavailable
         case failed(String)
 
-        static let unavailableMessage = "Premium isn’t available right now. Please try again later."
+        static let unavailableMessage = String(localized: "Premium isn’t available right now. Please try again later.")
     }
 
     enum PurchaseState: Equatable {
@@ -161,7 +161,7 @@ final class PremiumStore {
     func purchase(_ role: PremiumProductRole, entry: PaywallEntryPoint) async -> Bool {
         if case .purchasing = purchaseState { return false }
         guard let product = products.first(where: { $0.role == role }) else {
-            purchaseState = .failed("Prices haven’t loaded yet. Please try again.")
+            purchaseState = .failed(String(localized: "Prices haven’t loaded yet. Please try again."))
             return false
         }
         let properties = ["entry": entry.rawValue, "product": role.rawValue]
@@ -176,7 +176,7 @@ final class PremiumStore {
                     analytics.track(.premiumPurchaseCompleted, properties)
                     return true
                 }
-                purchaseState = .failed("The purchase couldn’t be confirmed. If you were charged, use Restore Purchases.")
+                purchaseState = .failed(String(localized: "The purchase couldn’t be confirmed. If you were charged, use Restore Purchases."))
                 analytics.track(.premiumPurchaseFailed, properties.merging(["reason": "not_entitled"]) { $1 })
             case .cancelled:
                 purchaseState = .idle
@@ -185,7 +185,7 @@ final class PremiumStore {
                 purchaseState = .pending
                 analytics.track(.premiumPurchasePending, properties)
             case .unverified:
-                purchaseState = .failed("The App Store couldn’t verify this purchase, so Premium wasn’t turned on. Please try Restore Purchases.")
+                purchaseState = .failed(String(localized: "The App Store couldn’t verify this purchase, so Premium wasn’t turned on. Please try Restore Purchases."))
                 analytics.track(.premiumPurchaseFailed, properties.merging(["reason": "unverified"]) { $1 })
             }
         } catch {
