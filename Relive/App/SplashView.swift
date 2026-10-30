@@ -18,7 +18,7 @@ struct SplashView: View {
     @State private var leaving = false
 
     /// Never wait longer than this for `isReady`: the app or the wall shows its own loading.
-    private static let longestWait: Duration = .seconds(2)
+    private static let longestWait: Duration = .seconds(8)
 
     var body: some View {
         ZStack {
@@ -53,26 +53,9 @@ struct SplashView: View {
         }
     }
 
-    /// The app icon, drawn: clay tile, paper door, clay Y.
+    /// The app icon, drawn: the door rises, then the Y draws itself.
     private var logo: some View {
-        GeometryReader { proxy in
-            let unit = proxy.size.width / 1024
-            ZStack {
-                RoundedRectangle(cornerRadius: 230 * unit, style: .continuous)
-                    .fill(Palette.accent)
-                YuviDoor()
-                    .fill(Palette.background)
-                    .scaleEffect(x: 1, y: door ? 1 : 0, anchor: .bottom)
-                    .opacity(door ? 1 : 0)
-                // Both arms draw at once and meet in the stem.
-                ForEach([YuviY.Arm.left, .right], id: \.self) { arm in
-                    YuviY(arm: arm)
-                        .trim(from: 0, to: yDrawn ? 1 : 0)
-                        .stroke(Palette.accent, style: StrokeStyle(lineWidth: 64 * unit, lineCap: .round, lineJoin: .round))
-                }
-            }
-            .clipShape(RoundedRectangle(cornerRadius: 230 * unit, style: .continuous))
-        }
+        YuviLogo(doorRise: door ? 1 : 0, yDrawn: yDrawn ? 1 : 0)
     }
 
     private func play() async {
@@ -103,36 +86,5 @@ struct SplashView: View {
             try? await Task.sleep(for: .seconds(reduceMotion ? 0.2 : 0.4))
             onFinish()
         }
-    }
-}
-
-/// The arched door of the icon, in the icon's 1024-point space (`yuvi-ikon.svg`).
-private struct YuviDoor: Shape {
-    func path(in rect: CGRect) -> Path {
-        let unit = rect.width / 1024
-        var path = Path()
-        path.move(to: CGPoint(x: 284 * unit, y: 840 * unit))
-        path.addLine(to: CGPoint(x: 284 * unit, y: 404 * unit))
-        path.addArc(center: CGPoint(x: 512 * unit, y: 404 * unit), radius: 228 * unit, startAngle: .degrees(180), endAngle: .degrees(0), clockwise: false)
-        path.addLine(to: CGPoint(x: 740 * unit, y: 840 * unit))
-        path.closeSubpath()
-        return path
-    }
-}
-
-/// One arm of the Y; the left one goes on as the stem (two lives, one path).
-private struct YuviY: Shape {
-    enum Arm { case left, right }
-    let arm: Arm
-
-    func path(in rect: CGRect) -> Path {
-        let unit = rect.width / 1024
-        func point(_ x: CGFloat, _ y: CGFloat) -> CGPoint { CGPoint(x: x * unit, y: y * unit) }
-        let x: CGFloat = arm == .left ? 406 : 618
-        var path = Path()
-        path.move(to: point(x, 356))
-        path.addCurve(to: point(512, 594), control1: point(x, 486), control2: point(512, 500))
-        if arm == .left { path.addLine(to: point(512, 880)) }
-        return path
     }
 }

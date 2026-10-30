@@ -19,7 +19,8 @@ enum MovieFrameDrawer {
         plan: MoviePlan,
         in context: CGContext,
         size: CGSize,
-        images: [Int: MovieSceneImages]
+        images: [Int: MovieSceneImages],
+        mark: CGImage? = nil
     ) {
         let canvas = plan.settings.aspect.renderSize
         let scale = size.width / canvas.width
@@ -63,6 +64,14 @@ enum MovieFrameDrawer {
 
         for caption in frame.captions {
             MovieCaptionDrawer.draw(caption.text, style: plan.settings.style, isOpening: plan.scenes[caption.sceneIndex].role == .opening, canvas: canvas, opacity: caption.opacity, in: context)
+        }
+
+        // The small Yuvi mark, bottom right, under the fades.
+        if let mark {
+            let unit = canvas.width / 1080
+            let height = 54 * unit
+            let width = height * CGFloat(mark.width) / CGFloat(max(1, mark.height))
+            UIImage(cgImage: mark).draw(in: CGRect(x: canvas.width - width - 44 * unit, y: canvas.height - height - 60 * unit, width: width, height: height))
         }
 
         if frame.blackOpacity > 0 {

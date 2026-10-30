@@ -109,7 +109,32 @@ final class CreationRenderingTests: XCTestCase {
         )
         let image = try XCTUnwrap(CreationRenderer.render(summary, size: SummaryCardCanvas.size)?.cgImage)
         XCTAssertEqual(image.width, 2160)
-        XCTAssertEqual(image.height, 2700)
+        XCTAssertEqual(image.height, 3840, "a 9:16 story")
+    }
+
+    /// Writes a sample of each shared image, with the Yuvi mark, to `YUVI_SHOTS` for a look by
+    /// eye (`TEST_RUNNER_YUVI_SHOTS=<dir>`); a plain size check everywhere else.
+    func testSharedImagesCarryTheMarkForALook() throws {
+        let photo = CreationTestLibrary.solidImage(width: 300, height: 400)
+        var samples: [(String, UIImage?)] = []
+        let summary = SummaryCardCanvas(
+            eyebrow: "2026", title: "October", counts: "12 memories · 3 places", photoIDs: ["a", "b", "c", "d"],
+            images: ["a": photo, "b": photo, "c": photo, "d": photo],
+            mosaic: SummaryCardCanvas.makeMosaic(aspects: [0.75, 0.75, 0.75, 0.75])
+        )
+        samples.append(("summary", CreationRenderer.render(summary, size: SummaryCardCanvas.size)))
+        for style in [CollageStyle.grid, .polaroid] {
+            let layout = CollageLayoutEngine().layout(photoAspects: [0.75, 0.75, 0.75], style: style, canvas: CreationAspectRatio.portrait.designSize, caption: CollageCaptionSpec(showsTitle: true, showsDetail: true))
+            let canvas = CollageCanvas(layout: layout, photoIDs: ["a", "b", "c"], images: ["a": photo, "b": photo, "c": photo], caption: CaptionContent(title: "Kaş", detail: "August 6, 2025"))
+            samples.append(("collage-\(style)", CreationRenderer.render(canvas, size: layout.canvas)))
+        }
+        let card = StoryCard(id: 0, role: .opening, layout: .cover, photos: ["a"], title: .named("Kaş"), dateSpan: DateSpan(start: Date(), end: Date()))
+        samples.append(("story", CreationRenderer.render(StoryCardCanvas(card: card, style: StoryStyle.allCases[0], images: ["a": photo]), size: StoryCardCanvas.size)))
+        for (_, image) in samples { XCTAssertNotNil(image) }
+        guard let folder = ProcessInfo.processInfo.environment["YUVI_SHOTS"] else { return }
+        for (name, image) in samples {
+            try image?.pngData()?.write(to: URL(fileURLWithPath: folder).appendingPathComponent("mark-\(name).png"))
+        }
     }
 
     /// A photo that couldn't be loaded draws a placeholder instead of breaking the render.

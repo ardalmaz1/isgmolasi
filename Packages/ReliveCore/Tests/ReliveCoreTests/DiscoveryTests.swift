@@ -152,6 +152,26 @@ struct DiscoveryRefineTests {
         #expect(unavailable.score == unavailable.metadataScore, "no thumbnail: metadata ranking unchanged")
     }
 
+    @Test func friendGroupsAndPagesOfNotesStepAsideForTheTwoOfYou() throws {
+        let shortlist = discovery.shortlist(from: F.library(), relationshipStart: nil, now: F.now)
+        let candidates = shortlist.candidates.filter { $0.representativeIDs.count >= 2 }
+        try #require(candidates.count >= 3)
+        let (pair, group, notes) = (candidates[0], candidates[1], candidates[2])
+        var analyses: [AssetID: RepresentativeAnalysis] = [:]
+        for id in shortlist.representativeIDs { analyses[id] = RepresentativeAnalysis(faceCount: 0, aesthetic: 0.5) }
+        for id in pair.representativeIDs { analyses[id] = RepresentativeAnalysis(faceCount: 2, aesthetic: 0.5) }
+        for id in group.representativeIDs { analyses[id] = RepresentativeAnalysis(faceCount: 5, aesthetic: 0.5) }
+        // Half of the moment is pages of a notebook.
+        for (index, id) in notes.representativeIDs.enumerated() {
+            analyses[id] = RepresentativeAnalysis(faceCount: 0, isUtility: index % 2 == 0, aesthetic: 0.5)
+        }
+        let refined = discovery.refine(shortlist, analyses: analyses)
+        let kept = try #require(refined.first { $0.id == pair.id })
+        #expect(kept.score > pair.metadataScore + 2, "photos of two people raise a moment")
+        #expect(!refined.contains { $0.id == group.id }, "a moment of group photos only is more likely friends")
+        #expect(!refined.contains { $0.id == notes.id }, "a moment that is mostly pages isn't a memory")
+    }
+
     @Test func refinedCandidatesAreBoundedAndNewestFirst() {
         let shortlist = discovery.shortlist(from: F.library(), relationshipStart: nil, now: F.now)
         let refined = discovery.refine(shortlist, analyses: [:])

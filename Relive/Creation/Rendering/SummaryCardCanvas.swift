@@ -2,11 +2,11 @@ import ReliveCore
 import SwiftUI
 import UIKit
 
-/// A 4:5 card that shares a month or a year: its name, a few honest counts, and a mosaic of its
-/// best photos.
+/// A 9:16 card that shares a month or a year — sized for a story on Instagram and the like:
+/// its name, a few honest counts, a mosaic of its best photos, and the small Yuvi mark.
 struct SummaryCardCanvas: View {
-    static let size = CreationAspectRatio.portrait.designSize
-    static let mosaicFrame = LayoutRect(x: 70, y: 400, width: 940, height: 860)
+    static let size = CreationAspectRatio.story.designSize
+    static let mosaicFrame = LayoutRect(x: 70, y: 520, width: 940, height: 1180)
 
     let eyebrow: String?
     let title: String
@@ -47,13 +47,17 @@ struct SummaryCardCanvas: View {
                     .minimumScaleFactor(0.5)
             }
             .frame(width: 940, height: 300, alignment: .bottomLeading)
-            .offset(x: 70, y: 60)
+            .offset(x: 70, y: 170)
 
             ForEach(Array(mosaic.slots.enumerated()), id: \.offset) { _, slot in
                 let id = photoIDs.indices.contains(slot.photoIndex) ? photoIDs[slot.photoIndex] : nil
                 CanvasPhoto(image: id.flatMap { images[$0] }, size: slot.photoFrame.cgSize, isMissing: id.map { missing.contains($0) } ?? true)
                     .placed(at: slot.photoFrame.offsetBy(dx: Self.mosaicFrame.x, dy: Self.mosaicFrame.y))
             }
+
+            YuviMark(height: 40)
+                .frame(width: Self.size.width, height: 220)
+                .offset(y: Self.mosaicFrame.y + Self.mosaicFrame.height)
         }
         .frame(width: Self.size.width, height: Self.size.height, alignment: .topLeading)
         .clipped()

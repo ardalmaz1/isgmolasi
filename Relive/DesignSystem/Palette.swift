@@ -10,7 +10,7 @@ enum Palette {
     /// Shown while a photo loads.
     static let placeholder = Color(light: 0xE6E0D6, dark: 0x2A2622)
     static let textPrimary = Color(light: 0x1E1B18, dark: 0xF3EFE9)
-    static let textSecondary = Color(light: 0x6B645B, dark: 0xA89F94)
+    static let textSecondary = Color(light: 0x5E574F, dark: 0xB3AA9F)
     static let textTertiary = Color(light: 0x958D82, dark: 0x746C62)
     static let hairline = Color(light: 0x1E1B18, dark: 0xF3EFE9).opacity(0.12)
     /// Text drawn on top of filled primary buttons.

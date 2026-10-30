@@ -8,9 +8,13 @@ struct TodayView: View {
     @Environment(AppModel.self) private var app
     @Environment(StoryStore.self) private var store
     @Environment(MadeForYouStore.self) private var madeForYou
+    @Environment(PartnerConnectionModel.self) private var partner
     @Environment(\.analytics) private var analytics
     @State private var path = NavigationPath()
     @State private var isAddingMemories = false
+    @State private var showsPartnerExplanation = false
+    /// "Not now" on the invite card hides it for a week.
+    @AppStorage("today.invitePartner.hiddenUntil") private var inviteHiddenUntil: Double = 0
     /// Chosen when Today refreshes (not on every redraw).
     @State private var discoveries: [TodayDiscovery] = []
 
@@ -27,6 +31,15 @@ struct TodayView: View {
                             .accessibilityAddTraits(.isHeader)
                     }
                     .padding(.top, Spacing.l)
+
+                    // A couples app: inviting the partner comes first, until they're connected.
+                    if partner.state == .notConnected, store.hasStory, Date().timeIntervalSince1970 >= inviteHiddenUntil {
+                        InvitePartnerCard(
+                            partnerName: app.couple?.partnerName,
+                            onInvite: { showsPartnerExplanation = true },
+                            onNotNow: { withAnimation { inviteHiddenUntil = Date().addingTimeInterval(7 * 86_400).timeIntervalSince1970 } }
+                        )
+                    }
 
                     if app.shouldAskSmileQuestion {
                         SmileQuestionCard()
@@ -108,6 +121,7 @@ struct TodayView: View {
             }
         }
         .addMemoriesFlow(isPresented: $isAddingMemories)
+        .partnerConnectSheet(isPresented: $showsPartnerExplanation)
         .onAppear { refreshResurfacing() }
         .onChange(of: store.story.generatedAt) { _, _ in refreshResurfacing() }
         .onChange(of: store.archive) { _, _ in refreshDiscoveries() }
@@ -345,6 +359,44 @@ struct ContinueStoryCard: View {
         }
         .buttonStyle(.plain)
         .accessibilityElement(children: .combine)
+    }
+}
+
+/// The first card on Today until the partner is connected.
+struct InvitePartnerCard: View {
+    let partnerName: String?
+    let onInvite: () -> Void
+    let onNotNow: () -> Void
+
+    private var name: String { partnerName ?? "your partner" }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.s) {
+            Image(systemName: "person.2.fill")
+                .font(.title3)
+                .foregroundStyle(Palette.accent)
+                .accessibilityHidden(true)
+            Text("Bring \(name) into your story")
+                .font(Typography.title3)
+                .foregroundStyle(Palette.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+            Text("Connect your two iPhones. \(partnerName ?? "Your partner") joins Premium free with your invitation, and your photos stay on this iPhone.")
+                .font(Typography.callout)
+                .foregroundStyle(Palette.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+            HStack(spacing: Spacing.s) {
+                Button("Invite \(partnerName ?? "Partner")", action: onInvite)
+                    .buttonStyle(.relivePrimary)
+                    .accessibilityIdentifier("todayInvitePartner")
+                Button("Not Now", action: onNotNow)
+                    .buttonStyle(.reliveQuiet)
+                    .fixedSize()
+            }
+            .padding(.top, Spacing.xs)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Spacing.m)
+        .background(Palette.surface, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
     }
 }
 

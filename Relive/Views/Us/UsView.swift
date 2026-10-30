@@ -57,15 +57,18 @@ struct UsView: View {
                 PartnerSection(showsExplanation: $showsPartnerExplanation)
 
                 Section("Yuvi Premium") {
-                    NavigationLink {
-                        PremiumSettingsView()
-                    } label: {
-                        LabeledContent("Premium") {
-                            Text(premium.showsPremium ? "Active" : "Free")
-                                .foregroundStyle(Palette.textSecondary)
+                    // Only a subscriber sees the plan row; "Free" says nothing useful here.
+                    if premium.showsPremium {
+                        NavigationLink {
+                            PremiumSettingsView()
+                        } label: {
+                            LabeledContent("Premium") {
+                                Text("Active")
+                                    .foregroundStyle(Palette.textSecondary)
+                            }
                         }
+                        .accessibilityIdentifier("usPremium")
                     }
-                    .accessibilityIdentifier("usPremium")
                     Button("Restore Purchases") { Task { await premium.restore(entry: .settings) } }
                         .disabled(premium.restoreState == .restoring)
                         .accessibilityIdentifier("usRestore")
@@ -86,12 +89,14 @@ struct UsView: View {
                     Text("Photo access")
                 } footer: {
                     Text("Your story holds only the photos you chose or kept. Yuvi never identifies people. You can change access any time in Settings.")
+                        .font(Typography.callout)
+                        .foregroundStyle(Palette.textSecondary)
                 }
                 .listRowBackground(Palette.surface)
 
                 Section("Privacy") {
                     Text("Your photos are organized on this iPhone and aren’t uploaded; there is no account and no feed. When Yuvi suggests moments, it reads dates and places and counts faces in a few photos — it never knows who anyone is. To name places, Yuvi asks Apple’s location service about a location — never a photo. Photos kept only in iCloud may be downloaded from your own iCloud to show them.")
-                        .font(Typography.footnote)
+                        .font(Typography.callout)
                         .foregroundStyle(Palette.textSecondary)
                         .padding(.vertical, Spacing.xxs)
                 }
@@ -131,8 +136,10 @@ struct UsView: View {
     }
 
     private static var versionText: String {
-        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.1"
-        return "Prototype \(version)"
+        let info = Bundle.main.infoDictionary
+        let version = info?["CFBundleShortVersionString"] as? String ?? "1.0"
+        let build = info?["CFBundleVersion"] as? String ?? "1"
+        return "\(version) (\(build))"
     }
 }
 

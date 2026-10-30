@@ -5,6 +5,9 @@ import UIKit
 /// Plays a movie plan live, without exporting: the same timeline and the same frame drawer as
 /// the exporter, drawn small. Photos are loaded once, small, and reused.
 struct MoviePreviewView: View {
+    /// The Yuvi mark, as the export draws it.
+    private static let mark = YuviMark.image(height: 54, scale: 2)?.cgImage
+
     let plan: MoviePlan
     @Binding var isPlaying: Bool
     /// Seconds into the movie when paused (set by the scene strip to show a scene).
@@ -93,7 +96,7 @@ struct MoviePreviewView: View {
         format.scale = min(displayScale, 2)
         format.opaque = true
         return UIGraphicsImageRenderer(size: size, format: format).image { context in
-            MovieFrameDrawer.draw(frame, plan: plan, in: context.cgContext, size: size, images: byIndex)
+            MovieFrameDrawer.draw(frame, plan: plan, in: context.cgContext, size: size, images: byIndex, mark: Self.mark)
         }
     }
 

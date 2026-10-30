@@ -61,6 +61,8 @@ struct MovieRenderer: Sendable {
     let loader: any CreationPhotoLoading
     /// 1 for export; tests render small.
     var scale: Double = 1
+    /// The Yuvi mark drawn in a corner (`YuviMark.image`), made on the main actor beforehand.
+    var mark: CGImage?
 
     func render(to url: URL, progress: @escaping @Sendable (Double) -> Void) async throws -> MovieRenderResult {
         guard plan.isReady, !plan.scenes.isEmpty else { throw MovieExportError.notEnoughPhotos }
@@ -132,7 +134,7 @@ struct MovieRenderer: Sendable {
                     try await Task.sleep(for: .milliseconds(4))
                 }
                 guard let buffer = Self.pixelBuffer(from: adaptor, width: width, height: height) else { throw MovieExportError.renderFailed }
-                Self.draw(frame, plan: plan, into: buffer, images: images)
+                Self.draw(frame, plan: plan, into: buffer, images: images, mark: mark)
                 guard adaptor.append(buffer, withPresentationTime: CMTime(value: CMTimeValue(index), timescale: fps)) else {
                     throw writer.error.map(Self.classify) ?? MovieExportError.renderFailed
                 }
@@ -173,7 +175,7 @@ struct MovieRenderer: Sendable {
         return buffer
     }
 
-    private static func draw(_ frame: MovieTimeline.Frame, plan: MoviePlan, into buffer: CVPixelBuffer, images: [Int: MovieSceneImages]) {
+    private static func draw(_ frame: MovieTimeline.Frame, plan: MoviePlan, into buffer: CVPixelBuffer, images: [Int: MovieSceneImages], mark: CGImage?) {
         CVPixelBufferLockBaseAddress(buffer, [])
         defer { CVPixelBufferUnlockBaseAddress(buffer, []) }
         let width = CVPixelBufferGetWidth(buffer)
@@ -191,7 +193,7 @@ struct MovieRenderer: Sendable {
         context.translateBy(x: 0, y: CGFloat(height))
         context.scaleBy(x: 1, y: -1)
         UIGraphicsPushContext(context)
-        MovieFrameDrawer.draw(frame, plan: plan, in: context, size: CGSize(width: width, height: height), images: images)
+        MovieFrameDrawer.draw(frame, plan: plan, in: context, size: CGSize(width: width, height: height), images: images, mark: mark)
         UIGraphicsPopContext()
     }
 

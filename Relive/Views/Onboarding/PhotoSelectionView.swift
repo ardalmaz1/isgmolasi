@@ -112,7 +112,7 @@ struct PrivacyNote: View {
                     .font(Typography.callout.weight(.semibold))
                     .foregroundStyle(Palette.textPrimary)
                 Text("Only the photos you choose. They’re organized on this iPhone — your photos aren’t uploaded, and there’s no account.")
-                    .font(Typography.footnote)
+                    .font(Typography.callout)
                     .foregroundStyle(Palette.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }

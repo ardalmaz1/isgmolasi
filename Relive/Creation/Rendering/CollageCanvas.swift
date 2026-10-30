@@ -65,6 +65,11 @@ struct CollageCanvas: View {
             if let rect = layout.caption, !caption.isEmpty {
                 captionView(in: rect)
             }
+
+            // The small Yuvi mark in the bottom margin; on a pill where there's no margin to sit in.
+            YuviMark(height: layout.watermark.height, onPill: layout.margin < 24)
+                .frame(width: layout.watermark.width, height: layout.watermark.height, alignment: .trailing)
+                .placed(at: layout.watermark)
         }
         .frame(width: layout.canvas.width, height: layout.canvas.height, alignment: .topLeading)
         .clipped()

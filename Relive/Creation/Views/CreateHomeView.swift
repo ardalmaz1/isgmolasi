@@ -25,6 +25,7 @@ struct CreateHomeView: View {
     /// moments (`MomentRoute`). A typed `[CreateRoute]` path silently refuses the others.
     @State private var path = NavigationPath()
     @State private var choosesBookSource = false
+    @State private var isAddingMemories = false
 
     var body: some View {
         let library = store.creationLibrary
@@ -69,23 +70,33 @@ struct CreateHomeView: View {
                             message: "Once your story has memories, you can turn them into collages, stories and recaps here."
                         )
                     } else {
+                        let photos = library.assets.count
                         favoritesSection(library: library)
-                        Text("Create Something")
+                        Text(photos < CreateUnlocks.story ? "Make Your First" : "Create Something")
                             .font(Typography.title2)
                             .foregroundStyle(Palette.textPrimary)
                             .accessibilityAddTraits(.isHeader)
-                        trendingNow
+                        if photos >= CreateUnlocks.story { trendingNow }
                         collageFeature(library: library)
-                        Hairline()
-                        storyFeature(library: library)
-                        Hairline()
-                        bookFeature(library: library, months: months, years: years)
-                        Hairline()
-                        movieFeature(library: library)
-                        Hairline()
-                        monthlyRecapRow(library: library, months: months)
-                        Hairline()
-                        yearRow(library: library, years: years)
+                        if photos >= CreateUnlocks.story {
+                            Hairline()
+                            storyFeature(library: library)
+                        }
+                        if photos >= CreateUnlocks.movieAndBook {
+                            Hairline()
+                            bookFeature(library: library, months: months, years: years)
+                            Hairline()
+                            movieFeature(library: library)
+                        }
+                        if photos >= CreateUnlocks.recaps {
+                            Hairline()
+                            monthlyRecapRow(library: library, months: months)
+                            Hairline()
+                            yearRow(library: library, years: years)
+                        }
+                        if let next = CreateUnlocks.next(after: photos) {
+                            ComingUpRow(next: next, photos: photos) { isAddingMemories = true }
+                        }
                     }
                 }
                 .padding(.horizontal, Spacing.screenMargin)
@@ -116,6 +127,7 @@ struct CreateHomeView: View {
         .onChange(of: store.userStates) { _, _ in madeForYou.refresh(from: store) }
         .onChange(of: store.keptItems.count) { _, _ in madeForYou.refresh(from: store) }
         .task { await trends.refresh() }
+        .addMemoriesFlow(isPresented: $isAddingMemories)
     }
 
     /// UI tests of other flows hide Made for You so Create keeps the layout they were written
@@ -542,5 +554,58 @@ private struct ContinueEditingCard: View {
         } message: {
             Text("Its photos stay in Yuvi and in the Photos app.")
         }
+    }
+}
+
+/// Create opens up as the story grows: on the first day one thing to make (a collage), the
+/// rest as photos gather, so a small story never faces eight tools at once.
+enum CreateUnlocks {
+    static let story = 15
+    static let movieAndBook = 25
+    static let recaps = 40
+
+    struct Next: Equatable {
+        let photos: Int
+        let names: String
+    }
+
+    /// What opens next, and at how many photos; nil once everything is open.
+    static func next(after photos: Int) -> Next? {
+        if photos < story { return Next(photos: story, names: "Stories and Trending") }
+        if photos < movieAndBook { return Next(photos: movieAndBook, names: "Memory Book and Memory Movie") }
+        if photos < recaps { return Next(photos: recaps, names: "Monthly Recap and Our Year") }
+        return nil
+    }
+}
+
+/// "Memory Book and Memory Movie open at 25 photos · 12 of 25" with a way to add more.
+private struct ComingUpRow: View {
+    let next: CreateUnlocks.Next
+    let photos: Int
+    let onAdd: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: Spacing.s) {
+            Text("Coming up")
+                .eyebrowStyle()
+            Text("\(next.names) open at \(next.photos) photos.")
+                .font(Typography.title3)
+                .foregroundStyle(Palette.textPrimary)
+                .fixedSize(horizontal: false, vertical: true)
+            ProgressView(value: Double(photos), total: Double(next.photos))
+                .tint(Palette.accent)
+            Text("\(photos) of \(next.photos) photos in your story")
+                .font(Typography.callout)
+                .foregroundStyle(Palette.textSecondary)
+            Button("Add Memories", action: onAdd)
+                .buttonStyle(.reliveOutline)
+                .padding(.top, Spacing.xs)
+                .accessibilityIdentifier("createAddMemories")
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(Spacing.m)
+        .background(Palette.surface, in: RoundedRectangle(cornerRadius: Radius.card, style: .continuous))
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier("createComingUp")
     }
 }

@@ -17,7 +17,7 @@ struct RelationshipDateView: View {
                 .padding(.top, Spacing.s)
 
             Text("Choose a month and a year — an estimate is perfectly fine. You can change it later in Us.")
-                .font(Typography.footnote)
+                .font(Typography.callout)
                 .foregroundStyle(Palette.textSecondary)
             // At the largest text sizes the footer keeps only the main action.
             if typeSize.isAccessibilitySize {

@@ -105,7 +105,7 @@ struct DiscoveryPrivacyView: View {
             .padding(.top, Spacing.s)
 
             Text("Next, iOS asks for access to your photos. Allowing full access lets Yuvi look; you can change this anytime in Settings.")
-                .font(Typography.footnote)
+                .font(Typography.callout)
                 .foregroundStyle(Palette.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, Spacing.s)

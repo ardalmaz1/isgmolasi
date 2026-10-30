@@ -339,9 +339,11 @@ public struct MemoryDiscovery: Sendable {
     /// Re-ranks the shortlist with the representatives' thumbnail signals and returns the
     /// possible moments to show, newest first.
     ///
-    /// Signals: two or more faces (a count — never who) raise a moment; a moment whose analysed
-    /// representatives are all utility images (documents, receipts) is dropped; aesthetics
-    /// nudge. A moment without local thumbnails keeps its metadata ranking.
+    /// Signals (face counts — never who): photos with one or two faces raise a moment, group
+    /// photos (three or more) lower it, and a moment made mostly of group photos with none of
+    /// one or two people is dropped — it is more likely friends than the couple. A moment whose
+    /// analysed representatives are mostly utility images (documents, notes, receipts) is
+    /// dropped; aesthetics nudge. A moment without local thumbnails keeps its metadata ranking.
     public func refine(_ shortlist: DiscoveryShortlist, analyses: [AssetID: RepresentativeAnalysis]) -> [DiscoveryCandidate] {
         var refined: [DiscoveryCandidate] = []
         for var candidate in shortlist.candidates {
@@ -349,20 +351,19 @@ public struct MemoryDiscovery: Sendable {
             let available = results.filter(\.isAvailable)
             candidate.unavailableRepresentatives = results.count - available.count
             candidate.faces = available.map { FaceSignal(faceCount: $0.faceCount) }.max(by: Self.weaker) ?? .unknown
-            if !available.isEmpty, available.allSatisfy(\.isUtility) { continue }
+            let utilityShare = Self.share(of: available) { $0.isUtility }
+            if !available.isEmpty, utilityShare >= 0.5 { continue }
+            let pairShare = Self.share(of: available) { (1...2).contains($0.faceCount ?? 0) }
+            let groupShare = Self.share(of: available) { ($0.faceCount ?? 0) >= 3 }
+            if available.count >= 2, groupShare >= 0.5, pairShare == 0 { continue }
 
             var score = candidate.metadataScore
-            switch candidate.faces {
-            case .twoOrMore: score += 2
-            case .one: score += 0.8
-            case .none: score -= 0.5
-            case .unknown: break
-            }
+            score += pairShare * 2.5 - groupShare * 1.5
+            if candidate.faces == .none { score -= 0.5 }
             let aesthetics = available.compactMap(\.aesthetic)
             if !aesthetics.isEmpty {
                 score += (aesthetics.reduce(0, +) / Double(aesthetics.count) - 0.5)
             }
-            let utilityShare = available.isEmpty ? 0 : Double(available.filter(\.isUtility).count) / Double(available.count)
             score -= utilityShare
             candidate.score = score
             refined.append(candidate)
@@ -409,6 +410,11 @@ public struct MemoryDiscovery: Sendable {
         if lhs.score != rhs.score { return lhs.score > rhs.score }
         if lhs.start != rhs.start { return lhs.start > rhs.start }
         return lhs.id < rhs.id
+    }
+
+    /// The share of `analyses` matching `predicate`; 0 when there are none.
+    static func share(of analyses: [RepresentativeAnalysis], where predicate: (RepresentativeAnalysis) -> Bool) -> Double {
+        analyses.isEmpty ? 0 : Double(analyses.filter(predicate).count) / Double(analyses.count)
     }
 
     static func weaker(_ lhs: FaceSignal, _ rhs: FaceSignal) -> Bool {

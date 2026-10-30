@@ -8,7 +8,8 @@ import Vision
 ///
 /// Signals: number of faces and their capture quality (no identification — Relive never learns
 /// who is in a photo), a feature print for similarity, Apple's aesthetics estimate (which also
-/// flags "utility" images such as receipts and screenshots of text), and pixel statistics from
+/// flags "utility" images such as receipts and screenshots of text; pages of text without
+/// faces count as utility too), and pixel statistics from
 /// ReliveCore (perceptual hash, contrast, sharpness).
 ///
 /// Every request fails independently; failures are recorded so the engine can degrade gracefully.
@@ -25,6 +26,9 @@ struct VisionAssetAnalyzer: AssetAnalyzing {
         }
         return await Self.analyze(image: image)
     }
+
+    /// Share of the image covered by text boxes above which a photo without faces is a page.
+    static let textPageCoverage: CGFloat = 0.12
 
     static func analyze(image: CGImage) async -> AssetAnalysis {
         var analysis = AssetAnalysis()
@@ -65,6 +69,19 @@ struct VisionAssetAnalyzer: AssetAnalyzing {
         } catch {
             failures.insert(.aesthetics)
             logger.debug("Aesthetics failed: \(error.localizedDescription, privacy: .public)")
+        }
+
+        // Pages of text (notebooks, notes, slides) that Apple's utility flag misses: mostly
+        // text and no one in it.
+        if !analysis.isUtility, analysis.faceCount == 0 {
+            let textRequest = VNDetectTextRectanglesRequest()
+            do {
+                try handler.perform([textRequest])
+                let area = (textRequest.results ?? []).reduce(0) { $0 + $1.boundingBox.width * $1.boundingBox.height }
+                if area >= textPageCoverage { analysis.isUtility = true }
+            } catch {
+                logger.debug("Text detection failed: \(error.localizedDescription, privacy: .public)")
+            }
         }
 
         // Perceptual hash, contrast and sharpness.

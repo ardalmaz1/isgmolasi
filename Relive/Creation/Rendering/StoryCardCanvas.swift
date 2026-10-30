@@ -309,6 +309,10 @@ struct StoryCardCanvas: View {
             words
         }
         .frame(width: width, height: height, alignment: .topLeading)
+        .overlay(alignment: .bottomTrailing) {
+            YuviMark(height: 30, onPill: true)
+                .padding(40)
+        }
         .clipped()
         .environment(\.colorScheme, .light)
     }
