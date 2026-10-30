@@ -1,0 +1,306 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "card": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kart"
+          }
+        }
+      }
+    },
+    "cards": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "kart"
+          }
+        }
+      }
+    },
+    "creation": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "üretim"
+          }
+        }
+      }
+    },
+    "creations": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "üretim"
+          }
+        }
+      }
+    },
+    "day": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gün"
+          }
+        }
+      }
+    },
+    "days": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gün"
+          }
+        }
+      }
+    },
+    "different month": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "farklı ay"
+          }
+        }
+      }
+    },
+    "different months": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "farklı ay"
+          }
+        }
+      }
+    },
+    "favorite": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "favori"
+          }
+        }
+      }
+    },
+    "favorites": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "favori"
+          }
+        }
+      }
+    },
+    "memories": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "anı"
+          }
+        }
+      }
+    },
+    "memory": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "anı"
+          }
+        }
+      }
+    },
+    "moment": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "an"
+          }
+        }
+      }
+    },
+    "moments": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "an"
+          }
+        }
+      }
+    },
+    "month": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ay"
+          }
+        }
+      }
+    },
+    "months": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ay"
+          }
+        }
+      }
+    },
+    "photo": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fotoğraf"
+          }
+        }
+      }
+    },
+    "photo is missing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fotoğraf eksik"
+          }
+        }
+      }
+    },
+    "photo missing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fotoğraf eksik"
+          }
+        }
+      }
+    },
+    "photos": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fotoğraf"
+          }
+        }
+      }
+    },
+    "photos are missing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fotoğraf eksik"
+          }
+        }
+      }
+    },
+    "photos missing": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fotoğraf eksik"
+          }
+        }
+      }
+    },
+    "place": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "yer"
+          }
+        }
+      }
+    },
+    "places": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "yer"
+          }
+        }
+      }
+    },
+    "similar photo": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "benzer fotoğraf"
+          }
+        }
+      }
+    },
+    "similar photos": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "benzer fotoğraf"
+          }
+        }
+      }
+    },
+    "trip": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gezi"
+          }
+        }
+      }
+    },
+    "trips": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "gezi"
+          }
+        }
+      }
+    },
+    "video": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "video"
+          }
+        }
+      }
+    },
+    "videos": {
+      "localizations": {
+        "tr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "video"
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

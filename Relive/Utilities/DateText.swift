@@ -66,9 +66,13 @@ enum DateText {
     }
 }
 
-/// Counted nouns with thousands separators: "1 moment", "1,568 days".
+/// Counted nouns with thousands separators: "1 moment", "1,568 days" ("1.568 gün").
+///
+/// Both words are looked up in the `Nouns` table and picked by count; a language that keeps the
+/// singular after a number (Turkish) translates the plural to the singular word.
 enum Counted {
     static func text(_ count: Int, _ singular: String, _ plural: String) -> String {
-        "\(count.formatted()) \(count == 1 ? singular : plural)"
+        let word = count == 1 ? singular : plural
+        return "\(count.formatted()) \(Bundle.main.localizedString(forKey: word, value: word, table: "Nouns"))"
     }
 }
