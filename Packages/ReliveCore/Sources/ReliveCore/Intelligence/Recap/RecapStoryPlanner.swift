@@ -254,7 +254,10 @@ public struct RecapStoryPlanner: Sendable {
     }
 
     func dayLabel(_ day: DayKey, withYear: Bool = false) -> String {
-        withYear ? "\(names.full(day.month)) \(day.day), \(day.year)" : "\(names.full(day.month)) \(day.day)"
+        if EditorialLanguage(locale: locale) == .turkish {
+            return withYear ? "\(day.day) \(names.full(day.month)) \(day.year)" : "\(day.day) \(names.full(day.month))"
+        }
+        return withYear ? "\(names.full(day.month)) \(day.day), \(day.year)" : "\(names.full(day.month)) \(day.day)"
     }
 
     // MARK: - Chapters

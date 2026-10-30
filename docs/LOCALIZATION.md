@@ -16,10 +16,24 @@ translatable). Read it before touching any user-facing text.
 
 ## Where strings live
 
-- **App:** `Relive/Resources/Localizable.xcstrings` (one catalog). Source language English.
-- **Nouns after numbers:** table `Nouns` in the same catalog (see Counts).
-- **ReliveCore:** generated text goes through a language parameter (as `EditorialLanguage` does
-  today), never through `Bundle.main`. The package has no string catalog of its own.
+- **App:** `Relive/Resources/Localizable.xcstrings` (plus `InfoPlist.xcstrings` for permission
+  texts). Source language English.
+- **Nouns after numbers:** `Relive/Resources/Nouns.xcstrings` (see Counts).
+- **ReliveCore:** generated words go through `EditorialLanguage` / `CoreWords`, which follow the
+  app's own localization (`Locale.reliveDisplay` = `Bundle.main.preferredLocalizations`), not the
+  device region. Under `swift test` that is English. The package has no string catalog.
+
+## Adding or updating a language
+
+Xcode does not fill the catalog on build. Round-trip through XLIFF:
+
+1. `xcodebuild -exportLocalizations -project Relive.xcodeproj -localizationPath <dir> -exportLanguage tr`
+2. Fill `<target>` for every unit (keep `%1$@`, `%lld` and their positions).
+3. `xcodebuild -importLocalizations -project Relive.xcodeproj -localizationPath <dir>/tr.xcloc`
+
+Unit and UI tests run in English: pass `-testLanguage en -testRegion en_US` (the simulators are
+set to Turkish). `ScreenshotTourUITests` finds tabs by position, so it also runs in any language
+(`-testLanguage tr -testRegion tr_TR`).
 
 ## Rules for app strings (Codex)
 

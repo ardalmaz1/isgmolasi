@@ -53,6 +53,19 @@ struct MomentNamingTests {
         #expect(tr.makeTitle(for: event(date(2025, 8, 6, 18), date(2025, 8, 6, 21), place: "Kaş")) == MomentTitle(primary: "Kaş", secondary: "Ağustos 2025"))
     }
 
+    @Test("A saved story is renamed in a new language; place names stay")
+    func renameStory() {
+        let evening = Moment(id: MomentID(), kind: .event, assetIDs: ["a"], featuredAssetIDs: ["a"], startDate: date(2024, 12, 12, 19), endDate: date(2024, 12, 12, 21), title: MomentTitle(primary: "December Evening", secondary: "December 2024"))
+        let kas = Moment(id: MomentID(), kind: .event, assetIDs: ["b"], featuredAssetIDs: ["b"], startDate: date(2025, 8, 6, 18), endDate: date(2025, 8, 6, 21), place: PlaceName(name: "Kaş"), title: MomentTitle(primary: "Kaş", secondary: "August 2025"))
+        let story = Story(generatedAt: Date(), moments: [evening, kas], chapters: [])
+        let tr = LocalMomentNamingService(calendar: testCalendar, locale: Locale(identifier: "tr_TR"))
+        let renamed = tr.renamed(story)
+        #expect(renamed.moments[0].title.primary == "Aralık Akşamı")
+        #expect(renamed.moments[1].title == MomentTitle(primary: "Kaş", secondary: "Ağustos 2025"))
+        #expect(tr.renamed(renamed) == renamed)
+        #expect(naming.renamed(renamed).moments[0].title.primary == "December Evening")
+    }
+
     @Test("New Year's Eve is recognised")
     func newYearsEve() {
         let title = naming.makeTitle(for: event(date(2025, 12, 31, 21), date(2026, 1, 1, 0, 45)))

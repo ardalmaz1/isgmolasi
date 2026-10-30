@@ -112,7 +112,8 @@ final class StoryStore {
         self.placeResolver = placeResolver
         self.analytics = analytics
         self.calendar = calendar
-        self.story = repository.loadStory() ?? .empty
+        // Names follow the app's language: a story saved in English reads in Turkish after a switch.
+        self.story = (repository.loadStory()).map(LocalMomentNamingService(calendar: calendar, locale: .reliveDisplay).renamed) ?? .empty
         self.assets = Dictionary(repository.loadAssets().map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
         self.userStates = repository.loadMomentStates()
         self.createdAssetIDs = repository.loadCreatedAssetIDs()
@@ -560,7 +561,7 @@ final class StoryStore {
             ),
             analyzer: analyzer,
             placeResolver: placeResolver,
-            namingService: LocalMomentNamingService(calendar: calendar, locale: .current)
+            namingService: LocalMomentNamingService(calendar: calendar, locale: .reliveDisplay)
         )
         let input = Array(assets.values)
         let (updates, continuation) = AsyncStream.makeStream(of: MemoryEngineProgress.self, bufferingPolicy: .bufferingNewest(1))

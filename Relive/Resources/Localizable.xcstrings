@@ -1,0 +1,7473 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    " · Part of %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : " · %@ içinden"
+          }
+        }
+      }
+    },
+    ", no longer in your library" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", artık arşivinizde değil"
+          }
+        }
+      }
+    },
+    "“%@”" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@”"
+          }
+        }
+      }
+    },
+    "%@ — and a card to share — are part of Yuvi Premium." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ve paylaşılacak bir kart Yuvi Premium'a dahil."
+          }
+        }
+      }
+    },
+    "%@ · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ %3$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "%@ found" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ bulundu"
+          }
+        }
+      }
+    },
+    "%@ in %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ in %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@ içinde"
+          }
+        }
+      }
+    },
+    "%@ of %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ of %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ / %2$@"
+          }
+        }
+      }
+    },
+    "%@ of the two of you." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İkinizin %@."
+          }
+        }
+      }
+    },
+    "%@ open at %lld photos." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ open at %2$lld photos."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ %2$lld fotoğrafta açılır."
+          }
+        }
+      }
+    },
+    "%@ per %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ per %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%2$@ başına %1$@"
+          }
+        }
+      }
+    },
+    "%@ preview, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ preview, %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ önizleme, %2$@"
+          }
+        }
+      }
+    },
+    "%@ Together" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@, Birlikte"
+          }
+        }
+      }
+    },
+    "%@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$@"
+          }
+        }
+      }
+    },
+    "%@, %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@, %2$lld of %3$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, %2$lld / %3$lld"
+          }
+        }
+      }
+    },
+    "%@’s" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@"
+          }
+        }
+      }
+    },
+    "%lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        }
+      }
+    },
+    "%lld chosen · choose at least %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld chosen · choose at least %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld seçildi · en az %2$lld seçin"
+          }
+        }
+      }
+    },
+    "%lld favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld favori"
+          }
+        }
+      }
+    },
+    "%lld images saved to Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld görsel Fotoğraflar'a kaydedildi"
+          }
+        }
+      }
+    },
+    "%lld more chapters" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld bölüm daha"
+          }
+        }
+      }
+    },
+    "%lld of %lld photos in your story" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld photos in your story"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizdeki %2$lld fotoğraftan %1$lld tanesi"
+          }
+        }
+      }
+    },
+    "%lld of up to %lld chosen" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of up to %2$lld chosen"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En fazla %2$lld fotoğraftan %1$lld seçildi"
+          }
+        }
+      }
+    },
+    "%lld photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fotoğraf"
+          }
+        }
+      }
+    },
+    "%lld photos are no longer in your library and were left out." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fotoğraf artık arşivinizde değil, dışarıda bırakıldı."
+          }
+        }
+      }
+    },
+    "%lld photos are no longer in your library." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fotoğraf artık arşivinizde değil."
+          }
+        }
+      }
+    },
+    "%lld photos are no longer in your library. Remove them from the movie, then try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fotoğraf artık arşivinizde değil. Onları filmden çıkarıp tekrar deneyin."
+          }
+        }
+      }
+    },
+    "%lld photos are no longer in your library. Replace or remove them, then try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fotoğraf artık arşivinizde değil. Değiştirin ya da çıkarın, sonra tekrar deneyin."
+          }
+        }
+      }
+    },
+    "%lld photos are no longer in your library. Replace them from Edit Card, or remove them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fotoğraf artık arşivinizde değil. Kartı Düzenle'den değiştirin ya da çıkarın."
+          }
+        }
+      }
+    },
+    "%lld years ago" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld yıl önce"
+          }
+        }
+      }
+    },
+    "%lld–%lld photos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld–%2$lld photos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld–%2$lld fotoğraf"
+          }
+        }
+      }
+    },
+    "%lld%%" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%%%lld"
+          }
+        }
+      }
+    },
+    "✓" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "✓"
+          }
+        }
+      }
+    },
+    "1 favorite" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 favori"
+          }
+        }
+      }
+    },
+    "9:16 Tall" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "9:16 Dikey"
+          }
+        }
+      }
+    },
+    "16:9 Wide" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "16:9 Yatay"
+          }
+        }
+      }
+    },
+    "A book keeps at least %lld photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir kitapta en az %lld fotoğraf bulunur."
+          }
+        }
+      }
+    },
+    "A book needs at least %lld photos, and there %@ here. Choose a few more to go with them." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A book needs at least %1$lld photos, and there %2$@ here. Choose a few more to go with them."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir kitap için en az %1$lld fotoğraf gerekiyor, burada %2$@ var. Yanlarına birkaç tane daha seçin."
+          }
+        }
+      }
+    },
+    "A book needs at least %lld photos, and there are none here that can be used." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir kitap için en az %lld fotoğraf gerekiyor, burada kullanılabilecek hiç fotoğraf yok."
+          }
+        }
+      }
+    },
+    "A collage needs at least two photos. Choose another to go with this one." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir kolaj için en az iki fotoğraf gerekiyor. Bunun yanına bir tane daha seçin."
+          }
+        }
+      }
+    },
+    "A few words for the first page" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk sayfa için birkaç kelime"
+          }
+        }
+      }
+    },
+    "A little memory for you" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size küçük bir anı"
+          }
+        }
+      }
+    },
+    "A moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir an"
+          }
+        }
+      }
+    },
+    "A Moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir An"
+          }
+        }
+      }
+    },
+    "A Month" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Ay"
+          }
+        }
+      }
+    },
+    "A month of your story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizden bir ay."
+          }
+        }
+      }
+    },
+    "A movie needs at least %lld different photos, and there %@ here. Choose a few more to make one." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A movie needs at least %1$lld different photos, and there %2$@ here. Choose a few more to make one."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir film için en az %1$lld farklı fotoğraf gerekiyor, burada %2$@ var. Birkaç tane daha seçin."
+          }
+        }
+      }
+    },
+    "A movie needs at least %lld photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir film için en az %lld fotoğraf gerekiyor."
+          }
+        }
+      }
+    },
+    "A photo is no longer in your library. Close and choose again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğraf artık arşivinizde değil. Kapatıp yeniden seçin."
+          }
+        }
+      }
+    },
+    "A place without a name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adı olmayan bir yer"
+          }
+        }
+      }
+    },
+    "A place you returned to" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar döndüğünüz bir yer"
+          }
+        }
+      }
+    },
+    "A short film, edited by Yuvi from your memories." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'nin anılarınızdan kurguladığı kısa bir film."
+          }
+        }
+      }
+    },
+    "A story needs at least %lld photos, and there %@ here." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "A story needs at least %1$lld photos, and there %2$@ here."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir hikâye için en az %1$lld fotoğraf gerekiyor, burada %2$@ var."
+          }
+        }
+      }
+    },
+    "A story needs at least %lld photos, and there are none here that can be used." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir hikâye için en az %lld fotoğraf gerekiyor, burada kullanılabilecek hiç fotoğraf yok."
+          }
+        }
+      }
+    },
+    "A trip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir gezi"
+          }
+        }
+      }
+    },
+    "A Trip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Gezi"
+          }
+        }
+      }
+    },
+    "A trip to look back on" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dönüp bakılacak bir gezi"
+          }
+        }
+      }
+    },
+    "A Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Yıl"
+          }
+        }
+      }
+    },
+    "A year ago" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir yıl önce"
+          }
+        }
+      }
+    },
+    "About %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hakkında"
+          }
+        }
+      }
+    },
+    "About %lld is plenty to get started. Add more anytime." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlamak için %lld civarı yeterli. İstediğiniz zaman daha fazlasını ekleyin."
+          }
+        }
+      }
+    },
+    "About AI creations" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yapay zekâ üretimleri hakkında"
+          }
+        }
+      }
+    },
+    "Active" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Etkin"
+          }
+        }
+      }
+    },
+    "Add" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekle"
+          }
+        }
+      }
+    },
+    "Add (%lld)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekle (%lld)"
+          }
+        }
+      }
+    },
+    "Add a few more favorites to make a book. A book needs at least %lld photos, and you have %@ that can be used." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add a few more favorites to make a book. A book needs at least %1$lld photos, and you have %2$@ that can be used."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitap yapmak için birkaç favori daha ekleyin. Bir kitap için en az %1$lld fotoğraf gerekiyor, kullanılabilecek %2$@ var."
+          }
+        }
+      }
+    },
+    "Add a few more favorites to make a collage. A collage needs at least two photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolaj yapmak için birkaç favori daha ekleyin. Bir kolaj için en az iki fotoğraf gerekiyor."
+          }
+        }
+      }
+    },
+    "Add a few more favorites to make a story. A story needs at least %lld photos, and you have %@ that can be used." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Add a few more favorites to make a story. A story needs at least %1$lld photos, and you have %2$@ that can be used."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye yapmak için birkaç favori daha ekleyin. Bir hikâye için en az %1$lld fotoğraf gerekiyor, kullanılabilecek %2$@ var."
+          }
+        }
+      }
+    },
+    "Add a few more memories from this year to build Our Year." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim Yılımız'ı oluşturmak için bu yıldan birkaç anı daha ekleyin."
+          }
+        }
+      }
+    },
+    "Add a Note" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not Ekle"
+          }
+        }
+      }
+    },
+    "Add Favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favori Ekle"
+          }
+        }
+      }
+    },
+    "Add from Photo Library" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf Arşivinden Ekle"
+          }
+        }
+      }
+    },
+    "Add Memories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Ekle"
+          }
+        }
+      }
+    },
+    "Add memories from this year to build Our Year." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim Yılımız'ı oluşturmak için bu yıldan anı ekleyin."
+          }
+        }
+      }
+    },
+    "Add memories to your story and they’ll appear here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenize anı ekleyin, burada görünsünler."
+          }
+        }
+      }
+    },
+    "Add memories to your story and Yuvi will find its moments." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenize anı ekleyin, Yuvi içindeki anları bulsun."
+          }
+        }
+      }
+    },
+    "Add or Remove Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf Ekle ya da Çıkar"
+          }
+        }
+      }
+    },
+    "Add photos of the two of you and they’ll all be here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İkinizin fotoğraflarını ekleyin, hepsi burada olsun."
+          }
+        }
+      }
+    },
+    "Add photos of the two of you and Yuvi will arrange them into your story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İkinizin fotoğraflarını ekleyin, Yuvi onları hikâyenize yerleştirsin."
+          }
+        }
+      }
+    },
+    "Add them and Yuvi will place them in your story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ekleyin, Yuvi onları hikâyenize yerleştirsin."
+          }
+        }
+      }
+    },
+    "Adds photos that have joined since and leaves out deleted ones. Your style, cover and note stay." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O günden beri eklenen fotoğrafları alır, silinenleri dışarıda bırakır. Stiliniz, kapağınız ve notunuz kalır."
+          }
+        }
+      }
+    },
+    "AI creations aren’t available yet, so nothing is sent today." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yapay zekâ üretimleri henüz kullanılamıyor, bugün hiçbir şey gönderilmiyor."
+          }
+        }
+      }
+    },
+    "All" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tümü"
+          }
+        }
+      }
+    },
+    "Already a favorite" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaten favori"
+          }
+        }
+      }
+    },
+    "An estimate is perfectly fine. Memories from before it are shown separately." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tahmini bir tarih de olur. Ondan önceki anılar ayrı gösterilir."
+          }
+        }
+      }
+    },
+    "And that’s our %@." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşte bizim %@."
+          }
+        }
+      }
+    },
+    "And that’s our %lld." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İşte bizim %lld."
+          }
+        }
+      }
+    },
+    "Any photo on this iPhone. Its own date and place are used, and it isn’t added to your story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu iPhone'daki herhangi bir fotoğraf. Kendi tarihi ve yeri kullanılır, hikâyenize eklenmez."
+          }
+        }
+      }
+    },
+    "Apple couldn’t renew your subscription. Premium stays on while you update your payment method in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple aboneliğinizi yenileyemedi. Ayarlar'dan ödeme yönteminizi güncellerken Premium açık kalır."
+          }
+        }
+      }
+    },
+    "Apple couldn’t renew your subscription. Update your payment method in Settings to turn Premium back on. " : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apple aboneliğinizi yenileyemedi. Premium'u yeniden açmak için Ayarlar'dan ödeme yönteminizi güncelleyin."
+          }
+        }
+      }
+    },
+    "are %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld tane"
+          }
+        }
+      }
+    },
+    "are only %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yalnızca %lld tane"
+          }
+        }
+      }
+    },
+    "As your story grows older, Yuvi will bring back memories here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz eskidikçe Yuvi anıları buraya geri getirecek."
+          }
+        }
+      }
+    },
+    "As your story grows, they’ll appear here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz büyüdükçe burada görünecekler."
+          }
+        }
+      }
+    },
+    "Back" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri"
+          }
+        }
+      }
+    },
+    "Before" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öncesi"
+          }
+        }
+      }
+    },
+    "Before %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ öncesi"
+          }
+        }
+      }
+    },
+    "Best results" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En iyi sonuç"
+          }
+        }
+      }
+    },
+    "Black" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siyah"
+          }
+        }
+      }
+    },
+    "Black & White" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Siyah Beyaz"
+          }
+        }
+      }
+    },
+    "book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kitap"
+          }
+        }
+      }
+    },
+    "Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitap"
+          }
+        }
+      }
+    },
+    "Books" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitaplar"
+          }
+        }
+      }
+    },
+    "Bring %@ into your story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hikâyenize girsin"
+          }
+        }
+      }
+    },
+    "Build from Photo Library" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf Arşivinden Oluştur"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vazgeç"
+          }
+        }
+      }
+    },
+    "Cancel Invitation" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daveti İptal Et"
+          }
+        }
+      }
+    },
+    "Card %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Card %1$lld of %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kart %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Card with %lld photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fotoğraflı kart"
+          }
+        }
+      }
+    },
+    "Change Cover" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapağı Değiştir"
+          }
+        }
+      }
+    },
+    "Change Layout" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzeni Değiştir"
+          }
+        }
+      }
+    },
+    "Change Selection" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçimi Değiştir"
+          }
+        }
+      }
+    },
+    "Chapter %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Chapter %1$lld of %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bölüm %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Checking iCloud…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud kontrol ediliyor…"
+          }
+        }
+      }
+    },
+    "Checking with the App Store…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store ile kontrol ediliyor…"
+          }
+        }
+      }
+    },
+    "Checking your subscription with the App Store." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aboneliğiniz App Store ile kontrol ediliyor."
+          }
+        }
+      }
+    },
+    "Checking…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kontrol ediliyor…"
+          }
+        }
+      }
+    },
+    "Choose %lld–%lld photos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose %1$lld–%2$lld photos"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld–%2$lld fotoğraf seçin"
+          }
+        }
+      }
+    },
+    "Choose a Cover" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak Seçin"
+          }
+        }
+      }
+    },
+    "Choose a few memories of the two of you." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İkinizden birkaç anı seçin."
+          }
+        }
+      }
+    },
+    "Choose a few photos first." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önce birkaç fotoğraf seçin."
+          }
+        }
+      }
+    },
+    "Choose a Moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir An Seçin"
+          }
+        }
+      }
+    },
+    "Choose a Month" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Ay Seçin"
+          }
+        }
+      }
+    },
+    "Choose a month and a year — an estimate is perfectly fine. You can change it later in Us." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir ay ve yıl seçin, tahmini olması yeterli. Daha sonra Biz'den değiştirebilirsiniz."
+          }
+        }
+      }
+    },
+    "Choose a month and a year, or skip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir ay ve yıl seçin ya da geçin"
+          }
+        }
+      }
+    },
+    "Choose a photo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğraf seçin"
+          }
+        }
+      }
+    },
+    "Choose a Trip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Gezi Seçin"
+          }
+        }
+      }
+    },
+    "Choose a Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Yıl Seçin"
+          }
+        }
+      }
+    },
+    "Choose Again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden Seç"
+          }
+        }
+      }
+    },
+    "Choose memories myself" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anıları kendim seçeceğim"
+          }
+        }
+      }
+    },
+    "Choose memories myself instead" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunun yerine anıları kendim seçeyim"
+          }
+        }
+      }
+    },
+    "Choose memories. Yuvi makes something beautiful from them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anıları seçin, Yuvi onlardan güzel bir şey hazırlasın."
+          }
+        }
+      }
+    },
+    "Choose More Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha Fazla Fotoğraf Seç"
+          }
+        }
+      }
+    },
+    "Choose Our Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarımızı Seç"
+          }
+        }
+      }
+    },
+    "Choose Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf Seç"
+          }
+        }
+      }
+    },
+    "Choose photos for your %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ için fotoğraf seçin"
+          }
+        }
+      }
+    },
+    "Choose photos from several months to make a book of your year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yılınızın kitabını yapmak için birkaç farklı aydan fotoğraf seçin"
+          }
+        }
+      }
+    },
+    "Chooses a style, shape and order for these photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu fotoğraflar için bir stil, biçim ve sıra seçer"
+          }
+        }
+      }
+    },
+    "Choosing a few favorites…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birkaç favori seçiliyor…"
+          }
+        }
+      }
+    },
+    "Close" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapat"
+          }
+        }
+      }
+    },
+    "Closing card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapanış kartı"
+          }
+        }
+      }
+    },
+    "collage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "kolaj"
+          }
+        }
+      }
+    },
+    "Collage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolaj"
+          }
+        }
+      }
+    },
+    "Collage preview, %@ style, %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Collage preview, %1$@ style, %2$@, %3$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolaj önizlemesi, %1$@ stili, %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "Collages" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolajlar"
+          }
+        }
+      }
+    },
+    "Collages and stories you’re still making will wait here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hâlâ hazırladığınız kolaj ve hikâyeler burada bekler."
+          }
+        }
+      }
+    },
+    "Colour" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renkli"
+          }
+        }
+      }
+    },
+    "Coming soon" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çok yakında"
+          }
+        }
+      }
+    },
+    "Coming up" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sırada"
+          }
+        }
+      }
+    },
+    "Connect your partner" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partnerinizi bağlayın"
+          }
+        }
+      }
+    },
+    "Connect Your Partner" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partnerinizi Bağlayın"
+          }
+        }
+      }
+    },
+    "Connect your two iPhones. %@ joins Premium free with your invitation, and your photos stay on this iPhone." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İki iPhone'u bağlayın. %@ davetinizle Premium'a ücretsiz katılır, fotoğraflarınız bu iPhone'da kalır."
+          }
+        }
+      }
+    },
+    "Connected" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlı"
+          }
+        }
+      }
+    },
+    "Connected with %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile bağlı"
+          }
+        }
+      }
+    },
+    "Connecting doesn’t upload your photo library." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlanmak fotoğraf arşivinizi yüklemez."
+          }
+        }
+      }
+    },
+    "Continue" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devam Et"
+          }
+        }
+      }
+    },
+    "Continue Editing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzenlemeye Devam Et"
+          }
+        }
+      }
+    },
+    "Continue editing %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Continue editing %1$@, %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ düzenlemeye devam et, %2$@"
+          }
+        }
+      }
+    },
+    "Continue with %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ile Devam Et"
+          }
+        }
+      }
+    },
+    "Continue your story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenize devam edin"
+          }
+        }
+      }
+    },
+    "Continues editing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzenlemeye devam eder"
+          }
+        }
+      }
+    },
+    "Continuing your draft" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taslağınıza devam ediliyor"
+          }
+        }
+      }
+    },
+    "Cool" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soğuk"
+          }
+        }
+      }
+    },
+    "Couldn’t make a card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kart hazırlanamadı"
+          }
+        }
+      }
+    },
+    "Couldn’t save the movie to Photos. Please try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film Fotoğraflar'a kaydedilemedi. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Couldn’t save to Photos. Please try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar'a kaydedilemedi. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Cover" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak"
+          }
+        }
+      }
+    },
+    "Cover photo. Opens full screen." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak fotoğrafı. Tam ekran açılır."
+          }
+        }
+      }
+    },
+    "Create" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oluştur"
+          }
+        }
+      }
+    },
+    "Create a Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Hikâye Oluştur"
+          }
+        }
+      }
+    },
+    "Create from Favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorilerden Oluştur"
+          }
+        }
+      }
+    },
+    "Create from this" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bundan oluştur"
+          }
+        }
+      }
+    },
+    "Create Something" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Şey Oluştur"
+          }
+        }
+      }
+    },
+    "Create Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye Oluştur"
+          }
+        }
+      }
+    },
+    "Creating your movie…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filminiz hazırlanıyor…"
+          }
+        }
+      }
+    },
+    "Creations" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretimler"
+          }
+        }
+      }
+    },
+    "Date" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarih"
+          }
+        }
+      }
+    },
+    "Dates and places help Yuvi group photos into possible moments." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihler ve yerler, Yuvi'nin fotoğrafları olası anlara ayırmasına yardım eder."
+          }
+        }
+      }
+    },
+    "Delete" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sil"
+          }
+        }
+      }
+    },
+    "Delete %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Sil"
+          }
+        }
+      }
+    },
+    "Delete Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitabı Sil"
+          }
+        }
+      }
+    },
+    "Delete Draft" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taslağı Sil"
+          }
+        }
+      }
+    },
+    "Delete this %@?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu %@ silinsin mi?"
+          }
+        }
+      }
+    },
+    "Delete this book?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu kitap silinsin mi?"
+          }
+        }
+      }
+    },
+    "Delete this draft?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu taslak silinsin mi?"
+          }
+        }
+      }
+    },
+    "Delete Yuvi’s Data" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Verilerini Sil"
+          }
+        }
+      }
+    },
+    "Designs the story again: a style, an order and layouts for these photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeyi yeniden tasarlar: bu fotoğraflar için bir stil, sıra ve düzen"
+          }
+        }
+      }
+    },
+    "Details" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayrıntılar"
+          }
+        }
+      }
+    },
+    "Did you find something that made you smile?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sizi gülümseten bir şey buldunuz mu?"
+          }
+        }
+      }
+    },
+    "Disconnect" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantıyı Kes"
+          }
+        }
+      }
+    },
+    "Disconnect Partner" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partner Bağlantısını Kes"
+          }
+        }
+      }
+    },
+    "Disconnecting…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantı kesiliyor…"
+          }
+        }
+      }
+    },
+    "Don’t Show This Again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu Bir Daha Gösterme"
+          }
+        }
+      }
+    },
+    "Don’t Suggest" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önerme"
+          }
+        }
+      }
+    },
+    "Don’t Suggest This Memory" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Anıyı Önerme"
+          }
+        }
+      }
+    },
+    "Don’t Suggest This Photo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Fotoğrafı Önerme"
+          }
+        }
+      }
+    },
+    "Done" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitti"
+          }
+        }
+      }
+    },
+    "Double-tap to swap with another photo. Touch and hold, then drag, to move it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başka bir fotoğrafla yer değiştirmek için iki kez dokunun. Taşımak için basılı tutup sürükleyin."
+          }
+        }
+      }
+    },
+    "Draft %@, %@, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Draft %1$@, %2$@, %3$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taslak %1$@, %2$@, %3$@"
+          }
+        }
+      }
+    },
+    "Drafts" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taslaklar"
+          }
+        }
+      }
+    },
+    "E" : {
+      "comment" : "East abbreviation in geographic coordinates",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D"
+          }
+        }
+      }
+    },
+    "Earlier" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha Önce"
+          }
+        }
+      }
+    },
+    "Edit" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düzenle"
+          }
+        }
+      }
+    },
+    "Edit Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitabı Düzenle"
+          }
+        }
+      }
+    },
+    "Edit Card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kartı Düzenle"
+          }
+        }
+      }
+    },
+    "Edit Names and Date" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İsimleri ve Tarihi Düzenle"
+          }
+        }
+      }
+    },
+    "Edit Note" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notu Düzenle"
+          }
+        }
+      }
+    },
+    "Edit Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğrafları Düzenle"
+          }
+        }
+      }
+    },
+    "Edit title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlığı düzenle"
+          }
+        }
+      }
+    },
+    "Edit your note" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notunuzu düzenleyin"
+          }
+        }
+      }
+    },
+    "Edited %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ düzenlendi"
+          }
+        }
+      }
+    },
+    "Edited just now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az önce düzenlendi"
+          }
+        }
+      }
+    },
+    "Every day of it, in order." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her günü, sırasıyla."
+          }
+        }
+      }
+    },
+    "Everything here is from %@. Add memories from another month to build Our Year." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buradaki her şey %@ ayından. Bizim Yılımız'ı oluşturmak için başka bir aydan anı ekleyin."
+          }
+        }
+      }
+    },
+    "Faded" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Soluk"
+          }
+        }
+      }
+    },
+    "Favorite" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favori"
+          }
+        }
+      }
+    },
+    "Favorite %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ favorilere ekle"
+          }
+        }
+      }
+    },
+    "Favorite a few memories to make a book from them. A book needs at least %lld photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitap yapmak için birkaç anıyı favorilere ekleyin. Bir kitap için en az %lld fotoğraf gerekiyor."
+          }
+        }
+      }
+    },
+    "Favorite a few memories to make a collage from them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolaj yapmak için birkaç anıyı favorilere ekleyin."
+          }
+        }
+      }
+    },
+    "Favorite a few memories to make a story from them. A story needs at least %lld photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye yapmak için birkaç anıyı favorilere ekleyin. Bir hikâye için en az %lld fotoğraf gerekiyor."
+          }
+        }
+      }
+    },
+    "Favorite book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitabı favorilere ekle"
+          }
+        }
+      }
+    },
+    "Favorite memories to keep them close and create from them later." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anıları yakınınızda tutmak ve sonra onlardan bir şey oluşturmak için favorilere ekleyin."
+          }
+        }
+      }
+    },
+    "Favorite moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı favorilere ekle"
+          }
+        }
+      }
+    },
+    "Favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favoriler"
+          }
+        }
+      }
+    },
+    "filmed %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ çekildi"
+          }
+        }
+      }
+    },
+    "Find Our Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyemizi Bul"
+          }
+        }
+      }
+    },
+    "Finding moments you spent together…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birlikte geçirdiğiniz anlar bulunuyor…"
+          }
+        }
+      }
+    },
+    "Finding places you’ve been…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gittiğiniz yerler bulunuyor…"
+          }
+        }
+      }
+    },
+    "Finding your story…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz bulunuyor…"
+          }
+        }
+      }
+    },
+    "First name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ad"
+          }
+        }
+      }
+    },
+    "Found for you" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sizin için bulundu"
+          }
+        }
+      }
+    },
+    "Found for you %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sizin için bulundu %@"
+          }
+        }
+      }
+    },
+    "Found for you: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sizin için bulundu: %@"
+          }
+        }
+      }
+    },
+    "Found more photos of the two of you?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İkinizin başka fotoğraflarını da mı buldunuz?"
+          }
+        }
+      }
+    },
+    "Free. Yuvi works just the same on your own." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ücretsiz. Yuvi tek başınıza da aynı şekilde çalışır."
+          }
+        }
+      }
+    },
+    "From Photo Library" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf Arşivinden"
+          }
+        }
+      }
+    },
+    "From your story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizden"
+          }
+        }
+      }
+    },
+    "From Yuvi" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'den"
+          }
+        }
+      }
+    },
+    "Full access is on, so Yuvi can suggest moments when you ask it to. Your story holds the %@ you chose or kept." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tam erişim açık, böylece Yuvi siz istediğinizde anlar önerebilir. Hikâyeniz seçtiğiniz ya da sakladığınız %@ içerir."
+          }
+        }
+      }
+    },
+    "Gathering your photos…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınız toplanıyor…"
+          }
+        }
+      }
+    },
+    "Getting your invitation ready…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Davetiniz hazırlanıyor…"
+          }
+        }
+      }
+    },
+    "Goes back to Yuvi's title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'nin başlığına döner"
+          }
+        }
+      }
+    },
+    "Hidden Memories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gizlenen Anılar"
+          }
+        }
+      }
+    },
+    "Hide Coordinates" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koordinatları Gizle"
+          }
+        }
+      }
+    },
+    "Hide Date" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihi Gizle"
+          }
+        }
+      }
+    },
+    "Hide Place" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeri Gizle"
+          }
+        }
+      }
+    },
+    "Hide similar photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benzer fotoğrafları gizle"
+          }
+        }
+      }
+    },
+    "Hide This Memory" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Anıyı Gizle"
+          }
+        }
+      }
+    },
+    "How would you like to begin?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nasıl başlamak istersiniz?"
+          }
+        }
+      }
+    },
+    "I know the exact day" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günü tam olarak biliyorum"
+          }
+        }
+      }
+    },
+    "I know when it began" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ne zaman başladığını biliyorum"
+          }
+        }
+      }
+    },
+    "I only remember the month" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sadece ayı hatırlıyorum"
+          }
+        }
+      }
+    },
+    "I’m not sure — skip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emin değilim, geç"
+          }
+        }
+      }
+    },
+    "Include notes from moments" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anların notlarını ekle"
+          }
+        }
+      }
+    },
+    "Invitation sent" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Davet gönderildi"
+          }
+        }
+      }
+    },
+    "Invite %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Davet Gönder"
+          }
+        }
+      }
+    },
+    "Invited by your partner? Open their invitation link on this iPhone and you’re in, free." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partneriniz mi davet etti? Davet bağlantısını bu iPhone'da açın, ücretsiz katılırsınız."
+          }
+        }
+      }
+    },
+    "is 1" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 tane"
+          }
+        }
+      }
+    },
+    "is only 1" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yalnızca 1 tane"
+          }
+        }
+      }
+    },
+    "It may count faces in a few photos, but it doesn’t know who anyone is." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bazı fotoğraflarda yüzleri sayabilir ama kimin kim olduğunu bilmez."
+          }
+        }
+      }
+    },
+    "It may have been deleted." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silinmiş olabilir."
+          }
+        }
+      }
+    },
+    "It’s removed from Yuvi. Its photos stay in Yuvi and in the Photos app." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'den kaldırıldı. Fotoğrafları Yuvi'de ve Fotoğraflar uygulamasında kalır."
+          }
+        }
+      }
+    },
+    "Its moments may have been hidden." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anları gizlenmiş olabilir."
+          }
+        }
+      }
+    },
+    "Its photos may have been removed or hidden." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğrafları kaldırılmış ya da gizlenmiş olabilir."
+          }
+        }
+      }
+    },
+    "Its photos stay in Yuvi and in the Photos app." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğrafları Yuvi'de ve Fotoğraflar uygulamasında kalır."
+          }
+        }
+      }
+    },
+    "Joining…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Katılınıyor…"
+          }
+        }
+      }
+    },
+    "Jump to" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Git"
+          }
+        }
+      }
+    },
+    "Jump to a year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir yıla git"
+          }
+        }
+      }
+    },
+    "Just a few memories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sadece birkaç anı"
+          }
+        }
+      }
+    },
+    "Just a few memories from %lld so far." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld yılından şimdilik birkaç anı var."
+          }
+        }
+      }
+    },
+    "Just a few memories this month" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu ay sadece birkaç anı var"
+          }
+        }
+      }
+    },
+    "Just getting started · %@ so far" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha yeni başlıyor · şimdilik %@"
+          }
+        }
+      }
+    },
+    "Keep" : {
+      "comment" : "Keep a moment in your story",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sakla"
+          }
+        }
+      }
+    },
+    "Keep a moment to continue" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Devam etmek için bir anı saklayın"
+          }
+        }
+      }
+    },
+    "Keep My Changes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değişikliklerimi Koru"
+          }
+        }
+      }
+    },
+    "Keep the ones that are yours. Moments you don’t keep aren’t saved." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Size ait olanları saklayın. Saklamadığınız anlar kaydedilmez."
+          }
+        }
+      }
+    },
+    "Keep, %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sakla, %@"
+          }
+        }
+      }
+    },
+    "Keeps it in My Creations" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretimlerim'de saklar"
+          }
+        }
+      }
+    },
+    "Keeps it in your favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorilerinizde saklar"
+          }
+        }
+      }
+    },
+    "Kept %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ saklandı"
+          }
+        }
+      }
+    },
+    "Kept in My Creations" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretimlerim'de saklandı"
+          }
+        }
+      }
+    },
+    "Kept in Yuvi" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'de saklandı"
+          }
+        }
+      }
+    },
+    "Kept just now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Az önce saklandı"
+          }
+        }
+      }
+    },
+    "Last checked" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son kontrol"
+          }
+        }
+      }
+    },
+    "Last page" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son sayfa"
+          }
+        }
+      }
+    },
+    "Later" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha Sonra"
+          }
+        }
+      }
+    },
+    "Latest Memories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son Anılar"
+          }
+        }
+      }
+    },
+    "Latest: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En son: %@"
+          }
+        }
+      }
+    },
+    "Leave Connection" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantıdan Ayrıl"
+          }
+        }
+      }
+    },
+    "Length" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uzunluk"
+          }
+        }
+      }
+    },
+    "Let Yuvi find them" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi bulsun"
+          }
+        }
+      }
+    },
+    "Lists the years of your story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizin yıllarını listeler"
+          }
+        }
+      }
+    },
+    "Loading prices…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fiyatlar yükleniyor…"
+          }
+        }
+      }
+    },
+    "Look again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeniden bak"
+          }
+        }
+      }
+    },
+    "Look back at your month together." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birlikte geçen ayınıza dönüp bakın."
+          }
+        }
+      }
+    },
+    "Looking at a few photos from each moment — %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Looking at a few photos from each moment — %1$lld of %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her andan birkaç fotoğrafa bakılıyor: %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Looking for possible moments…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Olası anlar aranıyor…"
+          }
+        }
+      }
+    },
+    "Looking through your memories…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anılarınız inceleniyor…"
+          }
+        }
+      }
+    },
+    "Made for You" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sizin İçin"
+          }
+        }
+      }
+    },
+    "Made on this iPhone. Your photos aren’t uploaded." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu iPhone'da hazırlandı. Fotoğraflarınız yüklenmez."
+          }
+        }
+      }
+    },
+    "Made with AI" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yapay zekâyla hazırlandı"
+          }
+        }
+      }
+    },
+    "Make a Collage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolaj Yap"
+          }
+        }
+      }
+    },
+    "Make a Memory Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Kitabı Yap"
+          }
+        }
+      }
+    },
+    "Make a Memory Movie" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Filmi Yap"
+          }
+        }
+      }
+    },
+    "Make a Movie" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film Yap"
+          }
+        }
+      }
+    },
+    "Make a New Cut" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni Bir Kurgu Yap"
+          }
+        }
+      }
+    },
+    "Make a new cut?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni bir kurgu yapılsın mı?"
+          }
+        }
+      }
+    },
+    "Make a Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye Yap"
+          }
+        }
+      }
+    },
+    "Make Collage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolaj Yap"
+          }
+        }
+      }
+    },
+    "Make it for me" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Benim için yap"
+          }
+        }
+      }
+    },
+    "Make Opening" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açılış Yap"
+          }
+        }
+      }
+    },
+    "Make Something" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir Şey Yap"
+          }
+        }
+      }
+    },
+    "Make something from your favorite photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favori fotoğraflarınızdan bir şey yapın."
+          }
+        }
+      }
+    },
+    "Make Your First" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlkinizi Yapın"
+          }
+        }
+      }
+    },
+    "Making the movie stopped when Yuvi left the screen. Please try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi ekrandan ayrılınca film hazırlama durdu. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Manage Subscription" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aboneliği Yönet"
+          }
+        }
+      }
+    },
+    "Memories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anılar"
+          }
+        }
+      }
+    },
+    "Memories already in your story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizde zaten olan anılar."
+          }
+        }
+      }
+    },
+    "Memories you hide won’t appear in your story or be resurfaced." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gizlediğiniz anılar hikâyenizde görünmez ve yeniden karşınıza çıkmaz."
+          }
+        }
+      }
+    },
+    "Memory Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Kitabı"
+          }
+        }
+      }
+    },
+    "Memory Book and Memory Movie" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Kitabı ve Anı Filmi"
+          }
+        }
+      }
+    },
+    "Memory Collage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Kolajı"
+          }
+        }
+      }
+    },
+    "Memory hidden" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı gizlendi"
+          }
+        }
+      }
+    },
+    "Memory Movie" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Filmi"
+          }
+        }
+      }
+    },
+    "Memory Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Hikâyesi"
+          }
+        }
+      }
+    },
+    "Moments" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anlar"
+          }
+        }
+      }
+    },
+    "Moments appear here once your story has memories." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizde anılar olunca anlar burada görünür."
+          }
+        }
+      }
+    },
+    "Mono" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tek Renk"
+          }
+        }
+      }
+    },
+    "Month" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ay"
+          }
+        }
+      }
+    },
+    "Monthly Recap" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aylık Özet"
+          }
+        }
+      }
+    },
+    "Monthly Recap and Our Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aylık Özet ve Bizim Yılımız"
+          }
+        }
+      }
+    },
+    "More" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daha Fazla"
+          }
+        }
+      }
+    },
+    "Move Earlier" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öne Al"
+          }
+        }
+      }
+    },
+    "Move Later" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sona Al"
+          }
+        }
+      }
+    },
+    "movie" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "film"
+          }
+        }
+      }
+    },
+    "Movie" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film"
+          }
+        }
+      }
+    },
+    "Movie preview, %lld photos, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Movie preview, %1$lld photos, %2$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film önizlemesi, %1$lld fotoğraf, %2$@"
+          }
+        }
+      }
+    },
+    "Movie Title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film Başlığı"
+          }
+        }
+      }
+    },
+    "Movies" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filmler"
+          }
+        }
+      }
+    },
+    "Movies, collages, stories and books you keep will be here, ready to watch, open or share again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sakladığınız filmler, kolajlar, hikâyeler ve kitaplar burada, yeniden izlemeye, açmaya ya da paylaşmaya hazır."
+          }
+        }
+      }
+    },
+    "My Creations" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretimlerim"
+          }
+        }
+      }
+    },
+    "N" : {
+      "comment" : "North abbreviation in geographic coordinates",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "K"
+          }
+        }
+      }
+    },
+    "Needs at least %lld photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En az %lld fotoğraf gerekiyor"
+          }
+        }
+      }
+    },
+    "New" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni"
+          }
+        }
+      }
+    },
+    "Next" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İleri"
+          }
+        }
+      }
+    },
+    "Next chapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sonraki bölüm"
+          }
+        }
+      }
+    },
+    "Next, iOS asks for access to your photos. Allowing full access lets Yuvi look; you can change this anytime in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdi iOS fotoğraflarınıza erişim isteyecek. Tam erişime izin verirseniz Yuvi bakabilir; bunu Ayarlar'dan istediğiniz zaman değiştirebilirsiniz."
+          }
+        }
+      }
+    },
+    "No active Premium subscription was found for this Apple Account." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Apple Hesabı için etkin bir Premium abonelik bulunamadı."
+          }
+        }
+      }
+    },
+    "No drafts" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Taslak yok"
+          }
+        }
+      }
+    },
+    "No favorites yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz favori yok"
+          }
+        }
+      }
+    },
+    "No feed, no account, nothing posted anywhere." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akış yok, hesap yok, hiçbir yerde paylaşım yok."
+          }
+        }
+      }
+    },
+    "No hidden memories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gizlenen anı yok"
+          }
+        }
+      }
+    },
+    "No live location. Yuvi never shows where either of you is." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Canlı konum yok. Yuvi ikinizin de nerede olduğunu asla göstermez."
+          }
+        }
+      }
+    },
+    "No memories yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz anı yok"
+          }
+        }
+      }
+    },
+    "No moments yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz an yok"
+          }
+        }
+      }
+    },
+    "No months yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz ay yok"
+          }
+        }
+      }
+    },
+    "No photos chosen yet. Pick a few that feel like the two of you." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz fotoğraf seçilmedi. İkinizi anlatan birkaç tane seçin."
+          }
+        }
+      }
+    },
+    "No photos to choose from" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçilecek fotoğraf yok"
+          }
+        }
+      }
+    },
+    "No places yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz yer yok"
+          }
+        }
+      }
+    },
+    "No title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlık yok"
+          }
+        }
+      }
+    },
+    "No trips yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz gezi yok"
+          }
+        }
+      }
+    },
+    "No years yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz yıl yok"
+          }
+        }
+      }
+    },
+    "Noir" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noir"
+          }
+        }
+      }
+    },
+    "Not available" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kullanılamıyor"
+          }
+        }
+      }
+    },
+    "Not available yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz kullanılamıyor"
+          }
+        }
+      }
+    },
+    "Not connected" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlı değil"
+          }
+        }
+      }
+    },
+    "Not enough favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeterli favori yok"
+          }
+        }
+      }
+    },
+    "Not enough favorites for a story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye için yeterli favori yok"
+          }
+        }
+      }
+    },
+    "Not enough photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeterli fotoğraf yok"
+          }
+        }
+      }
+    },
+    "Not enough photos for a story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye için yeterli fotoğraf yok"
+          }
+        }
+      }
+    },
+    "Not now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdi değil"
+          }
+        }
+      }
+    },
+    "Not Now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdi Değil"
+          }
+        }
+      }
+    },
+    "Not ours" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim değil"
+          }
+        }
+      }
+    },
+    "Not ours, %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim değil, %@"
+          }
+        }
+      }
+    },
+    "Not selected" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçili değil"
+          }
+        }
+      }
+    },
+    "Not yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz değil"
+          }
+        }
+      }
+    },
+    "Note" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not"
+          }
+        }
+      }
+    },
+    "Nothing here yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada henüz bir şey yok"
+          }
+        }
+      }
+    },
+    "Nothing to make from yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz oluşturulacak bir şey yok"
+          }
+        }
+      }
+    },
+    "Nothing to resurface yet" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz geri getirilecek bir şey yok"
+          }
+        }
+      }
+    },
+    "Nothing was kept. You can look again, or choose a few memories yourself." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hiçbir şey saklanmadı. Yeniden bakabilir ya da birkaç anıyı kendiniz seçebilirsiniz."
+          }
+        }
+      }
+    },
+    "Now tap the photo to swap with." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdi yer değiştireceği fotoğrafa dokunun."
+          }
+        }
+      }
+    },
+    "Offline for now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdilik çevrimdışı"
+          }
+        }
+      }
+    },
+    "OK" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tamam"
+          }
+        }
+      }
+    },
+    "On this iPhone. No account. Nothing posted anywhere." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu iPhone'da. Hesap yok. Hiçbir yerde paylaşım yok."
+          }
+        }
+      }
+    },
+    "Once your story has memories, you can turn them into collages, stories and recaps here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizde anılar olunca onları burada kolaja, hikâyeye ve özete dönüştürebilirsiniz."
+          }
+        }
+      }
+    },
+    "One afternoon, one evening, one day." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir öğleden sonra, bir akşam, bir gün."
+          }
+        }
+      }
+    },
+    "one month" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bir ay"
+          }
+        }
+      }
+    },
+    "One more chapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir bölüm daha"
+          }
+        }
+      }
+    },
+    "One photo is no longer in your library and was left out." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğraf artık arşivinizde değil, dışarıda bırakıldı."
+          }
+        }
+      }
+    },
+    "One photo is no longer in your library." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğraf artık arşivinizde değil."
+          }
+        }
+      }
+    },
+    "One photo is no longer in your library. Remove it from the movie, then try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğraf artık arşivinizde değil. Onu filmden çıkarıp tekrar deneyin."
+          }
+        }
+      }
+    },
+    "One photo is no longer in your library. Replace it from Edit Card, or remove it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğraf artık arşivinizde değil. Kartı Düzenle'den değiştirin ya da çıkarın."
+          }
+        }
+      }
+    },
+    "One photo is no longer in your library. Replace or remove it, then try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğraf artık arşivinizde değil. Değiştirin ya da çıkarın, sonra tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Only the photos selected for this creation will be sent. The rest of your Yuvi library is not uploaded." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnızca bu üretim için seçilen fotoğraflar gönderilir. Yuvi arşivinizin geri kalanı yüklenmez."
+          }
+        }
+      }
+    },
+    "Only the photos you choose. They’re organized on this iPhone — your photos aren’t uploaded, and there’s no account." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnızca seçtiğiniz fotoğraflar. Bu iPhone'da düzenlenir; fotoğraflarınız yüklenmez ve hesap gerekmez."
+          }
+        }
+      }
+    },
+    "Only what you choose to share, later and one by one, is shared." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yalnızca sonradan, tek tek paylaşmayı seçtikleriniz paylaşılır."
+          }
+        }
+      }
+    },
+    "Only you can see this. It stays on this iPhone." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu yalnızca siz görebilirsiniz. Bu iPhone'da kalır."
+          }
+        }
+      }
+    },
+    "Open" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aç"
+          }
+        }
+      }
+    },
+    "Open It" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aç"
+          }
+        }
+      }
+    },
+    "Open Its Moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anını Aç"
+          }
+        }
+      }
+    },
+    "Open Settings" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayarlar'ı Aç"
+          }
+        }
+      }
+    },
+    "Open This Memory" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Anıyı Aç"
+          }
+        }
+      }
+    },
+    "Open Your Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitabınızı Açın"
+          }
+        }
+      }
+    },
+    "Opening" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açılış"
+          }
+        }
+      }
+    },
+    "Opening card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açılış kartı"
+          }
+        }
+      }
+    },
+    "Opening scene" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açılış sahnesi"
+          }
+        }
+      }
+    },
+    "Opens it, ready to look at and edit" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açar, bakmaya ve düzenlemeye hazır"
+          }
+        }
+      }
+    },
+    "Opens it. More actions are available." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Açar. Başka işlemler de var."
+          }
+        }
+      }
+    },
+    "Opens the memory" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anıyı açar"
+          }
+        }
+      }
+    },
+    "Opens the recap, chapter by chapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özeti bölüm bölüm açar"
+          }
+        }
+      }
+    },
+    "Opens the trend" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akımı açar"
+          }
+        }
+      }
+    },
+    "Options" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçenekler"
+          }
+        }
+      }
+    },
+    "Organizing your photos was interrupted." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınızı düzenleme yarıda kaldı."
+          }
+        }
+      }
+    },
+    "Our %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim %@"
+          }
+        }
+      }
+    },
+    "Our %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim %lld"
+          }
+        }
+      }
+    },
+    "Our Memories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anılarımız"
+          }
+        }
+      }
+    },
+    "Our Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyemiz"
+          }
+        }
+      }
+    },
+    "Our story, together" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyemiz, birlikte"
+          }
+        }
+      }
+    },
+    "Our Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim Yılımız"
+          }
+        }
+      }
+    },
+    "Page %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Page %1$lld of %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sayfa %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Partner" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partner"
+          }
+        }
+      }
+    },
+    "Partner’s first name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partnerin adı"
+          }
+        }
+      }
+    },
+    "Pause" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duraklat"
+          }
+        }
+      }
+    },
+    "Photo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf"
+          }
+        }
+      }
+    },
+    "Photo %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf %lld"
+          }
+        }
+      }
+    },
+    "Photo %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Photo %1$lld of %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Photo %lld of %lld%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Photo %1$lld of %2$lld%3$@"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf %1$lld / %2$lld%3$@"
+          }
+        }
+      }
+    },
+    "Photo access" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf erişimi"
+          }
+        }
+      }
+    },
+    "Photo card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf kartı"
+          }
+        }
+      }
+    },
+    "Photo, %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf, %@"
+          }
+        }
+      }
+    },
+    "Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar"
+          }
+        }
+      }
+    },
+    "Photos · %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar · %lld"
+          }
+        }
+      }
+    },
+    "Photos aren’t shown here on purpose. Choose Show to return a memory to your story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar burada bilerek gösterilmiyor. Bir anıyı hikâyenize geri almak için Göster'e dokunun."
+          }
+        }
+      }
+    },
+    "Photos I Choose" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçtiğim Fotoğraflar"
+          }
+        }
+      }
+    },
+    "Photos in This Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Kitaptaki Fotoğraflar"
+          }
+        }
+      }
+    },
+    "Photos with a location appear here by place." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Konumu olan fotoğraflar burada yerlerine göre görünür."
+          }
+        }
+      }
+    },
+    "Pick the photos yourself; Yuvi keeps them as you chose." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğrafları kendiniz seçin; Yuvi onları seçtiğiniz gibi tutar."
+          }
+        }
+      }
+    },
+    "Picked up for swapping" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yer değiştirmek için seçildi"
+          }
+        }
+      }
+    },
+    "Place" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yer"
+          }
+        }
+      }
+    },
+    "Place card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yer kartı"
+          }
+        }
+      }
+    },
+    "Places" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yerler"
+          }
+        }
+      }
+    },
+    "Play" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oynat"
+          }
+        }
+      }
+    },
+    "Play %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oynat: %@"
+          }
+        }
+      }
+    },
+    "Play Our %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Oynat: Bizim %@"
+          }
+        }
+      }
+    },
+    "Possible moments" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Olası anlar"
+          }
+        }
+      }
+    },
+    "Premium" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium"
+          }
+        }
+      }
+    },
+    "Premium · Annual" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium · Yıllık"
+          }
+        }
+      }
+    },
+    "Premium · Monthly" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium · Aylık"
+          }
+        }
+      }
+    },
+    "Premium ends on %@. It won’t renew." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium %@ tarihinde bitiyor. Yenilenmeyecek."
+          }
+        }
+      }
+    },
+    "Premium is active." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium etkin."
+          }
+        }
+      }
+    },
+    "Premium isn’t available in your region right now." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium şu an bölgenizde kullanılamıyor."
+          }
+        }
+      }
+    },
+    "Premium isn’t available right now. Please try again later." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium şu an kullanılamıyor. Lütfen daha sonra tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Premium. Saves every page to Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium. Her sayfayı Fotoğraflar'a kaydeder"
+          }
+        }
+      }
+    },
+    "Preparing the recap" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özet hazırlanıyor"
+          }
+        }
+      }
+    },
+    "Preparing…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hazırlanıyor…"
+          }
+        }
+      }
+    },
+    "Preview of %@ with your photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınızla %@ önizlemesi"
+          }
+        }
+      }
+    },
+    "Previous chapter" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önceki bölüm"
+          }
+        }
+      }
+    },
+    "Prices haven’t loaded yet. Please try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fiyatlar henüz yüklenmedi. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Printed after the cover. It stays on this iPhone unless you share a page." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapaktan sonra basılır. Bir sayfayı paylaşmadığınız sürece bu iPhone'da kalır."
+          }
+        }
+      }
+    },
+    "Privacy" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gizlilik"
+          }
+        }
+      }
+    },
+    "Privacy Policy" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gizlilik Politikası"
+          }
+        }
+      }
+    },
+    "Purchases aren’t allowed on this iPhone or App Store account." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu iPhone'da ya da App Store hesabında satın almaya izin verilmiyor."
+          }
+        }
+      }
+    },
+    "Purchasing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satın alınıyor"
+          }
+        }
+      }
+    },
+    "Reading dates and places…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihler ve yerler okunuyor…"
+          }
+        }
+      }
+    },
+    "Recently" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son zamanlarda"
+          }
+        }
+      }
+    },
+    "Recommended" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önerilen"
+          }
+        }
+      }
+    },
+    "Red" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kırmızı"
+          }
+        }
+      }
+    },
+    "Remember this?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu hatırlıyor musunuz?"
+          }
+        }
+      }
+    },
+    "Remember this? ❤️" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bunu hatırlıyor musunuz? ❤️"
+          }
+        }
+      }
+    },
+    "Remove" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaldır"
+          }
+        }
+      }
+    },
+    "Remove Card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kartı Kaldır"
+          }
+        }
+      }
+    },
+    "Remove from Favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorilerden Kaldır"
+          }
+        }
+      }
+    },
+    "Remove Missing" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eksikleri Kaldır"
+          }
+        }
+      }
+    },
+    "Remove title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlığı kaldır"
+          }
+        }
+      }
+    },
+    "Removes it from your favorites" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favorilerinizden kaldırır"
+          }
+        }
+      }
+    },
+    "Renews on %@." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tarihinde yenilenir."
+          }
+        }
+      }
+    },
+    "Replace" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Değiştir"
+          }
+        }
+      }
+    },
+    "Replace %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ değiştir"
+          }
+        }
+      }
+    },
+    "Replace from Photo Library" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraf Arşivinden Değiştir"
+          }
+        }
+      }
+    },
+    "Replace Photo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğrafı Değiştir"
+          }
+        }
+      }
+    },
+    "Reset" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıfırla"
+          }
+        }
+      }
+    },
+    "Reset title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlığı sıfırla"
+          }
+        }
+      }
+    },
+    "Restore Purchases" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satın Alımları Geri Yükle"
+          }
+        }
+      }
+    },
+    "Right now, only the connection itself. Your photo library, what Yuvi learns from it, your hidden memories and your places stay on this iPhone. Sharing a photo or a note will always be something you choose, one at a time." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu an yalnızca bağlantının kendisi. Fotoğraf arşiviniz, Yuvi'nin ondan öğrendikleri, gizlenen anılarınız ve yerleriniz bu iPhone'da kalır. Bir fotoğrafı ya da notu paylaşmak her zaman sizin, tek tek vereceğiniz bir karar olacak."
+          }
+        }
+      }
+    },
+    "S" : {
+      "comment" : "South abbreviation in geographic coordinates",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "G"
+          }
+        }
+      }
+    },
+    "Save" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydet"
+          }
+        }
+      }
+    },
+    "Save All %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld Tanesini Kaydet"
+          }
+        }
+      }
+    },
+    "Save Full Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitabın Tamamını Kaydet"
+          }
+        }
+      }
+    },
+    "Save Page" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sayfayı Kaydet"
+          }
+        }
+      }
+    },
+    "Save This Card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Kartı Kaydet"
+          }
+        }
+      }
+    },
+    "Save to Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar'a Kaydet"
+          }
+        }
+      }
+    },
+    "Save Video" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Videoyu Kaydet"
+          }
+        }
+      }
+    },
+    "Saved to Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar'a kaydedildi"
+          }
+        }
+      }
+    },
+    "Saves every page to Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Her sayfayı Fotoğraflar'a kaydeder"
+          }
+        }
+      }
+    },
+    "Saving %lld pages…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld sayfa kaydediliyor…"
+          }
+        }
+      }
+    },
+    "Saving to Photos…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflar'a kaydediliyor…"
+          }
+        }
+      }
+    },
+    "Saving…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydediliyor…"
+          }
+        }
+      }
+    },
+    "Scene %lld of %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Scene %1$lld of %2$lld"
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sahne %1$lld / %2$lld"
+          }
+        }
+      }
+    },
+    "Scenes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sahneler"
+          }
+        }
+      }
+    },
+    "See All" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tümünü Gör"
+          }
+        }
+      }
+    },
+    "See all %@ of %@ with memories, the closing, a story or collage of the year, and a card to share, with Yuvi Premium." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "See all %1$@ of %2$@ with memories, the closing, a story or collage of the year, and a card to share, with Yuvi Premium."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Premium ile %2$@ içindeki anılı %1$@, kapanış, yılın hikâyesi ya da kolajı ve paylaşılacak bir kart sizi bekliyor."
+          }
+        }
+      }
+    },
+    "See All Drafts" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Taslakları Gör"
+          }
+        }
+      }
+    },
+    "See All Drafts (%lld)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Taslakları Gör (%lld)"
+          }
+        }
+      }
+    },
+    "See Our Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyemizi Gör"
+          }
+        }
+      }
+    },
+    "See the Full Recap" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özetin Tamamını Gör"
+          }
+        }
+      }
+    },
+    "See the Moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Gör"
+          }
+        }
+      }
+    },
+    "See the whole month" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ayın tamamını görün"
+          }
+        }
+      }
+    },
+    "See Your Collage" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kolajınızı Görün"
+          }
+        }
+      }
+    },
+    "See Your Full Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yılınızın Tamamını Görün"
+          }
+        }
+      }
+    },
+    "See Your Recap" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özetinizi Görün"
+          }
+        }
+      }
+    },
+    "See Your Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizi Görün"
+          }
+        }
+      }
+    },
+    "See Yuvi Premium" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Premium'u Gör"
+          }
+        }
+      }
+    },
+    "Selected" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçili"
+          }
+        }
+      }
+    },
+    "Selected, number %lld" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçili, %lld numara"
+          }
+        }
+      }
+    },
+    "Send Invitation" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Davet Gönder"
+          }
+        }
+      }
+    },
+    "Send Invitation Again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Daveti Yeniden Gönder"
+          }
+        }
+      }
+    },
+    "Shape" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biçim"
+          }
+        }
+      }
+    },
+    "Share" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paylaş"
+          }
+        }
+      }
+    },
+    "Share All Cards" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tüm Kartları Paylaş"
+          }
+        }
+      }
+    },
+    "Share card: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kartı paylaş: %@"
+          }
+        }
+      }
+    },
+    "Share Our Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bizim Yılımız'ı Paylaş"
+          }
+        }
+      }
+    },
+    "Share Page" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sayfayı Paylaş"
+          }
+        }
+      }
+    },
+    "Share Recap" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özeti Paylaş"
+          }
+        }
+      }
+    },
+    "Share This Card" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Kartı Paylaş"
+          }
+        }
+      }
+    },
+    "Sharing in Yuvi stops and you leave the connection. It was started from %@ iCloud, so it stays theirs; Yuvi on their iPhone closes it the next time it opens. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'de paylaşım durur ve bağlantıdan ayrılırsınız. Bağlantı %@ iCloud'undan başlatıldığı için onda kalır; onun iPhone'undaki Yuvi bir sonraki açılışta kapatır. Bu iPhone'daki fotoğraf ve anılarınız değişmez, Yuvi yalnızca size döner."
+          }
+        }
+      }
+    },
+    "Sharing in Yuvi stops for both of you, and %@ no longer has access to your connection. Your photos and memories on this iPhone don’t change, and Yuvi goes back to just you. Nothing from your library was shared, so there is nothing of yours on their iPhone to remove." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'de paylaşım ikiniz için de durur ve %@ artık bağlantınıza erişemez. Bu iPhone'daki fotoğraf ve anılarınız değişmez, Yuvi yalnızca size döner. Arşivinizden hiçbir şey paylaşılmadığı için onun iPhone'unda kaldırılacak bir şeyiniz yok."
+          }
+        }
+      }
+    },
+    "Show" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Göster"
+          }
+        }
+      }
+    },
+    "Show %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ göster"
+          }
+        }
+      }
+    },
+    "Show Coordinates" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koordinatları Göster"
+          }
+        }
+      }
+    },
+    "Show Date" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihi Göster"
+          }
+        }
+      }
+    },
+    "Show Place" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeri Göster"
+          }
+        }
+      }
+    },
+    "Show the photos of this moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu anın fotoğraflarını göster"
+          }
+        }
+      }
+    },
+    "Showing %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ gösteriliyor"
+          }
+        }
+      }
+    },
+    "Shows another title made from this movie's dates and places" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu filmin tarih ve yerlerinden başka bir başlık gösterir"
+          }
+        }
+      }
+    },
+    "Since your first memory · %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlk anınızdan beri · %@"
+          }
+        }
+      }
+    },
+    "So far" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şimdiye kadar"
+          }
+        }
+      }
+    },
+    "Soft" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yumuşak"
+          }
+        }
+      }
+    },
+    "Some photos are no longer available — they may have been deleted or removed from Yuvi’s access." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bazı fotoğraflar artık yok; silinmiş ya da Yuvi'nin erişiminden çıkarılmış olabilir."
+          }
+        }
+      }
+    },
+    "Something went wrong while making the image. Please try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Görsel hazırlanırken bir şeyler ters gitti. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Something went wrong while making the movie. Please try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Film hazırlanırken bir şeyler ters gitti. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Something went wrong while organizing your photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınız düzenlenirken bir şeyler ters gitti."
+          }
+        }
+      }
+    },
+    "Something went wrong with the App Store. Please try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store'da bir şeyler ters gitti. Lütfen tekrar deneyin."
+          }
+        }
+      }
+    },
+    "Something went wrong." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir şeyler ters gitti."
+          }
+        }
+      }
+    },
+    "starring %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "başrolde %@"
+          }
+        }
+      }
+    },
+    "Start a Book" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kitap Başlat"
+          }
+        }
+      }
+    },
+    "Start a Memory Book from…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anı Kitabını şuradan başlat…"
+          }
+        }
+      }
+    },
+    "Start date" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlangıç tarihi"
+          }
+        }
+      }
+    },
+    "Start New" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yeni Başlat"
+          }
+        }
+      }
+    },
+    "Start Over" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baştan Başla"
+          }
+        }
+      }
+    },
+    "Start over?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Baştan başlansın mı?"
+          }
+        }
+      }
+    },
+    "Start with a few photos. You can always add more." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birkaç fotoğrafla başlayın. İstediğiniz zaman daha fazlasını ekleyebilirsiniz."
+          }
+        }
+      }
+    },
+    "Status" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durum"
+          }
+        }
+      }
+    },
+    "Still connected · offline for now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hâlâ bağlı · şimdilik çevrimdışı"
+          }
+        }
+      }
+    },
+    "Stopped" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durduruldu"
+          }
+        }
+      }
+    },
+    "Stories" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeler"
+          }
+        }
+      }
+    },
+    "Stories and Trending" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeler ve Akımlar"
+          }
+        }
+      }
+    },
+    "story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "hikâye"
+          }
+        }
+      }
+    },
+    "Story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye"
+          }
+        }
+      }
+    },
+    "Story Maker" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâye Hazırlayıcı"
+          }
+        }
+      }
+    },
+    "Style" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stil"
+          }
+        }
+      }
+    },
+    "Subscribed on another iPhone or after reinstalling? Restore checks your Apple Account." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başka bir iPhone'da ya da yeniden yükledikten sonra mı abone oldunuz? Geri Yükle, Apple Hesabınızı kontrol eder."
+          }
+        }
+      }
+    },
+    "Subscriptions are handled by Apple. Yuvi never sees your payment details; it only learns from the App Store whether Premium is active." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abonelikleri Apple yönetir. Yuvi ödeme bilgilerinizi asla görmez; App Store'dan yalnızca Premium'un etkin olup olmadığını öğrenir."
+          }
+        }
+      }
+    },
+    "Suggest This Memory Again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu Anıyı Yeniden Öner"
+          }
+        }
+      }
+    },
+    "Tap a scene to move, replace or remove it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir sahneyi taşımak, değiştirmek ya da kaldırmak için ona dokunun."
+          }
+        }
+      }
+    },
+    "Tap the heart on a moment to keep it here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada tutmak için bir andaki kalbe dokunun."
+          }
+        }
+      }
+    },
+    "Tap the heart on a photo to keep it here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada tutmak için bir fotoğraftaki kalbe dokunun."
+          }
+        }
+      }
+    },
+    "Tap the heart on something you made to keep it here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada tutmak için yaptığınız bir şeydeki kalbe dokunun."
+          }
+        }
+      }
+    },
+    "Tap two photos to swap them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yer değiştirmek için iki fotoğrafa dokunun."
+          }
+        }
+      }
+    },
+    "Terms" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Koşullar"
+          }
+        }
+      }
+    },
+    "Terms of Use" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kullanım Koşulları"
+          }
+        }
+      }
+    },
+    "Thank you. There’s more to find as your story grows." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teşekkürler. Hikâyeniz büyüdükçe bulunacak daha çok şey var."
+          }
+        }
+      }
+    },
+    "That’s what it’s for. Thank you." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zaten bunun için. Teşekkürler."
+          }
+        }
+      }
+    },
+    "The App Store couldn’t verify this purchase, so Premium wasn’t turned on. Please try Restore Purchases." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store bu satın alımı doğrulayamadı, bu yüzden Premium açılmadı. Lütfen Satın Alımları Geri Yükle'yi deneyin."
+          }
+        }
+      }
+    },
+    "The App Store isn’t available right now. Please try again later." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App Store şu an kullanılamıyor. Lütfen daha sonra tekrar deneyin."
+          }
+        }
+      }
+    },
+    "The first memory of %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ yılının ilk anısı"
+          }
+        }
+      }
+    },
+    "The full recap — every highlight, the trips, a collage or story made from this month, and a card to share — is part of Yuvi Premium." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Özetin tamamı (her öne çıkan an, geziler, bu aydan yapılmış bir kolaj ya da hikâye ve paylaşılacak bir kart) Yuvi Premium'a dahil."
+          }
+        }
+      }
+    },
+    "The invitation stops working. Nothing else changes." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Davet çalışmayı bırakır. Başka hiçbir şey değişmez."
+          }
+        }
+      }
+    },
+    "the Moment" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "an"
+          }
+        }
+      }
+    },
+    "The purchase couldn’t be confirmed. If you were charged, use Restore Purchases." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satın alım onaylanamadı. Ücret alındıysa Satın Alımları Geri Yükle'yi kullanın."
+          }
+        }
+      }
+    },
+    "The rest of %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ayının geri kalanı"
+          }
+        }
+      }
+    },
+    "The title, places and dates" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlık, yerler ve tarihler"
+          }
+        }
+      }
+    },
+    "the Trip" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "gezi"
+          }
+        }
+      }
+    },
+    "Their first name" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Onun adı"
+          }
+        }
+      }
+    },
+    "There are no photos here that can go into a collage." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada kolaja girebilecek fotoğraf yok."
+          }
+        }
+      }
+    },
+    "There are no photos here that can go into a movie." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Burada filme girebilecek fotoğraf yok."
+          }
+        }
+      }
+    },
+    "There isn’t enough free space on this iPhone to make the movie." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu iPhone'da filmi hazırlamak için yeterli boş alan yok."
+          }
+        }
+      }
+    },
+    "There isn’t enough here for a recap yet. When you add more photos from this month, Yuvi will include them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Henüz özet için yeterli anı yok. Bu aydan daha fazla fotoğraf ekledikçe Yuvi onları da katacak."
+          }
+        }
+      }
+    },
+    "Things you make with Yuvi will appear here." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi ile yaptıklarınız burada görünecek."
+          }
+        }
+      }
+    },
+    "This book isn’t here anymore" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu kitap artık burada değil"
+          }
+        }
+      }
+    },
+    "This creation isn’t available in this version of Yuvi." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu üretim Yuvi'nin bu sürümünde kullanılamıyor."
+          }
+        }
+      }
+    },
+    "This creation needs the photos you choose to be processed by an AI provider. Only those photos would be sent — never the rest of your library." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu üretim için seçtiğiniz fotoğrafların bir yapay zekâ sağlayıcısında işlenmesi gerekiyor. Yalnızca o fotoğraflar gönderilir, arşivinizin geri kalanı asla."
+          }
+        }
+      }
+    },
+    "This creation requires the photos you select to be processed by an AI provider." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu üretim, seçtiğiniz fotoğrafların bir yapay zekâ sağlayıcısında işlenmesini gerektirir."
+          }
+        }
+      }
+    },
+    "This happens on your iPhone. Your photos aren’t uploaded." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu, iPhone'unuzda olur. Fotoğraflarınız yüklenmez."
+          }
+        }
+      }
+    },
+    "This isn’t here anymore" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu artık burada değil"
+          }
+        }
+      }
+    },
+    "This isn’t in your story anymore" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu artık hikâyenizde değil"
+          }
+        }
+      }
+    },
+    "This memory isn’t here anymore" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu anı artık burada değil"
+          }
+        }
+      }
+    },
+    "This photo isn’t available right now." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu fotoğraf şu an kullanılamıyor."
+          }
+        }
+      }
+    },
+    "This removes your story, notes and settings from Yuvi, and you’ll set it up again. Your books, collages, stories, movies, drafts and favorites stay, and so do memories you asked Yuvi not to suggest. Your photos in the Photos app are not touched." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu işlem hikâyenizi, notlarınızı ve ayarlarınızı Yuvi'den siler, her şeyi yeniden kurarsınız. Kitaplarınız, kolajlarınız, hikâyeleriniz, filmleriniz, taslaklarınız ve favorileriniz kalır; Yuvi'nin önermemesini istediğiniz anılar da öyle. Fotoğraflar uygulamasındaki fotoğraflarınıza dokunulmaz."
+          }
+        }
+      }
+    },
+    "This trend isn’t available" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu akım kullanılamıyor"
+          }
+        }
+      }
+    },
+    "This video isn’t available right now." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu video şu an kullanılamıyor."
+          }
+        }
+      }
+    },
+    "Title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlık"
+          }
+        }
+      }
+    },
+    "Title: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlık: %@"
+          }
+        }
+      }
+    },
+    "Titles" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başlıklar"
+          }
+        }
+      }
+    },
+    "Today" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bugün"
+          }
+        }
+      }
+    },
+    "Together since %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ tarihinden beri birlikte"
+          }
+        }
+      }
+    },
+    "Touch and hold a photo to drag it somewhere else, or to replace or remove it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğrafı başka yere sürüklemek, değiştirmek ya da kaldırmak için basılı tutun."
+          }
+        }
+      }
+    },
+    "Touch and hold a photo to replace, move or remove it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir fotoğrafı değiştirmek, taşımak ya da kaldırmak için basılı tutun."
+          }
+        }
+      }
+    },
+    "Trending" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akımlar"
+          }
+        }
+      }
+    },
+    "Trending Now" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Şu An Popüler"
+          }
+        }
+      }
+    },
+    "Trends come and go. Have a look at the others in Create." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akımlar gelir geçer. Oluştur'daki diğerlerine bir göz atın."
+          }
+        }
+      }
+    },
+    "Try Again" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tekrar Dene"
+          }
+        }
+      }
+    },
+    "Try another" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başka birini dene"
+          }
+        }
+      }
+    },
+    "Try another title" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Başka bir başlık dene"
+          }
+        }
+      }
+    },
+    "Turn a moment into a story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bir anı hikâyeye dönüştürün."
+          }
+        }
+      }
+    },
+    "Undated" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarihsiz"
+          }
+        }
+      }
+    },
+    "Undo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geri Al"
+          }
+        }
+      }
+    },
+    "Update from %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ üzerinden güncelle"
+          }
+        }
+      }
+    },
+    "Us" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biz"
+          }
+        }
+      }
+    },
+    "US" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "BİZ"
+          }
+        }
+      }
+    },
+    "Use as Cover" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapak Yap"
+          }
+        }
+      }
+    },
+    "Use Photo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğrafı Kullan"
+          }
+        }
+      }
+    },
+    "Use Suggested Cover" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Önerilen Kapağı Kullan"
+          }
+        }
+      }
+    },
+    "Use the Best Photo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En İyi Fotoğrafı Kullan"
+          }
+        }
+      }
+    },
+    "Used for “%@”." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“%@” için kullanıldı."
+          }
+        }
+      }
+    },
+    "Used for %@." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ için kullanıldı."
+          }
+        }
+      }
+    },
+    "Using the photos you chose" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seçtiğiniz fotoğraflar kullanılıyor"
+          }
+        }
+      }
+    },
+    "Video" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Video"
+          }
+        }
+      }
+    },
+    "W" : {
+      "comment" : "West abbreviation in geographic coordinates",
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "B"
+          }
+        }
+      }
+    },
+    "Waiting for %@ to accept" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Davetin kabul edilmesi bekleniyor"
+          }
+        }
+      }
+    },
+    "Waiting for access to your photos…" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınıza erişim bekleniyor…"
+          }
+        }
+      }
+    },
+    "Warm" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sıcak"
+          }
+        }
+      }
+    },
+    "Watch Your Movie" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filminizi İzleyin"
+          }
+        }
+      }
+    },
+    "We found some moments that might belong in your story." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenize ait olabilecek bazı anlar bulduk."
+          }
+        }
+      }
+    },
+    "We found something for you." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sizin için bir şey bulduk."
+          }
+        }
+      }
+    },
+    "What do you remember about this?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bununla ilgili ne hatırlıyorsunuz?"
+          }
+        }
+      }
+    },
+    "What Yuvi learns from your photos stays private on this iPhone." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'nin fotoğraflarınızdan öğrendikleri bu iPhone'da gizli kalır."
+          }
+        }
+      }
+    },
+    "What’s shared" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neler paylaşılıyor"
+          }
+        }
+      }
+    },
+    "When did your story begin?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz ne zaman başladı?"
+          }
+        }
+      }
+    },
+    "When your story began" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyenizin başladığı zaman"
+          }
+        }
+      }
+    },
+    "White" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Beyaz"
+          }
+        }
+      }
+    },
+    "Who’s your favorite person?" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sevdiğiniz kişi kim?"
+          }
+        }
+      }
+    },
+    "Without a date, Yuvi doesn’t count days together." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarih olmadan Yuvi birlikte geçen günleri saymaz."
+          }
+        }
+      }
+    },
+    "Without access, Yuvi can’t suggest moments. You can allow access in Settings, or choose a few memories yourself." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erişim olmadan Yuvi anlar öneremez. Ayarlar'dan erişime izin verebilir ya da birkaç anıyı kendiniz seçebilirsiniz."
+          }
+        }
+      }
+    },
+    "Year" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yıl"
+          }
+        }
+      }
+    },
+    "Years" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yıllar"
+          }
+        }
+      }
+    },
+    "Yes" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Evet"
+          }
+        }
+      }
+    },
+    "You" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sen"
+          }
+        }
+      }
+    },
+    "You can choose up to %lld photos." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En fazla %lld fotoğraf seçebilirsiniz."
+          }
+        }
+      }
+    },
+    "You can choose which photos Yuvi may see in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'nin hangi fotoğrafları görebileceğini Ayarlar'dan seçebilirsiniz."
+          }
+        }
+      }
+    },
+    "You choose which moments belong in your story. Only those are kept." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hangi anların hikâyenize ait olduğuna siz karar verirsiniz. Yalnızca onlar saklanır."
+          }
+        }
+      }
+    },
+    "You control what Yuvi can see." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'nin neyi görebileceğini siz belirlersiniz."
+          }
+        }
+      }
+    },
+    "You have %@." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ sizde."
+          }
+        }
+      }
+    },
+    "You have Yuvi Premium." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Premium sizde."
+          }
+        }
+      }
+    },
+    "You seem to be offline. Check your connection and try again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Çevrimdışı görünüyorsunuz. Bağlantınızı kontrol edip tekrar deneyin."
+          }
+        }
+      }
+    },
+    "You’ll need" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gerekenler"
+          }
+        }
+      }
+    },
+    "You’ll send an invitation from your iCloud. Your partner opens it on their iPhone with Yuvi installed." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iCloud'unuzdan bir davet göndereceksiniz. Partneriniz onu Yuvi yüklü iPhone'unda açacak."
+          }
+        }
+      }
+    },
+    "You’ve used your free creation. Previews and editing stay free." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ücretsiz üretim hakkınızı kullandınız. Önizleme ve düzenleme ücretsiz kalmaya devam ediyor."
+          }
+        }
+      }
+    },
+    "Your %@ is ready" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hazır"
+          }
+        }
+      }
+    },
+    "Your %lld story is just getting started." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld hikâyeniz daha yeni başlıyor."
+          }
+        }
+      }
+    },
+    "Your Creations" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Üretimleriniz"
+          }
+        }
+      }
+    },
+    "Your favorite person" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En sevdiğiniz kişi"
+          }
+        }
+      }
+    },
+    "Your first creation to save or share is free." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kaydedeceğiniz ya da paylaşacağınız ilk üretim ücretsiz."
+          }
+        }
+      }
+    },
+    "Your first name (optional)" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adınız (isteğe bağlı)"
+          }
+        }
+      }
+    },
+    "Your memories, made into a book." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anılarınız, bir kitapta."
+          }
+        }
+      }
+    },
+    "Your memories, moments, places, notes and favorites are always free. Premium is for what Yuvi creates from them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anılarınız, anlarınız, yerleriniz, notlarınız ve favorileriniz her zaman ücretsiz. Premium, Yuvi'nin onlardan oluşturdukları için."
+          }
+        }
+      }
+    },
+    "Your note" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notunuz"
+          }
+        }
+      }
+    },
+    "Your note: %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Notunuz: %@"
+          }
+        }
+      }
+    },
+    "Your own words, shown just as you write them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kendi sözleriniz, tam yazdığınız gibi."
+          }
+        }
+      }
+    },
+    "your partner" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "partneriniz"
+          }
+        }
+      }
+    },
+    "Your partner" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partneriniz"
+          }
+        }
+      }
+    },
+    "Your Partner" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partneriniz"
+          }
+        }
+      }
+    },
+    "Your partner connection" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partner bağlantınız"
+          }
+        }
+      }
+    },
+    "Your partner doesn’t need Yuvi to see it." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partnerinizin bunu görmek için Yuvi'ye ihtiyacı yok."
+          }
+        }
+      }
+    },
+    "your partner’s" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "partnerinizin"
+          }
+        }
+      }
+    },
+    "Your Photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınız"
+          }
+        }
+      }
+    },
+    "Your photos and moments are not affected." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınız ve anlarınız etkilenmez."
+          }
+        }
+      }
+    },
+    "Your photos are organized on this iPhone and aren’t uploaded; there is no account and no feed. When Yuvi suggests moments, it reads dates and places and counts faces in a few photos — it never knows who anyone is. To name places, Yuvi asks Apple’s location service about a location — never a photo. Photos kept only in iCloud may be downloaded from your own iCloud to show them." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınız bu iPhone'da düzenlenir ve yüklenmez; hesap da akış da yok. Yuvi anlar önerirken tarihleri ve yerleri okur, birkaç fotoğrafta yüzleri sayar; kimin kim olduğunu asla bilmez. Yerlere ad vermek için Yuvi, Apple'ın konum hizmetine bir fotoğrafı değil, yalnızca bir konumu sorar. Yalnızca iCloud'da tutulan fotoğraflar, gösterilmek için kendi iCloud'unuzdan indirilebilir."
+          }
+        }
+      }
+    },
+    "Your photos stay on this iPhone and are organized on-device. Nothing is uploaded and there is no account. To name places, Yuvi asks Apple’s location service about a location — never a photo." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğraflarınız bu iPhone'da kalır ve cihazda düzenlenir. Hiçbir şey yüklenmez, hesap gerekmez. Yerlere ad vermek için Yuvi, Apple'ın konum hizmetine bir fotoğrafı değil, yalnızca bir konumu sorar."
+          }
+        }
+      }
+    },
+    "Your Premium subscription has ended. " : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium aboneliğiniz sona erdi."
+          }
+        }
+      }
+    },
+    "Your Premium subscription is active again." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium aboneliğiniz yeniden etkin."
+          }
+        }
+      }
+    },
+    "Your Premium subscription was refunded or revoked. " : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Premium aboneliğiniz iade edildi ya da iptal edildi."
+          }
+        }
+      }
+    },
+    "Your purchase is waiting for approval. Premium turns on as soon as it’s approved." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satın alımınız onay bekliyor. Onaylanır onaylanmaz Premium açılır."
+          }
+        }
+      }
+    },
+    "Your recaps will appear here as your story grows." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz büyüdükçe özetleriniz burada görünecek."
+          }
+        }
+      }
+    },
+    "Your relationship, told through the photos you already have." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "İlişkiniz, zaten sahip olduğunuz fotoğraflarla anlatılıyor."
+          }
+        }
+      }
+    },
+    "Your story" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz"
+          }
+        }
+      }
+    },
+    "Your story has started." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz başladı."
+          }
+        }
+      }
+    },
+    "Your story holds only the photos you chose or kept. Yuvi never identifies people. You can change access any time in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz yalnızca seçtiğiniz ya da sakladığınız fotoğrafları içerir. Yuvi kimseyi tanımlamaz. Erişimi Ayarlar'dan istediğiniz zaman değiştirebilirsiniz."
+          }
+        }
+      }
+    },
+    "Your story is ready. ❤️" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz hazır. ❤️"
+          }
+        }
+      }
+    },
+    "Your words" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sizin sözleriniz"
+          }
+        }
+      }
+    },
+    "Your year together, remembered." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Birlikte geçen yılınız, hatırlandı."
+          }
+        }
+      }
+    },
+    "Your year, as a short film." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yılınız, kısa bir film olarak."
+          }
+        }
+      }
+    },
+    "Your years together will appear here as your story grows." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz büyüdükçe birlikte geçen yıllarınız burada görünecek."
+          }
+        }
+      }
+    },
+    "yuvi" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "yuvi"
+          }
+        }
+      }
+    },
+    "Yuvi" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi"
+          }
+        }
+      }
+    },
+    "Yuvi %@" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi %@"
+          }
+        }
+      }
+    },
+    "Yuvi can only use photos you’ve shared with it. You can share more in Us → Photo Access, or choose others." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi yalnızca onunla paylaştığınız fotoğrafları kullanabilir. Biz → Fotoğraf Erişimi'nden daha fazlasını paylaşabilir ya da başkalarını seçebilirsiniz."
+          }
+        }
+      }
+    },
+    "Yuvi can’t open that photo" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi o fotoğrafı açamıyor"
+          }
+        }
+      }
+    },
+    "Yuvi can’t open those photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi o fotoğrafları açamıyor"
+          }
+        }
+      }
+    },
+    "Yuvi can’t reach iCloud right now. You’re still connected; it will check again when it can." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi şu an iCloud'a ulaşamıyor. Hâlâ bağlısınız; mümkün olunca yeniden kontrol edecek."
+          }
+        }
+      }
+    },
+    "Yuvi can’t see any photos right now." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi şu an hiçbir fotoğrafı göremiyor."
+          }
+        }
+      }
+    },
+    "Yuvi can’t see any photos right now. You can choose which ones it may see in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi şu an hiçbir fotoğrafı göremiyor. Hangilerini görebileceğini Ayarlar'dan seçebilirsiniz."
+          }
+        }
+      }
+    },
+    "Yuvi can’t see your photos" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi fotoğraflarınızı göremiyor"
+          }
+        }
+      }
+    },
+    "Yuvi can’t see your photos right now, so your story is hidden. Your notes are safe." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi şu an fotoğraflarınızı göremediği için hikâyeniz gizli. Notlarınız güvende."
+          }
+        }
+      }
+    },
+    "Yuvi chooses photos again and makes a new cut. Your style, shape and length stay." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi fotoğrafları yeniden seçip yeni bir kurgu yapar. Stiliniz, biçiminiz ve uzunluğunuz kalır."
+          }
+        }
+      }
+    },
+    "Yuvi chooses the photos, the order and the rhythm. You can change anything after." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fotoğrafları, sırayı ve ritmi Yuvi seçer. Sonra her şeyi değiştirebilirsiniz."
+          }
+        }
+      }
+    },
+    "Yuvi couldn’t find a name for this location." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi bu konum için bir ad bulamadı."
+          }
+        }
+      }
+    },
+    "Yuvi didn’t find groups of photos to suggest. You can choose a few memories yourself instead." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi önerilecek fotoğraf grubu bulamadı. Bunun yerine birkaç anıyı kendiniz seçebilirsiniz."
+          }
+        }
+      }
+    },
+    "Yuvi Free" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Ücretsiz"
+          }
+        }
+      }
+    },
+    "Yuvi gathers your photos into moments as your story grows." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hikâyeniz büyüdükçe Yuvi fotoğraflarınızı anlara ayırır."
+          }
+        }
+      }
+    },
+    "Yuvi hasn’t asked to see any photos yet." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi henüz hiçbir fotoğrafı görmek istemedi."
+          }
+        }
+      }
+    },
+    "Yuvi isn’t allowed to save to Photos. You can allow it in Settings." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'nin Fotoğraflar'a kaydetme izni yok. Ayarlar'dan izin verebilirsiniz."
+          }
+        }
+      }
+    },
+    "Yuvi logs a few anonymous product events on this iPhone only (for example, that the paywall was opened). They never include photos, names, notes, captions or places." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi yalnızca bu iPhone'da birkaç anonim ürün olayı kaydeder (örneğin ödeme ekranının açıldığını). Bunlar asla fotoğraf, isim, not, açıklama ya da yer içermez."
+          }
+        }
+      }
+    },
+    "Yuvi looks for possible moments on this iPhone. You decide what to keep." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi olası anları bu iPhone'da arar. Neyin saklanacağına siz karar verirsiniz."
+          }
+        }
+      }
+    },
+    "Yuvi looks. You decide." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi bakar. Siz karar verirsiniz."
+          }
+        }
+      }
+    },
+    "Yuvi needs at least %lld photos to begin — you chose %lld. Choose a few more." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Yuvi needs at least %1$lld photos to begin — you chose %2$lld. Choose a few more."
+          }
+        },
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi'nin başlamak için en az %1$lld fotoğrafa ihtiyacı var, siz %2$lld seçtiniz. Birkaç tane daha seçin."
+          }
+        }
+      }
+    },
+    "Yuvi never writes words for you. Only notes you wrote appear in the book." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi sizin yerinize asla bir şey yazmaz. Kitapta yalnızca sizin yazdığınız notlar yer alır."
+          }
+        }
+      }
+    },
+    "Yuvi Premium" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Premium"
+          }
+        }
+      }
+    },
+    "Yuvi Premium Annual" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Premium Yıllık"
+          }
+        }
+      }
+    },
+    "Yuvi Premium Monthly" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi Premium Aylık"
+          }
+        }
+      }
+    },
+    "Yuvi sees only the %@ you chose." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi yalnızca seçtiğiniz %@ görür."
+          }
+        }
+      }
+    },
+    "Yuvi will choose the photos again. The photos and order you changed will be replaced; your style, shape, length and title stay." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi fotoğrafları yeniden seçecek. Değiştirdiğiniz fotoğraflar ve sıra yenilenecek; stiliniz, biçiminiz, uzunluğunuz ve başlığınız kalır."
+          }
+        }
+      }
+    },
+    "Yuvi won’t count days together until you add a date in Us" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Biz'den bir tarih ekleyene kadar Yuvi birlikte geçen günleri saymaz"
+          }
+        }
+      }
+    },
+    "Yuvi works fully on your own. Connecting is optional and free." : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi tek başınıza da tam çalışır. Bağlanmak isteğe bağlı ve ücretsiz."
+          }
+        }
+      }
+    },
+    "Yuvi, for the two of you" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi, ikiniz için"
+          }
+        }
+      }
+    },
+    "Yuvi. Our story, together" : {
+      "localizations" : {
+        "tr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yuvi. Hikâyemiz, birlikte"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.3"
+}

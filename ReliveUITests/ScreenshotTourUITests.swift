@@ -52,7 +52,7 @@ final class ScreenshotTourUITests: XCTestCase {
         sleep(4)
         save("03-reveal")
         seeStory.tap()
-        XCTAssertTrue(app.tabBars.buttons["Create"].waitForExistence(timeout: 10))
+        XCTAssertTrue(tab(app, 2).waitForExistence(timeout: 10))
         sleep(4)
         save("04-story-top")
         app.swipeUp()
@@ -66,11 +66,11 @@ final class ScreenshotTourUITests: XCTestCase {
     @MainActor
     func test2Screens() throws {
         let app = launch(fresh: false)
-        XCTAssertTrue(app.tabBars.buttons["Create"].waitForExistence(timeout: 30))
+        XCTAssertTrue(tab(app, 2).waitForExistence(timeout: 30))
         sleep(3)
 
         // Story: a moment
-        app.tabBars.buttons["Story"].tap()
+        tab(app, 1).tap()
         sleep(2)
         let cards = app.buttons.matching(identifier: "momentCard")
         if cards.firstMatch.waitForExistence(timeout: 10) {
@@ -85,7 +85,7 @@ final class ScreenshotTourUITests: XCTestCase {
         }
 
         // Today
-        app.tabBars.buttons["Today"].tap()
+        tab(app, 0).tap()
         sleep(4)
         save("20-today")
         app.swipeUp()
@@ -93,7 +93,7 @@ final class ScreenshotTourUITests: XCTestCase {
         save("21-today-scrolled")
 
         // Create
-        app.tabBars.buttons["Create"].tap()
+        tab(app, 2).tap()
         sleep(3)
         save("30-create")
         app.swipeUp()
@@ -103,7 +103,7 @@ final class ScreenshotTourUITests: XCTestCase {
         app.swipeDown()
 
         // Us
-        app.tabBars.buttons["Us"].tap()
+        tab(app, 3).tap()
         sleep(3)
         save("40-us")
         app.swipeUp()
@@ -114,8 +114,8 @@ final class ScreenshotTourUITests: XCTestCase {
     @MainActor
     func test3Recap() throws {
         let app = launch(fresh: false)
-        XCTAssertTrue(app.tabBars.buttons["Create"].waitForExistence(timeout: 30))
-        app.tabBars.buttons["Create"].tap()
+        XCTAssertTrue(tab(app, 2).waitForExistence(timeout: 30))
+        tab(app, 2).tap()
         tapClearOfTabBar(app, app.buttons["createMonthlyRecap"])
         let rows = app.buttons.matching(identifier: "recapMonthRow")
         guard rows.firstMatch.waitForExistence(timeout: 10) else { return XCTFail("No months") }
@@ -153,8 +153,8 @@ final class ScreenshotTourUITests: XCTestCase {
     @MainActor
     func test4Movie() throws {
         let app = launch(fresh: false)
-        XCTAssertTrue(app.tabBars.buttons["Create"].waitForExistence(timeout: 30))
-        app.tabBars.buttons["Create"].tap()
+        XCTAssertTrue(tab(app, 2).waitForExistence(timeout: 30))
+        tab(app, 2).tap()
         tapClearOfTabBar(app, app.buttons["createMovie"])
         sleep(1)
         app.buttons["movieSourceTrip"].tap()
@@ -176,8 +176,8 @@ final class ScreenshotTourUITests: XCTestCase {
     @MainActor
     func test5Book() throws {
         let app = launch(fresh: false)
-        XCTAssertTrue(app.tabBars.buttons["Create"].waitForExistence(timeout: 30))
-        app.tabBars.buttons["Create"].tap()
+        XCTAssertTrue(tab(app, 2).waitForExistence(timeout: 30))
+        tab(app, 2).tap()
         tapClearOfTabBar(app, app.buttons["createBook"])
         sleep(5)
         save("70-book")
@@ -190,6 +190,12 @@ final class ScreenshotTourUITests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    /// Tabs by position (Today, Story, Create, Us), so the tour runs in every language.
+    @MainActor
+    private func tab(_ app: XCUIApplication, _ index: Int) -> XCUIElement {
+        app.tabBars.buttons.element(boundBy: index)
+    }
 
     @MainActor
     private func launch(fresh: Bool) -> XCUIApplication {

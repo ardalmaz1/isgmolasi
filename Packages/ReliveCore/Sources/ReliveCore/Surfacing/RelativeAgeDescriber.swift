@@ -17,17 +17,18 @@ public struct RelativeAgeDescriber: Sendable {
         let months = components.month ?? 0
         let days = components.day ?? 0
 
+        let w = CoreWords()
         if years >= 1 {
-            let base = years == 1 ? "A year ago" : "\(years) years ago"
-            return isNearAnniversary(date, now: now) ? "\(base) this week" : base
+            let base = years == 1 ? w.pick("A year ago", "Bir yıl önce") : w.pick("\(years) years ago", "\(years) yıl önce")
+            return isNearAnniversary(date, now: now) ? w.pick("\(base) this week", "\(base) bu hafta") : base
         }
         if months >= 1 {
-            return months == 1 ? "A month ago" : "\(months) months ago"
+            return months == 1 ? w.pick("A month ago", "Bir ay önce") : w.pick("\(months) months ago", "\(months) ay önce")
         }
         if days >= 14 {
-            return "A few weeks ago"
+            return w.pick("A few weeks ago", "Birkaç hafta önce")
         }
-        return "Recently"
+        return w.pick("Recently", "Yakın zamanda")
     }
 
     /// True when `date` falls within the window around the same day in the current year.

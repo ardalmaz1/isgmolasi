@@ -202,3 +202,42 @@ struct NamingWords {
         return "\(name) \(compound)"
     }
 }
+
+extension LocalMomentNamingService {
+    /// The saved story named again in this service's language, so changing the phone's language
+    /// renames "October Evening" to "Ekim Akşamı". A name that is the place's own name is kept as
+    /// it is (places don't translate); every other name is rebuilt from the moment's dates and
+    /// place. Pure and idempotent: naming the same story twice gives the same names.
+    public func renamed(_ story: Story) -> Story {
+        var story = story
+        let chapterOfMoment = Dictionary(
+            story.chapters.flatMap { chapter in chapter.momentIDs.map { ($0, chapter) } },
+            uniquingKeysWith: { first, _ in first }
+        )
+        for index in story.chapters.indices {
+            let chapter = story.chapters[index]
+            if let place = chapter.place, chapter.title.primary == place.name { continue }
+            story.chapters[index].title = makeChapterTitle(for: ChapterNamingContext(
+                start: chapter.startDate, end: chapter.endDate, place: chapter.place, momentCount: chapter.momentIDs.count
+            ))
+        }
+        for index in story.moments.indices {
+            let moment = story.moments[index]
+            let chapter = chapterOfMoment[moment.id]
+            var title = makeTitle(for: MomentNamingContext(
+                kind: moment.kind,
+                start: moment.startDate,
+                end: moment.endDate,
+                place: moment.place,
+                chapterPlace: chapter?.place,
+                isInChapter: chapter != nil,
+                // A moment with a place that isn't named after it was named at home.
+                isAtHome: moment.place != nil && moment.title.primary != moment.place?.name,
+                assetCount: moment.assetIDs.count
+            ))
+            if let place = moment.place, moment.title.primary == place.name { title.primary = place.name }
+            story.moments[index].title = title
+        }
+        return story
+    }
+}
