@@ -1,0 +1,730 @@
+0	Yuvi
+1	Reviva
+2	O Yuvi salva as colagens e os cartões de histórias que você cria na sua fototeca. Eles são criados neste iPhone e nunca são enviados.
+3	O Yuvi organiza as fotos e os vídeos que você escolhe em uma linha do tempo privada da história de vocês. Eles são analisados neste iPhone e nunca são enviados.
+4	 · Parte de %@
+5	%1$@ %2$@ %3$@
+6	%@ juntos
+7	%@ encontrados
+8	%1$@ em %2$@
+9	%1$@ de %2$@
+10	%@ de vocês dois.
+11	%1$@ são liberados com %2$lld fotos.
+12	%1$@ por %2$@
+13	Prévia de %1$@, %2$@
+14	%1$@ · %2$@
+15	%@ — e um cartão para compartilhar — fazem parte do Yuvi Premium.
+16	%1$@, %2$@
+17	%1$@, %2$lld de %3$lld
+18	de %@
+19	%lld
+20	%1$lld selecionadas · escolha pelo menos %2$lld
+21	%lld favoritos
+22	%lld imagens salvas no Fotos
+23	Mais %lld capítulos
+24	%1$lld de %2$lld fotos na história de vocês
+25	%1$lld de até %2$lld selecionadas
+26	%lld fotos
+27	%lld fotos não estão mais na sua fototeca e foram deixadas de fora.
+28	%lld fotos não estão mais na sua fototeca.
+29	%lld fotos não estão mais na sua fototeca. Remova-as do filme e tente novamente.
+30	%lld fotos não estão mais na sua fototeca. Substitua-as ou remova-as e tente novamente.
+31	%lld fotos não estão mais na sua fototeca. Substitua-as em Editar Cartão ou remova-as.
+32	Há %lld anos
+33	%lld%%
+34	%1$lld–%2$lld fotos
+35	, não está mais na sua fototeca
+36	1 favorito
+37	9:16 Vertical
+38	16:9 Horizontal
+39	Um Momento
+40	Um Mês
+41	Uma Viagem
+42	Um Ano
+43	Um livro guarda pelo menos %lld fotos.
+44	Um livro precisa de pelo menos %1$lld fotos e aqui há %2$@. Escolha mais algumas para acompanhá-las.
+45	Um livro precisa de pelo menos %lld fotos e não há nenhuma aqui que possa ser usada.
+46	Uma colagem precisa de pelo menos duas fotos. Escolha outra para acompanhar esta.
+47	Algumas palavras para a primeira página
+48	Uma pequena lembrança para você
+49	Um momento
+50	Um mês da história de vocês.
+51	Um filme precisa de pelo menos %1$lld fotos diferentes e aqui há %2$@. Escolha mais algumas para criar um.
+52	Um filme precisa de pelo menos %lld fotos.
+53	Uma foto não está mais na sua fototeca. Feche e escolha novamente.
+54	Um lugar sem nome
+55	Um lugar ao qual vocês voltaram
+56	Um curta-metragem que o Yuvi edita com suas lembranças.
+57	Uma história precisa de pelo menos %1$lld fotos e aqui há %2$@.
+58	Uma história precisa de pelo menos %lld fotos e não há nenhuma aqui que possa ser usada.
+59	Uma viagem
+60	Uma viagem para relembrar
+61	Há um ano
+62	As criações com IA ainda não estão disponíveis, então nada é enviado por enquanto.
+63	Sobre %@
+64	Cerca de %lld já é suficiente para começar. Adicione mais quando quiser.
+65	Sobre as criações com IA
+66	Ativa
+67	Adicionar
+68	Adicionar (%lld)
+69	Adicionar Favoritos
+70	Adicionar Lembranças
+71	Adicionar uma Nota
+72	Adicione mais alguns favoritos para criar um livro. Um livro precisa de pelo menos %1$lld fotos e você tem %2$@ que você pode usar.
+73	Adicione mais alguns favoritos para criar uma colagem. Uma colagem precisa de pelo menos duas fotos.
+74	Adicione mais alguns favoritos para criar uma história. Uma história precisa de pelo menos %1$lld fotos e você tem %2$@ que você pode usar.
+75	Adicione mais algumas lembranças deste ano para criar Nosso Ano.
+76	Adicionar da Fototeca
+77	Adicione lembranças deste ano para criar Nosso Ano.
+78	Adicione lembranças à história de vocês e o Yuvi encontrará seus momentos.
+79	Adicione lembranças à história de vocês e elas aparecerão aqui.
+80	Adicionar ou Remover Fotos
+81	Adicione fotos de vocês dois e o Yuvi as organizará na história de vocês.
+82	Adicione fotos de vocês dois e todas estarão aqui.
+83	Adicione-as e o Yuvi as colocará na história de vocês.
+84	Adiciona as fotos que chegaram depois e deixa de fora as apagadas. Seu estilo, capa e nota são mantidos.
+85	Tudo
+86	Já é um favorito
+87	Uma estimativa está ótima. As lembranças anteriores são mostradas separadamente.
+88	E esse foi o nosso %@.
+89	E esse foi o nosso %lld.
+90	Qualquer foto deste iPhone. A data e o local originais são usados e ela não é adicionada à história de vocês.
+91	A Apple não conseguiu renovar sua assinatura. O Premium continua ativo enquanto você atualiza a forma de pagamento nos Ajustes.
+92	A Apple não conseguiu renovar sua assinatura. Atualize sua forma de pagamento nos Ajustes para reativar o Premium.
+93	Com o passar do tempo, o Yuvi trará lembranças de volta aqui.
+94	Conforme a história de vocês crescer, elas aparecerão aqui.
+95	Voltar
+96	Antes
+97	Antes de %@
+98	Melhores resultados
+99	Preto
+100	Preto e Branco
+101	Livro
+102	Livros
+103	Traga %@ para a história de vocês
+104	Criar a Partir da Fototeca
+105	Cancelar
+106	Cancelar Convite
+107	Cartão %1$lld de %2$lld
+108	Cartão com %lld fotos
+109	Alterar Capa
+110	Alterar Layout
+111	Alterar Seleção
+112	Capítulo %1$lld de %2$lld
+113	Consultando o iCloud…
+114	Consultando a App Store…
+115	Verificando sua assinatura com a App Store.
+116	Verificando…
+117	Escolha de %1$lld a %2$lld fotos
+118	Escolher Novamente
+119	Escolher Mais Fotos
+120	Escolher Nossas Fotos
+121	Escolher Fotos
+122	Escolher uma Capa
+123	Escolher um Momento
+124	Escolher um Mês
+125	Escolher uma Viagem
+126	Escolher um Ano
+127	Escolha algumas lembranças de vocês dois.
+128	Escolha algumas fotos primeiro.
+129	Escolha um mês e um ano — uma estimativa está ótima. Você pode alterar depois em Nós.
+130	Escolha um mês e um ano ou pule
+131	Escolha uma foto
+132	Escolher lembranças por conta própria
+133	Prefiro escolher lembranças por conta própria
+134	Escolha lembranças. O Yuvi cria algo bonito com elas.
+135	Escolha fotos para sua criação: %@
+136	Escolha fotos de vários meses para criar um livro do seu ano
+137	Escolhe um estilo, um formato e uma ordem para estas fotos
+138	Escolhendo alguns favoritos…
+139	Fechar
+140	Cartão de encerramento
+141	Colagem
+142	Prévia da colagem, estilo %1$@, %2$@, %3$@
+143	Colagens
+144	As colagens e histórias que você ainda está criando ficarão esperando aqui.
+145	Cor
+146	Em breve
+147	A seguir
+148	Conectar Seu Par
+149	Conectar seu par
+150	Conecte os dois iPhones. %@ recebe o Premium grátis com seu convite e suas fotos ficam neste iPhone.
+151	Conectado
+152	Conectado com %@
+153	Conectar não envia sua fototeca.
+154	Continuar
+155	Continuar Editando
+156	Continuar editando %1$@, %2$@
+157	Continuar com %@
+158	Continue a história de vocês
+159	Continua a edição
+160	Continuando seu rascunho
+161	Frio
+162	Não foi possível criar um cartão
+163	Não foi possível salvar o filme no Fotos. Tente novamente.
+164	Não foi possível salvar no Fotos. Tente novamente.
+165	Capa
+166	Foto da capa. Abre em tela cheia.
+167	Criar
+168	Criar Algo
+169	Criar História
+170	Criar uma História
+171	Criar com Favoritos
+172	Criar a Partir Disto
+173	Criando seu filme…
+174	Criações
+175	Data
+176	As datas e os locais ajudam o Yuvi a agrupar fotos em possíveis momentos.
+177	Apagar
+178	Apagar %@
+179	Apagar Livro
+180	Apagar Rascunho
+181	Apagar os Dados do Yuvi
+182	Apagar esta criação: %@?
+183	Apagar este livro?
+184	Apagar este rascunho?
+185	Redesenha a história: um estilo, uma ordem e layouts para estas fotos
+186	Detalhes
+187	Encontrou algo que fez você sorrir?
+188	Desconectar
+189	Desconectar Seu Par
+190	Desconectando…
+191	OK
+192	Não Mostrar Novamente
+193	Não Sugerir
+194	Não Sugerir Esta Lembrança
+195	Não Sugerir Esta Foto
+196	Toque duas vezes para trocar por outra foto. Mantenha pressionado e arraste para mover.
+197	Rascunho %1$@, %2$@, %3$@
+198	Rascunhos
+199	L
+200	Antes
+201	Editar
+202	Editar Livro
+203	Editar Cartão
+204	Editar Nomes e Data
+205	Editar Nota
+206	Editar Fotos
+207	Editar título
+208	Edite sua nota
+209	Editado %@
+210	Editado agora mesmo
+211	Cada dia, em ordem.
+212	Tudo aqui é de %@. Adicione lembranças de outro mês para criar Nosso Ano.
+213	Desbotado
+214	Favoritar
+215	Favoritar %@
+216	Favorite algumas lembranças para criar um livro com elas. Um livro precisa de pelo menos %lld fotos.
+217	Favorite algumas lembranças para criar uma colagem com elas.
+218	Favorite algumas lembranças para criar uma história com elas. Uma história precisa de pelo menos %lld fotos.
+219	Favoritar Livro
+220	Favorite lembranças para mantê-las por perto e criar com elas depois.
+221	Favoritar Momento
+222	Favoritos
+223	Encontrar Nossa História
+224	Encontrando momentos que vocês passaram juntos…
+225	Encontrando lugares onde vocês estiveram…
+226	Encontrando a história de vocês…
+227	Nome
+228	Encontrado para você
+229	Encontrado para você %@
+230	Encontrado para você: %@
+231	Encontrou mais fotos de vocês dois?
+232	Grátis. O Yuvi funciona do mesmo jeito quando você o usa sem conectar seu par.
+233	Da Fototeca
+234	Do Yuvi
+235	Da história de vocês
+236	O acesso completo está ativado, então o Yuvi pode sugerir momentos quando você pedir. A história de vocês guarda as %@ que você escolheu ou manteve.
+237	Reunindo suas fotos…
+238	Preparando seu convite…
+239	Volta ao título do Yuvi
+240	Lembranças Ocultas
+241	Ocultar Coordenadas
+242	Ocultar Data
+243	Ocultar Local
+244	Ocultar Esta Lembrança
+245	Ocultar fotos semelhantes
+246	Como você gostaria de começar?
+247	Sei o dia exato
+248	Sei quando começou
+249	Só lembro o mês
+250	Incluir notas dos momentos
+251	Convite enviado
+252	Convidar %@
+253	Recebeu um convite do seu par? Abra o link do convite neste iPhone para entrar de graça.
+254	Ele pode contar rostos em algumas fotos, mas não sabe quem é ninguém.
+255	Talvez tenha sido apagado.
+256	Seus momentos podem ter sido ocultados.
+257	Suas fotos podem ter sido removidas ou ocultadas.
+258	As fotos continuam no Yuvi e no app Fotos.
+259	Ele é removido do Yuvi. As fotos continuam no Yuvi e no app Fotos.
+260	Não tenho certeza — pular
+261	Entrando…
+262	Ir para
+263	Ir para um ano
+264	Só algumas lembranças
+265	Só algumas lembranças de %lld até agora.
+266	Só algumas lembranças neste mês
+267	Só o começo · %@ até agora
+268	Manter
+269	Manter Minhas Alterações
+270	Mantenha um momento para continuar
+271	Mantenha os que são de vocês. Os momentos que você não mantiver não serão salvos.
+272	Manter, %@
+273	Mantém em Minhas Criações
+274	Mantém nos seus favoritos
+275	Mantido %@
+276	Mantido em Minhas Criações
+277	Mantido no Yuvi
+278	Mantido agora mesmo
+279	Última verificação
+280	Última página
+281	Depois
+282	Lembranças Mais Recentes
+283	Mais recente: %@
+284	Sair da Conexão
+285	Duração
+286	Deixar o Yuvi encontrar
+287	Lista os anos da história de vocês
+288	Carregando preços…
+289	Procurar novamente
+290	Relembre o mês de vocês juntos.
+291	Olhando algumas fotos de cada momento — %1$lld de %2$lld
+292	Procurando possíveis momentos…
+293	Olhando suas lembranças…
+294	Feito para Você
+295	Criado neste iPhone. Suas fotos não são enviadas.
+296	Criado com IA
+297	Criar Colagem
+298	Usar como Abertura
+299	Criar Algo
+300	Faça Sua Primeira Criação
+301	Criar uma Colagem
+302	Criar um Livro de Lembranças
+303	Criar um Filme de Lembranças
+304	Criar um Filme
+305	Criar uma Nova Montagem
+306	Criar uma História
+307	Criar uma nova montagem?
+308	Criar para mim
+309	Crie algo com suas fotos favoritas.
+310	A criação do filme parou quando o Yuvi saiu da tela. Tente novamente.
+311	Gerenciar Assinatura
+312	Lembranças
+313	Lembranças que já estão na história de vocês.
+314	As lembranças que você ocultar não aparecerão na história de vocês nem serão trazidas de volta.
+315	Livro de Lembranças
+316	Livro de Lembranças e Filme de Lembranças
+317	Colagem de Lembranças
+318	Filme de Lembranças
+319	História de Lembranças
+320	Lembrança oculta
+321	Momentos
+322	Os momentos aparecem aqui quando a história de vocês tem lembranças.
+323	Monocromático
+324	Mês
+325	Resumo Mensal
+326	Resumo Mensal e Nosso Ano
+327	Mais
+328	Mover para Antes
+329	Mover para Depois
+330	Filme
+331	Título do Filme
+332	Prévia do filme, %1$lld fotos, %2$@
+333	Filmes
+334	Os filmes, colagens, histórias e livros que você mantiver ficarão aqui, prontos para assistir, abrir ou compartilhar novamente.
+335	Minhas Criações
+336	N
+337	Precisa de pelo menos %lld fotos
+338	Novo
+339	Seguinte
+340	Próximo capítulo
+341	Agora, o iOS pedirá acesso às suas fotos. O acesso completo permite que o Yuvi as veja; você pode alterar isso a qualquer momento nos Ajustes.
+342	Nenhuma assinatura ativa do Premium foi encontrada para esta Conta Apple.
+343	Nenhum rascunho
+344	Ainda não há favoritos
+345	Sem feed, sem conta, nada publicado em lugar nenhum.
+346	Nenhuma lembrança oculta
+347	Sem localização em tempo real. O Yuvi nunca mostra onde vocês estão.
+348	Ainda não há lembranças
+349	Ainda não há momentos
+350	Ainda não há meses
+351	Nenhuma foto escolhida ainda. Escolha algumas que tenham a cara de vocês dois.
+352	Nenhuma foto para escolher
+353	Ainda não há lugares
+354	Sem título
+355	Ainda não há viagens
+356	Ainda não há anos
+357	Noir
+358	Agora Não
+359	Indisponível
+360	Ainda indisponível
+361	Desconectado
+362	Favoritos insuficientes
+363	Favoritos insuficientes para uma história
+364	Fotos insuficientes
+365	Fotos insuficientes para uma história
+366	Agora não
+367	Não é nosso
+368	Não é nosso, %@
+369	Não selecionado
+370	Ainda não
+371	Nota
+372	Ainda não há nada aqui
+373	Ainda não há nada com que criar
+374	Ainda não há nada para relembrar
+375	Nada foi mantido. Você pode procurar novamente ou escolher algumas lembranças por conta própria.
+376	Agora toque na foto com a qual quer trocar.
+377	OK
+378	Sem internet por enquanto
+379	Neste iPhone. Sem conta. Nada publicado em lugar nenhum.
+380	Quando a história de vocês tiver lembranças, você poderá transformá-las em colagens, histórias e resumos aqui.
+381	Uma tarde, uma noite, um dia.
+382	Mais um capítulo
+383	Uma foto não está mais na sua fototeca e foi deixada de fora.
+384	Uma foto não está mais na sua fototeca.
+385	Uma foto não está mais na sua fototeca. Remova-a do filme e tente novamente.
+386	Uma foto não está mais na sua fototeca. Substitua-a em Editar Cartão ou remova-a.
+387	Uma foto não está mais na sua fototeca. Substitua-a ou remova-a e tente novamente.
+388	Somente as fotos selecionadas para esta criação serão enviadas. O restante da sua fototeca do Yuvi não é enviado.
+389	Somente as fotos que você escolhe. Elas são organizadas neste iPhone — suas fotos não são enviadas e não há conta.
+390	Só é compartilhado o que você escolher compartilhar depois, uma coisa de cada vez.
+391	Só você pode ver isto. Fica neste iPhone.
+392	Abrir
+393	Abrir
+394	Abrir Seu Momento
+395	Abrir Ajustes
+396	Abrir Esta Lembrança
+397	Abrir Seu Livro
+398	Abertura
+399	Cartão de abertura
+400	Cena de abertura
+401	Abre para ver e editar
+402	Abre. Mais ações estão disponíveis.
+403	Abre a lembrança
+404	Abre o resumo, capítulo por capítulo
+405	Abre a tendência
+406	Opções
+407	A organização das suas fotos foi interrompida.
+408	Nosso %@
+409	Nosso %lld
+410	Nossas Lembranças
+411	Nossa História
+412	Nosso Ano
+413	Nossa história, juntos
+414	Página %1$lld de %2$lld
+415	Par
+416	Nome do seu par
+417	Pausar
+418	Foto
+419	Foto %lld
+420	Foto %1$lld de %2$lld
+421	Foto %1$lld de %2$lld%3$@
+422	Acesso às fotos
+423	Cartão de foto
+424	Foto, %@
+425	Fotos
+426	Fotos que Eu Escolho
+427	As fotos não são mostradas aqui de propósito. Escolha Mostrar para devolver uma lembrança à história de vocês.
+428	Fotos Deste Livro
+429	As fotos com localização aparecem aqui por lugar.
+430	Fotos · %lld
+431	Escolha as fotos por conta própria; o Yuvi as mantém como você escolheu.
+432	Selecionada para troca
+433	Lugar
+434	Cartão de lugar
+435	Lugares
+436	Reproduzir
+437	Reproduzir %@
+438	Reproduzir Nosso %@
+439	Possíveis momentos
+440	Premium
+441	O Premium termina em %@. Não será renovado.
+442	O Premium está ativo.
+443	O Premium não está disponível na sua região no momento.
+444	O Premium não está disponível no momento. Tente novamente mais tarde.
+445	Premium · Anual
+446	Premium · Mensal
+447	Premium. Salva todas as páginas no Fotos
+448	Preparando o resumo
+449	Preparando…
+450	Prévia de %@ com suas fotos
+451	Capítulo anterior
+452	Os preços ainda não foram carregados. Tente novamente.
+453	Aparece depois da capa. Fica neste iPhone, a menos que você compartilhe uma página.
+454	Privacidade
+455	Política de Privacidade
+456	As compras não são permitidas neste iPhone ou nesta conta da App Store.
+457	Comprando
+458	Lendo datas e locais…
+459	Recentemente
+460	Recomendado
+461	Vermelho
+462	Lembra disso?
+463	Lembra disso? ❤️
+464	Remover
+465	Remover Cartão
+466	Remover Ausentes
+467	Remover dos Favoritos
+468	Remover título
+469	Remove dos seus favoritos
+470	Renova em %@.
+471	Substituir
+472	Substituir %@
+473	Substituir Foto
+474	Substituir pela Fototeca
+475	Redefinir
+476	Redefinir título
+477	Restaurar Compras
+478	Por enquanto, apenas a conexão em si. Sua fototeca, o que o Yuvi aprende com ela, suas lembranças ocultas e seus lugares ficam neste iPhone. Compartilhar uma foto ou uma nota sempre será uma escolha sua, uma de cada vez.
+479	S
+480	Salvar
+481	Salvar Todos os %lld
+482	Salvar Livro Completo
+483	Salvar Página
+484	Salvar Este Cartão
+485	Salvar Vídeo
+486	Salvar no Fotos
+487	Salvo no Fotos
+488	Salva todas as páginas no Fotos
+489	Salvando %lld páginas…
+490	Salvando no Fotos…
+491	Salvando…
+492	Cena %1$lld de %2$lld
+493	Cenas
+494	Ver Tudo
+495	Ver Todos os Rascunhos
+496	Ver Todos os Rascunhos (%lld)
+497	Ver Nossa História
+498	Ver Sua Colagem
+499	Ver Seu Ano Completo
+500	Ver Seu Resumo
+501	Ver Sua História
+502	Ver Yuvi Premium
+503	Veja todos os %1$@ de %2$@ com lembranças, o encerramento, uma história ou colagem do ano e um cartão para compartilhar, com o Yuvi Premium.
+504	Ver o Resumo Completo
+505	Ver o Momento
+506	Ver o mês inteiro
+507	Selecionado
+508	Selecionado, número %lld
+509	Enviar Convite
+510	Enviar Convite Novamente
+511	Formato
+512	Compartilhar
+513	Compartilhar Todos os Cartões
+514	Compartilhar Nosso Ano
+515	Compartilhar Página
+516	Compartilhar Resumo
+517	Compartilhar Este Cartão
+518	Compartilhar cartão: %@
+519	O compartilhamento no Yuvi para e você sai da conexão. Ela foi iniciada pelo iCloud de %@, então continua sendo do seu par; o Yuvi no iPhone dele a encerra na próxima vez que for aberto. Suas fotos e lembranças neste iPhone não mudam e o Yuvi volta a ser só seu.
+520	O compartilhamento no Yuvi é encerrado para vocês dois e %@ não tem mais acesso à conexão de vocês. Suas fotos e lembranças neste iPhone não mudam e o Yuvi volta a ser só seu. Nada da sua fototeca foi compartilhado, então não há nada seu para remover do outro iPhone.
+521	Mostrar
+522	Mostrar %@
+523	Mostrar Coordenadas
+524	Mostrar Data
+525	Mostrar Local
+526	Mostrar as fotos deste momento
+527	Mostrando %@
+528	Mostra outro título criado com as datas e os locais deste filme
+529	Desde a primeira lembrança de vocês · %@
+530	Até agora
+531	Suave
+532	Algumas fotos não estão mais disponíveis — elas podem ter sido apagadas ou removidas do acesso do Yuvi.
+533	Algo deu errado ao criar a imagem. Tente novamente.
+534	Algo deu errado ao criar o filme. Tente novamente.
+535	Algo deu errado ao organizar suas fotos.
+536	Algo deu errado com a App Store. Tente novamente.
+537	Algo deu errado.
+538	Começar Novo
+539	Recomeçar
+540	Começar um Livro
+541	Começar um Livro de Lembranças com…
+542	Data de início
+543	Recomeçar?
+544	Comece com algumas fotos. Você sempre pode adicionar mais.
+545	Status
+546	Ainda conectado · sem internet por enquanto
+547	Interrompido
+548	Histórias
+549	Histórias e Tendências
+550	História
+551	Criador de Histórias
+552	Estilo
+553	Assinou em outro iPhone ou depois de reinstalar? Restaurar verifica sua Conta Apple.
+554	As assinaturas são gerenciadas pela Apple. O Yuvi nunca vê seus dados de pagamento; ele só recebe da App Store a informação de que o Premium está ativo ou não.
+555	Sugerir Esta Lembrança Novamente
+556	Toque em uma cena para mover, substituir ou remover.
+557	Toque no coração de um momento para mantê-lo aqui.
+558	Toque no coração de uma foto para mantê-la aqui.
+559	Toque no coração de algo que você criou para manter aqui.
+560	Toque em duas fotos para trocá-las.
+561	Termos
+562	Termos de Uso
+563	Obrigado. Há mais para encontrar conforme a história de vocês cresce.
+564	É para isso que ele serve. Obrigado.
+565	A App Store não conseguiu verificar esta compra, então o Premium não foi ativado. Tente Restaurar Compras.
+566	A App Store não está disponível no momento. Tente novamente mais tarde.
+567	A primeira lembrança de %@
+568	O resumo completo — todos os destaques, as viagens, uma colagem ou história deste mês e um cartão para compartilhar — faz parte do Yuvi Premium.
+569	O convite para de funcionar. Nada mais muda.
+570	Não foi possível confirmar a compra. Se houve cobrança, use Restaurar Compras.
+571	O restante de %@
+572	O título, os lugares e as datas
+573	O nome do seu par
+574	Não há fotos aqui que possam entrar em uma colagem.
+575	Não há fotos aqui que possam entrar em um filme.
+576	Não há espaço livre suficiente neste iPhone para criar o filme.
+577	Ainda não há o suficiente para um resumo. Quando você adicionar mais fotos deste mês, o Yuvi as incluirá.
+578	As coisas que você criar com o Yuvi aparecerão aqui.
+579	Este livro não está mais aqui
+580	Esta criação não está disponível nesta versão do Yuvi.
+581	Esta criação precisa que as fotos que você escolher sejam processadas por um provedor de IA. Somente essas fotos seriam enviadas — nunca o restante da sua fototeca.
+582	Esta criação exige que as fotos selecionadas sejam processadas por um provedor de IA.
+583	Isso acontece no seu iPhone. Suas fotos não são enviadas.
+584	Isto não está mais aqui
+585	Isto não está mais na história de vocês
+586	Esta lembrança não está mais aqui
+587	Esta foto não está disponível no momento.
+588	Isso remove a história de vocês, as notas e os ajustes do Yuvi, e você fará a configuração novamente. Seus livros, colagens, histórias, filmes, rascunhos e favoritos são mantidos, assim como as lembranças que você pediu ao Yuvi para não sugerir. Suas fotos no app Fotos não são alteradas.
+589	Esta tendência não está disponível
+590	Este vídeo não está disponível no momento.
+591	Título
+592	Título: %@
+593	Títulos
+594	Hoje
+595	Juntos desde %@
+596	Mantenha uma foto pressionada para arrastá-la a outro lugar, substituí-la ou removê-la.
+597	Mantenha uma foto pressionada para substituir, mover ou remover.
+598	Tendências
+599	Em Alta
+600	As tendências vêm e vão. Dê uma olhada nas outras em Criar.
+601	Tentar Novamente
+602	Experimentar outro
+603	Experimentar outro título
+604	Transforme um momento em uma história.
+605	NÓS
+606	Sem data
+607	Desfazer
+608	Atualizar a partir de %@
+609	Nós
+610	Usar Foto
+611	Usar Capa Sugerida
+612	Usar como Capa
+613	Usar a Melhor Foto
+614	Usado para %@.
+615	Usado para “%@”.
+616	Usando as fotos que você escolheu
+617	Vídeo
+618	O
+619	Esperando %@ aceitar
+620	Esperando acesso às suas fotos…
+621	Quente
+622	Assistir ao Seu Filme
+623	Encontramos alguns momentos que podem fazer parte da história de vocês.
+624	Encontramos algo para você.
+625	O que o Yuvi aprende com suas fotos fica privado neste iPhone.
+626	O que você lembra disso?
+627	O que é compartilhado
+628	Quando a história de vocês começou?
+629	Quando a história de vocês começou
+630	Branco
+631	Quem é sua pessoa favorita?
+632	Sem uma data, o Yuvi não conta os dias juntos.
+633	Sem acesso, o Yuvi não pode sugerir momentos. Você pode permitir o acesso nos Ajustes ou escolher algumas lembranças por conta própria.
+634	Ano
+635	Anos
+636	Sim
+637	Você
+638	Você pode escolher até %lld fotos.
+639	Você pode escolher quais fotos o Yuvi pode ver nos Ajustes.
+640	Você escolhe quais momentos fazem parte da história de vocês. Somente esses são mantidos.
+641	Você controla o que o Yuvi pode ver.
+642	Você tem %@.
+643	Você tem o Yuvi Premium.
+644	Parece que você está sem internet. Verifique sua conexão e tente novamente.
+645	Sua criação está pronta: %@
+646	A história de vocês de %lld está só começando.
+647	Suas Criações
+648	Seu Par
+649	Suas Fotos
+650	Sua assinatura do Premium terminou.
+651	Sua assinatura do Premium está ativa novamente.
+652	Sua assinatura do Premium foi reembolsada ou revogada.
+653	Sua pessoa favorita
+654	Sua primeira criação para salvar ou compartilhar é grátis.
+655	Seu nome (opcional)
+656	Suas lembranças, transformadas em um livro.
+657	Suas lembranças, momentos, lugares, notas e favoritos são sempre gratuitos. O Premium é para o que o Yuvi cria a partir deles.
+658	Sua nota
+659	Sua nota: %@
+660	Suas próprias palavras, mostradas exatamente como você escreve.
+661	Seu par
+662	Sua conexão com seu par
+663	Seu par não precisa do Yuvi para ver.
+664	Suas fotos e momentos não são afetados.
+665	Suas fotos são organizadas neste iPhone e não são enviadas; não há conta nem feed. Quando o Yuvi sugere momentos, ele lê datas e locais e conta rostos em algumas fotos — nunca sabe quem é ninguém. Para dar nome aos lugares, o Yuvi consulta o serviço de localização da Apple sobre uma localização — nunca sobre uma foto. As fotos mantidas apenas no iCloud podem ser baixadas do seu próprio iCloud para serem mostradas.
+666	Suas fotos ficam neste iPhone e são organizadas no dispositivo. Nada é enviado e não há conta. Para dar nome aos lugares, o Yuvi consulta o serviço de localização da Apple sobre uma localização — nunca sobre uma foto.
+667	Sua compra está aguardando aprovação. O Premium é ativado assim que ela for aprovada.
+668	Seus resumos aparecerão aqui conforme a história de vocês crescer.
+669	O relacionamento de vocês, contado pelas fotos que você já tem.
+670	A história de vocês
+671	A história de vocês começou.
+672	A história de vocês guarda apenas as fotos que você escolheu ou manteve. O Yuvi nunca identifica pessoas. Você pode alterar o acesso a qualquer momento nos Ajustes.
+673	A história de vocês está pronta. ❤️
+674	Suas palavras
+675	O ano de vocês juntos, para relembrar.
+676	Seu ano, em um curta-metragem.
+677	Seus anos juntos aparecerão aqui conforme a história de vocês crescer.
+678	Você vai precisar de
+679	Você enviará um convite pelo seu iCloud. Seu par o abre no iPhone dele com o Yuvi instalado.
+680	Você já usou sua criação grátis. As prévias e a edição continuam gratuitas.
+681	Yuvi %@
+682	Yuvi Grátis
+683	Yuvi Premium
+684	Yuvi Premium Anual
+685	Yuvi Premium Mensal
+686	O Yuvi só pode usar as fotos que você compartilhou com ele. Você pode compartilhar mais em Nós → Acesso às Fotos ou escolher outras.
+687	O Yuvi não consegue abrir essa foto
+688	O Yuvi não consegue abrir essas fotos
+689	O Yuvi não consegue acessar o iCloud no momento. A conexão continua ativa; ele verificará novamente quando puder.
+690	O Yuvi não consegue ver nenhuma foto no momento.
+691	O Yuvi não consegue ver nenhuma foto no momento. Você pode escolher quais ele pode ver nos Ajustes.
+692	O Yuvi não consegue ver suas fotos
+693	O Yuvi não consegue ver suas fotos no momento, então a história de vocês está oculta. Suas notas estão seguras.
+694	O Yuvi escolhe as fotos novamente e cria uma nova montagem. Seu estilo, formato e duração são mantidos.
+695	O Yuvi escolhe as fotos, a ordem e o ritmo. Você pode alterar tudo depois.
+696	O Yuvi não encontrou um nome para esta localização.
+697	O Yuvi não encontrou grupos de fotos para sugerir. Você pode escolher algumas lembranças por conta própria.
+698	O Yuvi reúne suas fotos em momentos conforme a história de vocês cresce.
+699	O Yuvi ainda não pediu acesso a nenhuma foto.
+700	O Yuvi não tem permissão para salvar no Fotos. Você pode permitir nos Ajustes.
+701	O Yuvi registra alguns eventos anônimos de uso apenas neste iPhone (por exemplo, que a tela de assinatura foi aberta). Eles nunca incluem fotos, nomes, notas, legendas ou lugares.
+702	O Yuvi procura possíveis momentos neste iPhone. Você decide o que manter.
+703	O Yuvi procura. Você decide.
+704	O Yuvi precisa de pelo menos %1$lld fotos para começar — você escolheu %2$lld. Escolha mais algumas.
+705	O Yuvi nunca escreve por você. Somente as notas que você escreveu aparecem no livro.
+706	O Yuvi vê somente as %@ que você escolheu.
+707	O Yuvi escolherá as fotos novamente. As fotos e a ordem que você alterou serão substituídas; seu estilo, formato, duração e título são mantidos.
+708	O Yuvi não contará os dias juntos até você adicionar uma data em Nós
+709	Você pode usar o Yuvi por completo sem conectar seu par. Conectar é opcional e gratuito.
+710	Yuvi, para vocês dois
+711	Yuvi. Nossa história, juntos
+712	%lld
+713	apenas %lld
+714	livro
+715	colagem
+716	filmado %@
+717	1
+718	apenas 1
+719	filme
+720	um mês
+721	com %@
+722	história
+723	o momento
+724	a viagem
+725	seu par
+726	do seu par
+727	yuvi
+728	“%@”
+729	✓
