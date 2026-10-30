@@ -92,10 +92,8 @@ struct PremiumBadge: View {
 /// agreement; the privacy policy URL must be set before release (see docs/COMMERCIAL.md).
 enum CommercialLinks {
     static let termsOfUse = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
-    /// Set to the published privacy policy before App Store submission
-    /// (`https://ardalmaz1.github.io/isgmolasi/privacy/`, source `docs/privacy/index.html`, once
-    /// GitHub Pages serves it). Until then Relive shows its on-device privacy summary.
-    static let privacyPolicy: URL? = nil
+    /// The published privacy policy (GitHub Pages, source `docs/privacy/index.html`).
+    static let privacyPolicy: URL? = URL(string: "https://ardalmaz1.github.io/isgmolasi/privacy/")
 }
 
 /// Where a free preview ends: says what the full version holds, calmly, with one way in.
