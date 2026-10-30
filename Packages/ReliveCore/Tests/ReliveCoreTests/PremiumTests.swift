@@ -202,4 +202,13 @@ struct PaywallTextTests {
         #expect(book.title == year.title && book.benefits == collage.benefits && book.message == year.message)
         #expect(PaywallEntryPoint.memoryBook.capability == .memoryBookExport)
     }
+
+    @Test func theWallHasItsOwnWordsAndNamesThePartner() {
+        let wall = PaywallCopy(entry: .welcome)
+        #expect(wall.context == "Your story is ready")
+        #expect(wall.title == "Keep your story, together")
+        #expect(wall.message.contains("One subscription covers you both"))
+        #expect(wall.benefits.contains("Your partner joins free with your invitation"))
+        #expect(PaywallEntryPoint.welcome.capability == nil)
+    }
 }

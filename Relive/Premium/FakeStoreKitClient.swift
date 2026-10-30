@@ -136,7 +136,7 @@ final class FakeStoreKitClient: StoreKitClient, @unchecked Sendable {
                 id: PremiumProductRole.monthly.productID,
                 role: .monthly,
                 displayName: "Yuvi Premium Monthly",
-                displayPrice: "$4.99",
+                displayPrice: "$9.99",
                 period: SubscriptionPeriod(value: 1, unit: .month)
             ),
         ]

@@ -14,7 +14,7 @@ final class MadeForYouUITests: XCTestCase {
     @MainActor
     func testMadeForYouOpensAPreparedCreation() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall"]
         app.launch()
         try completeOnboarding(app)
 
@@ -101,7 +101,7 @@ final class MadeForYouUITests: XCTestCase {
 
         // Review: dark mode and a large text size, same library and history.
         let dark = XCUIApplication()
-        dark.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free", "-ReliveUITestDarkMode"]
+        dark.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall", "-ReliveUITestDarkMode"]
         dark.launch()
         XCTAssertTrue(dark.tabBars.buttons["Create"].waitForExistence(timeout: 30))
         dark.tabBars.buttons["Create"].tap()
@@ -111,7 +111,7 @@ final class MadeForYouUITests: XCTestCase {
         dark.terminate()
 
         let large = XCUIApplication()
-        large.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free",
+        large.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall",
                                   "-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityL"]
         large.launch()
         XCTAssertTrue(large.tabBars.buttons["Create"].waitForExistence(timeout: 30))

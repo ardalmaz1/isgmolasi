@@ -17,7 +17,7 @@ final class MovieUITests: XCTestCase {
     @MainActor
     func testMakeEditKeepAMovie() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall"]
         app.launch()
         try completeOnboarding(app)
         let prefix = app.windows.firstMatch.frame.height < 700 ? "W" : "V"

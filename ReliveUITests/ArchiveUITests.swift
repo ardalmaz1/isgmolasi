@@ -14,7 +14,7 @@ final class ArchiveUITests: XCTestCase {
     @MainActor
     func testTodayStoryYearsAndTheFreeArchive() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall"]
         app.launch()
         try completeOnboarding(app)
         let prefix = app.windows.firstMatch.frame.height < 700 ? "X" : "U"
@@ -116,7 +116,7 @@ final class ArchiveUITests: XCTestCase {
         for (name, arguments) in [("dark", ["-ReliveUITestDarkMode"]),
                                   ("large", ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])] {
             let review = XCUIApplication()
-            review.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free"] + arguments
+            review.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall"] + arguments
             review.launch()
             let digit = name == "dark" ? "8" : "9"
             XCTAssertTrue(review.tabBars.buttons["Today"].waitForExistence(timeout: 30))

@@ -15,7 +15,7 @@ final class PartnerUITests: XCTestCase {
     func testConnectWaitDisconnectAndICloudStates() throws {
         // 1. Solo → explanation → invitation → waiting → cancel the invitation.
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-RelivePartnerFake", "available"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall", "-RelivePartnerFake", "available"]
         app.launch()
         try completeOnboarding(app)
         app.tabBars.buttons["Us"].tap()
@@ -99,7 +99,7 @@ final class PartnerUITests: XCTestCase {
     @MainActor
     private func launch(_ arguments: [String]) -> XCUIApplication {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveStoreKit", "free"] + arguments
+        app.launchArguments += ["-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall"] + arguments
         app.launch()
         XCTAssertTrue(app.tabBars.buttons["Us"].waitForExistence(timeout: 15), "the story was not kept")
         return app

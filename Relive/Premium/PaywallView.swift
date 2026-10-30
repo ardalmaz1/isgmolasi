@@ -1,8 +1,9 @@
 import ReliveCore
 import SwiftUI
 
-/// The one paywall. Shown only after the user has seen what Relive made — never at launch or
-/// after onboarding. No countdowns, no urgency, and the close button is always visible.
+/// The one paywall. Shown only after the user has seen what Yuvi made: once as the hard paywall
+/// after the story is revealed (`.welcome`, no close button), then wherever a creation is kept.
+/// No countdowns, no urgency.
 struct PaywallView: View {
     let entry: PaywallEntryPoint
     var heroAssetID: AssetID?
@@ -16,6 +17,8 @@ struct PaywallView: View {
     @State private var showsPrivacy = false
 
     private var copy: PaywallCopy { PaywallCopy(entry: entry) }
+    /// The hard paywall after onboarding: it closes only when Premium arrives.
+    private var isWall: Bool { entry == .welcome }
 
     var body: some View {
         ScrollView {
@@ -39,7 +42,9 @@ struct PaywallView: View {
         }
         .scrollIndicators(.hidden)
         .reliveBackground()
-        .overlay(alignment: .topTrailing) { closeButton }
+        .overlay(alignment: .topTrailing) {
+            if !isWall { closeButton }
+        }
         .sheet(isPresented: $showsPrivacy) { PrivacySummaryView() }
         .onAppear {
             premium.trackPaywall(viewed: entry)
@@ -211,6 +216,13 @@ struct PaywallView: View {
                 .accessibilityIdentifier("paywallMessage")
         }
         RestoreStatusText()
+        if isWall {
+            Text("Invited by your partner? Open their invitation link on this iPhone and you’re in, free.")
+                .font(Typography.footnote)
+                .foregroundStyle(Palette.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+                .accessibilityIdentifier("paywallPartnerHint")
+        }
     }
 
     private var alreadyPremium: some View {

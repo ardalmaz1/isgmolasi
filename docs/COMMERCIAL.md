@@ -1,5 +1,15 @@
 # Commercial v1 — Relive Premium
 
+> **Hard paywall (30.10.2026).** Onboarding builds the story and reveals it; then the paywall
+> (`PaywallEntryPoint.welcome`, no close button) stands between the user and the app until
+> Premium is verified. One subscription covers both partners: a partner who joined through an
+> invitation (`PartnerConnectionRecord.role == .partner`, connected) is covered
+> (`PremiumStore.isCoveredByPartner`) and never sees the wall. Prices: $39.99/year with a 1-week
+> free trial (preselected) and $9.99/month, no weekly or lifetime plan. Everything below about
+> free features and the first free creation still holds inside the app, but only subscribers and
+> covered partners get there. UI tests that exercise those gates pass `-ReliveUITestNoHardPaywall`;
+> `HardPaywallUITests` covers the wall itself.
+
 > Memories are free. Creating more from them is Premium.
 
 ## What's free and what's Premium
@@ -46,7 +56,8 @@ Only when the user tries to keep something they have already seen, or opens the 
 | `ourYear` | "Relive Your Full Year", Share | Relive your full year |
 | `settings` | Us → Relive Premium → See Relive Premium | — |
 
-There is no paywall at launch, after onboarding, or in Today, Story or Us. Closing it returns to
+There is no paywall at launch. After onboarding there is the hard paywall (above); inside the
+app there is none in Today, Story or Us. Closing it returns to
 exactly where the user was, with nothing exported. If the user subscribes from the paywall, the
 action they were taking (for example, Save Full Book) finishes when the paywall closes.
 
@@ -139,7 +150,7 @@ include photos, notes, names, captions or places.
   - `CommercialUITests` covers the free path, the paywall, the purchase and Premium.
 - **Running from Xcode:**
   - `StoreKit/Relive.storekit` holds both products with **placeholder** prices ($39.99/year with
-    a 1-week free trial, $4.99/month).
+    a 1-week free trial, $9.99/month).
   - To use it, choose Product → Scheme → Edit Scheme → Run → Options → StoreKit Configuration →
     `Relive.storekit`. It isn't preselected, so CI and TestFlight are unaffected.
   - Without it, Debug builds talk to the sandbox.

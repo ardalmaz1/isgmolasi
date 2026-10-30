@@ -20,8 +20,8 @@ and the partner connection (Phase B). Shared memories (Phase C onward) come afte
 | ☐ | Subscription group and both products | Arda | `COMMERCIAL.md` → App Store Connect setup |
 | ☐ | Sandbox purchase, restore, cancel on a device | Arda | `COMMERCIAL.md` → Sandbox testing |
 | ☐ | Partner connection on two iPhones | Arda + Kübra | `COUPLES_DEVICE_TEST_PLAN.md` § Phase B |
-| ☐ | Screenshots (6.9-inch) | Arda | see Screenshots below |
-| ☑ | Version set to 1.0 (build 7) | Claude | `MARKETING_VERSION` |
+| ☑ | Screenshots (6.9-inch) | Claude | see Screenshots below |
+| ☑ | Version set to 1.0 (build 8) | Claude | `MARKETING_VERSION` |
 
 ## App Information
 
@@ -56,7 +56,7 @@ and the partner connection (Phase B). Shared memories (Phase C onward) come afte
 > • A timeline of your relationship, built from your own photos
 > • Moments, trips and places found automatically, with honest, factual titles
 > • Today brings back memories from this day in earlier years
-> • Your notes and favorites, always free
+> • Your notes and favorites, always yours
 >
 > MAKE SOMETHING TOGETHER
 > • Collages and stories ready to share
@@ -74,11 +74,12 @@ and the partner connection (Phase B). Shared memories (Phase C onward) come afte
 > Connect with your partner through iCloud. Nothing from your library is shared by connecting.
 >
 > YUVI PREMIUM
-> Your memories, moments, places, notes and favorites are always free, and your first creation is
-> on us. Premium unlocks saving and sharing every creation, the full Monthly Recap and Our Year,
-> and Memory Book export. Premium is an auto-renewing subscription, billed yearly or monthly
-> through your Apple Account. It renews unless cancelled at least 24 hours before the end of the
-> current period; manage or cancel it in your Apple Account settings.
+> Yuvi builds your story and shows it to you before you pay anything. To step inside it, and
+> into everything Yuvi creates from it, start Yuvi Premium: the annual plan begins with a free
+> week. One subscription covers you both: your partner joins free with your invitation. Premium
+> is an auto-renewing subscription, billed yearly or monthly through your Apple Account. It
+> renews unless cancelled at least 24 hours before the end of the current period; manage or
+> cancel it in your Apple Account settings.
 >
 > Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
 > Privacy Policy: https://ardalmaz1.github.io/yuvi/privacy/
@@ -110,9 +111,11 @@ couple,relationship,memories,anniversary,timeline,photo album,love,collage,recap
 > "Let Yuvi find them" (full photo access) or choose at least 5 photos yourself. Yuvi builds the
 > story on the device; nothing is uploaded.
 >
-> Premium: the first creation is free. Make a collage (Create → Memory Collage), save it once,
-> then save a second one to see the paywall. Products: relive.premium.annual and
-> relive.premium.monthly.
+> Premium: after onboarding Yuvi reveals the story it built, then shows the subscription screen.
+> Please subscribe with a sandbox account to continue (the annual plan has a 1-week free trial;
+> Restore Purchases is on the same screen). Products: relive.premium.annual ($39.99/year) and
+> relive.premium.monthly ($9.99/month). A partner who joins through an invitation is covered by
+> the inviting partner's subscription and does not see this screen.
 >
 > Partner connection (Us → Connect Your Partner) uses iCloud sharing and needs a second iPhone
 > with a different Apple Account to complete; without it, you can start the connection and see

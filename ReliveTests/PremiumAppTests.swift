@@ -190,6 +190,24 @@ final class EntitlementStoreTests: XCTestCase {
         XCTAssertFalse(premium.showsPremium)
         XCTAssertFalse(defaults.bool(forKey: PremiumStore.cachedPremiumKey), "the cache follows StoreKit")
     }
+
+    func testHardPaywallOpensForSubscribersAndTheInvitedPartnerOnly() async {
+        let client = FakeStoreKitClient()
+        let premium = PremiumTestKit.store(client)
+        await premium.refreshEntitlements()
+        XCTAssertFalse(premium.hasAppAccess, "no subscription: the wall stays")
+
+        premium.isCoveredByPartner = true
+        XCTAssertTrue(premium.hasAppAccess, "the invited partner is covered by the inviting partner")
+        XCTAssertTrue(premium.isPremium, "and has every Premium feature")
+        let decision = await premium.exportDecision(for: .memoryBookExport)
+        XCTAssertEqual(decision, .allowed)
+
+        premium.isCoveredByPartner = false
+        client.snapshot.transactions = [client.activeTransaction(.monthly)]
+        await premium.refreshEntitlements()
+        XCTAssertTrue(premium.hasAppAccess, "a subscriber goes in")
+    }
 }
 
 @MainActor

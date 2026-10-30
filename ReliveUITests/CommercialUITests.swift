@@ -17,7 +17,7 @@ final class CommercialUITests: XCTestCase {
     @MainActor
     func testFreeCreationPaywallAndPremium() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestHideMadeForYou"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall", "-ReliveUITestHideMadeForYou"]
         app.launch()
         try completeOnboarding(app)
 
@@ -120,7 +120,7 @@ final class CommercialUITests: XCTestCase {
         // 5. Relaunch as free (the fake App Store forgets the purchase): the free creation is
         //    still used, and the recap shows its free preview
         let free = XCUIApplication()
-        free.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free", "-ReliveUITestHideMadeForYou"]
+        free.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall", "-ReliveUITestHideMadeForYou"]
         free.launch()
         XCTAssertTrue(free.tabBars.buttons["Create"].waitForExistence(timeout: 30), "Main app did not appear after relaunch")
         free.tabBars.buttons["Create"].tap()

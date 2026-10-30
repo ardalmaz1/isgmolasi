@@ -10,6 +10,8 @@ public enum PaywallEntryPoint: String, CaseIterable, Codable, Sendable {
     case ourYear = "our_year"
     case premiumStyle = "premium_style"
     case memoryMovie = "memory_movie"
+    /// The hard paywall after onboarding, once the story has been revealed.
+    case welcome
     case settings
 
     /// The capability the user was reaching for (for analytics and for the unlock check).
@@ -23,7 +25,7 @@ public enum PaywallEntryPoint: String, CaseIterable, Codable, Sendable {
         case .ourYear: .fullYearInReview
         case .premiumStyle: .premiumStyles
         case .memoryMovie: .memoryMovie
-        case .settings: nil
+        case .welcome, .settings: nil
         }
     }
 }
@@ -44,7 +46,20 @@ public struct PaywallCopy: Equatable, Sendable {
         case .storyExport: "Keep every story"
         case .premiumStyle: "Every design"
         case .memoryMovie: "Keep this movie"
+        case .welcome: "Your story is ready"
         case .settings: nil
+        }
+        if entry == .welcome {
+            title = "Keep your story, together"
+            message = "Yuvi Premium opens everything Yuvi made from your photos. One subscription covers you both."
+            benefits = [
+                "Your whole story: moments, trips and places",
+                "Today, Monthly Recap and Our Year",
+                "Memory Movies, Books, Collages & Stories",
+                "Your partner joins free with your invitation",
+                "Private: your photos never leave your iPhone",
+            ]
+            return
         }
         title = "Keep making memories worth keeping"
         message = "Your memories are always yours.\nPremium gives you everything Yuvi can create from them."

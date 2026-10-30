@@ -64,14 +64,22 @@ final class PremiumStore {
 
     // MARK: - Reading
 
-    /// Verified Premium, checked this launch.
-    var isPremium: Bool { status.isPremium }
+    /// The partner who joined through an invitation: the inviting partner's subscription
+    /// covers both of them. Set from the partner connection (see `RootView`).
+    var isCoveredByPartner = false
+
+    /// Verified Premium, checked this launch, or covered by the partner's subscription.
+    var isPremium: Bool { status.isPremium || isCoveredByPartner }
 
     /// For showing things (badges, the full recap): the verified answer, or until the first
     /// check finishes, the last known one. Never used to allow an export.
     var showsPremium: Bool {
-        status == .unknown ? cachedPremium : status.isPremium
+        (status == .unknown ? cachedPremium : status.isPremium) || isCoveredByPartner
     }
+
+    /// Whether the main app may open. Yuvi has a hard paywall after onboarding: the story is
+    /// built and revealed first, then Premium (or the partner's) is needed to go in.
+    var hasAppAccess: Bool { showsPremium }
 
     /// May the user see this in full?
     func hasAccess(to capability: PremiumCapability) -> Bool {

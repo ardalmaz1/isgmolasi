@@ -14,7 +14,7 @@ final class FirstExperienceUITests: XCTestCase {
     @MainActor
     func testDiscoveryPathToFirstDiscoveryAndStory() throws {
         let app = XCUIApplication()
-        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free"]
+        app.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall"]
         app.launch()
         let prefix = app.windows.firstMatch.frame.height < 700 ? "Q" : "N"
 
@@ -124,7 +124,7 @@ final class FirstExperienceUITests: XCTestCase {
         for (name, arguments) in [("dark", ["-ReliveUITestDarkMode"]),
                                   ("large", ["-UIPreferredContentSizeCategoryName", "UICTContentSizeCategoryAccessibilityXXXL"])] {
             let review = XCUIApplication()
-            review.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free"] + arguments
+            review.launchArguments += ["-ReliveUITestImportAllPhotos", "-ReliveUITestStartFresh", "-ReliveStoreKit", "free", "-ReliveUITestNoHardPaywall"] + arguments
             review.launch()
             let digit = name == "dark" ? "8" : "9"
             let start = review.buttons["onboardingFindStory"]
