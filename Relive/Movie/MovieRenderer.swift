@@ -16,21 +16,21 @@ enum MovieExportError: LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .notEnoughPhotos:
-            "A movie needs at least \(MovieEligibility.minimumPhotos) photos."
+            String(localized: "A movie needs at least \(MovieEligibility.minimumPhotos) photos.")
         case .missingPhotos(let count):
             count == 1
-                ? "One photo is no longer in your library. Remove it from the movie, then try again."
-                : "\(count) photos are no longer in your library. Remove them from the movie, then try again."
+                ? String(localized: "One photo is no longer in your library. Remove it from the movie, then try again.")
+                : String(localized: "\(count) photos are no longer in your library. Remove them from the movie, then try again.")
         case .renderFailed:
-            "Something went wrong while making the movie. Please try again."
+            String(localized: "Something went wrong while making the movie. Please try again.")
         case .notEnoughSpace:
-            "There isn’t enough free space on this iPhone to make the movie."
+            String(localized: "There isn’t enough free space on this iPhone to make the movie.")
         case .interrupted:
-            "Making the movie stopped when Yuvi left the screen. Please try again."
+            String(localized: "Making the movie stopped when Yuvi left the screen. Please try again.")
         case .photosAccessDenied:
-            "Yuvi isn’t allowed to save to Photos. You can allow it in Settings."
+            String(localized: "Yuvi isn’t allowed to save to Photos. You can allow it in Settings.")
         case .saveFailed:
-            "Couldn’t save the movie to Photos. Please try again."
+            String(localized: "Couldn’t save the movie to Photos. Please try again.")
         }
     }
 }

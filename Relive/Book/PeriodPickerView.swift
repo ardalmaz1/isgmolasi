@@ -11,9 +11,9 @@ struct PeriodPickerView: View {
 
         var title: String {
             switch self {
-            case .trip: "Choose a Trip"
-            case .month: "Choose a Month"
-            case .year: "Choose a Year"
+            case .trip: String(localized: "Choose a Trip")
+            case .month: String(localized: "Choose a Month")
+            case .year: String(localized: "Choose a Year")
             }
         }
     }
@@ -38,7 +38,7 @@ struct PeriodPickerView: View {
         let rows = self.rows(library: store.creationLibrary)
         Group {
             if rows.isEmpty {
-                QuietMessageView(title: emptyTitle, message: "As your story grows, they’ll appear here.")
+                QuietMessageView(title: emptyTitle, message: String(localized: "As your story grows, they’ll appear here."))
             } else {
                 List(rows) { row in
                     let enough = row.photoCount >= minimumPhotos
@@ -60,7 +60,7 @@ struct PeriodPickerView: View {
                                         .font(Typography.footnote)
                                         .foregroundStyle(Palette.textSecondary)
                                 }
-                                Text(enough ? Counted.text(row.photoCount, "photo", "photos") : "Needs at least \(minimumPhotos) photos")
+                                Text(enough ? Counted.text(row.photoCount, "photo", "photos") : String(localized: "Needs at least \(minimumPhotos) photos"))
                                     .font(Typography.footnote)
                                     .foregroundStyle(Palette.textTertiary)
                             }
@@ -91,9 +91,9 @@ struct PeriodPickerView: View {
 
     private var emptyTitle: String {
         switch kind {
-        case .trip: "No trips yet"
-        case .month: "No months yet"
-        case .year: "No years yet"
+        case .trip: String(localized: "No trips yet")
+        case .month: String(localized: "No months yet")
+        case .year: String(localized: "No years yet")
         }
     }
 

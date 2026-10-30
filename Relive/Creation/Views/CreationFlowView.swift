@@ -60,7 +60,7 @@ struct CreationFlowView: View {
                     PhotoLibraryUnavailableView(count: count, onChooseAgain: { stage = .chooseSource }, onCancel: close)
                 case .choosePhotos(let preselected):
                     MemoryPickerView(
-                        title: "Choose Photos",
+                        title: String(localized: "Choose Photos"),
                         range: request.kind.photoRange,
                         initialSelection: preselected,
                         onDone: { ids in begin(with: .photos(ids)) },
@@ -93,7 +93,7 @@ struct CreationFlowView: View {
                         isFromFavorites: startedFrom == .favorites
                     )
                 case .gone:
-                    QuietMessageView(title: "This isn’t here anymore", message: "It may have been deleted.")
+                    QuietMessageView(title: String(localized: "This isn’t here anymore"), message: String(localized: "It may have been deleted."))
                         .frame(maxHeight: .infinity)
                         .reliveBackground()
                         .toolbar {
@@ -103,9 +103,9 @@ struct CreationFlowView: View {
                         }
                 case .notEnough(let message, let preselected):
                     QuietMessageView(
-                        title: startedFrom == .favorites ? "Not enough favorites" : "Not enough photos",
+                        title: startedFrom == .favorites ? String(localized: "Not enough favorites") : String(localized: "Not enough photos"),
                         message: message,
-                        actionTitle: "Choose Photos",
+                        actionTitle: String(localized: "Choose Photos"),
                         action: { stage = .choosePhotos(preselected: preselected) }
                     )
                     .frame(maxHeight: .infinity)
@@ -218,7 +218,7 @@ struct CreationFlowView: View {
     @ViewBuilder
     private var continuedDraftNotice: some View {
         if let source = continuedDraftSource {
-            ToastView(message: "Continuing your draft", actionTitle: "Start New") {
+            ToastView(message: String(localized: "Continuing your draft"), actionTitle: String(localized: "Start New")) {
                 startNewVersion(from: source)
             }
             .accessibilityAction(named: "Start New") { startNewVersion(from: source) }
@@ -263,12 +263,12 @@ struct CreationFlowView: View {
                 let message: String
                 if source == .favorites {
                     message = photos.isEmpty
-                        ? "Favorite a few memories to make a collage from them."
-                        : "Add a few more favorites to make a collage. A collage needs at least two photos."
+                        ? String(localized: "Favorite a few memories to make a collage from them.")
+                        : String(localized: "Add a few more favorites to make a collage. A collage needs at least two photos.")
                 } else {
                     message = photos.isEmpty
-                        ? "There are no photos here that can go into a collage."
-                        : "A collage needs at least two photos. Choose another to go with this one."
+                        ? String(localized: "There are no photos here that can go into a collage.")
+                        : String(localized: "A collage needs at least two photos. Choose another to go with this one.")
                 }
                 stage = .notEnough(message: message, preselected: photos.filter { store.assets[$0] != nil })
             } else {
@@ -290,12 +290,12 @@ struct CreationFlowView: View {
                 let message: String
                 if source == .favorites {
                     message = available == 0
-                        ? "Favorite a few memories to make a book from them. A book needs at least \(required) photos."
-                        : "Add a few more favorites to make a book. A book needs at least \(required) photos, and you have \(available == 1 ? "1 favorite" : "\(available) favorites") that can be used."
+                        ? String(localized: "Favorite a few memories to make a book from them. A book needs at least \(required) photos.")
+                        : String(localized: "Add a few more favorites to make a book. A book needs at least \(required) photos, and you have \(available == 1 ? String(localized: "1 favorite") : String(localized: "\(available) favorites")) that can be used.")
                 } else {
                     message = available == 0
-                        ? "A book needs at least \(required) photos, and there are none here that can be used."
-                        : "A book needs at least \(required) photos, and there \(available == 1 ? "is only 1" : "are only \(available)") here. Choose a few more to go with them."
+                        ? String(localized: "A book needs at least \(required) photos, and there are none here that can be used.")
+                        : String(localized: "A book needs at least \(required) photos, and there \(available == 1 ? String(localized: "is only 1") : String(localized: "are only \(available)")) here. Choose a few more to go with them.")
                 }
                 stage = .notEnough(message: message, preselected: library.availablePhotos(for: source).filter { store.assets[$0] != nil })
             }

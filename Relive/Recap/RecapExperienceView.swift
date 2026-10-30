@@ -222,7 +222,7 @@ struct RecapExperienceView: View {
         let closing = plan.chapters.last { $0.kind == .closing } ?? plan.chapters.first
         let title: String = switch request.period {
         case .month(let month): CreationText.monthName(month) ?? CreationText.monthTitle(month)
-        case .year(let year): "Our \(year)"
+        case .year(let year): String(localized: "Our \(year)")
         }
         let eyebrow: String = switch request.period {
         case .month(let month): String(month.year)

@@ -24,7 +24,7 @@ struct MemoryBookReaderView: View {
             if let book = store.book(id: bookID) {
                 reader(book: book, layout: BookLayoutEngine(library: store.creationLibrary(for: book)).layout(book))
             } else {
-                QuietMessageView(title: "This book isn’t here anymore", message: "It may have been deleted.")
+                QuietMessageView(title: String(localized: "This book isn’t here anymore"), message: String(localized: "It may have been deleted."))
                     .frame(maxHeight: .infinity)
             }
         }
@@ -38,7 +38,7 @@ struct MemoryBookReaderView: View {
             }
             if store.book(id: bookID) != nil {
                 ToolbarItem(placement: .primaryAction) {
-                    FavoriteButton(kind: .creation, identifier: bookID.uuidString, label: "Favorite book", accessibilityID: "bookFavorite")
+                    FavoriteButton(kind: .creation, identifier: bookID.uuidString, label: String(localized: "Favorite book"), accessibilityID: "bookFavorite")
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button("Edit") { isEditing = true }
@@ -65,9 +65,9 @@ struct MemoryBookReaderView: View {
             if !layout.missingAssetIDs.isEmpty {
                 AccessBanner(
                     message: layout.missingAssetIDs.count == 1
-                        ? "One photo is no longer in your library and was left out."
-                        : "\(layout.missingAssetIDs.count) photos are no longer in your library and were left out.",
-                    actionTitle: "Edit Book",
+                        ? String(localized: "One photo is no longer in your library and was left out.")
+                        : String(localized: "\(layout.missingAssetIDs.count) photos are no longer in your library and were left out."),
+                    actionTitle: String(localized: "Edit Book"),
                     action: { isEditing = true }
                 )
                 .padding(.horizontal, Spacing.screenMargin)
@@ -131,13 +131,13 @@ struct MemoryBookReaderView: View {
                 .buttonStyle(.relivePrimary)
                 .disabled(export.isBusy || layout.pages.isEmpty)
                 .accessibilityLabel("Save Full Book")
-                .accessibilityHint(premium.showsPremium ? "Saves every page to Photos" : "Premium. Saves every page to Photos")
+                .accessibilityHint(premium.showsPremium ? String(localized: "Saves every page to Photos") : String(localized: "Premium. Saves every page to Photos"))
                 .accessibilityIdentifier("bookSaveFullBook")
             }
             .padding(.horizontal, Spacing.screenMargin)
             .padding(.bottom, Spacing.s)
         }
-        .navigationTitle(CreationText.title(layout.facts.title) ?? "Memory Book")
+        .navigationTitle(CreationText.title(layout.facts.title) ?? String(localized: "Memory Book"))
     }
 
     /// Saved, and nothing has changed since: saving again would make a duplicate.
@@ -148,8 +148,8 @@ struct MemoryBookReaderView: View {
 
     private func pageLabel(_ page: BookPage?, total: Int) -> String {
         guard let page else { return "" }
-        if page.kind == .cover { return "Cover" }
-        return "Page \(page.id + 1) of \(total)"
+        if page.kind == .cover { return String(localized: "Cover") }
+        return String(localized: "Page \(page.id + 1) of \(total)")
     }
 
     private var properties: [String: String] { ["kind": "memory_book_page"] }
@@ -179,7 +179,7 @@ struct MemoryBookReaderView: View {
     private func saveFullBook(_ pages: [BookPage], style: BookStyle, hero: AssetID?) async {
         await gate.export(.memoryBookExport, entry: .memoryBook, premium: premium, heroAssetID: hero) { succeeded in
             let images = CreationImageSource(loader: loader)
-            await export.saveEncoded(store: store, analytics: analytics, properties: ["kind": "memory_book"], message: "Saving \(pages.count) pages…", onSaved: succeeded) {
+            await export.saveEncoded(store: store, analytics: analytics, properties: ["kind": "memory_book"], message: String(localized: "Saving \(pages.count) pages…"), onSaved: succeeded) {
                 var jpegs: [Data] = []
                 for page in pages {
                     try Task.checkCancellation()

@@ -193,7 +193,7 @@ struct PaywallView: View {
             }
             .buttonStyle(.relivePrimary)
             .disabled(selectedProduct == nil || isPurchasing)
-            .accessibilityLabel(isPurchasing ? "Purchasing" : PaywallText.callToAction(selectedProduct))
+            .accessibilityLabel(isPurchasing ? String(localized: "Purchasing") : PaywallText.callToAction(selectedProduct))
             .accessibilityIdentifier("paywallPurchase")
 
             if let product = selectedProduct {
@@ -209,7 +209,7 @@ struct PaywallView: View {
     @ViewBuilder
     private var messages: some View {
         let text: String? = switch premium.purchaseState {
-        case .pending: "Your purchase is waiting for approval. Premium turns on as soon as it’s approved."
+        case .pending: String(localized: "Your purchase is waiting for approval. Premium turns on as soon as it’s approved.")
         case .failed(let message): message
         case .idle, .purchasing: nil
         }
@@ -320,9 +320,9 @@ private struct PlanRow: View {
     }
 
     private var accessibilityText: String {
-        var parts = [PaywallText.planName(product.role), "\(product.displayPrice) per \(product.period.recurringPhrase)"]
+        var parts = [PaywallText.planName(product.role), String(localized: "\(product.displayPrice) per \(product.period.recurringPhrase)")]
         if let badge = PaywallText.offerBadge(product) { parts.append(badge) }
-        if isRecommended { parts.append("Recommended") }
+        if isRecommended { parts.append(String(localized: "Recommended")) }
         return parts.joined(separator: ", ")
     }
 }
@@ -334,9 +334,9 @@ struct RestoreStatusText: View {
     var body: some View {
         let text: String? = switch premium.restoreState {
         case .idle: nil
-        case .restoring: "Checking with the App Store…"
-        case .restored: "Your Premium subscription is active again."
-        case .nothingToRestore: "No active Premium subscription was found for this Apple Account."
+        case .restoring: String(localized: "Checking with the App Store…")
+        case .restored: String(localized: "Your Premium subscription is active again.")
+        case .nothingToRestore: String(localized: "No active Premium subscription was found for this Apple Account.")
         case .failed(let message): message
         }
         if let text {

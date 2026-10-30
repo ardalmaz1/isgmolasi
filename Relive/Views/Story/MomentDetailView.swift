@@ -22,8 +22,8 @@ struct MomentDetailView: View {
                 content(for: moment)
             } else {
                 QuietMessageView(
-                    title: "This memory isn’t here anymore",
-                    message: "Its photos may have been removed or hidden."
+                    title: String(localized: "This memory isn’t here anymore"),
+                    message: String(localized: "Its photos may have been removed or hidden.")
                 )
                 .frame(maxHeight: .infinity)
                 .reliveBackground()
@@ -76,7 +76,7 @@ struct MomentDetailView: View {
                             Button {
                                 store.toggleFavorite(.memory, asset.id)
                             } label: {
-                                Label(isFavorite ? "Remove from Favorites" : "Favorite", systemImage: isFavorite ? "heart.slash" : "heart")
+                                Label(isFavorite ? String(localized: "Remove from Favorites") : String(localized: "Favorite"), systemImage: isFavorite ? "heart.slash" : "heart")
                             }
                             if asset.kind == .photo {
                                 Button {
@@ -90,7 +90,7 @@ struct MomentDetailView: View {
                 }
 
                 if similarCount > 0 {
-                    Button(showsSimilar ? "Hide similar photos" : "Show \(Counted.text(similarCount, "similar photo", "similar photos"))") {
+                    Button(showsSimilar ? String(localized: "Hide similar photos") : String(localized: "Show \(Counted.text(similarCount, "similar photo", "similar photos"))")) {
                         withAnimation(.easeInOut(duration: 0.25)) { showsSimilar.toggle() }
                     }
                     .buttonStyle(.reliveQuiet)
@@ -105,7 +105,7 @@ struct MomentDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 // The moment itself; its photos keep their own favorites.
-                FavoriteButton(kind: .moment, identifier: moment.id.uuidString, label: "Favorite moment", accessibilityID: "momentFavorite")
+                FavoriteButton(kind: .moment, identifier: moment.id.uuidString, label: String(localized: "Favorite moment"), accessibilityID: "momentFavorite")
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
@@ -117,7 +117,7 @@ struct MomentDetailView: View {
                     Button {
                         isEditingNote = true
                     } label: {
-                        Label(store.userState(for: moment.id).hasNote ? "Edit Note" : "Add a Note", systemImage: "pencil")
+                        Label(store.userState(for: moment.id).hasNote ? String(localized: "Edit Note") : String(localized: "Add a Note"), systemImage: "pencil")
                     }
                     if store.userState(for: moment.id).heroOverrideAssetID != nil {
                         Button {
@@ -204,7 +204,7 @@ private struct MomentFacts: View {
             text += " · \(Counted.text(videos, "video", "videos"))"
         }
         if let chapter, chapter.title.primary != moment.title.primary {
-            text += " · Part of \(chapter.title.primary)"
+            text += String(localized: " · Part of \(chapter.title.primary)")
         }
         return text
     }

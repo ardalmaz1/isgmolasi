@@ -540,7 +540,7 @@ final class StoryStore {
             return conclude(runID, .cancelled)
         }
         guard !assets.isEmpty else {
-            return conclude(runID, .failed("Choose a few photos first."))
+            return conclude(runID, .failed(String(localized: "Choose a few photos first.")))
         }
 
         let started = Date()
@@ -585,7 +585,7 @@ final class StoryStore {
                 return conclude(runID, .cancelled)
             }
             Self.logger.error("Processing failed: \(error.localizedDescription, privacy: .public)")
-            return conclude(runID, .failed("Something went wrong while organizing your photos."))
+            return conclude(runID, .failed(String(localized: "Something went wrong while organizing your photos.")))
         }
         // Deliver every pending progress update before the outcome, so none can follow it.
         continuation.finish()
@@ -766,7 +766,7 @@ final class StoryStore {
             for: story,
             isVisible: isVisible,
             storyStart: relationshipStart?.date,
-            beforeStartTitle: relationshipStart.map { "Before \(DateText.relationshipStart($0))" } ?? "Before"
+            beforeStartTitle: relationshipStart.map { String(localized: "Before \(DateText.relationshipStart($0))") } ?? String(localized: "Before")
         )
         statistics = StoryStatistics.compute(story: story, assets: assets, userStates: userStates, isAvailable: isAvailable)
         archive = ArchiveIndex.build(story: story, assets: assets, userStates: userStates, isAvailable: isAvailable, calendar: calendar)

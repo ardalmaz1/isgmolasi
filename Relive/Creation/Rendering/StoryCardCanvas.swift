@@ -34,7 +34,7 @@ struct StoryCardText: Equatable {
                 title = CreationText.dateLine(span)
             } else {
                 // Several years, or nothing known: a neutral headline, never an invented one.
-                title = "Our Memories"
+                title = String(localized: "Our Memories")
                 subtitle = period
             }
             if let place, place != title { meta = place }
@@ -45,7 +45,7 @@ struct StoryCardText: Equatable {
             subtitle = title == day ? nil : (card.showsDate ? CreationText.dateLine(card.dateSpan) : nil)
         case .closing:
             if let year = card.closingYear {
-                title = "And that’s our \(year)."
+                title = String(localized: "And that’s our \(year).")
             } else {
                 title = [place, card.showsDate ? CreationText.periodLine(card.dateSpan) : nil].compactMap { $0 }.joined(separator: " · ").nilIfEmpty
             }
@@ -58,12 +58,12 @@ struct StoryCardText: Equatable {
         let text = StoryCardText(card: card)
         let kind: String
         switch card.role {
-        case .opening: kind = "Opening card"
-        case .photo: kind = card.photos.count == 1 ? "Photo card" : "Card with \(card.photos.count) photos"
-        case .place: kind = "Place card"
-        case .closing: kind = "Closing card"
+        case .opening: kind = String(localized: "Opening card")
+        case .photo: kind = card.photos.count == 1 ? String(localized: "Photo card") : String(localized: "Card with \(card.photos.count) photos")
+        case .place: kind = String(localized: "Place card")
+        case .closing: kind = String(localized: "Closing card")
         }
-        return (["\(kind), \(number) of \(total)", text.title, text.subtitle, text.meta, text.coordinate].compactMap { $0 }).joined(separator: ", ")
+        return ([String(localized: "\(kind), \(number) of \(total)"), text.title, text.subtitle, text.meta, text.coordinate].compactMap { $0 }).joined(separator: ", ")
     }
 }
 

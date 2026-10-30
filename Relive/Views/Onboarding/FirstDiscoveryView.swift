@@ -86,8 +86,8 @@ struct FirstDiscoveryView: View {
 
     private var headline: String {
         guard resolved else { return "" }
-        guard let discovery else { return "Your story has started." }
-        return discovery.kind == .smallStory ? "Your story has started." : "We found something for you."
+        guard let discovery else { return String(localized: "Your story has started.") }
+        return discovery.kind == .smallStory ? String(localized: "Your story has started.") : String(localized: "We found something for you.")
     }
 
     // MARK: - The result
@@ -124,16 +124,16 @@ struct FirstDiscoveryView: View {
 
     private func eyebrow(_ discovery: FirstDiscovery) -> String? {
         switch discovery.kind {
-        case .movie: "Memory Movie"
-        case .recap: discovery.suggestion?.creation == .yearInReview ? "Our Year" : "Monthly Recap"
+        case .movie: String(localized: "Memory Movie")
+        case .recap: discovery.suggestion?.creation == .yearInReview ? String(localized: "Our Year") : String(localized: "Monthly Recap")
         case .suggestion: discovery.suggestion.map { CreationLabel.name($0.creation) }
-        case .moment, .smallStory: "From your story"
+        case .moment, .smallStory: String(localized: "From your story")
         }
     }
 
     private func title(_ discovery: FirstDiscovery) -> String {
         if let suggestion = discovery.suggestion { return suggestion.title }
-        return moment(discovery)?.title.primary ?? "A moment"
+        return moment(discovery)?.title.primary ?? String(localized: "A moment")
     }
 
     private func subtitle(_ discovery: FirstDiscovery) -> String? {
@@ -145,16 +145,16 @@ struct FirstDiscoveryView: View {
 
     static func actionTitle(for discovery: FirstDiscovery) -> String {
         switch discovery.kind {
-        case .movie: "Watch Your Movie"
-        case .recap: "See Your Recap"
+        case .movie: String(localized: "Watch Your Movie")
+        case .recap: String(localized: "See Your Recap")
         case .suggestion:
             switch discovery.suggestion?.creation {
-            case .book: "Open Your Book"
-            case .story: "See Your Story"
-            case .collage: "See Your Collage"
-            default: "Open It"
+            case .book: String(localized: "Open Your Book")
+            case .story: String(localized: "See Your Story")
+            case .collage: String(localized: "See Your Collage")
+            default: String(localized: "Open It")
             }
-        case .moment, .smallStory: "Open This Memory"
+        case .moment, .smallStory: String(localized: "Open This Memory")
         }
     }
 

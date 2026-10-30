@@ -85,7 +85,7 @@ final class AppModel {
     var relationship: RelationshipProfile? { profile.relationship }
 
     var coupleName: String {
-        profile.relationship?.coupleDisplayName ?? "Your story"
+        profile.relationship?.coupleDisplayName ?? String(localized: "Your story")
     }
 
     // MARK: - Onboarding

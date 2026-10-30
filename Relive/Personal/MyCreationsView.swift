@@ -23,9 +23,9 @@ struct MyCreationsView: View {
             VStack(alignment: .leading, spacing: Spacing.l) {
                 if all.isEmpty {
                     QuietMessageView(
-                        title: "Nothing here yet",
-                        message: "Movies, collages, stories and books you keep will be here, ready to watch, open or share again.",
-                        actionTitle: "Make Something",
+                        title: String(localized: "Nothing here yet"),
+                        message: String(localized: "Movies, collages, stories and books you keep will be here, ready to watch, open or share again."),
+                        actionTitle: String(localized: "Make Something"),
                         action: {
                             app.selectedTab = .create
                             dismiss()
@@ -115,7 +115,7 @@ struct KeptItemLink: View {
             Button { app.open(item, origin: origin) } label: { Label("Open", systemImage: "arrow.up.forward.app") }
             let isFavorite = store.isFavorite(.creation, item.favoriteID)
             Button { store.toggleFavorite(.creation, item.favoriteID) } label: {
-                Label(isFavorite ? "Remove from Favorites" : "Favorite", systemImage: isFavorite ? "heart.slash" : "heart")
+                Label(isFavorite ? String(localized: "Remove from Favorites") : String(localized: "Favorite"), systemImage: isFavorite ? "heart.slash" : "heart")
             }
             Divider()
             Button(role: .destructive) { confirmsDelete = true } label: {
@@ -124,7 +124,7 @@ struct KeptItemLink: View {
         }
         .accessibilityHint("Opens it. More actions are available.")
         .accessibilityActions {
-            Button(store.isFavorite(.creation, item.favoriteID) ? "Remove from Favorites" : "Favorite") {
+            Button(store.isFavorite(.creation, item.favoriteID) ? String(localized: "Remove from Favorites") : String(localized: "Favorite")) {
                 store.toggleFavorite(.creation, item.favoriteID)
             }
             Button("Delete \(item.kind.name)") { confirmsDelete = true }

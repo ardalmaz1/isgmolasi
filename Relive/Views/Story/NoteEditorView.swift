@@ -3,8 +3,8 @@ import SwiftUI
 /// A private note on a moment. Stored only on this iPhone.
 struct NoteEditorView: View {
     let initialText: String
-    var prompt = "What do you remember about this?"
-    var privacyLine = "Only you can see this. It stays on this iPhone."
+    var prompt = String(localized: "What do you remember about this?")
+    var privacyLine = String(localized: "Only you can see this. It stays on this iPhone.")
     let onSave: (String) -> Void
 
     @Environment(\.dismiss) private var dismiss

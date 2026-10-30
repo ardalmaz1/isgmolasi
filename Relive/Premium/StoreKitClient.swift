@@ -25,11 +25,11 @@ enum StoreFailure: Error, Equatable, Sendable {
 
     var message: String {
         switch self {
-        case .network: "You seem to be offline. Check your connection and try again."
-        case .unavailable: "The App Store isn’t available right now. Please try again later."
-        case .purchaseNotAllowed: "Purchases aren’t allowed on this iPhone or App Store account."
-        case .productUnavailable: "Premium isn’t available in your region right now."
-        case .unknown: "Something went wrong with the App Store. Please try again."
+        case .network: String(localized: "You seem to be offline. Check your connection and try again.")
+        case .unavailable: String(localized: "The App Store isn’t available right now. Please try again later.")
+        case .purchaseNotAllowed: String(localized: "Purchases aren’t allowed on this iPhone or App Store account.")
+        case .productUnavailable: String(localized: "Premium isn’t available in your region right now.")
+        case .unknown: String(localized: "Something went wrong with the App Store. Please try again.")
         }
     }
 }

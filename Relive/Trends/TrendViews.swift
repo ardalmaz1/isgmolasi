@@ -230,10 +230,10 @@ struct TrendCard: View {
 
     /// One quiet word at most.
     static func label(trend: TrendDefinition, availability: TrendAvailability) -> String? {
-        if availability == .comingSoon { return "Coming soon" }
+        if availability == .comingSoon { return String(localized: "Coming soon") }
         switch trend.badge {
-        case .new?: return "New"
-        case .trending?: return "Trending"
+        case .new?: return String(localized: "New")
+        case .trending?: return String(localized: "Trending")
         case nil: return nil
         }
     }
@@ -253,7 +253,7 @@ struct TrendDetailView: View {
             if let trend = trends.trend(id: trendID) {
                 content(trend, availability: TrendCatalogFilter.availability(of: trend, in: trends.context()))
             } else {
-                QuietMessageView(title: "This trend isn’t available", message: "Trends come and go. Have a look at the others in Create.")
+                QuietMessageView(title: String(localized: "This trend isn’t available"), message: String(localized: "Trends come and go. Have a look at the others in Create."))
                     .frame(maxHeight: .infinity)
             }
         }
@@ -334,8 +334,8 @@ struct TrendDetailView: View {
         let range = trend.photos.range
         let count = range.lowerBound == range.upperBound
             ? Counted.text(range.lowerBound, "photo", "photos")
-            : "\(range.lowerBound)–\(range.upperBound) photos"
-        return "\(count) of the two of you."
+            : String(localized: "\(range.lowerBound)–\(range.upperBound) photos")
+        return String(localized: "\(count) of the two of you.")
     }
 }
 
@@ -378,7 +378,7 @@ struct TrendCreationFlow: View {
                 TrendStudioView(model: studio, onClose: { dismiss() })
             } else if let recipe = TrendRecipeRegistry.recipe(for: trend.recipe), trend.execution != .ai {
                 MemoryPickerView(
-                    title: "Choose Photos",
+                    title: String(localized: "Choose Photos"),
                     range: trend.photos.range,
                     onDone: { ids in
                         studio = TrendStudioModel(
@@ -389,7 +389,7 @@ struct TrendCreationFlow: View {
                     onCancel: { dismiss() }
                 )
             } else {
-                QuietMessageView(title: "Not available yet", message: "This creation isn’t available in this version of Yuvi.")
+                QuietMessageView(title: String(localized: "Not available yet"), message: String(localized: "This creation isn’t available in this version of Yuvi."))
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
                     }

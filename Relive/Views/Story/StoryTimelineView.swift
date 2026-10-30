@@ -78,15 +78,15 @@ struct StoryTimelineView: View {
     private var banners: some View {
         if store.accessStatus == .denied || store.accessStatus == .restricted {
             AccessBanner(
-                message: "Yuvi can’t see your photos right now, so your story is hidden. Your notes are safe.",
-                actionTitle: "Open Settings",
+                message: String(localized: "Yuvi can’t see your photos right now, so your story is hidden. Your notes are safe."),
+                actionTitle: String(localized: "Open Settings"),
                 action: { SystemPresenter.openSettings() }
             )
             .padding(.bottom, Spacing.l)
         } else if !store.unavailableAssetIDs.isEmpty {
             AccessBanner(
-                message: "Some photos are no longer available — they may have been deleted or removed from Yuvi’s access.",
-                actionTitle: "Choose Photos",
+                message: String(localized: "Some photos are no longer available — they may have been deleted or removed from Yuvi’s access."),
+                actionTitle: String(localized: "Choose Photos"),
                 action: { isAddingMemories = true }
             )
             .padding(.bottom, Spacing.l)
@@ -94,9 +94,9 @@ struct StoryTimelineView: View {
 
         if store.sections.isEmpty {
             QuietMessageView(
-                title: "Nothing here yet",
-                message: "Add photos of the two of you and Yuvi will arrange them into your story.",
-                actionTitle: "Add Memories",
+                title: String(localized: "Nothing here yet"),
+                message: String(localized: "Add photos of the two of you and Yuvi will arrange them into your story."),
+                actionTitle: String(localized: "Add Memories"),
                 action: { isAddingMemories = true }
             )
         }
@@ -203,7 +203,7 @@ struct StoryTimelineView: View {
     @ViewBuilder
     private var hiddenToast: some View {
         if app.recentlyHiddenMomentID != nil {
-            ToastView(message: "Memory hidden", actionTitle: "Undo") {
+            ToastView(message: String(localized: "Memory hidden"), actionTitle: String(localized: "Undo")) {
                 withAnimation { app.undoHide() }
             }
             .padding(.bottom, Spacing.l)
@@ -244,9 +244,9 @@ private struct StoryHeader: View {
     private var subtitle: String? {
         var parts: [String] = []
         if let start = app.relationship?.start {
-            parts.append("Together since \(DateText.relationshipStart(start))")
+            parts.append(String(localized: "Together since \(DateText.relationshipStart(start))"))
         } else if let first = store.firstMemoryDate {
-            parts.append("Since your first memory · \(DateText.monthYear(first))")
+            parts.append(String(localized: "Since your first memory · \(DateText.monthYear(first))"))
         }
         let moments = store.sections
             .filter { $0.id != TimelineBuilder.beforeStartID }
@@ -362,7 +362,7 @@ struct YearNavigator: View {
             }
         } label: {
             HStack(spacing: Spacing.xxs) {
-                Text(current?.title ?? "Years")
+                Text(current?.title ?? String(localized: "Years"))
                     .font(Typography.callout.weight(.semibold).monospacedDigit())
                     .lineLimit(1)
                 Image(systemName: "chevron.down")
@@ -377,7 +377,7 @@ struct YearNavigator: View {
             .contentShape(Capsule())
         }
         .accessibilityLabel("Jump to a year")
-        .accessibilityValue(current.map { "Showing \($0.title)" } ?? "")
+        .accessibilityValue(current.map { String(localized: "Showing \($0.title)") } ?? "")
         .accessibilityHint("Lists the years of your story")
         .accessibilityIdentifier("storyYearNavigator")
     }

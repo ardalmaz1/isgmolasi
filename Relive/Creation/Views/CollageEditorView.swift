@@ -39,7 +39,7 @@ struct CollageEditorView: View {
                 preview
                     .padding(.horizontal, Spacing.screenMargin)
 
-                Text(model.selectedIndex == nil ? "Tap two photos to swap them." : "Now tap the photo to swap with.")
+                Text(model.selectedIndex == nil ? String(localized: "Tap two photos to swap them.") : String(localized: "Now tap the photo to swap with."))
                     .font(Typography.footnote)
                     .foregroundStyle(Palette.textSecondary)
                     .frame(maxWidth: .infinity)
@@ -57,9 +57,9 @@ struct CollageEditorView: View {
                 if !model.missingInCollage.isEmpty {
                     AccessBanner(
                         message: model.missingInCollage.count == 1
-                            ? "One photo is no longer in your library."
-                            : "\(model.missingInCollage.count) photos are no longer in your library.",
-                        actionTitle: "Remove Missing",
+                            ? String(localized: "One photo is no longer in your library.")
+                            : String(localized: "\(model.missingInCollage.count) photos are no longer in your library."),
+                        actionTitle: String(localized: "Remove Missing"),
                         action: removeMissing
                     )
                     .padding(.horizontal, Spacing.screenMargin)
@@ -128,7 +128,7 @@ struct CollageEditorView: View {
                 switch purpose {
                 case .edit:
                     MemoryPickerView(
-                        title: "Choose Photos",
+                        title: String(localized: "Choose Photos"),
                         range: model.range,
                         initialSelection: model.photoIDs,
                         onDone: { ids in
@@ -139,7 +139,7 @@ struct CollageEditorView: View {
                     )
                 case .replace(let index):
                     MemoryPickerView(
-                        title: "Replace Photo",
+                        title: String(localized: "Replace Photo"),
                         range: 1...1,
                         excluded: Set(model.photoIDs),
                         onDone: { ids in
@@ -237,17 +237,17 @@ struct CollageEditorView: View {
             Text("Details").eyebrowStyle()
             if let title = model.titleText {
                 Toggle(isOn: $model.showsTitle.animation(animation)) {
-                    LabeledText(label: "Title", value: title)
+                    LabeledText(label: String(localized: "Title"), value: title)
                 }
             }
             if let date = model.dateText {
                 Toggle(isOn: $model.showsDate.animation(animation)) {
-                    LabeledText(label: "Date", value: date)
+                    LabeledText(label: String(localized: "Date"), value: date)
                 }
             }
             if let place = model.placeText {
                 Toggle(isOn: $model.showsPlace.animation(animation)) {
-                    LabeledText(label: "Place", value: place)
+                    LabeledText(label: String(localized: "Place"), value: place)
                 }
             }
         }
@@ -327,7 +327,7 @@ struct CollageEditorView: View {
             }
         }
         .accessibilityLabel("Photo \(index + 1) of \(model.photoIDs.count)")
-        .accessibilityValue(isSelected ? "Picked up for swapping" : "")
+        .accessibilityValue(isSelected ? String(localized: "Picked up for swapping") : "")
         .accessibilityHint("Double-tap to swap with another photo. Touch and hold, then drag, to move it.")
         .accessibilityActions {
             Button("Replace") { picker = .replace(index) }

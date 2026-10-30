@@ -22,15 +22,15 @@ struct PhotoSourceChooserView: View {
 
                 VStack(spacing: Spacing.s) {
                     SourceRow(
-                        title: "From Yuvi",
-                        detail: "Memories already in your story.",
+                        title: String(localized: "From Yuvi"),
+                        detail: String(localized: "Memories already in your story."),
                         systemImage: "book.closed",
                         action: onRelive
                     )
                     .accessibilityIdentifier("sourceRelive")
                     SourceRow(
-                        title: "From Photo Library",
-                        detail: "Any photo on this iPhone. Its own date and place are used, and it isn’t added to your story.",
+                        title: String(localized: "From Photo Library"),
+                        detail: String(localized: "Any photo on this iPhone. Its own date and place are used, and it isn’t added to your story."),
                         systemImage: "photo.on.rectangle",
                         action: onPhotoLibrary
                     )
@@ -77,15 +77,15 @@ struct MovieSourceChooserView: View {
                 .padding(.top, Spacing.m)
 
                 VStack(spacing: Spacing.s) {
-                    SourceRow(title: "Choose a Moment", detail: "One afternoon, one evening, one day.", systemImage: "sparkles", action: onMoment)
+                    SourceRow(title: String(localized: "Choose a Moment"), detail: String(localized: "One afternoon, one evening, one day."), systemImage: "sparkles", action: onMoment)
                         .accessibilityIdentifier("movieSourceMoment")
-                    SourceRow(title: "Choose a Trip", detail: "Every day of it, in order.", systemImage: "airplane", action: onTrip)
+                    SourceRow(title: String(localized: "Choose a Trip"), detail: String(localized: "Every day of it, in order."), systemImage: "airplane", action: onTrip)
                         .accessibilityIdentifier("movieSourceTrip")
-                    SourceRow(title: "Choose a Month", detail: "A month of your story.", systemImage: "calendar", action: onMonth)
+                    SourceRow(title: String(localized: "Choose a Month"), detail: String(localized: "A month of your story."), systemImage: "calendar", action: onMonth)
                         .accessibilityIdentifier("movieSourceMonth")
-                    SourceRow(title: "Choose a Year", detail: "Your year, as a short film.", systemImage: "calendar.badge.clock", action: onYear)
+                    SourceRow(title: String(localized: "Choose a Year"), detail: String(localized: "Your year, as a short film."), systemImage: "calendar.badge.clock", action: onYear)
                         .accessibilityIdentifier("movieSourceYear")
-                    SourceRow(title: "Choose Photos", detail: "Pick the photos yourself; Yuvi keeps them as you chose.", systemImage: "photo.on.rectangle", action: onPhotos)
+                    SourceRow(title: String(localized: "Choose Photos"), detail: String(localized: "Pick the photos yourself; Yuvi keeps them as you chose."), systemImage: "photo.on.rectangle", action: onPhotos)
                         .accessibilityIdentifier("movieSourcePhotos")
                 }
             }
@@ -148,10 +148,10 @@ extension CreationKind {
     /// "collage", "story", "book" — for sentences.
     var noun: String {
         switch self {
-        case .collage: "collage"
-        case .story: "story"
-        case .book: "book"
-        case .movie: "movie"
+        case .collage: String(localized: "collage")
+        case .story: String(localized: "story")
+        case .book: String(localized: "book")
+        case .movie: String(localized: "movie")
         }
     }
 }
@@ -235,9 +235,9 @@ struct PhotoLibraryUnavailableView: View {
 
     var body: some View {
         QuietMessageView(
-            title: count == 1 ? "Yuvi can’t open that photo" : "Yuvi can’t open those photos",
-            message: "Yuvi can only use photos you’ve shared with it. You can share more in Us → Photo Access, or choose others.",
-            actionTitle: "Choose Again",
+            title: count == 1 ? String(localized: "Yuvi can’t open that photo") : String(localized: "Yuvi can’t open those photos"),
+            message: String(localized: "Yuvi can only use photos you’ve shared with it. You can share more in Us → Photo Access, or choose others."),
+            actionTitle: String(localized: "Choose Again"),
             action: onChooseAgain
         )
         .frame(maxHeight: .infinity)

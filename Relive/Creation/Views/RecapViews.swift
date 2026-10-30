@@ -16,13 +16,13 @@ struct MonthlyRecapListView: View {
 
         Group {
             if recaps.isEmpty {
-                QuietMessageView(title: "No months yet", message: "Your recaps will appear here as your story grows.")
+                QuietMessageView(title: String(localized: "No months yet"), message: String(localized: "Your recaps will appear here as your story grows."))
             } else {
                 List(recaps, id: \.month) { recap in
                     NavigationLink(value: CreateRoute.month(recap.month)) {
                         PeriodRow(
                             title: CreationText.monthTitle(recap.month),
-                            detail: recap.isSufficient ? CreationText.counts(recap.statistics) : "Just a few memories",
+                            detail: recap.isSufficient ? CreationText.counts(recap.statistics) : String(localized: "Just a few memories"),
                             coverID: recap.highlights(limit: 1).first
                         )
                     }
@@ -68,14 +68,14 @@ struct MonthlyRecapView: View {
 
                 if !recap.isSufficient {
                     QuietMessageView(
-                        title: "Just a few memories this month",
-                        message: "There isn’t enough here for a recap yet. When you add more photos from this month, Yuvi will include them."
+                        title: String(localized: "Just a few memories this month"),
+                        message: String(localized: "There isn’t enough here for a recap yet. When you add more photos from this month, Yuvi will include them.")
                     )
                     if !recap.moments.isEmpty {
                         MomentLinks(moments: recap.moments)
                     }
                 } else {
-                    RecapPlayButton(title: "Play \(headline)", identifier: "recapPlay") {
+                    RecapPlayButton(title: String(localized: "Play \(headline)"), identifier: "recapPlay") {
                         app.openRecap(.month(month), origin: "monthly_recap")
                     }
                     PhotoSpread(photoIDs: recap.highlights(limit: isFull ? 5 : 3))
@@ -84,10 +84,10 @@ struct MonthlyRecapView: View {
                         CreationActions(
                             export: export,
                             actions: [
-                                .init(title: "Make a Collage", identifier: "recapCollage") {
+                                .init(title: String(localized: "Make a Collage"), identifier: "recapCollage") {
                                     app.startCreation(.collage, from: .source(.month(month)), origin: "monthly_recap")
                                 },
-                                .init(title: "Create a Story", identifier: "recapStory") {
+                                .init(title: String(localized: "Create a Story"), identifier: "recapStory") {
                                     app.startCreation(.story, from: .source(.month(month)), origin: "monthly_recap")
                                 },
                             ]
@@ -98,9 +98,9 @@ struct MonthlyRecapView: View {
                         }
                     } else {
                         PremiumTeaser(
-                            title: "See the whole month",
-                            message: "The full recap — every highlight, the trips, a collage or story made from this month, and a card to share — is part of Yuvi Premium.",
-                            actionTitle: "See the Full Recap",
+                            title: String(localized: "See the whole month"),
+                            message: String(localized: "The full recap — every highlight, the trips, a collage or story made from this month, and a card to share — is part of Yuvi Premium."),
+                            actionTitle: String(localized: "See the Full Recap"),
                             identifier: "recapUnlock"
                         ) {
                             gate.showPaywall(.monthlyRecap, premium: premium, heroAssetID: recap.highlights(limit: 1).first)
@@ -123,7 +123,7 @@ struct MonthlyRecapView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if recap.isSufficient {
-                ShareToolbarButton(title: "Share", export: export, identifier: "recapShare") {
+                ShareToolbarButton(title: String(localized: "Share"), export: export, identifier: "recapShare") {
                     Task { await share(recap, headline: headline) }
                 }
             }
@@ -170,12 +170,12 @@ struct YearListView: View {
 
         Group {
             if reviews.isEmpty {
-                QuietMessageView(title: "No years yet", message: "Your years together will appear here as your story grows.")
+                QuietMessageView(title: String(localized: "No years yet"), message: String(localized: "Your years together will appear here as your story grows."))
             } else {
                 List(reviews, id: \.year) { review in
                     NavigationLink(value: CreateRoute.year(review.year)) {
                         PeriodRow(
-                            title: review.isSufficient ? "Our \(review.year)" : String(review.year),
+                            title: review.isSufficient ? String(localized: "Our \(review.year)") : String(review.year),
                             detail: review.isSufficient ? CreationText.counts(review.statistics, includeTrips: true) : YearText.notYet(review.eligibility),
                             coverID: review.highlights(limit: 1).first
                         )
@@ -219,14 +219,14 @@ struct OurYearView: View {
                 PeriodHeader(
                     eyebrow: app.coupleName,
                     spokenEyebrow: app.coupleSpokenName,
-                    title: review.isSufficient ? "Our \(year)" : String(year),
+                    title: review.isSufficient ? String(localized: "Our \(year)") : String(year),
                     detail: review.statistics.memoryCount > 0 ? CreationText.counts(review.statistics, includeTrips: true) : nil
                 )
 
                 if !review.isSufficient {
                     notYetAYear(review)
                 } else {
-                    RecapPlayButton(title: "Play Our \(String(year))", identifier: "yearPlay") {
+                    RecapPlayButton(title: String(localized: "Play Our \(String(year))"), identifier: "yearPlay") {
                         app.openRecap(.year(year), origin: "our_year")
                     }
                     if let lead = library.best(review.highlights(limit: 12)) {
@@ -266,9 +266,9 @@ struct OurYearView: View {
                         }
                     } else {
                         PremiumTeaser(
-                            title: "Your \(String(year)) is ready",
-                            message: "See all \(Counted.text(review.months.count, "month", "months")) of \(String(year)) with memories, the closing, a story or collage of the year, and a card to share, with Yuvi Premium.",
-                            actionTitle: "See Your Full Year",
+                            title: String(localized: "Your \(String(year)) is ready"),
+                            message: String(localized: "See all \(Counted.text(review.months.count, "month", "months")) of \(String(year)) with memories, the closing, a story or collage of the year, and a card to share, with Yuvi Premium."),
+                            actionTitle: String(localized: "See Your Full Year"),
                             identifier: "yearUnlock"
                         ) {
                             gate.showPaywall(.ourYear, premium: premium, heroAssetID: library.best(review.highlights(limit: 12)))
@@ -282,11 +282,11 @@ struct OurYearView: View {
         }
         .scrollIndicators(.hidden)
         .reliveBackground()
-        .navigationTitle(review.isSufficient ? "Our \(String(year))" : String(year))
+        .navigationTitle(review.isSufficient ? String(localized: "Our \(String(year))") : String(year))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if review.isSufficient {
-                ShareToolbarButton(title: "Share Our Year", export: export, identifier: "yearShare") {
+                ShareToolbarButton(title: String(localized: "Share Our Year"), export: export, identifier: "yearShare") {
                     Task { await share(review) }
                 }
             }
@@ -336,10 +336,10 @@ struct OurYearView: View {
         CreationActions(
             export: export,
             actions: [
-                .init(title: "Create Story", identifier: "yearStory") {
+                .init(title: String(localized: "Create Story"), identifier: "yearStory") {
                     app.startCreation(.story, from: .source(.year(year)), origin: "our_year")
                 },
-                .init(title: "Make a Collage", identifier: "yearCollage") {
+                .init(title: String(localized: "Make a Collage"), identifier: "yearCollage") {
                     app.startCreation(.collage, from: .source(.year(year)), origin: "our_year")
                 },
             ],
@@ -354,7 +354,7 @@ struct OurYearView: View {
             await export.share(name: "Our \(year)", analytics: analytics, properties: ["kind": "our_year"], onShared: succeeded) {
                 let image = try await SummaryCardExport.render(
                     eyebrow: app.relationship?.userName == nil ? nil : app.coupleName,
-                    title: "Our \(year)",
+                    title: String(localized: "Our \(year)"),
                     counts: CreationText.counts(review.statistics, includeTrips: true),
                     photoIDs: review.highlights(limit: 6),
                     library: library,
@@ -371,27 +371,27 @@ struct OurYearView: View {
 enum YearText {
     static func notYet(_ eligibility: YearEligibility) -> String {
         switch eligibility {
-        case .singleMonth(let month): "Just getting started · \(CreationText.monthName(month) ?? "one month") so far"
-        case .tooFew: "Just a few memories"
-        case .empty, .eligible: "No memories yet"
+        case .singleMonth(let month): String(localized: "Just getting started · \(CreationText.monthName(month) ?? String(localized: "one month")) so far")
+        case .tooFew: String(localized: "Just a few memories")
+        case .empty, .eligible: String(localized: "No memories yet")
         }
     }
 
     static func notYetTitle(_ eligibility: YearEligibility, year: Int) -> String {
         switch eligibility {
-        case .singleMonth, .empty, .eligible: "Your \(year) story is just getting started."
-        case .tooFew: "Just a few memories from \(year) so far."
+        case .singleMonth, .empty, .eligible: String(localized: "Your \(year) story is just getting started.")
+        case .tooFew: String(localized: "Just a few memories from \(year) so far.")
         }
     }
 
     static func notYetMessage(_ eligibility: YearEligibility) -> String {
         switch eligibility {
         case .singleMonth(let month):
-            "Everything here is from \(CreationText.monthName(month) ?? "one month"). Add memories from another month to build Our Year."
+            String(localized: "Everything here is from \(CreationText.monthName(month) ?? String(localized: "one month")). Add memories from another month to build Our Year.")
         case .tooFew:
-            "Add a few more memories from this year to build Our Year."
+            String(localized: "Add a few more memories from this year to build Our Year.")
         case .empty, .eligible:
-            "Add memories from this year to build Our Year."
+            String(localized: "Add memories from this year to build Our Year.")
         }
     }
 }

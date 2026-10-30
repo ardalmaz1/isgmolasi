@@ -27,7 +27,7 @@ struct ProcessingView: View {
         VStack(alignment: .leading, spacing: Spacing.l) {
             Spacer()
 
-            Text(isReady ? "Your story is ready. ❤️" : "Finding your story…")
+            Text(isReady ? String(localized: "Your story is ready. ❤️") : String(localized: "Finding your story…"))
                 .font(Typography.display)
                 .foregroundStyle(Palette.textPrimary)
                 .contentTransition(.opacity)
@@ -107,7 +107,7 @@ struct ProcessingView: View {
 
     private var failureMessage: String? {
         if case .failed(let message) = store.processing { return message }
-        return wasInterrupted ? "Organizing your photos was interrupted." : nil
+        return wasInterrupted ? String(localized: "Organizing your photos was interrupted.") : nil
     }
 
     // MARK: - Running
@@ -142,25 +142,25 @@ struct ProcessingView: View {
 
     static func message(for stage: MemoryEngineStage) -> String {
         switch stage {
-        case .readingMetadata, .analyzingImages: "Looking through your memories…"
-        case .findingMoments: "Finding moments you spent together…"
-        case .findingPlaces: "Finding places you’ve been…"
-        case .choosingFavorites, .finished: "Choosing a few favorites…"
+        case .readingMetadata, .analyzingImages: String(localized: "Looking through your memories…")
+        case .findingMoments: String(localized: "Finding moments you spent together…")
+        case .findingPlaces: String(localized: "Finding places you’ve been…")
+        case .choosingFavorites, .finished: String(localized: "Choosing a few favorites…")
         }
     }
 
     /// "12 moments found", "1 trip found", "3 places found" — only once the run knows.
     static func facts(_ facts: MemoryEngineFacts) -> [String] {
         var lines: [String] = []
-        if let moments = facts.moments, moments > 0 { lines.append("\(Counted.text(moments, "moment", "moments")) found") }
-        if let trips = facts.trips, trips > 0 { lines.append("\(Counted.text(trips, "trip", "trips")) found") }
-        if let places = facts.places, places > 0 { lines.append("\(Counted.text(places, "place", "places")) found") }
+        if let moments = facts.moments, moments > 0 { lines.append(String(localized: "\(Counted.text(moments, "moment", "moments")) found")) }
+        if let trips = facts.trips, trips > 0 { lines.append(String(localized: "\(Counted.text(trips, "trip", "trips")) found")) }
+        if let places = facts.places, places > 0 { lines.append(String(localized: "\(Counted.text(places, "place", "places")) found")) }
         return lines
     }
 
     static func detail(for progress: MemoryEngineProgress) -> String? {
         guard progress.stage == .analyzingImages, progress.totalUnits > 0 else { return nil }
-        return "\(progress.completedUnits.formatted()) of \(progress.totalUnits.formatted())"
+        return String(localized: "\(progress.completedUnits.formatted()) of \(progress.totalUnits.formatted())")
     }
 }
 

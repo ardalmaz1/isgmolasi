@@ -39,8 +39,8 @@ struct EditProfileView: View {
                     Text("When your story began")
                 } footer: {
                     Text(hasDate
-                         ? "An estimate is perfectly fine. Memories from before it are shown separately."
-                         : "Without a date, Yuvi doesn’t count days together.")
+                         ? String(localized: "An estimate is perfectly fine. Memories from before it are shown separately.")
+                         : String(localized: "Without a date, Yuvi doesn’t count days together."))
                 }
             }
             .scrollContentBackground(.hidden)

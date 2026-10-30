@@ -33,11 +33,11 @@ struct PhotoGridCell: View {
     }
 
     private var accessibilityText: String {
-        var parts = [asset.kind == .video ? "Video" : "Photo"]
+        var parts = [asset.kind == .video ? String(localized: "Video") : String(localized: "Photo")]
         if let date = asset.creationDate {
             parts.append(date.formatted(date: .abbreviated, time: .shortened))
         }
-        if isFavorite { parts.append("Favorite") }
+        if isFavorite { parts.append(String(localized: "Favorite")) }
         return parts.joined(separator: ", ")
     }
 

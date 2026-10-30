@@ -24,7 +24,7 @@ struct ShareMomentView: View {
                             .shadow(color: .black.opacity(0.12), radius: 16, y: 6)
                             .accessibilityLabel("Share card: \(shareTitle)")
                     } else if failed {
-                        QuietMessageView(title: "Couldn’t make a card", message: "This photo isn’t available right now.")
+                        QuietMessageView(title: String(localized: "Couldn’t make a card"), message: String(localized: "This photo isn’t available right now."))
                     } else {
                         ProgressView()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
