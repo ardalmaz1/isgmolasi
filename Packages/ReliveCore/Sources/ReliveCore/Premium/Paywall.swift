@@ -38,37 +38,38 @@ public struct PaywallCopy: Equatable, Sendable {
     public var benefits: [String]
 
     public init(entry: PaywallEntryPoint) {
+        let w = CoreWords()
         context = switch entry {
-        case .memoryBook: "Keep this book"
-        case .ourYear: "See your full year"
-        case .monthlyRecap: "See the whole month"
-        case .collageExport, .trendExport: "Create without limits"
-        case .storyExport: "Keep every story"
-        case .premiumStyle: "Every design"
-        case .memoryMovie: "Keep this movie"
-        case .welcome: "Your story is ready"
+        case .memoryBook: w.pick("Keep this book", "Bu kitabı saklayın")
+        case .ourYear: w.pick("See your full year", "Yılınızın tamamını görün")
+        case .monthlyRecap: w.pick("See the whole month", "Ayın tamamını görün")
+        case .collageExport, .trendExport: w.pick("Create without limits", "Sınırsız oluşturun")
+        case .storyExport: w.pick("Keep every story", "Her hikâyeyi saklayın")
+        case .premiumStyle: w.pick("Every design", "Tüm tasarımlar")
+        case .memoryMovie: w.pick("Keep this movie", "Bu filmi saklayın")
+        case .welcome: w.pick("Your story is ready", "Hikâyeniz hazır")
         case .settings: nil
         }
         if entry == .welcome {
-            title = "Keep your story, together"
-            message = "Yuvi Premium opens everything Yuvi made from your photos. One subscription covers you both."
+            title = w.pick("Keep your story, together", "Hikâyenizi birlikte saklayın")
+            message = w.pick("Yuvi Premium opens everything Yuvi made from your photos. One subscription covers you both.", "Yuvi Premium, Yuvi'nin fotoğraflarınızdan hazırladığı her şeyi açar. Tek abonelik ikinizi de kapsar.")
             benefits = [
-                "Your whole story: moments, trips and places",
-                "Today, Monthly Recap and Our Year",
-                "Memory Movies, Books, Collages & Stories",
-                "Your partner joins free with your invitation",
-                "Private: your photos never leave your iPhone",
+                w.pick("Your whole story: moments, trips and places", "Hikâyenizin tamamı: anlar, geziler ve yerler"),
+                w.pick("Today, Monthly Recap and Our Year", "Bugün, Aylık Özet ve Bizim Yılımız"),
+                w.pick("Memory Movies, Books, Collages & Stories", "Anı Filmleri, Kitaplar, Kolajlar ve Hikâyeler"),
+                w.pick("Your partner joins free with your invitation", "Partneriniz davetinizle ücretsiz katılır"),
+                w.pick("Private: your photos never leave your iPhone", "Gizli: fotoğraflarınız iPhone'unuzdan hiç çıkmaz"),
             ]
             return
         }
-        title = "Keep making memories worth keeping"
-        message = "Your memories are always yours.\nPremium gives you everything Yuvi can create from them."
+        title = w.pick("Keep making memories worth keeping", "Saklamaya değer anılar biriktirmeye devam edin")
+        message = w.pick("Your memories are always yours.\nPremium gives you everything Yuvi can create from them.", "Anılarınız her zaman sizin.\nPremium, Yuvi'nin onlardan oluşturabileceği her şeyi açar.")
         benefits = [
-            "Unlimited Memory Books",
-            "Stories, Collages & Memory Movies",
-            "Monthly and yearly recaps",
-            "Every premium design",
-            "Full-quality exports",
+            w.pick("Unlimited Memory Books", "Sınırsız Anı Kitabı"),
+            w.pick("Stories, Collages & Memory Movies", "Hikâyeler, Kolajlar ve Anı Filmleri"),
+            w.pick("Monthly and yearly recaps", "Aylık ve yıllık özetler"),
+            w.pick("Every premium design", "Tüm premium tasarımlar"),
+            w.pick("Full-quality exports", "Tam kaliteli dışa aktarım"),
         ]
     }
 }
@@ -89,12 +90,23 @@ public struct SubscriptionPeriod: Equatable, Sendable {
 
     /// "year", "month", "3 months".
     public var recurringPhrase: String {
-        value == 1 ? unit.rawValue : "\(value) \(unit.rawValue)s"
+        if CoreWords().isTurkish { return value == 1 ? turkishUnit : "\(value) \(turkishUnit)" }
+        return value == 1 ? unit.rawValue : "\(value) \(unit.rawValue)s"
     }
 
     /// "1 week", "3 days", "1 month".
     public var durationPhrase: String {
-        "\(value) \(value == 1 ? unit.rawValue : unit.rawValue + "s")"
+        if CoreWords().isTurkish { return "\(value) \(turkishUnit)" }
+        return "\(value) \(value == 1 ? unit.rawValue : unit.rawValue + "s")"
+    }
+
+    private var turkishUnit: String {
+        switch unit.rawValue {
+        case "day": "gün"
+        case "week": "hafta"
+        case "month": "ay"
+        default: "yıl"
+        }
     }
 }
 
@@ -156,8 +168,8 @@ public struct PremiumProduct: Equatable, Identifiable, Sendable {
 public enum PaywallText {
     public static func planName(_ role: PremiumProductRole) -> String {
         switch role {
-        case .annual: "Annual"
-        case .monthly: "Monthly"
+        case .annual: CoreWords().pick("Annual", "Yıllık")
+        case .monthly: CoreWords().pick("Monthly", "Aylık")
         }
     }
 
@@ -169,6 +181,13 @@ public enum PaywallText {
     /// "1 week free" — only for a trial the App Store says the user can start.
     public static func offerBadge(_ product: PremiumProduct) -> String? {
         guard let offer = product.availableOffer else { return nil }
+        if CoreWords().isTurkish {
+            return switch offer.paymentMode {
+            case .freeTrial: "\(totalDuration(offer)) ücretsiz"
+            case .payAsYouGo: "Başlangıçta \(offer.displayPrice) / \(offer.period.recurringPhrase)"
+            case .payUpFront: "İlk \(totalDuration(offer)) \(offer.displayPrice)"
+            }
+        }
         switch offer.paymentMode {
         case .freeTrial:
             return "\(totalDuration(offer)) free"
@@ -181,13 +200,15 @@ public enum PaywallText {
 
     /// "Start Free Trial" only when there is a real trial to start; otherwise honest words.
     public static func callToAction(_ product: PremiumProduct?) -> String {
-        guard let product else { return "Continue" }
-        if product.freeTrial != nil { return "Start Free Trial" }
-        return "Continue with \(planName(product.role))"
+        let w = CoreWords()
+        guard let product else { return w.pick("Continue", "Devam Et") }
+        if product.freeTrial != nil { return w.pick("Start Free Trial", "Ücretsiz Denemeyi Başlat") }
+        return w.pick("Continue with \(planName(product.role))", "\(planName(product.role)) ile Devam Et")
     }
 
     /// The recurring-subscription disclosure under the button.
     public static func disclosure(_ product: PremiumProduct) -> String {
+        if CoreWords().isTurkish { return turkishDisclosure(product) }
         let renews = "Renews automatically until cancelled. Cancel anytime in Settings at least 24 hours before the end of the current period."
         let recurring = "\(product.displayPrice) per \(product.period.recurringPhrase)"
         guard let offer = product.availableOffer else {
@@ -199,6 +220,20 @@ public enum PaywallText {
         case .payUpFront: "\(offer.displayPrice) for \(totalDuration(offer))"
         }
         return "\(planName(product.role)) subscription: \(start), then \(recurring). \(renews)"
+    }
+
+    private static func turkishDisclosure(_ product: PremiumProduct) -> String {
+        let renews = "İptal edilene kadar otomatik yenilenir. Dönem bitmeden en az 24 saat önce Ayarlar'dan istediğiniz zaman iptal edebilirsiniz."
+        let recurring = "\(product.period.recurringPhrase) başına \(product.displayPrice)"
+        guard let offer = product.availableOffer else {
+            return "\(planName(product.role)) abonelik: \(recurring). \(renews)"
+        }
+        let start = switch offer.paymentMode {
+        case .freeTrial: "\(totalDuration(offer)) ücretsiz"
+        case .payAsYouGo: "\(totalDuration(offer)) boyunca \(offer.period.recurringPhrase) başına \(offer.displayPrice)"
+        case .payUpFront: "\(totalDuration(offer)) için \(offer.displayPrice)"
+        }
+        return "\(planName(product.role)) abonelik: \(start), ardından \(recurring). \(renews)"
     }
 
     private static func totalDuration(_ offer: IntroductoryOffer) -> String {

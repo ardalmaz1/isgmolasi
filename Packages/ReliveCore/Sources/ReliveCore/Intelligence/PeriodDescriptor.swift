@@ -99,7 +99,7 @@ public struct PeriodDescriptor: Hashable, Sendable, Codable {
 
     /// "June 8, 2026", "June 8–10, 2026", "August 2026", "August – October 2026", "2025 – 2026".
     /// Nil when no memory has a date.
-    public func label(locale: Locale = Locale(identifier: "en_US"), calendar: Calendar) -> String? {
+    public func label(locale: Locale = .reliveDisplay, calendar: Calendar) -> String? {
         let names = MonthNames(locale: locale, calendar: calendar)
         switch kind {
         case .unknown:
@@ -151,10 +151,10 @@ public struct PeriodDescriptor: Hashable, Sendable, Codable {
 
         var name: String {
             switch self {
-            case .spring: "Spring"
-            case .summer: "Summer"
-            case .autumn: "Autumn"
-            case .winter: "Winter"
+            case .spring: CoreWords().pick("Spring", "İlkbahar")
+            case .summer: CoreWords().pick("Summer", "Yaz")
+            case .autumn: CoreWords().pick("Autumn", "Sonbahar")
+            case .winter: CoreWords().pick("Winter", "Kış")
             }
         }
 

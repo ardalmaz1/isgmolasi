@@ -147,7 +147,7 @@ public struct MemoryIntelligenceEngine: Sendable {
         library: CreationLibrary,
         ranker: MemoryRanker = MemoryRanker(),
         detector: DuplicateDetector = DuplicateDetector(),
-        locale: Locale = Locale(identifier: "en_US")
+        locale: Locale = .reliveDisplay
     ) {
         self.library = library
         self.ranker = ranker

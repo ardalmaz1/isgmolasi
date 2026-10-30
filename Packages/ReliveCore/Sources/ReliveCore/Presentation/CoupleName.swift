@@ -26,7 +26,7 @@ public struct CoupleName: Hashable, Sendable {
     }
 
     /// The first name: the user's own, or "You".
-    public func lead(you: String = "You") -> String {
+    public func lead(you: String = CoreWords().pick("You", "Sen")) -> String {
         userName ?? you
     }
 
@@ -34,17 +34,17 @@ public struct CoupleName: Hashable, Sendable {
     public var hasBothNames: Bool { userName != nil && !partnerName.isEmpty }
 
     /// "Arda ♥ Kübra", "You ♥ Kübra", or just the lead when there is no partner name.
-    public func display(you: String = "You") -> String {
+    public func display(you: String = CoreWords().pick("You", "Sen")) -> String {
         partnerName.isEmpty ? lead(you: you) : "\(lead(you: you)) \(Self.heart) \(partnerName)"
     }
 
     /// "Arda and Kübra" — for VoiceOver.
-    public func spoken(you: String = "You", spokenJoiner: String = "and") -> String {
+    public func spoken(you: String = CoreWords().pick("You", "Sen"), spokenJoiner: String = CoreWords().pick("and", "ve")) -> String {
         partnerName.isEmpty ? lead(you: you) : "\(lead(you: you)) \(spokenJoiner) \(partnerName)"
     }
 
     /// "Arda & Kübra" — where a symbol doesn't belong.
-    public func plain(you: String = "You") -> String {
+    public func plain(you: String = CoreWords().pick("You", "Sen")) -> String {
         partnerName.isEmpty ? lead(you: you) : "\(lead(you: you)) & \(partnerName)"
     }
 }

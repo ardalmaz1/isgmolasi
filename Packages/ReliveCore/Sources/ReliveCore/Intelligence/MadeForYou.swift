@@ -132,7 +132,7 @@ public struct MadeForYouEngine: Sendable {
     /// Two suggestions sharing more than this share of the smaller one's memories are one too many.
     public var overlapLimit = 0.5
 
-    public init(library: CreationLibrary, now: Date, history: SuggestionHistory = SuggestionHistory(), hemisphere: PeriodDescriptor.Hemisphere? = nil, locale: Locale = Locale(identifier: "en_US")) {
+    public init(library: CreationLibrary, now: Date, history: SuggestionHistory = SuggestionHistory(), hemisphere: PeriodDescriptor.Hemisphere? = nil, locale: Locale = .reliveDisplay) {
         self.library = library
         self.now = now
         self.history = history
@@ -226,8 +226,8 @@ public struct MadeForYouEngine: Sendable {
                 id: "anniversary:\(moment.id.uuidString):\(calendar.component(.year, from: now))-\(years)",
                 kind: kind,
                 eyebrow: memory.ageDescription,
-                title: name.isEmpty ? (dateLabel ?? "A memory") : name,
-                subtitle: [Self.count(usable.count, "memory", "memories"), dateLabel].compactMap { $0 }.joined(separator: " · "),
+                title: name.isEmpty ? (dateLabel ?? words.pick("A memory", "Bir anı")) : name,
+                subtitle: [words.count(usable.count, "memory", "memories"), dateLabel].compactMap { $0 }.joined(separator: " · "),
                 creation: creation,
                 source: source,
                 coverAssetID: plan.lead,
@@ -260,9 +260,9 @@ public struct MadeForYouEngine: Sendable {
             return MadeForYouSuggestion(
                 id: "month:\(month.year)-\(month.month)",
                 kind: .monthRecap,
-                eyebrow: "Your month",
-                title: month.year == current.year ? "Your \(monthName)" : "\(monthName) \(month.year)",
-                subtitle: "\(Self.count(recap.statistics.memoryCount, "memory", "memories")) · \(Self.count(moments, "moment", "moments"))",
+                eyebrow: words.pick("Your month", "Bu ayınız"),
+                title: month.year == current.year ? words.pick("Your \(monthName)", "\(monthName) ayınız") : "\(monthName) \(month.year)",
+                subtitle: "\(words.count(recap.statistics.memoryCount, "memory", "memories")) · \(words.count(moments, "moment", "moments"))",
                 creation: .monthlyRecap,
                 source: .month(month),
                 coverAssetID: plan.lead,
@@ -291,9 +291,9 @@ public struct MadeForYouEngine: Sendable {
             result.append(MadeForYouSuggestion(
                 id: "year:\(candidate)",
                 kind: .yearRecap,
-                eyebrow: candidate == year ? "Your year so far" : "Your year",
-                title: "Our \(candidate)",
-                subtitle: "\(Self.count(review.statistics.memoryCount, "memory", "memories")) · \(Self.count(review.months.count, "month", "months"))",
+                eyebrow: candidate == year ? words.pick("Your year so far", "Yılınız şimdiye kadar") : words.pick("Your year", "Yılınız"),
+                title: words.pick("Our \(candidate)", "Bizim \(candidate)"),
+                subtitle: "\(words.count(review.statistics.memoryCount, "memory", "memories")) · \(words.count(review.months.count, "month", "months"))",
                 creation: .yearInReview,
                 source: .year(candidate),
                 coverAssetID: plan.lead,
@@ -313,9 +313,9 @@ public struct MadeForYouEngine: Sendable {
                 result.append(MadeForYouSuggestion(
                     id: "book:year:\(year - 1)",
                     kind: .memoryBook,
-                    eyebrow: "Ready to create",
-                    title: "Our \(year - 1)",
-                    subtitle: "Memory Book · \(Self.count(last.statistics.memoryCount, "memory", "memories"))",
+                    eyebrow: words.pick("Ready to create", "Oluşturmaya hazır"),
+                    title: words.pick("Our \(year - 1)", "Bizim \(year - 1)"),
+                    subtitle: "\(words.pick("Memory Book", "Anı Kitabı")) · \(words.count(last.statistics.memoryCount, "memory", "memories"))",
                     creation: .book,
                     source: .year(year - 1),
                     coverAssetID: plan.lead,
@@ -379,9 +379,9 @@ public struct MadeForYouEngine: Sendable {
             return MadeForYouSuggestion(
                 id: "trip:\(first.id.uuidString)",
                 kind: .trip,
-                eyebrow: "A trip",
+                eyebrow: words.pick("A trip", "Bir gezi"),
                 title: editorial.text.isEmpty ? factualTitle : editorial.text,
-                subtitle: [Self.count(usable.count, "memory", "memories"), when ?? Self.count(days, "day", "days")].joined(separator: " · "),
+                subtitle: [words.count(usable.count, "memory", "memories"), when ?? words.count(days, "day", "days")].joined(separator: " · "),
                 creation: creation,
                 source: source,
                 coverAssetID: plan.lead,
@@ -411,9 +411,9 @@ public struct MadeForYouEngine: Sendable {
             return MadeForYouSuggestion(
                 id: "place:\(key)",
                 kind: .place,
-                eyebrow: "Through the years",
-                title: "\(entry.place.name) through the years",
-                subtitle: "\(first) – \(last) · \(Self.count(usable.count, "memory", "memories"))",
+                eyebrow: words.pick("Through the years", "Yıllar içinde"),
+                title: words.pick("\(entry.place.name) through the years", "Yıllar içinde \(entry.place.name)"),
+                subtitle: "\(first) – \(last) · \(words.count(usable.count, "memory", "memories"))",
                 creation: .story,
                 source: .photos(plan.selected),
                 coverAssetID: plan.lead,
@@ -453,9 +453,9 @@ public struct MadeForYouEngine: Sendable {
                 result.append(MadeForYouSuggestion(
                     id: "season:\(year)-\(season)-\(hemisphere.rawValue)",
                     kind: .season,
-                    eyebrow: "From your story",
+                    eyebrow: words.pick("From your story", "Hikâyenizden"),
                     title: label,
-                    subtitle: [Self.count(pool.count, "memory", "memories"), places > 0 ? Self.count(places, "place", "places") : nil].compactMap { $0 }.joined(separator: " · "),
+                    subtitle: [words.count(pool.count, "memory", "memories"), places > 0 ? words.count(places, "place", "places") : nil].compactMap { $0 }.joined(separator: " · "),
                     creation: .book,
                     source: .photos(plan.selected),
                     coverAssetID: plan.lead,
@@ -510,9 +510,7 @@ public struct MadeForYouEngine: Sendable {
         return days.sorted().map { MonthKey(year: $0.year, month: $0.month) }.filter { seen.insert($0).inserted }
     }
 
-    static func count(_ value: Int, _ one: String, _ many: String) -> String {
-        "\(value) \(value == 1 ? one : many)"
-    }
+    var words: CoreWords { CoreWords(locale: locale) }
 }
 
 extension MemoryIntelligenceEngine {

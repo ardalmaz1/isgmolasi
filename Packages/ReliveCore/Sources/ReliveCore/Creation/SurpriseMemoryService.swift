@@ -18,7 +18,16 @@ public struct SurpriseMemory: Hashable, Sendable {
     public var place: PlaceName?
 
     /// "A year ago today", "2 years ago this week", "6 months ago today".
-    public var ageDescription: String {
+    public var ageDescription: String { ageDescription(in: .current) }
+
+    public func ageDescription(in language: EditorialLanguage) -> String {
+        if language == .turkish {
+            let base = switch anchor {
+            case .years(let years): years == 1 ? "Bir yıl önce" : "\(years) yıl önce"
+            case .months(let months): months == 1 ? "Bir ay önce" : "\(months) ay önce"
+            }
+            return isSameDay ? "\(base) bugün" : "\(base) bu hafta"
+        }
         let base: String
         switch anchor {
         case .years(let years): base = years == 1 ? "A year ago" : "\(years) years ago"

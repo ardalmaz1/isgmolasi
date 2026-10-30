@@ -40,12 +40,15 @@ public struct FactualTitleBuilder: Sendable {
     public var calendar: Calendar
     public var locale: Locale
 
-    public init(calendar: Calendar, locale: Locale = Locale(identifier: "en_US")) {
+    public init(calendar: Calendar, locale: Locale = .reliveDisplay) {
         self.calendar = calendar
         self.locale = locale
     }
 
     public static let neutralTitle = "Our Memories"
+
+    private var words: CoreWords { CoreWords(locale: locale) }
+    private var neutral: String { words.pick(Self.neutralTitle, "Anılarımız") }
 
     public func title(for candidates: [MemoryCandidate], period: PeriodDescriptor, story: Story, userTitle: String? = nil) -> FactualTitle {
         let periodLabel = period.isComplete ? period.label(locale: locale, calendar: calendar) : nil
@@ -54,7 +57,7 @@ public struct FactualTitleBuilder: Sendable {
             return FactualTitle(primary: userTitle, secondary: periodLabel, basis: .user)
         }
         guard !candidates.isEmpty else {
-            return FactualTitle(primary: Self.neutralTitle, secondary: nil, basis: .neutral)
+            return FactualTitle(primary: neutral, secondary: nil, basis: .neutral)
         }
 
         if let id = candidates.first?.momentID, candidates.allSatisfy({ $0.momentID == id }),
@@ -78,22 +81,22 @@ public struct FactualTitleBuilder: Sendable {
 
         // Only a period that covers every memory may become the title.
         guard period.isComplete else {
-            return FactualTitle(primary: Self.neutralTitle, secondary: nil, basis: .neutral)
+            return FactualTitle(primary: neutral, secondary: nil, basis: .neutral)
         }
         let names = MonthNames(locale: locale, calendar: calendar)
         switch period.kind {
         case .month(let month):
-            return FactualTitle(primary: "Moments from \(names.full(month.month))", secondary: periodLabel, basis: .period)
+            return FactualTitle(primary: NamingWords(language: words.language).momentsFrom(names.full(month.month)), secondary: periodLabel, basis: .period)
         case .days(let first, _):
-            return FactualTitle(primary: "Moments from \(names.full(first.month))", secondary: periodLabel, basis: .period)
+            return FactualTitle(primary: NamingWords(language: words.language).momentsFrom(names.full(first.month)), secondary: periodLabel, basis: .period)
         case .months(let first, _):
-            return FactualTitle(primary: "Our \(first.year)", secondary: periodLabel, basis: .period)
+            return FactualTitle(primary: words.pick("Our \(first.year)", "Bizim \(first.year)"), secondary: periodLabel, basis: .period)
         case .years:
-            return FactualTitle(primary: Self.neutralTitle, secondary: periodLabel, basis: .period)
+            return FactualTitle(primary: neutral, secondary: periodLabel, basis: .period)
         case .day:
-            return FactualTitle(primary: periodLabel ?? Self.neutralTitle, secondary: nil, basis: .period)
+            return FactualTitle(primary: periodLabel ?? neutral, secondary: nil, basis: .period)
         case .unknown:
-            return FactualTitle(primary: Self.neutralTitle, secondary: nil, basis: .neutral)
+            return FactualTitle(primary: neutral, secondary: nil, basis: .neutral)
         }
     }
 }

@@ -61,9 +61,9 @@ public enum MovieLength: String, CaseIterable, Codable, Hashable, Sendable {
 
     public var name: String {
         switch self {
-        case .short: "Short"
-        case .standard: "Standard"
-        case .long: "Long"
+        case .short: CoreWords().pick("Short", "Kısa")
+        case .standard: CoreWords().pick("Standard", "Standart")
+        case .long: CoreWords().pick("Long", "Uzun")
         }
     }
 }
@@ -82,10 +82,10 @@ public enum MovieStyle: String, CaseIterable, Codable, Hashable, Sendable {
 
     public var name: String {
         switch self {
-        case .classic: "Classic"
-        case .editorial: "Editorial"
-        case .film: "Film"
-        case .warm: "Warm"
+        case .classic: CoreWords().pick("Classic", "Klasik")
+        case .editorial: CoreWords().pick("Editorial", "Dergi")
+        case .film: CoreWords().pick("Film", "Film")
+        case .warm: CoreWords().pick("Warm", "Sıcak")
         }
     }
 

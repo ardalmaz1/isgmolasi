@@ -72,9 +72,17 @@ public protocol EditorialTextProviding: Sendable {
 
 /// Relive's own words: warm where it's safe, plain where it isn't, always true.
 public struct DeterministicEditorialTextProvider: EditorialTextProviding {
-    public init() {}
+    public var language: EditorialLanguage
+
+    public init(language: EditorialLanguage = .current) {
+        self.language = language
+    }
 
     public func text(for facts: EditorialFacts) -> EditorialText {
+        language == .turkish ? turkish(facts) : english(facts)
+    }
+
+    private func english(_ facts: EditorialFacts) -> EditorialText {
         switch facts {
         case .monthOpening(let month, let year, let memories, let moments, let places):
             return EditorialText(
@@ -144,6 +152,71 @@ public struct DeterministicEditorialTextProvider: EditorialTextProviding {
         }
     }
 
+    /// Turkish keeps the noun singular after a number ("4 anı") and suffixes names ("Kaş'ta").
+    /// "Favori" is a ranking word in `FactualTextPolicy`, so favorites are "işaretli" here.
+    private func turkish(_ facts: EditorialFacts) -> EditorialText {
+        func n(_ value: Int, _ noun: String) -> String { "\(value) \(noun)" }
+        func counts(_ memories: Int, _ moments: Int, _ places: Int) -> String {
+            var parts = [n(memories, "anı"), n(moments, "an")]
+            if places > 0 { parts.append(n(places, "yer")) }
+            return parts.joined(separator: " · ")
+        }
+        switch facts {
+        case .monthOpening(let month, let year, let memories, let moments, let places):
+            return EditorialText(eyebrow: "\(month) \(year)", title: "\(month), birlikte.", detail: counts(memories, moments, places))
+        case .yearOpening(let year, let memories, let moments, let months):
+            return EditorialText(
+                eyebrow: "Bizim \(year)",
+                title: "\(year), birlikte.",
+                detail: "\(n(memories, "anı")) · \(n(moments, "an")) · \(n(months, "ay"))"
+            )
+        case .firstMemory(_, let isYear, let date, let place):
+            return EditorialText(
+                eyebrow: isYear ? "Yılın ilk anısı" : "Başlangıç",
+                title: isYear ? "Yıl burada başladı." : "Ay burada başladı.",
+                detail: [date, place].compactMap { $0 }.joined(separator: " · ")
+            )
+        case .trip(let name, let days, let memories, let date):
+            let place = name + TurkishSuffix.locative(name)
+            let title = days >= 2 ? "\(place) \(Self.turkishWord(days)) gün." : "\(place) bir gün."
+            return EditorialText(eyebrow: "Bir gezi", title: title, detail: [date, n(memories, "anı")].compactMap { $0 }.joined(separator: " · "))
+        case .repeatedPlace(let place, let moments, let days, let isYear):
+            return EditorialText(
+                eyebrow: isYear ? "Tekrar tekrar gelinen bir yer" : "Yine aynı yer",
+                title: "Yine \(place).",
+                detail: "\(n(moments, "an")) · \(n(days, "farklı gün"))"
+            )
+        case .busyDay(let date, let memories, let places):
+            return EditorialText(
+                eyebrow: "Hatırlanacak çok şeyi olan bir gün",
+                title: date,
+                detail: places > 1 ? "\(n(memories, "anı")) · \(n(places, "yer"))" : n(memories, "anı")
+            )
+        case .people(let count):
+            return EditorialText(eyebrow: "Karede", title: "Karede ikiniz.", detail: n(count, "fotoğraf"))
+        case .favorites(let count):
+            return EditorialText(eyebrow: "İşaretledikleriniz", title: "Yakın tuttuklarınız.", detail: n(count, "işaretli"))
+        case .frames(let period, let count):
+            return EditorialText(eyebrow: "Kareler", title: "\(period), \(count) karede.")
+        case .places(let count, let isYear):
+            return EditorialText(eyebrow: "Yerler", title: "Bu \(isYear ? "yıl" : "ay") \(Self.turkishWord(count)) yer.")
+        case .timeline(let period, _):
+            return EditorialText(eyebrow: "Zaman çizgisi", title: "\(period), baştan sona.")
+        case .numbers(let year):
+            return EditorialText(eyebrow: "Rakamlarla yıl", title: "\(year), sayılarla.")
+        case .monthByMonth(_, _):
+            return EditorialText(eyebrow: "Ay ay", title: "Yılınız, ay ay.")
+        case .compact(let period, let isYear, let memories, let moments):
+            return EditorialText(
+                eyebrow: period,
+                title: isYear ? "\(period) daha yeni başlıyor." : "\(period) Yuvi'de sakin geçti.",
+                detail: "\(n(memories, "anı")) · \(n(moments, "an"))"
+            )
+        case .closing(let period, _, let memories, let moments, let places):
+            return EditorialText(title: "\(period) böyleydi.", detail: counts(memories, moments, places))
+        }
+    }
+
     static func counts(memories: Int, moments: Int, places: Int) -> String {
         var parts = [count(memories, "memory", "memories"), count(moments, "moment", "moments")]
         if places > 0 { parts.append(count(places, "place", "places")) }
@@ -157,6 +230,11 @@ public struct DeterministicEditorialTextProvider: EditorialTextProviding {
     /// "four" for small numbers (titles read better), digits otherwise.
     static func word(_ value: Int) -> String {
         let words = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
+        return words.indices.contains(value) ? words[value] : String(value)
+    }
+
+    static func turkishWord(_ value: Int) -> String {
+        let words = ["sıfır", "bir", "iki", "üç", "dört", "beş", "altı", "yedi", "sekiz", "dokuz", "on"]
         return words.indices.contains(value) ? words[value] : String(value)
     }
 }

@@ -18,7 +18,7 @@ public struct MovieStoryPlanner: Sendable {
     public var library: CreationLibrary
     public var locale: Locale
 
-    public init(library: CreationLibrary, locale: Locale = Locale(identifier: "en_US")) {
+    public init(library: CreationLibrary, locale: Locale = .reliveDisplay) {
         self.library = library
         self.locale = locale
     }

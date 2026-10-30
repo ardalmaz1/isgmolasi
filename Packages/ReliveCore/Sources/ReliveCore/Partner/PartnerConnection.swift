@@ -74,33 +74,33 @@ public enum PartnerMessage: Equatable, Sendable {
     public var text: String {
         switch self {
         case .signInToICloud:
-            "Sign in to iCloud in Settings to connect your partner. Yuvi works as usual without it."
+            CoreWords().pick("Sign in to iCloud in Settings to connect your partner. Yuvi works as usual without it.", "Partnerinizi bağlamak için Ayarlar'dan iCloud'a giriş yapın. Yuvi onsuz da her zamanki gibi çalışır.")
         case .iCloudRestricted:
             "iCloud isn’t available on this iPhone, so a partner can’t be connected. Yuvi works as usual without it."
         case .iCloudUnknown:
-            "Yuvi couldn’t check iCloud right now. Try again in a moment."
+            CoreWords().pick("Yuvi couldn’t check iCloud right now. Try again in a moment.", "Yuvi şu an iCloud'u kontrol edemedi. Birazdan tekrar deneyin.")
         case .couldNotReachICloud:
-            "Yuvi couldn’t reach iCloud. Try again."
+            CoreWords().pick("Yuvi couldn’t reach iCloud. Try again.", "Yuvi iCloud'a ulaşamadı. Tekrar deneyin.")
         case .temporarilyUnavailable:
-            "Your partner connection is temporarily unavailable. Yuvi will try again."
+            CoreWords().pick("Your partner connection is temporarily unavailable. Yuvi will try again.", "Partner bağlantınız geçici olarak kullanılamıyor. Yuvi tekrar deneyecek.")
         case .relationshipFull:
-            "This Yuvi relationship already has two people."
+            CoreWords().pick("This Yuvi relationship already has two people.", "Bu Yuvi ilişkisinde zaten iki kişi var.")
         case .alreadyConnected:
-            "You’re already connected with a partner. Disconnect first to accept another invitation."
+            CoreWords().pick("You’re already connected with a partner. Disconnect first to accept another invitation.", "Zaten bir partnere bağlısınız. Başka bir daveti kabul etmek için önce bağlantıyı sonlandırın.")
         case .iCloudFull:
-            "There isn’t enough iCloud storage to connect. Free up space in Settings and try again."
+            CoreWords().pick("There isn’t enough iCloud storage to connect. Free up space in Settings and try again.", "Bağlanmak için yeterli iCloud alanı yok. Ayarlar'dan yer açıp tekrar deneyin.")
         case .invitationEnded:
-            "This invitation is no longer active. Ask for a new one."
+            CoreWords().pick("This invitation is no longer active. Ask for a new one.", "Bu davet artık geçerli değil. Yeni bir davet isteyin.")
         case .connectionEnded(let byPartner):
             byPartner
-                ? "Your partner ended the connection. Your own memories are unchanged."
-                : "The connection ended. Your own memories are unchanged."
+                ? CoreWords().pick("Your partner ended the connection. Your own memories are unchanged.", "Partneriniz bağlantıyı sonlandırdı. Kendi anılarınız olduğu gibi duruyor.")
+                : CoreWords().pick("The connection ended. Your own memories are unchanged.", "Bağlantı sona erdi. Kendi anılarınız olduğu gibi duruyor.")
         case .accountChanged:
-            "The iCloud account on this iPhone changed, so the partner connection was paused."
+            CoreWords().pick("The iCloud account on this iPhone changed, so the partner connection was paused.", "Bu iPhone'daki iCloud hesabı değiştiği için partner bağlantısı duraklatıldı.")
         case .somethingWentWrong:
-            "Something went wrong. Try again."
+            CoreWords().pick("Something went wrong. Try again.", "Bir şeyler ters gitti. Tekrar deneyin.")
         case .joined:
-            "You’re connected. Each of you keeps your own memories on your own iPhone; only what you choose to share later is shared."
+            CoreWords().pick("You’re connected. Each of you keeps your own memories on your own iPhone; only what you choose to share later is shared.", "Bağlandınız. Her biriniz kendi anılarını kendi iPhone'unda tutar; yalnızca sonradan paylaşmayı seçtikleriniz paylaşılır.")
         }
     }
 

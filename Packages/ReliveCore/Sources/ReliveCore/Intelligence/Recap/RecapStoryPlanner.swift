@@ -113,7 +113,7 @@ public struct RecapStoryPlanner: Sendable {
     public static let monthChapterMinimum = 5
     public static let yearChapterMinimum = 5
 
-    public init(library: CreationLibrary, text: any EditorialTextProviding = DeterministicEditorialTextProvider(), locale: Locale = Locale(identifier: "en_US")) {
+    public init(library: CreationLibrary, text: any EditorialTextProviding = DeterministicEditorialTextProvider(), locale: Locale = .reliveDisplay) {
         self.library = library
         self.text = text
         self.locale = locale

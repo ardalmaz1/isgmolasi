@@ -21,7 +21,7 @@ public struct LocalMomentNamingService: MomentNamingService {
 
     public init(
         calendar: Calendar,
-        locale: Locale = Locale(identifier: "en_US"),
+        locale: Locale = .reliveDisplay,
         logicalDayStartHour: Int = 4,
         wholeDayThreshold: TimeInterval = 5 * 3600
     ) {

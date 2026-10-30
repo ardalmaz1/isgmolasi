@@ -39,6 +39,18 @@ public enum EditorialLanguage: String, CaseIterable, Codable, Hashable, Sendable
     public init(locale: Locale) {
         self = locale.identifier.lowercased().hasPrefix("tr") ? .turkish : .english
     }
+
+    /// The language the app is showing: its bundle's first localization ("tr" on a Turkish
+    /// phone once the app has Turkish). English under `swift test`.
+    public static var current: EditorialLanguage { EditorialLanguage(locale: .reliveDisplay) }
+}
+
+extension Locale {
+    /// The locale Relive writes its own words in, matching the app's localization rather than
+    /// the device region (a Turkish region with an English app stays English).
+    public static var reliveDisplay: Locale {
+        Locale(identifier: Bundle.main.preferredLocalizations.first ?? "en")
+    }
 }
 
 /// How sure Relive is of a piece of information.

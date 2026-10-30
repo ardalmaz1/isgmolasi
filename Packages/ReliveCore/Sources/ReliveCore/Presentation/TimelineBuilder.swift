@@ -43,7 +43,7 @@ public struct TimelineBuilder: Sendable {
     ///   - storyStart: the relationship's start, when the couple gave one. Moments from before
     ///     it are not part of "Together since…": they are gathered first, in their own section
     ///     titled `beforeStartTitle` ("Before March 2021"), never mixed into the years after.
-    public func sections(for story: Story, isVisible: (Moment) -> Bool, storyStart: Date? = nil, beforeStartTitle: String = "Before") -> [TimelineSection] {
+    public func sections(for story: Story, isVisible: (Moment) -> Bool, storyStart: Date? = nil, beforeStartTitle: String = CoreWords().pick("Before", "Öncesi")) -> [TimelineSection] {
         let visible = story.moments.filter(isVisible)
         var items: [(date: Date?, item: TimelineItem)] = []
         var emittedChapters = Set<UUID>()
@@ -78,7 +78,7 @@ public struct TimelineBuilder: Sendable {
             } else {
                 sections.append(TimelineSection(
                     id: id,
-                    title: year.map(String.init) ?? "Without a date",
+                    title: year.map(String.init) ?? CoreWords().pick("Without a date", "Tarihsiz"),
                     year: year,
                     items: [entry.item]
                 ))
